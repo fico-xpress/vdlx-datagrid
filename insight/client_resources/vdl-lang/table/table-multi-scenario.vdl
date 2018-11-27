@@ -1,0 +1,182 @@
+<vdl version="4.1">
+    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+
+    <ol class="todo">
+        <li>Intro text/explanation</li>
+        <li>Finish VDL source and usage snippets</li>
+    </ol>
+
+    <style>
+        .column-class-attribute {
+            background: rgba(255, 0, 0, .4) !important;
+        }
+
+        .redball {
+            display: block;
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background-color: orangered;
+        }
+
+        td.editable {
+            border-bottom: 2px dashed #EAEAFF;
+        }
+
+        .h3-hilite {
+            border-bottom: 1px dashed red;;
+        }
+    </style>
+
+    <vdl-page>
+
+        <vdl-section vdl-if="=scenarios.length < 2" heading="Multi Scenario">
+            <vdl-row >
+                <vdl-column size="8">
+                    <h3 class="h3-hilite">Please add another scenario to the shelf.</h3>
+                </vdl-column>
+                <vdl-column size="4">
+                    <p class="post-it">This view requires 2 scenarios on the shelf in order to demonstrate
+                        multi-scenario support.</p>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section vdl-if="=scenarios.length > 1">
+            <vdl-section heading="Multi-scenario tables">
+                <p class="lead">
+                    Tables can be created with data from several scenarios. This is achieved through
+                    specifying a scenario id on a table column or a table itself
+                </p>
+            </vdl-section>
+
+            <vdl-section heading="Examples">
+                <vdl-row>
+                    <vdl-column heading="Specifying a scenario id" size="6">
+                        <vdl-table scenario="1">
+                            <vdl-table-column entity="SupportCosts" >Support Costs</vdl-table-column>
+                            <vdl-table-column entity="ServiceLevelAgreements">Agreements</vdl-table-column>
+                        </vdl-table>
+                    </vdl-column>
+                    <vdl-column heading="VDL source:" size="6">
+                        <code-panel>
+&lt;vdl-table scenario=&quot;1&quot;&gt;
+    &lt;vdl-table-column entity=&quot;SupportCosts&quot; &gt;Support Costs&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;ServiceLevelAgreements&quot;&gt;Agreements&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                        </code-panel>
+                    </vdl-column>
+                </vdl-row>
+
+                <vdl-row>
+                    <vdl-column heading="Mixed scenario table" size="6">
+                        <vdl-table >
+                            <vdl-table-column entity="SupportCosts">Support Costs (Default 0)</vdl-table-column>
+                            <vdl-table-column entity="ServiceLevelAgreements" scenario="1">Agreements (Scenario #1)
+                            </vdl-table-column>
+                        </vdl-table>
+                    </vdl-column>
+                    <vdl-column heading="Source code" size="6">
+                        <code-panel>
+&lt;vdl-table &gt;
+    &lt;vdl-table-column entity=&quot;SupportCosts&quot;&gt;Support Costs (Default 0)&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;ServiceLevelAgreements&quot;
+                      scenario=&quot;1&quot;&gt;Agreements (Scenario #1)&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                        </code-panel>
+                    </vdl-column>
+                </vdl-row>
+
+                <vdl-row>
+                    <vdl-column heading="Looping over scenarios (columns grouped by scenario)" size="6">
+                        <vdl-table >
+                            <vdl-table-column vdl-repeat="=s,i in scenarios" scenario="=i" entity="SupportCosts"
+                                            heading="=s.props.name + ' Costs'"></vdl-table-column>
+                            <vdl-table-column vdl-repeat="=s,i in scenarios" scenario="=i" entity="ServiceLevelAgreements"
+                                            heading="=s.props.name + ' SLA'">
+                            </vdl-table-column>
+                        </vdl-table>
+                    </vdl-column>
+
+                    <vdl-column heading="VDL source:" size="6">
+                        <code-panel>
+&lt;vdl-table &gt;
+    &lt;vdl-table-column vdl-repeat=&quot;=s,i in scenarios&quot;
+                      scenario=&quot;=i&quot;
+                      entity=&quot;SupportCosts&quot;
+                      heading=&quot;=s.props.name + &apos; Costs&apos;&quot;&gt;
+    &lt;/vdl-table-column&gt;
+    &lt;vdl-table-column vdl-repeat=&quot;=s,i in scenarios&quot;
+                      scenario=&quot;=i&quot;
+                      entity=&quot;ServiceLevelAgreements&quot;
+                      heading=&quot;=s.props.name + &apos; SLA&apos;&quot;&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                        </code-panel>
+                    </vdl-column>
+                </vdl-row>
+
+                <vdl-row>
+                    <vdl-column heading="Looping over scenarios (columns grouped by entity)" size="6">
+                        <vdl-table vdl-repeat-contents="=s,i in scenarios">
+                            <vdl-table-column scenario="=i" entity="SupportCosts"
+                                            heading="=s.props.name + ' Costs'"></vdl-table-column>
+                            <vdl-table-column scenario="=i" entity="ServiceLevelAgreements"
+                                            heading="=s.props.name + ' SLA'">
+                            </vdl-table-column>
+                        </vdl-table>
+                    </vdl-column>
+
+                    <vdl-column heading="VDL source:" size="6">
+                        <code-panel>
+&lt;vdl-table vdl-repeat-contents=&quot;=s,i in scenarios&quot;&gt;
+    &lt;vdl-table-column scenario=&quot;=i&quot; entity=&quot;SupportCosts&quot;
+                      heading=&quot;=s.props.name + &apos; Costs&apos;&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column scenario=&quot;=i&quot; entity=&quot;ServiceLevelAgreements&quot;
+                      heading=&quot;=s.props.name + &apos; SLA&apos;&quot;&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                        </code-panel>
+                    </vdl-column>
+                </vdl-row>
+
+                <vdl-row>
+                    <vdl-column heading="Looping over scenarios (table per scenario)" size="6">
+                        <vdl-table vdl-repeat="=s,i in scenarios" scenario="=i">
+                            <vdl-table-column entity="SupportCosts">Support Costs
+                            </vdl-table-column>
+                        </vdl-table>
+                    </vdl-column>
+
+                    <vdl-column heading="VDL source:" size="6">
+                        <code-panel>
+&lt;vdl-table vdl-repeat=&quot;=s,i in scenarios&quot; scenario=&quot;=i&quot;&gt;
+    &lt;vdl-table-column entity=&quot;SupportCosts&quot;&gt;Support Costs
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                        </code-panel>
+
+                    </vdl-column>
+                </vdl-row>
+
+                <vdl-row>
+                    <vdl-column heading="Overriding scenario ids" size="6">
+                        <vdl-table scenario="1">
+                            <vdl-table-column entity="SupportCosts" scenario="0">Scenario 0</vdl-table-column>
+                            <vdl-table-column entity="SupportCosts" scenario="1">Scenario 1</vdl-table-column>
+                        </vdl-table>
+                    </vdl-column>
+                    <vdl-column heading="VDL source:" size="6">
+                        <code-panel>
+&lt;vdl-table scenario=&quot;1&quot;&gt;
+    &lt;vdl-table-column entity=&quot;SupportCosts&quot; scenario=&quot;0&quot;&gt;Scenario 0&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;SupportCosts&quot; scenario=&quot;1&quot;&gt;Scenario 1&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                        </code-panel>
+                    </vdl-column>
+                </vdl-row>
+        </vdl-section>
+
+
+    </vdl-page>
+</vdl>

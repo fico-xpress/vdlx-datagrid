@@ -1,0 +1,261 @@
+<vdl version="4.1">
+    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+
+    <ol class="todo">
+        <li>Intro text/Explanation</li>
+        <li>Tidy</li>
+    </ol>
+
+    <style>
+        vdl-row + vdl-row {
+            border-top: 1px solid lightgray;
+            padding-top: 19px;
+        }
+    </style>
+
+    <vdl-page>
+
+        <vdl-section heading="Autotable errors">
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>Error shown when <code>vdl-table-column</code> is not contained within <code>vdl-table</code>.</p>
+                    <vdl-table-column entity="FactoryDemand" editable="false" width="4">Factory Demand</vdl-table-column>
+                </vdl-column>
+                <vdl-column size="6">
+                    <h5>VDL source code:</h5>
+                <code-panel>
+&lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;false&quot; width=&quot;4&quot;&gt;Factory Demand&lt;/vdl-table-column&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>Error shown when trying to bind a <code>vdl-table-column</code> to a set.</p>
+                    <vdl-table>
+                        <vdl-table-column entity="Factories">Factories</vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6">
+                    <h5>VDL source code:</h5>
+                <code-panel>&lt;vdl-table&gt;
+    &lt;vdl-table-column entity=&quot;Factories&quot;&gt;Factories&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>Error shown when trying to bind a <code>vdl-table-column</code> to a scalar.</p>
+                    <vdl-table>
+                        <vdl-table-column entity="demand">demand</vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6">
+                    <h5>VDL source code:</h5>
+                <code-panel>&lt;vdl-table&gt;
+    &lt;vdl-table-column entity=&quot;demand&quot;&gt;demand&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>Error shown when trying to show two arrays with different indices.</p>
+                    <vdl-table>
+                        <vdl-table-column entity="FactorySupply"></vdl-table-column>
+                        <vdl-table-column entity="IntArray"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6">
+                    <h5>VDL source code:</h5>
+                <code-panel>&lt;vdl-table&gt;
+    &lt;vdl-table-column entity=&quot;FactorySupply&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;IntArray&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>Error shown when trying to show array and unrelated set.</p>
+                    <vdl-table>
+                        <vdl-table-column set="DAYS"></vdl-table-column>
+                        <vdl-table-column entity="FactorySupply"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6">
+                    <h5>VDL source code:</h5>
+                <code-panel>&lt;vdl-table&gt;
+    &lt;vdl-table-column set=&quot;DAYS&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactorySupply&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>Missing Index Filter on single dimension array</p>
+                    <p>Two single dimension arrays, index filtering on one.</p>
+                    <vdl-table>
+                        <vdl-table-column entity="IntArray">
+                            <vdl-index-filter set="Indices" value="New York"></vdl-index-filter>
+                        </vdl-table-column>
+                        <vdl-table-column entity="RealArray"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6">
+                    <code-panel>&lt;vdl-table&gt;
+    &lt;vdl-table-column entity=&quot;IntArray&quot;&gt;
+        &lt;vdl-index-filter set=&quot;Indices&quot; value=&quot;New York&quot;&gt;&lt;/vdl-index-filter&gt;
+    &lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;RealArray&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>Error shown when trying to show two arrays with different indices and index filtering.</p>
+                    <vdl-table>
+                        <vdl-table-column entity="IntArray"></vdl-table-column>
+                        <vdl-table-column entity="FactorySupply">
+                            <vdl-index-filter set="Factories" value="Paris"></vdl-index-filter>
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6">
+                    <h5>VDL source code:</h5>
+                <code-panel>&lt;vdl-table&gt;
+    &lt;vdl-table-column entity=&quot;IntArray&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactorySupply&quot;&gt;
+        &lt;vdl-index-filter set=&quot;Factories&quot; value=&quot;Paris&quot;&gt;&lt;/vdl-index-filter&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>Error shown when trying to show two arrays with same indices and index filtering only on one <code>vdl-table-column</code>.</p>
+                    <vdl-table>
+                        <vdl-table-column entity="FactoryDemand"></vdl-table-column>
+                        <vdl-table-column entity="FactorySupply">
+                            <vdl-index-filter set="Factories" value="Paris"></vdl-index-filter>
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6">
+                    <h5>VDL source code:</h5>
+                <code-panel>&lt;vdl-table&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactorySupply&quot;&gt;
+        &lt;vdl-index-filter set=&quot;Factories&quot; value=&quot;Paris&quot;&gt;&lt;/vdl-index-filter&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>Error shown when <code>vdl-index-filter</code> is not contained within an <code>vdl-table-column</code> or a <code>vdl-table</code></p>
+                    <vdl-index-filter set="Depots" value="Columbus"></vdl-index-filter>
+                </vdl-column>
+                <vdl-column size="6">
+                    <h5>VDL source code:</h5>
+                    <code-panel>
+&lt;vdl-index-filter set=&quot;Depots&quot; value=&quot;Columbus&quot;&gt;&lt;/vdl-index-filter&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>Error shown when <code>vdl-index-filter</code> is not contained within an <code>vdl-table-column</code></p>
+                    <vdl-table>
+                        <vdl-index-filter set="Depots" value="Columbus"></vdl-index-filter>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6">
+                    <h5>VDL source code:</h5>
+                    <code-panel>
+&lt;vdl-table&gt;
+    &lt;vdl-index-filter set=&quot;Depots&quot; value=&quot;Columbus&quot;&gt;&lt;/vdl-index-filter&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
+                    <vdl-table>
+                        <vdl-table-column entity="SupportLevels" editor-type="select"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6">
+                    <h5>VDL source code:</h5>
+                    <code-panel>
+&lt;vdl-table&gt;
+    &lt;vdl-table-column entity=&quot;SupportLevels&quot; editor-type=&quot;select&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>A vdl-index-filter element can only be used within a vdl-table-column that is bound to an entity, not a set.</p>
+                    <vdl-table>
+                        <vdl-table-column set="Factories">
+                            <vdl-index-filter set="Factories" value="=scenario.entities.MyScalar.value"
+                                              vdl-if="=scenario.entities.MyBool.value"></vdl-index-filter>
+                        </vdl-table-column>
+                        <vdl-table-column entity="FactoryDemand" editable="=scenario.entities.MyBool.value">
+                            <vdl-index-filter set="Factories" value="=scenario.entities.MyScalar.value"
+                                              vdl-if="=scenario.entities.MyBool.value"></vdl-index-filter>
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6">
+                    <h5>VDL source code:</h5>
+                    <code-panel>
+&lt;vdl-table&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot;&gt;
+        &lt;vdl-index-filter set=&quot;Factories&quot; value=&quot;=scenario.entities.MyScalar.value&quot;
+                          vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;&lt;/vdl-index-filter&gt;
+    &lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;=scenario.entities.MyBool.value&quot;&gt;
+        &lt;vdl-index-filter set=&quot;Factories&quot; value=&quot;=scenario.entities.MyScalar.value&quot;
+                          vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;&lt;/vdl-index-filter&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>Cannot specify an entity and a set for a vdl-table-column.</p>
+                    <vdl-table>
+                        <vdl-table-column set="Factories" entity="FactoryDemand"></vdl-table-column>
+                        <vdl-table-column entity="FactoryDemand" editable="=scenario.entities.MyBool.value">
+                            <vdl-index-filter set="Factories" value="=scenario.entities.MyScalar.value"
+                                              vdl-if="=scenario.entities.MyBool.value"></vdl-index-filter>
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6">
+                    <h5>VDL source code:</h5>
+                    <code-panel>
+&lt;vdl-table&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot; entity=&quot;FactoryDemand&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;=scenario.entities.MyBool.value&quot;&gt;
+        &lt;vdl-index-filter set=&quot;Factories&quot; value=&quot;=scenario.entities.MyScalar.value&quot;
+                          vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;&lt;/vdl-index-filter&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column size="6" heading="Result:">
+                    <vdl-table page-size="10" page-mode="paged">
+                        <vdl-table-column entity="AGENCYNAME" format="£#,###.00"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; format=&quot;&#163;#,###.00&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+
+            </vdl-row>
+        </vdl-section>
+    </vdl-page>
+</vdl>

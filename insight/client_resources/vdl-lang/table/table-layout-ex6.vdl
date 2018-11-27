@@ -1,0 +1,203 @@
+<vdl version="4.1">
+    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+
+    <ol class="todo">
+        <li>Intro text/Explanation</li>
+        <li>Move to presenation VG?</li>
+    </ol>
+
+    <vdl-page>
+        <vdl-section heading="Example 6, fixed width columns">
+            <vdl-row>
+                <vdl-column size="12" heading="Fixed table width, adaptive column widths.">
+                    <p>Example shows fixed width table with no column widths specified.</p>
+                    <p>This table is constrained to 500 pixels wide. The columns adapt their widths to header and/or content widths.</p>
+                    <code-panel>
+    &lt;vdl-table width=&quot;500&quot;&gt;
+        &lt;vdl-table-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; &gt;Agency&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
+    &lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="12" class="ruler">
+                    <vdl-table width="500">
+                        <vdl-table-column set="AGENCY">ID</vdl-table-column>
+                        <vdl-table-column entity="AGENCYNAME">Agency</vdl-table-column>
+                        <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
+                        <vdl-table-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="12">
+                    <img src="images/ruler.png" alt="ruler"/>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+        <vdl-section>
+            <vdl-row>
+                <vdl-column size="12" heading="Fixed table width, fixed column widths.">
+                    <p>Example shows fixed width table with all column widths specified and adding up to table width.</p>
+                    <code-panel>
+    &lt;vdl-table width=&quot;500&quot;&gt;
+        &lt;vdl-table-column set=&quot;AGENCY&quot; width=&quot;100&quot;&gt;ID&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; width=&quot;150&quot;&gt;Agency&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;NAGENTS&quot; width=&quot;125&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;125&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
+    &lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="12" class="ruler">
+                    <vdl-table width="500">
+                        <vdl-table-column set="AGENCY" width="100">ID</vdl-table-column>
+                        <vdl-table-column entity="AGENCYNAME" width="150">Agency</vdl-table-column>
+                        <vdl-table-column entity="NAGENTS" width="125">Num Agents</vdl-table-column>
+                        <vdl-table-column entity="MIN_AGENT_COMMISSION" width="125">Minimum Agent Commission</vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="12">
+                    <img src="images/ruler.png" alt="ruler"/>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+        <vdl-section>
+            <vdl-row>
+                <vdl-column size="12" heading="Fixed table width, fixed column widths. (wide)">
+                    <p>Example shows fixed width table with all column widths specified and adding up to more than table width.</p>
+                    <code-panel>
+    &lt;vdl-table width=&quot;500&quot;&gt;
+        &lt;vdl-table-column set=&quot;AGENCY&quot; width=&quot;130&quot;&gt;ID&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; width=&quot;160&quot;&gt;Agency&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;NAGENTS&quot; width=&quot;180&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;200&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
+    &lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="12" class="ruler">
+                    <vdl-table width="500">
+                        <vdl-table-column set="AGENCY" width="130">ID</vdl-table-column>
+                        <vdl-table-column entity="AGENCYNAME" width="160">Agency</vdl-table-column>
+                        <vdl-table-column entity="NAGENTS" width="180">Num Agents</vdl-table-column>
+                        <vdl-table-column entity="MIN_AGENT_COMMISSION" width="200">Minimum Agent Commission</vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="12">
+                    <img src="images/ruler.png" alt="ruler"/>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+        <vdl-section>
+            <vdl-row>
+                <vdl-column size="12" heading="Fixed table width, fixed column widths. (narrow)">
+                    <p>Example shows fixed width table with all column widths specified and adding up to less than table width.</p>
+                    <code-panel>
+    &lt;vdl-table width=&quot;500&quot;&gt;
+        &lt;vdl-table-column set=&quot;AGENCY&quot; width=&quot;30&quot;&gt;ID&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; width=&quot;60&quot;&gt;Agency&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;NAGENTS&quot; width=&quot;40&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;40&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
+    &lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="12" class="ruler">
+                    <vdl-table width="500">
+                        <vdl-table-column set="AGENCY" width="30">ID</vdl-table-column>
+                        <vdl-table-column entity="AGENCYNAME" width="60">Agency</vdl-table-column>
+                        <vdl-table-column entity="NAGENTS" width="40">Num Agents</vdl-table-column>
+                        <vdl-table-column entity="MIN_AGENT_COMMISSION" width="40">Minimum Agent Commission</vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="12">
+                    <img src="images/ruler.png" alt="ruler"/>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+        <vdl-section>
+            <vdl-row>
+                <vdl-column size="12" heading="Fixed table width, some fixed column widths.">
+                    <p>Example shows fixed width table with the first two column widths specified.</p>
+                    <code-panel>
+    &lt;vdl-table width=&quot;600&quot;&gt;
+        &lt;vdl-table-column set=&quot;AGENCY&quot; width=&quot;64&quot;&gt;ID&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; width=&quot;300&quot;&gt;Agency&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
+    &lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="12" class="ruler">
+                    <vdl-table width="600">
+                        <vdl-table-column set="AGENCY" width="64">ID</vdl-table-column>
+                        <vdl-table-column entity="AGENCYNAME" width="300">Agency</vdl-table-column>
+                        <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
+                        <vdl-table-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="12">
+                    <img src="images/ruler.png" alt="ruler"/>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+        <vdl-section>
+            <vdl-row>
+                <vdl-column size="12" heading="Custom table width, fixed column widths.">
+                    <p>Example shows custom table width specified and all column widths.</p>
+                    <p>All columns are specified as <strong>width="140"</strong>. The table should have a width of <strong>4 x 140px = 560px</strong>.</p>
+                    <code-panel>
+    &lt;vdl-table width=&quot;custom&quot;&gt;
+        &lt;vdl-table-column set=&quot;AGENCY&quot; width=&quot;140&quot;&gt;ID&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; width=&quot;140&quot;&gt;Agency&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;NAGENTS&quot; width=&quot;140&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;140&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
+    &lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="12" class="ruler">
+                <vdl-table width="custom">
+                    <vdl-table-column set="AGENCY" width="140">ID</vdl-table-column>
+                    <vdl-table-column entity="AGENCYNAME" width="140">Agency</vdl-table-column>
+                    <vdl-table-column entity="NAGENTS" width="140">Num Agents</vdl-table-column>
+                    <vdl-table-column entity="MIN_AGENT_COMMISSION" width="140">Minimum Agent Commission</vdl-table-column>
+                </vdl-table>
+                </vdl-column>
+                <vdl-column size="12">
+                    <img src="images/ruler.png" alt="ruler"/>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+        <vdl-section>
+            <vdl-row>
+                <vdl-column size="12" heading="Custom table width, some fixed column widths.">
+                    <p>Example shows custom table width specified and some column widths. The remaining columns will take a width of <strong>100px</strong>.</p>
+                    <p>Two columns are specified as <strong>width="240"</strong>. Columns with no width set will default to <strong>100px</strong> wide when the <strong>width="custom"</strong> attribute is applied to the parent vdl-table. The table should have a width of <strong>2 x 240px + 2 * 100px = 680px.</strong></p>
+                    <code-panel>
+    &lt;vdl-table width=&quot;custom&quot;&gt;
+        &lt;vdl-table-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; width=&quot;240&quot;&gt;Agency&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;240&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
+    &lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="12" class="ruler">
+                    <vdl-table width="custom">
+                        <vdl-table-column set="AGENCY">ID</vdl-table-column>
+                        <vdl-table-column entity="AGENCYNAME" width="240">Agency</vdl-table-column>
+                        <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
+                        <vdl-table-column entity="MIN_AGENT_COMMISSION" width="240">Minimum Agent Commission</vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="12">
+                    <img src="images/ruler.png" alt="ruler"/>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+    </vdl-page>
+</vdl>

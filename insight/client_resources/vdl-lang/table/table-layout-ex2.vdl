@@ -1,0 +1,153 @@
+<vdl version="4.1">
+    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+
+    <ol class="todo">
+        <li>Intro text/Explanation</li>
+        <li>Move to presentation VG?</li>
+    </ol>
+
+    <vdl-page>
+        <vdl-section heading="Example 2 - fixed width tables.">
+            <vdl-column size="12">
+                <p>Multiple tables, same width but different number of columns.</p>
+                <p>Text content in cells aligned left, numerical content aligned right.</p>
+                <code-panel>
+&lt;vdl-section&gt;
+    &lt;vdl-column size=&quot;10&quot;&gt;
+        &lt;vdl-table&gt;
+            &lt;vdl-table-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;AGENCYNAME&quot;&gt;Agency&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
+        &lt;/vdl-table&gt;
+    &lt;/vdl-column&gt;
+&lt;/vdl-section&gt;
+                </code-panel>
+            </vdl-column>
+        </vdl-section>
+
+        <vdl-section>
+            <vdl-column size="10">
+                <vdl-table>
+                    <vdl-table-column set="AGENCY">ID</vdl-table-column>
+                    <vdl-table-column entity="AGENCYNAME">Agency</vdl-table-column>
+                    <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
+                </vdl-table>
+            </vdl-column>
+        </vdl-section>
+
+        <vdl-section>
+            <vdl-column  size="12">
+                <code-panel>
+&lt;vdl-section&gt;
+    &lt;vdl-column size=&quot;10&quot;&gt;
+        &lt;vdl-table&gt;
+            &lt;vdl-table-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;AGENCYNAME&quot;&gt;Agency&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
+        &lt;/vdl-table&gt;
+    &lt;/vdl-column&gt;
+&lt;/vdl-section&gt;
+                </code-panel>
+            </vdl-column>
+        </vdl-section>
+
+        <vdl-section>
+            <vdl-column size="10">
+                <vdl-table>
+                    <vdl-table-column set="AGENCY">ID</vdl-table-column>
+                    <vdl-table-column entity="AGENCYNAME">Agency</vdl-table-column>
+                    <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
+                    <vdl-table-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdl-table-column>
+                </vdl-table>
+            </vdl-column>
+        </vdl-section>
+
+        <vdl-section>
+            <vdl-column size="12">
+                <code-panel>
+&lt;vdl-section&gt;
+    &lt;vdl-column size=&quot;10&quot;&gt;
+        &lt;vdl-table&gt;
+            &lt;vdl-table-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;AGENCYNAME&quot;&gt;Agency&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;MAX_AGENT_ACCOUNTS&quot;&gt;Max Acct.&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;MAX_PERC_AGENCY&quot;&gt;Max %&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;MIN_AGENT_ACCOUNTS&quot;&gt;Min. Acct.&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
+        &lt;/vdl-table&gt;
+    &lt;/vdl-column&gt;
+&lt;/vdl-section&gt;
+                </code-panel>
+            </vdl-column>
+        </vdl-section>
+
+        <vdl-section>
+            <vdl-column size="10">
+                <vdl-table>
+                    <vdl-table-column set="AGENCY">ID</vdl-table-column>
+                    <vdl-table-column entity="AGENCYNAME">Agency</vdl-table-column>
+                    <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
+                    <vdl-table-column entity="MAX_AGENT_ACCOUNTS">Max Acct.</vdl-table-column>
+                    <vdl-table-column entity="MAX_PERC_AGENCY">Max %</vdl-table-column>
+                    <vdl-table-column entity="MIN_AGENT_ACCOUNTS">Min. Acct.</vdl-table-column>
+                    <vdl-table-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdl-table-column>
+                </vdl-table>
+            </vdl-column>
+        </vdl-section>
+
+
+        <vdl-section heading="Scroll bar">
+            <style>
+                p.warning {
+                    color: orangered;
+                }
+            </style>
+            <vdl-column size="12">
+                <p>If you specify a size that is too small for the number of columns to fit in then you can add some CSS to show a horizontal scroll bar.</p>
+                <p class="warning">Be aware that this isn't compatible with tables that have pagination controls.</p>
+                <code-panel>&lt;style&gt;
+    vdl-column.constrain-width {
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+&lt;/style&gt;
+&lt;vdl-section&gt;
+    &lt;vdl-column size=&quot;4&quot; class=&quot;constrain-width&quot;&gt;
+        &lt;vdl-table&gt;
+            &lt;vdl-table-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;AGENCYNAME&quot;&gt;Agency&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;MAX_AGENT_ACCOUNTS&quot;&gt;Max Acct.&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;MAX_PERC_AGENCY&quot;&gt;Max %&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;MIN_AGENT_ACCOUNTS&quot;&gt;Min. Acct.&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
+        &lt;/vdl-table&gt;
+    &lt;/vdl-column&gt;
+&lt;/vdl-section&gt;
+                </code-panel>
+            </vdl-column>
+        </vdl-section>
+
+        <vdl-section>
+            <style>
+                vdl-column.constrain-width {
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                }
+            </style>
+            <vdl-column size="3" class="constrain-width">
+                <vdl-table>
+                    <vdl-table-column set="AGENCY">ID</vdl-table-column>
+                    <vdl-table-column entity="AGENCYNAME">Agency</vdl-table-column>
+                    <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
+                    <vdl-table-column entity="MAX_AGENT_ACCOUNTS">Max Acct.</vdl-table-column>
+                    <vdl-table-column entity="MAX_PERC_AGENCY">Max %</vdl-table-column>
+                    <vdl-table-column entity="MIN_AGENT_ACCOUNTS">Min. Acct.</vdl-table-column>
+                    <vdl-table-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdl-table-column>
+                </vdl-table>
+            </vdl-column>
+        </vdl-section>
+    </vdl-page>
+</vdl>

@@ -1,0 +1,64 @@
+<vdl version="4.1">
+    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+
+    <ol class="todo">
+        <li>Intro text/Explanation</li>
+        <li>VDL Source and Usage snippets</li>
+    </ol>
+
+    <style>
+        .column-class-attribute {
+            background: rgba(255, 0, 0, .4) !important;
+        }
+
+        .redball {
+            display: block;
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background-color: orangered;
+        }
+
+        td.editable {
+            border-bottom: 2px dashed #EAEAFF;
+        }
+    </style>
+
+    <vdl-page>
+
+        <vdl-section heading="Table with conditionals and loops">
+
+            <vdl-row>
+                <vdl-column heading="Single scalar form">
+                    <p>Uncheck this to hide the 'FactoryDemand' column in the table below. </p>
+                    <vdl-form>
+                        <vdl-field entity="MyBool"></vdl-field>
+                    </vdl-form>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column heading="Form with conditional column" size="6">
+                    <vdl-table>
+                        <vdl-table-column entity="FactorySupply">Factory Supply</vdl-table-column>
+                        <vdl-table-column vdl-if="=scenario.entities.MyBool.value" entity="FactoryDemand">Factory
+                            Demand
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column heading="VDL source:" size="6">
+                    <code-panel>
+&lt;vdl-table&gt;
+    &lt;vdl-table-column entity=&quot;FactorySupply&quot;&gt;Factory Supply&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column vdl-if=&quot;=scenario.entities.MyBool.value&quot; entity=&quot;FactoryDemand&quot;&gt;Factory
+        Demand
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+
+                </vdl-column>
+            </vdl-row>
+
+        </vdl-section>
+
+    </vdl-page>
+</vdl>

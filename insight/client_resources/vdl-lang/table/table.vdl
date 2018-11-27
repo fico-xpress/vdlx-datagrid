@@ -1,0 +1,414 @@
+<vdl version="4.1">
+    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+
+    <style>
+        .test-class {
+            background: rgba(255, 0, 0, .4) !important;
+        }
+
+        .redball {
+            display: block;
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background-color: orangered;
+        }
+
+        td.editable {
+            border-bottom: 2px dashed #EAEAFF;
+        }
+
+        .red {
+            background-color: rgba(255, 0, 0, 0.22);
+        }
+
+        .green {
+            background-color: rgba(0, 255, 0, 0.22);
+        }
+
+        .todo {
+            padding: 19px;
+            background-color: yellow;
+            font-family: "American Typewriter";
+        }
+    </style>
+
+    <vdl-include src="vdlx-datagrid.vdl"/>
+    <link rel="stylesheet" href="css/vdlx-datagrid2.css">
+
+    <vdl-page>
+
+        <vdl-section heading="vdlx-datagrid">
+            <p class="lead">This page shows basic usage of vdlx-datagrid and attributes</p>
+        </vdl-section>
+
+        <vdl-section heading="Basic usage">
+            <vdl-row>
+                <vdl-column heading="Simple autotable" size="6">
+<!--
+                    <vdl-table>
+                        <vdl-table-column set="SupportLevels">Support L.</vdl-table-column>
+                        <vdl-table-column entity="SupportCosts"></vdl-table-column>
+                        <vdl-table-column entity="ServiceLevelAgreements"></vdl-table-column>
+                    </vdl-table>
+-->
+
+                    <script>
+                        var table1Columns = [
+                            {set: 'SupportLevels'},
+                            {entity: 'SupportCosts', tooltip: function(cell) {
+                                    return 'The value is: ' + cell.;
+                                }},
+                            {entity: 'ServiceLevelAgreements'},
+                        ]
+                    </script>
+                    <vdlx-datagrid column-filter="true" data-page-mode="paged" data-page-size="20">
+                        <vdlx-datagrid-provider columns="=table1Columns">
+                        </vdlx-datagrid-provider>
+                    </vdlx-datagrid>
+
+                </vdl-column>
+
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>&lt;script&gt;
+    var table1Columns = [
+        {set: 'SupportLevels'},
+        {entity: 'SupportCosts'},
+        {entity: 'ServiceLevelAgreements'},
+    ]
+&lt;/script&gt;
+&lt;vdlx-datagrid column-filter=&quot;true&quot; data-page-mode=&quot;paged&quot; data-page-size=&quot;20&quot;&gt;
+    &lt;vdlx-datagrid-provider columns=&quot;=table1Columns&quot;&gt;
+    &lt;/vdlx-datagrid-provider&gt;
+&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+
+                    <div class="todo">
+                        <ol>
+                            <li>Adapt table height to data size</li>
+                        </ol>
+                    </div>
+                </vdl-column>
+
+            </vdl-row>
+
+
+
+            <vdl-row>
+                <vdl-column heading="Simple autotable with repeated index sets" size="6">
+<!--
+                    <vdl-table>
+                        <vdl-table-column set="Factories" heading="Origin"></vdl-table-column>
+                        <vdl-table-column set="Factories" heading="Destination"></vdl-table-column>
+                        <vdl-table-column entity="ShippingCosts"></vdl-table-column>
+                    </vdl-table>
+-->
+                    <script>
+                        var table2Columns = [
+                            {set: 'Factories'},
+                            {set: 'Factories'},
+                            {entity: 'ShippingCosts'},
+                        ]
+                    </script>
+                    <vdlx-datagrid column-filter="true" data-page-mode="paged" data-page-size="20">
+                        <vdlx-datagrid-provider columns="=table2Columns">
+                        </vdlx-datagrid-provider>
+                    </vdlx-datagrid>
+                </vdl-column>
+
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;vdl-table&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot; heading=&quot;Origin&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot; heading=&quot;Destination&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;ShippingCosts&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+
+                    <div class="todo">
+                        <ol>
+                            <li>
+                                Repeated index sets
+                            </li>
+                        </ol>
+                    </div>
+                </vdl-column>
+
+            </vdl-row>
+        </vdl-section>
+
+        <style>
+            .htable {
+                border: 3px solid darkorange;
+            }
+            .htable td {
+                border: 1px solid plum;
+            }
+        </style>
+
+        <vdl-section heading="Applying styling">
+            <vdl-row>
+                <vdl-column heading="Autotable with a CSS class" size="6">
+<!--                    <vdl-table class="htable">
+                        <vdl-table-column set="SupportLevels">Support L.</vdl-table-column>
+                        <vdl-table-column entity="SupportCosts"></vdl-table-column>
+                        <vdl-table-column entity="ServiceLevelAgreements"></vdl-table-column>
+                    </vdl-table>-->
+                    <script>
+                        var table3Columns = [
+                            {set: 'SupportLevels'},
+                            {entity: 'SupportCosts'},
+                            {entity: 'ServiceLevelAgreements'},
+                        ]
+                    </script>
+                    <vdlx-datagrid class="htable" column-filter="true" data-page-mode="paged" data-page-size="20">
+                        <vdlx-datagrid-provider columns="=table3Columns">
+                        </vdlx-datagrid-provider>
+                    </vdlx-datagrid>
+
+                </vdl-column>
+
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;style&gt;
+    .htable {
+        border: 3px solid darkorange;
+    }
+    .htable td {
+        border: 1px solid plum;
+    }
+&lt;/style&gt;
+
+&lt;vdl-table class=&quot;htable&quot;&gt;
+    &lt;vdl-table-column set=&quot;SupportLevels&quot;&gt;Support L.&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;SupportCosts&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                    <div class="todo">
+                        <ol>
+                            <li>Apply class at generated table root</li>
+                        </ol>
+                    </div>
+                </vdl-column>
+
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Hiding columns">
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>
+                        You can use the <code>vdl-visible</code> attribute on <code>&lt;vdl-table-column&gt;</code> tags to hide them from display.
+                        Any table callbacks that include row data will still include the hidden columns in the row data.
+                    </p>
+                    <p>In this example the index column is being hidden.</p>
+                    <vdl-table>
+                        <vdl-table-column set="SupportLevels" vdl-visible="=false"></vdl-table-column>
+                        <vdl-table-column entity="SupportCosts"></vdl-table-column>
+                        <vdl-table-column entity="ServiceLevelAgreements"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="VDL Source">
+                    <h5>VDL source code:</h5>
+                    <code-panel>
+&lt;vdl-table&gt;
+    &lt;vdl-table-column set=&quot;SupportLevels&quot; vdl-visible=&quot;=false&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;SupportCosts&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                    <div class="todo">
+                        <ol>
+                            <li>See if we need this?</li>
+                        </ol>
+                    </div>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+
+        <vdl-section heading="Number formatting">
+            <vdl-column size="6" heading="Result:">
+                <vdl-table>
+                    <vdl-table-column set="SupportLevels">Support L.</vdl-table-column>
+                    <vdl-table-column entity="SupportCosts" format="$#,###.00"></vdl-table-column>
+                    <vdl-table-column entity="ServiceLevelAgreements"></vdl-table-column>
+                </vdl-table>
+            </vdl-column>
+
+            <vdl-column size="6" heading="VDL source">
+                <code-panel>
+&lt;vdl-table&gt;
+    &lt;vdl-table-column set=&quot;SupportLevels&quot;&gt;Support L.&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;SupportCosts&quot; format=&quot;$#,###.00&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                </code-panel>
+                <div class="todo">
+                    <ol>
+                        <li>Inline number formatting required.</li>
+                    </ol>
+                </div>
+            </vdl-column>
+
+        </vdl-section>
+
+        <vdl-section heading="Custom cell rendering">
+            <script>
+                function italic(data, type, row) {
+                    data = data ? data : '';
+                    if (type === 'display') {
+                        return '<i>Italic text ' + _.escape(data) + '</i>';
+                    } else if (type === 'copy') {
+                        return data + ' (in italics)';
+                    }
+
+                    return data;
+                }
+
+                function colorize(data, type, row) {
+                    data = data ? data : '';
+                    var even = row[0] % 2 === 0;
+                    var redOrGreen = even ? 'red' : 'green';
+                    if (type === 'display') {
+                        return '<div class="' + _.escape(redOrGreen) + '">' + _.escape(data) + '</div>'
+                    } else if (type === 'copy') {
+                        return data  + ' (on ' + redOrGreen + ' background)';
+                    }
+
+                    return data;
+                }
+            </script>
+
+            <vdl-column size="6">
+                <vdl-table>
+                    <vdl-table-column render="=italic" entity="SupportCosts" heading="SUPPORT COSTS"></vdl-table-column>
+                    <vdl-table-column render="=colorize" entity="ServiceLevelAgreements">Agreements</vdl-table-column>
+                </vdl-table>
+            </vdl-column>
+
+            <vdl-column size="6" heading="VDL source:">
+                <code-panel>
+&lt;script&gt;
+    function italic(data, type, row) {
+        data = data ? data : &#x27;&#x27;;
+        if (type === &#x27;display&#x27;) {
+            return &#x27;&lt;i&gt;Italic text &#x27; + _.escape(data) + &#x27;&lt;/i&gt;&#x27;;
+        } else if (type === &#x27;copy&#x27;) {
+            return data + &#x27; (in italics)&#x27;;
+        }
+
+        return data;
+    }
+
+    function colorize(data, type, row) {
+        data = data ? data : &#x27;&#x27;;
+        var even = row[0] % 2 === 0;
+        var redOrGreen = even ? &#x27;red&#x27; : &#x27;green&#x27;;
+        if (type === &#x27;display&#x27;) {
+            return &#x27;&lt;div class=&quot;&#x27; + _.escape(redOrGreen) + &#x27;&quot;&gt;&#x27; + _.escape(data) + &#x27;&lt;/div&gt;&#x27;
+        } else if (type === &#x27;copy&#x27;) {
+            return data  + &#x27; (on &#x27; + redOrGreen + &#x27; background)&#x27;;
+        }
+
+        return data;
+    }
+&lt;/script&gt;
+
+&lt;vdl-column size=&quot;6&quot;&gt;
+    &lt;vdl-table&gt;
+        &lt;vdl-table-column
+                render=&quot;=italic&quot;
+                entity=&quot;SupportCosts&quot;
+                heading=&quot;SUPPORT COSTS&quot;&gt;&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column
+                render=&quot;=colorize&quot;
+                entity=&quot;ServiceLevelAgreements&quot;&gt;Agreements&lt;/vdl-table-column&gt;
+    &lt;/vdl-table&gt;
+&lt;/vdl-column&gt;
+                </code-panel>
+            </vdl-column>
+        </vdl-section>
+
+        <vdl-section heading="Pagination">
+            <vdl-column heading="" size="6">
+                <vdl-table page-size="5" page-mode="paged" >
+                    <vdl-table-column entity="FactorySupply" heading="SUPPORT COSTS"></vdl-table-column>
+                </vdl-table>
+            </vdl-column>
+
+            <vdl-column heading="VDL source:" size="6">
+                <code-panel>
+&lt;vdl-table page-size=&quot;=5&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdl-table-column entity=&quot;FactorySupply&quot; heading=&quot;SUPPORT COSTS&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                </code-panel>
+            </vdl-column>
+        </vdl-section>
+
+        <vdl-section heading="Filtering">
+            <vdl-column heading="" size="6">
+                <vdl-table show-filter="true" column-filter="true">
+                    <vdl-table-column entity="SupportCosts" heading="SUPPORT COSTS"></vdl-table-column>
+                    <vdl-table-column entity="ServiceLevelAgreements">Agreements Custom Title</vdl-table-column>
+                </vdl-table>
+            </vdl-column>
+
+            <vdl-column heading="VDL source:" size="6">
+                <code-panel>
+&lt;vdl-table show-filter=&quot;true&quot; column-filter=&quot;true&quot;&gt;
+    &lt;vdl-table-column entity=&quot;SupportCosts&quot; heading=&quot;SUPPORT COSTS&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column
+            entity=&quot;ServiceLevelAgreements&quot;&gt;Agreements Custom Title&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                </code-panel>
+            </vdl-column>
+        </vdl-section>
+
+        <vdl-section heading="HTML escaping">
+            <vdl-row>
+                <vdl-column size="6">
+                    <p class="lead">Guarding against script injection in the <code>heading</code> attribute.</p>
+                    <p>VDL tables will rewrite the contents on the header to avoid executing inline JavaScript code.</p>
+                    <vdl-table>
+                        <vdl-table-column entity="MIN_AGENT_ACCOUNTS" heading="='<script>alert(\'hacked once\');</script>'"></vdl-table-column>
+                        <vdl-table-column entity="MAX_AGENT_ACCOUNTS" heading="<script>alert('hacked twice');</script>">
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column heading="VDL source:" size="6">
+                    <code-panel>
+&lt;vdl-table&gt;
+    &lt;vdl-table-column
+        entity=&quot;MIN_AGENT_ACCOUNTS&quot;
+        heading=&quot;='&lt;script&gt;alert(\'hacked twice\');&lt;/script&gt;'&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column
+        entity=&quot;MAX_AGENT_ACCOUNTS&quot;
+        heading=&quot;&lt;script&gt;alert('hacked once');&lt;/script&gt;&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+        
+        <vdl-section heading="Always keep selection visible">
+            <vdl-row>
+                <vdl-column size="6">
+                    <p class="lead">When <code>"always-show-selection"</code> attribute is set to <code>"true"</code>, tables keep selection visible after it
+                        becomes inactive</p>
+                    <vdl-table always-show-selection="true" page-size="5" page-mode="paged" >
+                        <vdl-table-column entity="FactorySupply" heading="SUPPORT COSTS"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column heading="VDL source:" size="6" page-size="5" page-mode="paged" >
+                    <code-panel>
+&lt;vdl-table always-show-selection=&quot;true&quot; page-size=&quot;5&quot; page-mode=&quot;paged&quot; &gt;
+    &lt;vdl-table-column entity=&quot;FactorySupply&quot; heading=&quot;SUPPORT COSTS&quot;&gt;&lt;&#x2F;vdl-table-column&gt;
+&lt;&#x2F;vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+    </vdl-page>
+</vdl>

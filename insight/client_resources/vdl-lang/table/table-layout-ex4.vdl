@@ -1,0 +1,64 @@
+<vdl version="4.1">
+    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+
+    <ol class="todo">
+        <li>Intro text/Explanation</li>
+        <li>Move to presenation VG?</li>
+    </ol>
+
+    <vdl-page>
+        <vdl-section heading="Example 4 - content wrapping.">
+            <vdl-column size="12">
+                <h4>Larger width on a column</h4>
+                <p class="lead">Content wrapping is now the default for table headers and cells in VDL.</p>
+                <code-panel>
+    &lt;vdl-section&gt;
+        &lt;vdl-table&gt;
+            &lt;vdl-table-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; width=&quot;200&quot;&gt;Agency&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;64&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
+        &lt;/vdl-table&gt;
+    &lt;/vdl-section&gt;
+                </code-panel>
+            </vdl-column>
+        </vdl-section>
+
+        <vdl-section>
+            <vdl-table>
+                <vdl-table-column set="AGENCY">ID</vdl-table-column>
+                <vdl-table-column entity="AGENCYNAME" width="200">Agency</vdl-table-column>
+                <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
+                <vdl-table-column entity="MIN_AGENT_COMMISSION" width="64">Minimum Agent Commission</vdl-table-column>
+            </vdl-table>
+        </vdl-section>
+
+
+        <vdl-section>
+            <vdl-column size="12">
+                <h4>Narrower width on a column</h4>
+                <p><strong>Please note:</strong> Specifying a width for only some of the columns may cause the columns with no width  to display differently on different browsers/platforms.</p>
+                <p>If you need stricter control of the whole table then please refer to the view "Ex.6 Fixed Width Columns"</p>
+                <code-panel>
+    &lt;vdl-section&gt;
+        &lt;vdl-table&gt;
+            &lt;vdl-table-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; width=&quot;40&quot;&gt;Agency&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
+            &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;64&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
+        &lt;/vdl-table&gt;
+    &lt;/vdl-section&gt;
+                </code-panel>
+            </vdl-column>
+        </vdl-section>
+
+        <vdl-section>
+            <vdl-table>
+                <vdl-table-column set="AGENCY">ID</vdl-table-column>
+                <vdl-table-column entity="AGENCYNAME" width="40">Agency</vdl-table-column>
+                <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
+                <vdl-table-column entity="MIN_AGENT_COMMISSION" width="64">Minimum Agent Commission</vdl-table-column>
+            </vdl-table>
+        </vdl-section>
+    </vdl-page>
+</vdl>

@@ -1,0 +1,86 @@
+<vdl version="4.1">
+    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+
+    <ol class="todo">
+        <li>Intro text/Explanation</li>
+        <li>Move to presenation VG?</li>
+    </ol>
+
+    <vdl-page>
+        <vdl-section heading="Autotable with decorations in unsized column">
+            <vdl-row>
+                <vdl-column>
+                    <p>When an autotable sites within a column which has no size specified then it should occupy the minimum width based on its content.</p>
+                    <p>If the extra options are required they should also fit within the same space.</p>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column>
+                    <vdl-table page-size="=2" page-mode="paged" show-filter="true" column-filter="true">
+                        <vdl-table-column entity="SupportCosts" editable="true" heading="SUPPORT COSTS"></vdl-table-column>
+                        <vdl-table-column entity="ServiceLevelAgreements" editable="true">Agreements</vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Inside vdl-section" heading-level="3">
+            <vdl-table show-filter="3">
+                <vdl-table-column set="AGENCY">ID</vdl-table-column>
+                <vdl-table-column entity="AGENCYNAME">Agency</vdl-table-column>
+                <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
+                <vdl-table-column entity="MAX_AGENT_ACCOUNTS">Max Acct.</vdl-table-column>
+                <vdl-table-column entity="MAX_PERC_AGENCY">Max %</vdl-table-column>
+                <vdl-table-column entity="MIN_AGENT_ACCOUNTS">Min. Acct.</vdl-table-column>
+                <vdl-table-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdl-table-column>
+            </vdl-table>
+        </vdl-section>
+
+        <vdl-section heading="Inside vdl-row" heading-level="3">
+            <vdl-row>
+                <vdl-table show-filter="3">
+                    <vdl-table-column set="AGENCY">ID</vdl-table-column>
+                    <vdl-table-column entity="AGENCYNAME">Agency</vdl-table-column>
+                    <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
+                    <vdl-table-column entity="MAX_AGENT_ACCOUNTS">Max Acct.</vdl-table-column>
+                    <vdl-table-column entity="MAX_PERC_AGENCY">Max %</vdl-table-column>
+                    <vdl-table-column entity="MIN_AGENT_ACCOUNTS">Min. Acct.</vdl-table-column>
+                    <vdl-table-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdl-table-column>
+                </vdl-table>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Inside vdl-column (unsized)" heading-level="3">
+            <vdl-row>
+                <vdl-column>
+                    <vdl-table>
+                        <vdl-table-column set="AGENCY">ID</vdl-table-column>
+                        <vdl-table-column entity="AGENCYNAME">Agency</vdl-table-column>
+                        <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
+                        <vdl-table-column entity="MAX_AGENT_ACCOUNTS">Max Acct.</vdl-table-column>
+                        <vdl-table-column entity="MAX_PERC_AGENCY">Max %</vdl-table-column>
+                        <vdl-table-column entity="MIN_AGENT_ACCOUNTS">Min. Acct.</vdl-table-column>
+                        <vdl-table-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="With some fixed columns" heading-level="3">
+            <vdl-row>
+                <vdl-column>
+                    <vdl-table>
+                        <vdl-table-column set="AGENCY">ID</vdl-table-column>
+                        <vdl-table-column entity="AGENCYNAME">Agency</vdl-table-column>
+                        <vdl-table-column entity="NAGENTS" width="120">Num Agents</vdl-table-column>
+                        <vdl-table-column entity="MAX_AGENT_ACCOUNTS"  width="32">Max Acct.</vdl-table-column>
+                        <vdl-table-column entity="MAX_PERC_AGENCY"  width="120">Max %</vdl-table-column>
+                        <vdl-table-column entity="MIN_AGENT_ACCOUNTS">Min. Acct.</vdl-table-column>
+                        <vdl-table-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+    </vdl-page>
+</vdl>

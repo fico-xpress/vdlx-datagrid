@@ -1,0 +1,170 @@
+<vdl version="4.1">
+    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+
+
+    <ol class="todo">
+        <li>Intro text/Explanation</li>
+        <li>VDL Source and Usage snippets</li>
+    </ol>
+
+    <vdl-page>
+        <vdl-section heading="Index filtering">
+            <p class="lead">Table contents can be filtered by index values with <code>vdl-index-filter</code></p>
+        </vdl-section>
+
+
+        <vdl-section heading="Examples">
+            <vdl-row>
+                <vdl-column heading="Set table parameters">
+                    <vdl-form>
+                        <vdl-field label="Enable column filter & editing" label-size="4" entity="MyBool"></vdl-field>
+                        <vdl-field label="Choose factory" label-size="4" entity="MyScalar"
+                                   options-set="Factories"></vdl-field>
+                        <vdl-field label="Set width of the &quot;Factory Demand&quot; column" label-size="4"
+                                   entity="demand"></vdl-field>
+                    </vdl-form>
+                </vdl-column>
+            </vdl-row>
+
+            <script>
+                // 'Factory Demand (' + scenario.entities.MyScalar.label + ')'
+                function createFactoryDemandHeading(factory, showFactory) {
+                    var label = "Factory Demand";
+                    if(showFactory && factory !== 'insight') {
+                        label += " (" + factory + ")";
+                    }
+                    return label;
+                }
+            </script>
+
+            <vdl-row>
+                <vdl-column size="6" heading="Index filtered column">
+                    <vdl-table>
+                        <vdl-table-column set="MonthsOfYear" width="100"></vdl-table-column>
+                        <vdl-table-column entity="FactoryDemand" editable="=scenario.entities.MyBool.value"
+                                          heading="=createFactoryDemandHeading(scenario.entities.MyScalar.label, scenario.entities.MyBool.value)"
+                                          width="=scenario.entities.demand.value">
+                            <vdl-index-filter set="Factories" value="=scenario.entities.MyScalar.value"
+                                              vdl-if="=scenario.entities.MyBool.value"></vdl-index-filter>
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+
+                <vdl-column heading="VDL source:" size="6">
+                    <code-panel>
+&lt;vdl-table&gt;
+    &lt;vdl-table-column set=&quot;MonthsOfYear&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;=scenario.entities.MyBool.value&quot;
+                        heading=&quot;=&apos;Factory Demand (&apos; + scenario.entities.MyScalar.label + &apos;)&apos;&quot;
+                        width=&quot;=scenario.entities.demand.value&quot;&gt;
+        &lt;vdl-index-filter set=&quot;Factories&quot; value=&quot;=scenario.entities.MyScalar.value&quot;
+                        vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;&lt;/vdl-index-filter&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column size="6" heading="Index filtered column (repeated index sets, filtering the first by default)">
+                    <vdl-table>
+                        <vdl-table-column set="Factories" heading="Origin"
+                                          vdl-if="=!scenario.entities.MyBool.value"
+                        ></vdl-table-column>
+                        <vdl-table-column set="Factories" set-position="1" heading="Destination"></vdl-table-column>
+                        <vdl-table-column entity="ShippingCosts" editable="=scenario.entities.MyBool.value"
+                                          heading="='Shipping Costs (' +
+                                            scenario.entities.MyScalar.label +
+                                              ', Destination)'">
+                            <vdl-index-filter set="Factories"
+                                              value="=scenario.entities.MyScalar.value"
+                                              vdl-if="=scenario.entities.MyBool.value"></vdl-index-filter>
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+
+                <vdl-column heading="VDL source:" size="6">
+                    <code-panel>
+&lt;vdl-table&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot; heading=&quot;Origin&quot;
+                      vdl-if=&quot;=!scenario.entities.MyBool.value&quot;
+    &gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot; set-position=&quot;1&quot; heading=&quot;Destination&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;ShippingCosts&quot; editable=&quot;=scenario.entities.MyBool.value&quot;
+                      heading=&quot;='Shipping Costs (' +
+                    scenario.entities.MyScalar.label +
+                      ', Destination)'&quot;&gt;
+        &lt;vdl-index-filter set=&quot;Factories&quot;
+                          value=&quot;=scenario.entities.MyScalar.value&quot;
+                          vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;&lt;/vdl-index-filter&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column size="6" heading="Index filtered column (repeated index sets, filtering the second)">
+                    <vdl-table>
+                        <vdl-table-column set="Factories" heading="Origin"></vdl-table-column>
+                        <vdl-table-column set="Factories" heading="Destination"
+                                          vdl-if="=!scenario.entities.MyBool.value"
+                        ></vdl-table-column>
+                        <vdl-table-column entity="ShippingCosts" editable="=scenario.entities.MyBool.value"
+                                          heading="='Shipping Costs (Origin,' +
+                                            scenario.entities.MyScalar.label + ')'">
+                            <vdl-index-filter set="Factories" set-position="1"
+                                              value="=scenario.entities.MyScalar.value"
+                                              vdl-if="=scenario.entities.MyBool.value"></vdl-index-filter>
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+
+                <vdl-column heading="VDL source:" size="6">
+                    <code-panel>
+&lt;vdl-table&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot; heading=&quot;Origin&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot; heading=&quot;Destination&quot;
+                      vdl-if=&quot;=!scenario.entities.MyBool.value&quot;
+    &gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;ShippingCosts&quot; editable=&quot;=scenario.entities.MyBool.value&quot;
+                      heading=&quot;='Shipping Costs (Origin,' +
+                    scenario.entities.MyScalar.label + ')'&quot;&gt;
+        &lt;vdl-index-filter set=&quot;Factories&quot; set-position=&quot;1&quot;
+                          value=&quot;=scenario.entities.MyScalar.value&quot;
+                          vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;&lt;/vdl-index-filter&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column size="6" heading="Pivot index values as columns">
+                    <vdl-table vdl-repeat-contents="=f in scenario.entities.Factories">
+                        <vdl-table-column entity="FactoryDemand" editable="true"
+                                        heading="='Factory Demand (' + f.label + ')'"
+                                        width="=scenario.entities.demand.value">
+                            <vdl-index-filter set="Factories" value="=f.value"></vdl-index-filter>
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+
+                <vdl-column heading="VDL source:" size="6">
+                    <code-panel>
+&lt;vdl-table vdl-repeat-contents=&quot;=f in scenario.entities.Factories&quot;&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;
+                      heading=&quot;=&apos;Factory Demand (&apos; + f.label + &apos;)&apos;&quot;
+                      width=&quot;=scenario.entities.demand.value&quot;&gt;
+        &lt;vdl-index-filter set=&quot;Factories&quot; value=&quot;=f.value&quot;&gt;&lt;/vdl-index-filter&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+    </vdl-page>
+</vdl>

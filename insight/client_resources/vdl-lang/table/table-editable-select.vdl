@@ -1,0 +1,207 @@
+<vdl version="4.1">
+    <vdl-include src="project-settings.vdl"></vdl-include>
+    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+
+    <style>
+        .example {
+            margin-bottom: 30px;
+        }
+    </style>
+
+    <vdl-page>
+        <vdl-section heading="Editable tables - Select inputs">
+            <p class="lead">
+                This page shows how to use select inputs in editable tables.
+            </p>
+        </vdl-section>
+
+        <vdl-section>
+            <vdl-row class="example">
+                <vdl-row>
+                    <vdl-column size="6">
+                        <p>The table below uses a set entity as the editor options. It will automatically pick-up on the
+                            labels array for that set and use them as the display values.</p>
+                    </vdl-column>
+                </vdl-row>
+
+                <vdl-column size="6">
+                    <vdl-table page-size="10" page-mode="paged" show-filter="true">
+                        <vdl-table-column entity="StockSizes" editable="true"
+                                          editor-options-set="StockSizeValues"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="Source code">
+                    <code-panel>
+&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdl-table-column entity=&quot;StockSizes&quot; editable=&quot;true&quot;
+        editor-options-set=&quot;StockSizeValues&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row class="example">
+                <vdl-row>
+                    <vdl-column size="6">
+                        <p>The table below uses a plain array for the select options, text and values.</p>
+                    </vdl-column>
+                </vdl-row>
+                <vdl-column size="6">
+                    <vdl-table page-size="10" page-mode="paged">
+                        <vdl-table-column entity="FactoryDemand" editable="true"
+                                          editor-options="=[0,1,2]"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="Source code">
+                    <code-panel>
+&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;
+        editor-options=&quot;=[0,1,2]&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row class="example">
+                <vdl-row>
+                    <vdl-column size="6">
+                        <p>The table below uses an object as a map of values to display text. You can also use an array
+                            of key/value objects if you wist to preserve the order of the items, e.g:</p>
+                        <code-panel>
+editor-options=&quot;=[{key: 0, value: 'first'}, {key: 1, value: 'second'}, {key: 2, value: 'third'}]&quot;
+                        </code-panel>
+                    </vdl-column>
+                </vdl-row>
+                <vdl-column size="6">
+                    <vdl-table page-size="10" page-mode="paged">
+                        <vdl-table-column entity="StockSizes" editable="true"
+                                          editor-options="={0: 'Small', 1: 'Medium', 2: 'Large'}"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="Source code">
+                    <code-panel>
+&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdl-table-column entity=&quot;StockSizes&quot; editable=&quot;true&quot;
+        editor-options=&quot;={0: 'Small', 1: 'Medium', 2: 'Large'}&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row class="example">
+                <vdl-row>
+                    <vdl-column size="6">
+                        <p>
+                            The table below uses an expression to build the select options for StockSizes when it goes
+                            into edit mode. <i>editor-options</i> can be an expression or a function reference. It
+                            gets passed the current value of the cell (value) and the current row data (rowData). It can return
+                            one of the following: an array, an object of key/value or an array of objects [{key: ..., value: ...}].
+                        </p>
+                        <p>
+                            If you click in StockSizes cell corresponding to a row containing the "New York" Factory then
+                            the select input will have 1 options. All other StockSizes cells will contain 3 options.
+                        </p>
+                    </vdl-column>
+                </vdl-row>
+                <vdl-column size="6">
+                    <vdl-table page-size="10" page-mode="paged">
+                        <vdl-table-column entity="StockSizes" editable="true"
+                                          editor-options="=rowData[0] === 'New York' ? {0: 'Small'} : {0: 'Small', 1: 'Medium', 2: 'Large'}"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="Source code">
+                    <code-panel>
+&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdl-table-column entity=&quot;StockSizes&quot; editable=&quot;true&quot;
+        editor-options=&quot;=rowData[0] === {0: 'Small'} : {0: 'Small', 1: 'Medium', 2: 'Large'}&quot;
+    &gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Two columns with select type">
+            <vdl-row class="example">
+                <vdl-column size="6">
+                    <p>The table below uses first column with<code>editor-options-set</code>, and other column uses
+                        <code>editor-options</code></p>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-column size="6">
+                <vdl-table page-size="10" page-mode="paged" show-filter="true">
+                    <vdl-table-column entity="StockSizes" editable="true" editor-options-set="StockSizeValues">
+                    </vdl-table-column>
+                    <vdl-table-column editable="true" editor-options="=[0,1,2]" entity="FactoryDemand">
+                        Factory Demand
+                    </vdl-table-column>
+                </vdl-table>
+            </vdl-column>
+            <vdl-column size="6" heading="Source code">
+                <code-panel>
+&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot; show-filter=&quot;true&quot;&gt;
+    &lt;vdl-table-column entity=&quot;StockSizes&quot; editable=&quot;true&quot; editor-type=&quot;select&quot;
+        editor-options-set=&quot;StockSizeValues&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column editable=&quot;true&quot; editor-options=&quot;=[0,1,2]&quot; entity=&quot;FactoryDemand&quot;&gt;Factory
+    Demand
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                </code-panel>
+            </vdl-column>
+        </vdl-section>
+
+        <vdl-section heading="Select inputs: Include empty option">
+            <vdl-row class="example">
+                <vdl-row>
+                    <vdl-column size="6">
+                        <p>In this table the AGENCYNAME and MAX_AGENT_ACCOUNTS columns are editable. The input for the
+                            AGENCYNAME column is a select input with values coming from the AGENCY set. The
+                            <code>editor-options-include-empty</code> attribute is true so an additional option is
+                            provided to remove the array element.</p>
+                    </vdl-column>
+                </vdl-row>
+                <vdl-column size="6">
+                    <vdl-table page-size="10" page-mode="paged">
+                        <vdl-table-column entity="AGENCYNAME" editable="true"
+                                          editor-options-include-empty="true"
+                                          editor-options-set="AGENCY" scenario="0"></vdl-table-column>
+                        <vdl-table-column entity="MAX_AGENT_ACCOUNTS" editable="true"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="Source code">
+                    <code-panel>
+&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; editable=&quot;true&quot;
+        editor-options-include-empty=&quot;true&quot;
+        editor-options-set=&quot;AGENCY&quot; scenario=&quot;1&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;MAX_AGENT_ACCOUNTS&quot; editable=&quot;true&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row class="example">
+                <vdl-row>
+                    <vdl-column size="6">
+                        <p>In this table the StockSizes and FactoryDemand columns are editable. The input for the
+                            StockSizes column is a select input with values coming from an expression. The
+                            <code>editor-options-include-empty</code> attribute is true so an additional option is
+                            provided to remove the array element.</p>
+                    </vdl-column>
+                </vdl-row>
+                <vdl-column size="6">
+                    <vdl-table page-size="10" page-mode="paged">
+                        <vdl-table-column entity="StockSizes" editable="true"
+                                          editor-options-include-empty="true"
+                                          editor-options="={0: 'Small', 1: 'Medium', 2: 'Large'}">
+                        </vdl-table-column>
+                        <vdl-table-column entity="FactoryDemand" editable="true"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="Source code">
+                    <code-panel>
+&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdl-table-column entity=&quot;StockSizes&quot; editable=&quot;true&quot;
+        editor-options-include-empty=&quot;true&quot;
+        editor-options=&quot;={0: 'Small', 1: 'Medium', 2: 'Large'}&quot;&gt;
+    &lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+    </vdl-page>
+</vdl>

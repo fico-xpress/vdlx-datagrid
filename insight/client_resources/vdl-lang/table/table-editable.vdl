@@ -1,0 +1,146 @@
+<vdl version="4.1">
+    <vdl-include src="project-settings.vdl"></vdl-include>
+    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+
+    <style>
+        .example {
+            margin-bottom: 30px;
+        }
+    </style>
+
+    <vdl-page>
+        <vdl-section heading="Editable tables">
+            <p class="lead">
+                This page shows how to create editable tables.
+            </p>
+        </vdl-section>
+
+        <vdl-section heading="Basic usage">
+            <vdl-row>
+                <p>
+                    This example shows that table columns can be made editable by providing
+                    an <code>editable</code> attribute. It can be either an expression or a boolean string.
+                </p>
+            </vdl-row>
+            <vdl-column heading="Editable table" size="12">
+                <vdl-row>
+                    <vdl-form vdl-repeat-contents="=s,i in scenarios">
+                        <vdl-field scenario="=i" entity="MyBool" label-size="6"
+                                   label="='Make ' + s.props.name + ' agreements editable'">
+                        </vdl-field>
+                    </vdl-form>
+                </vdl-row>
+                <vdl-row>
+                    <vdl-table vdl-repeat-contents="=s,i in scenarios">
+                        <vdl-table-column entity="SupportCosts" editable="true" heading="SUPPORT COSTS"
+                                          scenario="=i"></vdl-table-column>
+                        <vdl-table-column entity="ServiceLevelAgreements" editable="=s.entities.MyBool.value" scenario="=i">
+                            Agreements
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-row>
+            </vdl-column>
+
+            <vdl-column size="12" heading="Source Code">
+                <code-panel>
+&lt;vdl-form vdl-repeat-contents=&quot;=s,i in scenarios&quot;&gt;
+    &lt;vdl-field
+            scenario=&quot;=i&quot;
+            entity=&quot;MyBool&quot;
+            label=&quot;=&apos;Make &apos; + s.props.name + &apos; agreements editable&apos;&quot;&gt;
+    &lt;/vdl-field&gt;
+&lt;/vdl-form&gt;
+&lt;vdl-table vdl-repeat-contents=&quot;=s,i in scenarios&quot;&gt;
+    &lt;vdl-table-column
+            entity=&quot;SupportCosts&quot;
+            editable=&quot;true&quot;
+            heading=&quot;SUPPORT COSTS&quot;
+            scenario=&quot;=i&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column
+            entity=&quot;ServiceLevelAgreements&quot;
+            editable=&quot;=s.entities.MyBool.value&quot;
+            scenario=&quot;=i&quot;&gt;Agreements&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                </code-panel>
+            </vdl-column>
+        </vdl-section>
+
+		<vdl-section heading="Boolean inputs">
+            <vdl-row class="example">
+                <vdl-row>
+                    <vdl-column size="6">
+                        <p>The table below uses booleans where the value is stored into a boolean field and alternatively where it is stored as a string.</p>
+                    </vdl-column>
+                </vdl-row>
+
+                <vdl-column size="6">
+                    <vdl-table page-size="10" page-mode="paged" show-filter="true" column-filter="true">
+                        <vdl-table-column set="SupportLevels" editable="true" filter-by-formatted="true"></vdl-table-column>
+                        <vdl-table-column entity="SupportRenewed" editable="true"></vdl-table-column>
+                        <vdl-table-column entity="SupportRenewed" heading="Support Not Renewed" editable="true" editor-checked-value="false" editor-unchecked-value="true"></vdl-table-column>
+                        <vdl-table-column entity="SupportPaid" editable="true" editor-type="checkbox" editor-unchecked-value="Pending" editor-checked-value="Paid"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="Source code">
+                    <code-panel>
+&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot; column-filter=&quot;true&quot;&gt;
+    &lt;vdl-table-column entity=&quot;SupportRenewed&quot; editable=&quot;true&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;SupportRenewed&quot; heading=&quot;Support Not Renewed"
+            editable=&quot;true&quot;
+            editor-checked-value=&quot;false&quot;
+            editor-unchecked-value=&quot;true&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;SupportPaid&quot; editable=&quot;true&quot;
+            editor-type="checkbox" editor-unchecked-value=&quot;Pending&quot;
+            editor-checked-value=&quot;Paid&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;</code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Add/Remove Row">
+            <vdl-row class="example">
+                <vdl-row>
+                    <vdl-column size="6">
+                        <p>VDL Table option enabled to allow adding and removing rows against existing indices.</p>
+                    </vdl-column>
+                </vdl-row>
+                <vdl-column size="6">
+                    <vdl-table add-remove-row="true" page-size="10" page-mode="paged">
+                        <vdl-table-column entity="FactorySupply" editable="true"></vdl-table-column>
+                        <vdl-table-column entity="FactoryDemand" editable="true"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="Source code">
+                    <code-panel>
+&lt;vdl-table add-remove-row=&quot;true&quot; page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdl-table-column entity=&quot;FactorySupply&quot; editable=&quot;true&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Add/Remove Row (auto-increment)">
+            <vdl-row class="example">
+                <vdl-row>
+                    <vdl-column size="6">
+                        <p>VDL Table add-remove-row option to allow extending an integer index set.</p>
+                    </vdl-column>
+                </vdl-row>
+                <vdl-column size="6">
+                    <vdl-table add-remove-row="addrow-autoinc">
+                        <vdl-table-column entity="PlanetNamesFromInteger" editable="true"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="Source code">
+                    <code-panel>
+&lt;vdl-table add-remove-row=&quot;addrow-autoinc&quot;&gt;
+    &lt;vdl-table-column entity=&quot;PlanetNamesFromInteger&quot; editable=&quot;true&quot;&gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+    </vdl-page>
+</vdl>

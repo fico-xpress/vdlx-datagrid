@@ -1,0 +1,159 @@
+<vdl version="4.1">
+    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+
+    <vdl-page>
+        <vdl-section heading="Table Row Selection - Filter Tables">
+
+            <vdl-row>
+                <vdl-column>
+                    <p class="lead">
+                        Row selection events get fired when a row is selected by the user.
+                        These events can trigger runtime code that can be used to filter a table for example.
+                    </p>
+                    <p>
+                        See the Table component API for a description of the events <a target="_blank" href="http://www.fico.com/fico-xpress-optimization/docs/latest/insight/javascript_api/Table.html">Table API</a>
+                        and <a target="_blank" href="http://www.fico.com/fico-xpress-optimization/docs/latest/insight/vdl_reference/vdl-table.html">vdl-target</a> for the "row-filter" attribute.
+                    </p>
+                </vdl-column>
+                <vdl-column>
+                    <code-panel>
+&lt;script&gt;
+    var showChildFilteredTable = VDL.createVariable();
+    var childFilteredTableIndex = VDL.createVariable();
+    function rowSelect(vm, evt, selection) {
+        if(selection) {
+            showChildFilteredTable(true);
+            childFilteredTableIndex(selection.activeCell.rowData);
+        } else {
+            showChildFilteredTable(false);
+            childFilteredTableIndex([undefined, undefined]);
+        }
+    }
+&lt;/script&gt;
+&lt;vdl-column size=&quot;6&quot; heading=&quot;Master table&quot;&gt;
+    &lt;vdl-table id=&quot;master-table&quot; vdl-event=&quot;'selection-changed':rowSelect, 'selection-removed':rowSelect&quot;&gt;
+        &lt;vdl-table-column entity=&quot;StockSizeLabels&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;/vdl-table&gt;
+&lt;/vdl-column&gt;
+&lt;vdl-column size=&quot;6&quot; heading=&quot;Child table&quot;&gt;
+    &lt;vdl-table vdl-if=&quot;=showChildFilteredTable&quot; id=&quot;child-table&quot; row-filter=&quot;=function(rowData, indices) {return rowData[3] === childFilteredTableIndex()[0];}&quot;&gt;
+        &lt;vdl-table-column entity=&quot;FactorySupply&quot;&gt;&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;StockSizes&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;/vdl-table&gt;
+&lt;/vdl-column&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <script>
+                    var showChildFilteredTable = VDL.createVariable();
+                    var childFilteredTableIndex = VDL.createVariable();
+                    function rowSelect(vm, evt, selection) {
+                        if(selection) {
+                            showChildFilteredTable(true);
+                            childFilteredTableIndex(selection.activeCell.rowData);
+                        } else {
+                            showChildFilteredTable(false);
+                            childFilteredTableIndex([undefined, undefined]);
+                        }
+                    }
+                </script>
+                <vdl-column size="6" heading="Master table">
+                    <vdl-table id="master-table" vdl-event="'selection-changed':rowSelect, 'selection-removed':rowSelect">
+                        <vdl-table-column entity="StockSizeLabels"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="Child table">
+                    <vdl-table vdl-if="=showChildFilteredTable" id="child-table" row-filter="=function(rowData, indices) {return rowData[3] === childFilteredTableIndex()[0];}">
+                        <vdl-table-column entity="FactorySupply"></vdl-table-column>
+                        <vdl-table-column entity="StockSizes"></vdl-table-column>
+                    </vdl-table>
+                    <div vdl-if="=!showChildFilteredTable()">
+                        Select a row in this Master table to show a filtered table here.
+                    </div>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <script>
+            var showChildDetailTable = VDL.createVariable(false);
+            var childDetailTableIndex = VDL.createVariable(0);
+
+            function rowDetail(vm, evt, selection) {
+                if (selection) {
+                    showChildDetailTable(true);
+                    childDetailTableIndex([selection.activeCell.rowData[0]]);
+                } else {
+                    showChildDetailTable(false);
+                    childDetailTableIndex([undefined]);
+                }
+            }
+        </script>
+        <vdl-section heading="Table Row Selection - Master Detail">
+            <vdl-row>
+                <vdl-column>
+                    <p class="lead">Row selection can also be used to populate the indices for form elements so that related arrays can be edited outside the table.</p>
+                    <p>
+                        See the Table API for a description of the events <a target="_blank" href="http://www.fico.com/fico-xpress-optimization/docs/latest/insight/javascript_api/Table.html">Table API</a>
+                        and <a target="_blank" href="http://www.fico.com/fico-xpress-optimization/docs/latest/insight/vdl_reference/vdl-form.html">vdl-form</a> and
+                        <a target="_blank" href="http://www.fico.com/fico-xpress-optimization/docs/latest/insight/vdl_reference/vdl-field.html">vdl-field</a> for how to set up VDL Form and Field.
+                    </p>
+
+                </vdl-column>
+                <code-panel>
+&lt;script&gt;
+    var showChildDetailTable = VDL.createVariable(false);
+    var childDetailTableIndex = VDL.createVariable(0);
+
+    function rowDetail(vm, evt, selection) {
+        if (selection) {
+            showChildDetailTable(true);
+            childDetailTableIndex([selection.activeCell.rowData[0]]);
+        } else {
+            showChildDetailTable(false);
+            childDetailTableIndex([undefined]);
+        }
+    }
+&lt;/script&gt;
+
+&lt;vdl-column size=&quot;6&quot; heading=&quot;Master table&quot;&gt;
+    &lt;vdl-table vdl-event=&quot;'selection-changed':rowDetail, 'selection-removed':rowDetail&quot;&gt;
+        &lt;vdl-table-column entity=&quot;AGENCYNAME&quot;&gt;&lt;/vdl-table-column&gt;
+        &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;/vdl-table&gt;
+&lt;/vdl-column&gt;
+&lt;vdl-column size=&quot;6&quot; heading=&quot;Detail form&quot; vdl&gt;
+    &lt;vdl-form vdl-if=&quot;=showChildDetailTable&quot;&gt;
+        &lt;vdl-field entity=&quot;AGENCYNAME&quot; indices=&quot;=childDetailTableIndex()&quot;&gt;&lt;/vdl-field&gt;
+        &lt;vdl-field entity=&quot;MIN_AGENT_ACCOUNTS&quot; indices=&quot;=childDetailTableIndex()&quot;&gt;&lt;/vdl-field&gt;
+        &lt;vdl-field entity=&quot;MAX_AGENT_ACCOUNTS&quot; indices=&quot;=childDetailTableIndex()&quot;&gt;&lt;/vdl-field&gt;
+        &lt;vdl-field entity=&quot;NAGENTS&quot; indices=&quot;=childDetailTableIndex()&quot;&gt;&lt;/vdl-field&gt;
+    &lt;/vdl-form&gt;
+&lt;/vdl-column&gt;
+
+                </code-panel>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6" heading="Master table">
+                    <vdl-table vdl-event="'selection-changed':rowDetail, 'selection-removed':rowDetail">
+                        <vdl-table-column entity="AGENCYNAME"></vdl-table-column>
+                        <vdl-table-column entity="NAGENTS"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="Detail form">
+                    <vdl-form vdl-if="=showChildDetailTable">
+                        <vdl-field entity="AGENCYNAME" indices="=childDetailTableIndex()"></vdl-field>
+                        <vdl-field entity="MIN_AGENT_ACCOUNTS" indices="=childDetailTableIndex()"></vdl-field>
+                        <vdl-field entity="MAX_AGENT_ACCOUNTS" indices="=childDetailTableIndex()"></vdl-field>
+                        <vdl-field entity="NAGENTS" indices="=childDetailTableIndex()"></vdl-field>
+                    </vdl-form>
+                    <div vdl-if="=!showChildDetailTable()">
+                        Select a row in this Master table to show an edit form here.
+                    </div>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+    </vdl-page>
+</vdl>

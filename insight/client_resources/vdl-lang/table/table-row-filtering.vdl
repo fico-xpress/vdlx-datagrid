@@ -1,0 +1,81 @@
+<vdl version="4.1">
+    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+
+    <ol class="todo">
+        <li>Intro text/Explanation</li>
+        <li>No scrolling in source4 snippets</li>
+    </ol>
+
+    <script>
+        function greaterThan10 (rowData, indices) {
+            return rowData[2] > 10;
+        }
+    </script>
+
+    <vdl-page>
+        <vdl-section heading="Row filtering">
+            <p class="lead">
+                Table rows can be filtered with a <code>row-filter</code> attribute.
+            </p>
+        </vdl-section>
+
+        <vdl-section heading="Examples">
+            <vdl-row>
+                <vdl-column heading="Row filtering with an expression" size="6">
+                    <vdl-table row-filter="=(indices[0] === 'Paris' || indices[1] === 'August') && rowData[2] >= 20">
+                        <vdl-table-column set="Factories"></vdl-table-column>
+                        <vdl-table-column entity="FactoryDemand" ></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;vdl-table row-filter=&quot;=(indices[0] === 'Paris' || indices[1] === 'August') &amp;&amp; rowData[2] &gt;= 20&quot;&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; &gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="Row filtering with a function identifier" size="6">
+                    <vdl-table row-filter="=greaterThan10">
+                        <vdl-table-column set="Factories"></vdl-table-column>
+                        <vdl-table-column entity="FactoryDemand" ></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;script&gt;
+    function greaterThan10 (rowData, indices, position, tableData) {
+        return rowData[2] &gt; 10;
+    }
+&lt;/script&gt;
+
+&lt;vdl-table row-filter=&quot;=greaterThan10&quot;&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; &gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column heading="Row filtering with an inline function" size="6">
+                    <vdl-table row-filter="=function(rowData) { return rowData[2] > 10;}">
+                        <vdl-table-column set="Factories"></vdl-table-column>
+                        <vdl-table-column entity="FactoryDemand" ></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;vdl-table row-filter=&quot;=function(rowData) { return rowData[2] &gt; 10;}&quot;&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; &gt;&lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+    </vdl-page>
+</vdl>
