@@ -1,0 +1,154 @@
+<vdl version="4.1">
+
+    <style>
+
+        .link-tile {
+            display: block;
+            outline: 1px solid grey;
+            padding: 9px;
+            margin: 9px;
+        }
+
+    </style>
+
+    <vdl-page>
+
+        <vdl-section heading="Welcome">
+            <vdl-row>
+                <vdl-column size="9" heading="Table Performance Project">
+                    <p>Here are several views exploring VDL & Insight table performance.</p>
+                    <p>
+                        The three views
+                        <a class="link-tile" onclick="insight.openView('Table Performance')">Table Performance</a>
+                        <a class="link-tile" onclick="insight.openView('Table Performance 2')">Table Performance 2</a>
+                        <a class="link-tile" onclick="insight.openView('Table Performance 3')">Table Performance 3</a>
+                        are using the current VDL table and were produced to explore performance problems that developers were experiencing.
+                    </p>
+                    <p>
+                        The two views
+                        <a class="link-tile" onclick="insight.openView('Table Fast 2')">Table Fast 2</a>
+                        <a class="link-tile" onclick="insight.openView('Table Fast 3')">Table Fast 3</a>
+                        use a different table library which promises to provide much speedier in-client performance.
+                    </p>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section>
+            <vdl-row>
+                <vdl-column size="9">
+                        <h4>TODOs</h4>
+                    <pre>
+
+Cell editing                    [√]
+
+    - Integers                  [√]
+    - Reals                     [√]
+    - Strings                   [√]
+
+Boolean editor                  [√]
+
+    - Boolean editor works fully.
+
+Dropdown editor                 [√]
+
+    - with Tabulator.js 4.1.1 Dropdown editor works fully.
+
+Autocomplete editor             []
+
+    - lookahead typing
+
+Validation                      [√]
+
+    - Validation is configured with the tableOptions object at present.
+
+Scrollable view                 [√]
+
+    - Fully working
+
+Paginated view                  [WIP]
+
+    - Fully working
+    - Needs to use FICO pagination widget
+    - Can set page-size
+
+FICO UX Styling                 [WIP]
+
+    - Basic styles in but needs some finesse and thought about new options that we don't currently have.
+    - Column filters need some extra styling work.
+
+Column filters                  [√]
+
+    - Column filters currently do a partial match and are enabled with the column-filter attribute
+
+Global filter (possible?)       []
+
+    - Global filters may be possible but needs further work.
+
+Selection                       [WIP]
+
+    - Row selection can be enabled.
+    - No built-in block selection but creating a block-select module doesn't appear to difficult.
+
+Copy & Paste                    [WIP]
+
+    - Whole table copy and paste.
+
+Row grouping                    [√]
+
+    - specify a column to group by, groups rows with header showing value for group and number of rows.
+
+Column calculations
+
+    - built-in column calculations are:
+        average, maximum, minimum, sum, concatenate, count
+    - Custom calculations are a simple passed in function, same for formatting
+    - Options to display top and/or bottom of table, same for groups
+
+Easily accessible callbacks     [WIP]
+
+    - Need to decide whether they will be attributes or some other method of attachment.
+
+Column sorting                  [√]
+
+    - User interaction or programmatic access
+    - Built-in sorters
+        String, Numeric, Alphanumeric, Boolean, Field exists, Date, Time, DateTime, Arrays, Custom
+    - Multi-column sorting
+    - Initial sort
+    - Clear sorting function
+
+Loading spinner                 []
+
+    - not started yet
+
+Entity labels                   []
+
+    - not started yet
+
+Other built-in features
+
+    Callback to apply Editable per cell, per column.
+    Rich programmatic filtering, most comparison operators + custom
+    Columns for sets and arrays may be displayed in any order.
+    Downloadable table data
+        CSV, JSON, XSLX or PDF
+    Controls can be localized
+    Row formatter for non-standard tables.
+    Freeze columns or rows
+    Vertical column headers
+    Column groups
+    Automatically collapse or hide columns when table width changes
+    Nested data trees - for hierarchical data relationships
+
+
+
+                    </pre>
+                </vdl-column>
+            </vdl-row>
+
+        </vdl-section>
+
+    </vdl-page>
+
+</vdl>

@@ -1,0 +1,10 @@
+.DS_Store
+.idea/
+archive/
+build.sh
+**/.DS_Store
+**/.c9
+**/.omsync*
+node_modules/
+insight/model_resources/*.csv
+*.zip

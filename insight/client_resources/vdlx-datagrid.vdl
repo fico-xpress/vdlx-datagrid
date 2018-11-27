@@ -1,0 +1,6 @@
+<vdl version="4.1">
+    <link href="css/bootstrap/tabulator_bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="js/tabulator.js"></script>
+    <script src="js/vdlx-datagrid.js"></script>
+    <script src="js/vdlx-datagrid-provider.js"></script>
+</vdl>

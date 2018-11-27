@@ -1,0 +1,170 @@
+model "Table Performance"
+
+uses "mminsight"
+
+  parameters
+    MyParam = "insight"
+    LENGTH = 400
+    ! DATAFOLDER = ""
+    ! DATAFILE = DATAFOLDER + "agency_example_data.txt"
+  end-parameters
+
+public declarations
+    ! read in table 1
+    ! t1IndexA,t1IndexB,t1IndexC,t1IndexD,t1IndexE,t1Col1,t1Col2,t1Col3,t1Col4,t1Col5,t1Col6
+    t1IndexA,t1IndexB,t1IndexC,t1IndexD,t1IndexE: set of integer
+    t1Col1,t1Col2,t1Col3,t1Col4,t1Col5: dynamic array(t1IndexA,t1IndexB,t1IndexC,t1IndexD,t1IndexE) of integer
+    t1Col6: dynamic array(t1IndexA,t1IndexB,t1IndexC,t1IndexD,t1IndexE) of boolean
+
+    ! read in table 2
+    ! t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF,t2Col1,t2Col2,t2Col3,t2Col4
+    t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF: set of integer
+    t2Col1: dynamic array(t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF) of real
+    t2Col2: dynamic array(t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF) of boolean
+    t2Col3: dynamic array(t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF) of string
+    t2Col4: dynamic array(t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF) of integer
+
+    ! read in table 3
+    ! t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF,t3Col1,t3Col2,t3Col3,t3Col4
+    t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF: set of integer
+    t3Col1: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of real
+    t3Col2: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of boolean
+    t3Col3: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of string
+    t3Col4: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of integer
+
+    ! read in table 4
+    ! t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF,t4Col1,t4Col2,t4Col3,t4Col4
+    t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF: set of integer
+    t4Col1: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of real
+    t4Col2: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of boolean
+    t4Col3: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of string
+    t4Col4: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of integer
+
+    ! read in table 5
+    ! t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF,t5Col1,t5Col2,t5Col3,t5Col4
+    t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF: set of integer
+    t5Col1: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of real
+    t5Col2: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of boolean
+    t5Col3: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of string
+    t5Col4: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of integer
+
+    ! VDL Language App - Table Data
+
+    !@insight.alias Support level
+    SupportLevel: integer   ! The selected support level
+
+    ! Set of months
+
+    !@insight.alias Months of the year
+    MonthsOfYear: set of string
+    Settings: array(MonthsOfYear) of string
+
+    Factories: set of string                       ! Set of factories
+    FactoryCapacities: array(Factories) of integer ! Factory capacity
+    FactorySupply: array(Factories, MonthsOfYear) of integer ! Factory supply
+
+    !@insight.transform.labels.entity StockSizeLabels
+    StockSizeValues = 0..2
+
+    StockSizeLabels: array(StockSizeValues) of string
+    !@insight.transform.labels.entity StockSizeLabels
+    StockSizes: array(Factories, MonthsOfYear) of integer
+
+    Customers: set of string
+    FactoryCustomerAgreements: array(Factories, MonthsOfYear, Customers) of real
+
+    !@insight.alias Factory Demand (units)
+    FactoryDemand: array(Factories, MonthsOfYear) of integer ! Factory demand
+
+    !@insight.alias Shipping costs
+    ShippingCosts: array(Factories, Factories) of real ! Costs for shipping between factories
+
+    !@insight.transform.labels.entity SupportLevelNames
+    SupportLevels = 0..2                           ! Set of support levels
+
+    SupportLevelNames: array(SupportLevels) of string ! Support level names
+    !@insight.alias Support Costs
+    SupportCosts: array(SupportLevels) of real     ! Support level cost
+    SupportRenewed: array(SupportLevels) of boolean! Support renewed by client
+    SupportPaid: array(SupportLevels) of string    ! Support costs have been paid. Client will put Paid or Pending in this
+    !@insight.alias Service Level Agreements
+    ServiceLevelAgreements: array(SupportLevels) of integer ! Support level contract
+
+    Indices = 1..LENGTH                            ! Set of indices
+    RealArray: array(Indices) of real              ! Array of reals
+    IntArray: array(Indices) of integer            ! Array of integers
+    demand: integer
+    percent: real
+
+end-declarations
+
+initializations from "mmsheet.csv:table1.csv"
+    [t1Col1,t1Col2,t1Col3,t1Col4,t1Col5,t1Col6] as "skiph;[A1:K2001]"
+end-initializations
+
+initializations from "mmsheet.csv:table2.csv"
+    [t2Col1,t2Col2,t2Col3,t2Col4] as "skiph;[A1:J10001]"
+end-initializations
+
+initializations from "mmsheet.csv:table3.csv"
+    [t3Col1,t3Col2,t3Col3,t3Col4] as "skiph;[A1:J100001]"
+end-initializations
+
+initializations from "mmsheet.csv:table4.csv"
+    [t4Col1,t4Col2,t4Col3,t4Col4] as "skiph;[A1:J500001]"
+end-initializations
+
+initializations from "mmsheet.csv:table5.csv"
+    [t5Col1,t5Col2,t5Col3,t5Col4] as "skiph;[A1:J1000001]"
+end-initializations
+
+writeln('size t1 ', t1Col1.size)
+writeln('size t2 ', t2Col1.size)
+writeln('size t3 ', t3Col1.size)
+writeln('size t4 ', t4Col1.size)
+writeln('size t5 ', t5Col1.size)
+
+
+    MonthsOfYear := {"January", "February", "March",
+	    "April", "May", "June", "July", "August",
+	    "September", "October", "November", "December"}
+
+    Settings("January") := "Bob"
+
+    DAYS := {"FRI","SAT","SUN","MON","TUE","WED","THU"}
+
+    Factories := {"New York", "Paris", "Peckham"}
+
+    StockSizeLabels(0) := "Small"
+    StockSizeLabels(1) := "Medium"
+    StockSizeLabels(2) := "Large"
+
+    Customers := {"Nike", "Adidas", "Puma"}
+
+    forall (f in Factories) do
+      forall (m in MonthsOfYear) do
+        FactorySupply(f,m) := ceil((demand / 100) * 130)
+        FactoryDemand(f,m) := demand
+        forall (c in Customers) do
+          FactoryCustomerAgreements(f, m, c) := demand * random
+        end-do
+
+        StockSizes(f, m) := demand mod 3
+        demand += 1
+      end-do
+    end-do
+
+    forall (f1 in Factories, f2 in Factories) do
+        ShippingCosts(f1, f2) := random
+    end-do
+
+    SupportLevelNames :: ["Bronze", "Silver", "Gold"]
+    SupportCosts :: [100.0, 250.0, 500.0]
+    SupportRenewed :: [FALSE, TRUE, FALSE]
+    SupportPaid :: ['Pending', 'Paid', 'Pending']
+    ServiceLevelAgreements :: [48, 24, 1]
+
+writeln("Finished")
+
+end-model
+

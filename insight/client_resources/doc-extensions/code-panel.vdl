@@ -1,0 +1,24 @@
+<vdl version="4.1">
+    <link rel="stylesheet" href="css/lib/solarized-light.css"/>
+    <style>
+        code-panel {
+            margin-bottom: 20px;
+        }
+    </style>
+
+    <script src="js/lib/highlight.pack.js"></script>
+
+    <vdl-extension name="code-panel">
+        <vdl-template>
+            <pre><vdl-contents></vdl-contents></pre>
+        </vdl-template>
+        <script>
+            VDL('code-panel', {
+                transform: function (element) {
+                    element.textContent = element.textContent.trim();
+                    hljs.highlightBlock(element);
+                }
+            });
+        </script>
+    </vdl-extension>
+</vdl>

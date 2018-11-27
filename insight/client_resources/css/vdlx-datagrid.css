@@ -1,0 +1,41 @@
+
+vdlx-datagrid .tabulator-tableHolder .index {
+    font-weight: bold;
+}
+
+vdlx-datagrid .numeric, vdlx-datagrid .editable-numeric {
+    text-align: right;
+}
+
+vdlx-datagrid .tabulator-tableHolder .index-numeric {
+    text-align: right;
+    font-weight: bold;
+}
+
+vdlx-datagrid .unknown {
+    color: purple;
+}
+
+vdlx-datagrid {
+    border-collapse: collapse;
+}
+
+vdlx-datagrid .tabulator-row .tabulator-cell {
+    padding: 5px 9px;
+    border: 1px solid #CCCCCC;
+    line-height: 18px;
+}
+
+vdlx-datagrid .tabulator .tabulator-header, vdlx-datagrid .tabulator .tabulator-header .tabulator-col {
+    background-color: #D2E9F4;
+    font-weight: normal;
+    border: 1px solid #CCCCCC;
+
+}
+vdlx-datagrid .tabulator .tabulator-header .tabulator-col .tabulator-col-content {
+    padding: 5px;
+}
+
+vdlx-datagrid .tabulator-row-even {
+    background-color: #f2f2f2;
+}

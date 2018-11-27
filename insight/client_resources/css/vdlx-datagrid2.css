@@ -1,0 +1,210 @@
+/* General */
+vdlx-datagrid .tabulator.table-striped {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-tableHolder {
+    /*border: 1px solid blue;*/
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-table {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-loader {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-loader-msg {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-loading {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-error {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-placeholder {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-moving {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-block-select {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-moving {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-movingrow-sending {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-movingrow-receiving {
+
+}
+
+/* Columns & Headers */
+vdlx-datagrid .tabulator.table-striped .tabulator-header {
+    background-color: #D2E9F4;
+    border-bottom: 1px solid #CCCCCC;
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-headers {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-calcs-holder {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-col {
+    background-color: #D2E9F4;
+    /*height: 29px;*/
+    line-height: 17px;
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-col {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-col-content {
+    text-align: center;
+    font-weight: 400;
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-col-title {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-col-group {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-col-group-cols {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-handle {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-title-editor {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-header-filter {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-sortable {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-frozen {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-frozen-left {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-frozen-right {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-row-resize-handle {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-col-vertical {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-col-vertical-flip {
+
+}
+
+/* Rows */
+vdlx-datagrid .tabulator.table-striped .tabulator-row {
+    border-bottom: 1px solid #CCCCCC; /* #cccccc */
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-row:nth-child(2n) {
+    background-color: #F2F2F2;
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-row-odd {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-row-even {
+
+}
+vdlx-datagrid .tabulator.table-bordered {
+    border: 1px solid #CCCCCC;
+}
+vdlx-datagrid .tabulator.table-bordered .tabulator-header .tabulator-col, .tabulator.table-bordered .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+    border-color: #CCCCCC;
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-tableHolder .tabulator-cell {
+
+}
+
+vdlx-datagrid .tabulator.table-striped .tabulator-tableHolder .tabulator-cell .checkbox-editor {
+    text-align: center;
+    line-height: 17px;
+}
+
+vdlx-datagrid .tabulator.table-condensed .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+    padding: 5px 9px;
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-tableHolder .tabulator-cell.index-numeric {
+    text-align: right;
+    font-weight: 700;
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-tableHolder .tabulator-cell.editable-numeric,
+vdlx-datagrid .tabulator.table-striped .tabulator-tableHolder .tabulator-cell.numeric {
+    text-align: right;
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-selectable {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-unselectable {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-selected {
+
+}
+vdlx-datagrid .tabulator.table-condensed .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-editing {
+    padding: 0;
+    background-color: #fff8c1;
+}
+vdlx-datagrid .tabulator.table-condensed .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.editable-numeric.tabulator-editing input {
+    text-align: right;
+    padding: 5px 9px !important;
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-validation-fail {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-group {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-group-visible {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-group-level-X {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-calcs {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-calcs-top {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-calcs-bottom {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-row-handle {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-row-handle-box {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-row-handle-bar {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-row-resize-handle {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-responsive-collapse {
+
+}
+
+/* Pagination */
+vdlx-datagrid .tabulator.table-striped .tabulator-footer {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-paginator {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-pages {
+
+}
+vdlx-datagrid .tabulator.table-striped .tabulator-page {
+
+}

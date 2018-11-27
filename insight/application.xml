@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model-companion xmlns="http://www.fico.com/xpress/optimization-modeler/model-companion" version="3.0">
+
+    <client>
+        <view-group title="Main">
+            <vdl-view title="Welcome" path="welcome.vdl" requires-scenarios-loaded="false"/>
+            <vdl-view title="Table Performance" path="table-slow.vdl"/>
+            <vdl-view title="Table Performance 2" path="table-slow2.vdl"/>
+            <vdl-view title="Table Performance 3" path="table-slow3.vdl"/>
+            <!--<vdl-view title="Table Fast" path="table-fast.vdl"/>-->
+            <vdl-view title="Table Fast 2" path="table-fast2.vdl"/>
+            <vdl-view title="Table Fast 3" path="table-fast3.vdl"/>
+        </view-group>
+
+        <view-group title="VDL Lang - Tables Compatibility">
+            <vdl-view title="Basic usage" path="vdl-lang/table/table.vdl"/>
+            <vdl-view title="Editable tables" path="vdl-lang/table/table-editable.vdl"/>
+            <vdl-view title="Editable tables - Select inputs" path="vdl-lang/table/table-editable-select.vdl"/>
+            <vdl-view title="Table Selection" path="vdl-lang/table/table-selection.vdl"/>
+            <vdl-view title="Multi-scenario" path="vdl-lang/table/table-multi-scenario.vdl"/>
+            <vdl-view title="Conditionals" path="vdl-lang/table/table-conditionals.vdl"/>
+            <vdl-view title="Index filtering" path="vdl-lang/table/table-index-filtering.vdl"/>
+            <vdl-view title="Row filtering" path="vdl-lang/table/table-row-filtering.vdl"/>
+            <vdl-view title="Table modifiers" path="vdl-lang/table/table-modifiers.vdl"/>
+            <vdl-view title="Error handling" path="vdl-lang/table/table-errors.vdl"/>
+        </view-group>
+
+        <view-group title="vdlx-datagrid Features">
+            <vdl-view title="VXDG - Basic Usage" path="datagrid/datagrid.vdl"/>
+        </view-group>
+
+        <client-resources-local-path>/Users/e48378/Documents/support/curtisfranks/table-performance/insight/client_resources</client-resources-local-path>
+    </client>
+</model-companion>

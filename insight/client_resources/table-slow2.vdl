@@ -1,0 +1,71 @@
+<vdl version="4.1">
+
+	<vdl-page>
+		<vdl-section width="1600" >
+			<vdl-row>
+				<vdl-column size="6">
+					<vdl-row>
+						<vdl-row>
+							<vdl-table id="cstrConfigTbl"
+									   class="x-small-table-ext remove-all-option-ext"
+									   add-remove-row="true"
+									   column-filter="true"
+									   page-mode="paged"
+									   page-size="20"
+									   width="600"
+									   selection-navigation="=true">
+								<vdl-table-column set="t2IndexA" data-set="cstrIdaFicoBandSet"
+												  width="1"
+												  heading="IDA / FICO Band"
+										          label-tooltip-options='{
+																			"theme":"vdl",
+																			"labelArray":"cstrIdaFicoBandLabelArray"
+		        														  }'>
+							    </vdl-table-column>
+								<vdl-table-column set="t2IndexB" data-set="cstrPrdctGrpSet"
+												  width="1"
+												  heading="Product Group">
+							    </vdl-table-column>
+								<vdl-table-column set="t2IndexC" data-set="cstrDlrPerfBandSet"
+												  width="1"
+												  heading="Dealer Performance"
+										          label-tooltip-options='{
+
+																	"theme":"vdl",
+																	"labelArray":"cstrDlrPerfBandLabelArray"
+		        														  }'>
+							    </vdl-table-column>
+								<vdl-table-column set="t2IndexD" data-set="cstrPrevCustStandBandSet"
+												  width="1"
+												  heading="Prev. Cust. Stand.">
+							    </vdl-table-column>
+								<vdl-table-column set="t2IndexE" data-set="slotIdx"
+												  width="1"
+												  heading="Slot #">
+							    </vdl-table-column>
+								<vdl-table-column set="t2IndexF" data-set="cstrDecisionSet"
+												  class="nowrap-ext"
+												  width="1"
+												  heading="Constraint">
+							    </vdl-table-column>
+								<vdl-table-column entity="t2Col1" data-entity="slotCstrBoundArray"
+												  class="highlight-ext"
+												  width="1"
+												  editable="=true"
+												  heading="Bound">
+							    </vdl-table-column>
+								<vdl-table-column entity="t2Col2" data-entity="slotCstrEnabledArray"
+												  class="highlight-ext"
+												  width="1"
+												  editable="=true"
+												  heading="Enable">
+							    </vdl-table-column>
+							</vdl-table>
+						</vdl-row>
+					</vdl-row>
+				</vdl-column>
+
+			</vdl-row>
+		</vdl-section>
+	</vdl-page>
+</vdl>
