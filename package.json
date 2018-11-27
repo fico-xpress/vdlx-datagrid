@@ -10,7 +10,7 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "csv-stringify": "^4.0.1",
+        "csv-stringify": "^4.3.1",
         "lodash": "^4.17.11"
     },
     "dependencies": {
