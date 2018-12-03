@@ -1,10 +1,7 @@
 <vdl version="4.1">
     <link href="vdlx-datagrid/css/bootstrap/tabulator_bootstrap.min.css" rel="stylesheet">
-    <script type="text/javascript" src="vdlx-datagrid/js/tabulator.js"></script>
+    <script src="vdlx-datagrid/js/tabulator.js"></script>
     <script src="vdlx-datagrid/js/vdlx-datagrid.js"></script>
-    <script src="vdlx-datagrid/js/vdlx-datagrid-columns.js"></script>
-<!--
-    <script src="js/vdlx-datagrid-provider.js"></script>
--->
-    <link rel="stylesheet" href="vdlx-datagrid/css/vdlx-datagrid2.css">
+    <!--<script src="js/vdlx-datagrid-column.js"></script>-->
+    <link rel="stylesheet" href="vdlx-datagrid/css/vdlx-datagrid.css">
 </vdl>

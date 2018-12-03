@@ -1,21 +1,30 @@
 <vdl version="4.1">
     <vdl-page>
 
+        <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+
+        <script>
+
+            var gridData = [
+                {a: 10, b: 20, c: 30},
+                {a: 11, b: 21, c: 31},
+                {a: 12, b: 22, c: 32},
+                {a: 13, b: 23, c: 33},
+            ]
+
+        </script>
+
+        <!--<vdlx-datagrid-column></vdlx-datagrid-column>-->
         <vdl-section heading="Datagrid example">
-            <vdlx-datagrid>
-                <vdlx-datagrid-column></vdlx-datagrid-column>
+            <vdlx-datagrid id="demo1" grid-data="=gridData">
             </vdlx-datagrid>
         </vdl-section>
-
+<!--
         <vdl-section heading="Table example">
             <vdl-table>
-                <vdlx-table-column></vdlx-table-column>
+                <vdl-table-column></vdl-table-column>
             </vdl-table>
-        </vdl-section>
-
-
-
-
+        </vdl-section>-->
 
     </vdl-page>
 </vdl>
