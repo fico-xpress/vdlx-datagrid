@@ -8,7 +8,6 @@
  */
 
 
-
 /*
     vdlx-datagrid-column attributes
 

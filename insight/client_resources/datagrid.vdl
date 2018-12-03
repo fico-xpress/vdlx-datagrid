@@ -1,0 +1,22 @@
+<vdl version="4.1">
+    <vdl-page>
+
+        <vdl-section heading="Datagrid example">
+            <vdlx-datagrid>
+                <vdlx-datagrid-column></vdlx-datagrid-column>
+            </vdlx-datagrid>
+        </vdl-section>
+
+        <vdl-section heading="Table example">
+            <vdl-table>
+                <vdlx-table-column></vdlx-table-column>
+            </vdl-table>
+        </vdl-section>
+
+
+
+
+
+    </vdl-page>
+</vdl>
+

@@ -4,12 +4,7 @@
     <client>
         <view-group title="Main">
             <vdl-view title="Welcome" path="welcome.vdl" requires-scenarios-loaded="false"/>
-            <vdl-view title="Table Performance" path="table-slow.vdl"/>
-            <vdl-view title="Table Performance 2" path="table-slow2.vdl"/>
-            <vdl-view title="Table Performance 3" path="table-slow3.vdl"/>
-            <!--<vdl-view title="Table Fast" path="table-fast.vdl"/>-->
-            <vdl-view title="Table Fast 2" path="table-fast2.vdl"/>
-            <vdl-view title="Table Fast 3" path="table-fast3.vdl"/>
+            <vdl-view title="Example One" path="datagrid.vdl"/>
         </view-group>
 
         <view-group title="VDL Lang - Tables Compatibility">
