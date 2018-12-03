@@ -1,4 +1,11 @@
 /* General */
+vdlx-datagrid {
+    display: block;
+}
+
+vdlx-datagrid .tabulator {
+    margin-bottom: 0;
+}
 vdlx-datagrid .tabulator.table-striped {
 
 }
