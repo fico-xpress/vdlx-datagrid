@@ -1,3 +1,240 @@
 <vdl version="4.1">
-    <vdl-page></vdl-page>
+    <vdl-page>
+
+        <vdl-section heading="Datagrid example">
+            <vdlx-datagrid>
+                <vdlx-datagrid-column></vdlx-datagrid-column>
+            </vdlx-datagrid>
+        </vdl-section>
+
+        <vdl-section heading="Table example">
+            <vdl-table>
+                <vdlx-table-column></vdlx-table-column>
+            </vdl-table>
+        </vdl-section>
+
+
+        <vdl-section>
+            <vdl-row>
+
+                <h1>VDL Table</h1>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Support in DG</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>add-remove-row</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>always-show-selection</td>
+                        <td>N</td>
+                    </tr>
+                    <tr>
+                        <td>class</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>column-filter</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>modifier</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>page-mode</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>page-size</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>row-filter</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>save-state</td>
+                        <td>N</td>
+                    </tr>
+                    <tr>
+                        <td>scenario</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>selection-navigation</td>
+                        <td>N</td>
+                    </tr>
+                    <tr>
+                        <td>show-filter</td>
+                        <td>N</td>
+                    </tr>
+                    <tr>
+                        <td>width</td>
+                        <td>Y</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </vdl-row>
+
+            <vdl-row>
+
+                <h1>VDL Table Column</h1>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Support in DG</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr>
+                        <td>class</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>editable</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>editor-checked-value</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>editor-options</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>editor-options-include-empty</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>editor-options-set</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>editor-type</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>editor-unchecked-value</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>entity</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>filter-by-formatted</td>
+                        <td>?</td>
+                    </tr>
+                    <tr>
+                        <td>format</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>heading</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>render</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>scenario</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>set</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>set-position</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>sort-by-formatted</td>
+                        <td>?</td>
+                    </tr>
+                    <tr>
+                        <td>width</td>
+                        <td>Y</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+
+            </vdl-row>
+
+            <vdl-row>
+
+                <h1>VDL Index Filter</h1>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Support in DG</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>set</td>
+                        <td>N</td>
+                    </tr>
+                    <tr>
+                        <td>value</td>
+                        <td>N</td>
+                    </tr>
+                    <tr>
+                        <td>set-position</td>
+                        <td>N</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+
+            </vdl-row>
+
+            <vdl-row>
+
+                <h1>VDL Validate</h1>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Support in DG</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>pass</td>
+                        <td>N</td>
+                    </tr>
+                    <tr>
+                        <td>allow-save</td>
+                        <td>N</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+
+            </vdl-row>
+
+
+        </vdl-section>
+
+
+    </vdl-page>
 </vdl>
+
