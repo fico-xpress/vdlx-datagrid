@@ -100,6 +100,9 @@ VDL('vdlx-datagrid', {
         }
     ],
     createViewModel: function (params, componentInfo) {
+
+        debugger;
+
         var view = insight.getView();
 
         var vm = {};
@@ -148,6 +151,19 @@ VDL('vdlx-datagrid', {
             .catch(function (err) {
                 debugger;
             });
+
+        vm.tableUpdate = function () {
+            debugger;
+        };
+
+        vm.tableValidate = function () {
+            debugger;
+        };
+
+        vm.validate = function () {
+            debugger;
+        };
+
 
         return vm;
     },

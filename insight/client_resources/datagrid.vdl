@@ -17,6 +17,7 @@
         <!--<vdlx-datagrid-column></vdlx-datagrid-column>-->
         <vdl-section heading="Datagrid example">
             <vdlx-datagrid id="demo1" grid-data="=gridData">
+                <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
             </vdlx-datagrid>
         </vdl-section>
 <!--
