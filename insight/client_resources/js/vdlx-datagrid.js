@@ -141,7 +141,7 @@ VDL('vdlx-datagrid', {
                 tableOptions.paginationSize = params.pageSize || 15;
             } else if (!pageMode || pageMode === 'none') {
                 // tableOptions.height = params.tableHeight || '1130px';
-                tableOptions.height = '600px';
+                // tableOptions.height = '600px';
             }
             tableOptions.tableBuilt = function() {
                 console.timeEnd('+++TIME vdlx-datagrid RENDER');
