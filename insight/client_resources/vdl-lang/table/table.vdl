@@ -25,16 +25,9 @@
         .green {
             background-color: rgba(0, 255, 0, 0.22);
         }
-
-        .todo {
-            padding: 19px;
-            background-color: yellow;
-            font-family: "American Typewriter";
-        }
     </style>
 
     <vdl-include src="vdlx-datagrid.vdl"/>
-    <link rel="stylesheet" href="css/vdlx-datagrid2.css">
 
     <vdl-page>
 
@@ -44,7 +37,7 @@
 
         <vdl-section heading="Basic usage">
             <vdl-row>
-                <vdl-column heading="Simple autotable" size="6">
+                <vdl-column heading="Simple datagrid" size="6">
 <!--
                     <vdl-table>
                         <vdl-table-column set="SupportLevels">Support L.</vdl-table-column>
@@ -57,7 +50,7 @@
                         var table1Columns = [
                             {set: 'SupportLevels'},
                             {entity: 'SupportCosts', tooltip: function(cell) {
-                                    return 'The value is: ' + cell.;
+                                    return 'The value is: ' + cell.value;
                                 }},
                             {entity: 'ServiceLevelAgreements'},
                         ]
@@ -83,9 +76,9 @@
 &lt;/vdlx-datagrid&gt;
                     </code-panel>
 
-                    <div class="todo">
+                    <div class="todo done">
                         <ol>
-                            <li>Adapt table height to data size</li>
+                            <li>Adapt table height to data size √</li>
                         </ol>
                     </div>
                 </vdl-column>
@@ -95,7 +88,7 @@
 
 
             <vdl-row>
-                <vdl-column heading="Simple autotable with repeated index sets" size="6">
+                <vdl-column heading="Simple datagrid with repeated index sets" size="6">
 <!--
                     <vdl-table>
                         <vdl-table-column set="Factories" heading="Origin"></vdl-table-column>
@@ -117,12 +110,17 @@
                 </vdl-column>
 
                 <vdl-column size="6" heading="VDL source:">
-                    <code-panel>
-&lt;vdl-table&gt;
-    &lt;vdl-table-column set=&quot;Factories&quot; heading=&quot;Origin&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column set=&quot;Factories&quot; heading=&quot;Destination&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;ShippingCosts&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+                    <code-panel>&lt;script&gt;
+    var table2Columns = [
+        {set: 'Factories'},
+        {set: 'Factories'},
+        {entity: 'ShippingCosts'},
+    ]
+&lt;/script&gt;
+&lt;vdlx-datagrid column-filter=&quot;true&quot; data-page-mode=&quot;paged&quot; data-page-size=&quot;20&quot;&gt;
+    &lt;vdlx-datagrid-provider columns=&quot;=table2Columns&quot;&gt;
+    &lt;/vdlx-datagrid-provider&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
 
                     <div class="todo">
@@ -137,14 +135,6 @@
             </vdl-row>
         </vdl-section>
 
-        <style>
-            .htable {
-                border: 3px solid darkorange;
-            }
-            .htable td {
-                border: 1px solid plum;
-            }
-        </style>
 
         <vdl-section heading="Applying styling">
             <vdl-row>
@@ -154,6 +144,14 @@
                         <vdl-table-column entity="SupportCosts"></vdl-table-column>
                         <vdl-table-column entity="ServiceLevelAgreements"></vdl-table-column>
                     </vdl-table>-->
+                    <style>
+                        .htable {
+                            border: 3px solid darkorange;
+                        }
+                        .htable .tabulator-cell:last-child {
+                            background-color: lightpink;
+                        }
+                    </style>
                     <script>
                         var table3Columns = [
                             {set: 'SupportLevels'},
@@ -174,20 +172,25 @@
     .htable {
         border: 3px solid darkorange;
     }
-    .htable td {
-        border: 1px solid plum;
+    .htable .tabulator-cell:last-child {
+        background-color: lightpink;
     }
 &lt;/style&gt;
-
-&lt;vdl-table class=&quot;htable&quot;&gt;
-    &lt;vdl-table-column set=&quot;SupportLevels&quot;&gt;Support L.&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;SupportCosts&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+&lt;script&gt;
+    var table3Columns = [
+        {set: 'SupportLevels'},
+        {entity: 'SupportCosts'},
+        {entity: 'ServiceLevelAgreements'},
+    ]
+&lt;/script&gt;
+&lt;vdlx-datagrid class=&quot;htable&quot; column-filter=&quot;true&quot; data-page-mode=&quot;paged&quot; data-page-size=&quot;20&quot;&gt;
+    &lt;vdlx-datagrid-provider columns=&quot;=table3Columns&quot;&gt;
+    &lt;/vdlx-datagrid-provider&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
-                    <div class="todo">
+                    <div class="todo done">
                         <ol>
-                            <li>Apply class at generated table root</li>
+                            <li>Apply class at generated table root parent</li>
                         </ol>
                     </div>
                 </vdl-column>

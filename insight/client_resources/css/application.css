@@ -1,0 +1,17 @@
+/*
+todo list styles
+*/
+.todo {
+    padding: 19px;
+    background-color: yellow;
+    font-family: "American Typewriter";
+}
+.todo.done {
+    padding: 19px;
+    background-color: limegreen;
+    font-family: "American Typewriter";
+}
+
+.todo.not-doing {
+    background-color: gray;
+}
