@@ -118,7 +118,7 @@
         }
     ];
 
-    function parseIntOrKeep(val) {
+    function parseIntOrKeep (val) {
         var result = _.parseInt(val);
         if (_.isNaN(result)) {
             return val;
@@ -129,6 +129,8 @@
     function isNullOrUndefined (val) {
         return _.isNull(val) || _.isUndefined(val);
     }
+
+    var stripEmpties = _.partialRight(_.pick, _.flow(_.identity, _.negate(isNullOrUndefined)));
 
     VDL('vdlx-datagrid', {
         tag: 'vdlx-datagrid',
@@ -152,16 +154,6 @@
 
             function buildTable () {
                 var groupOpen = 'true';
-
-                var tableOptions = {
-                    columns: vm.columnConfig,
-                    layout: 'fitColumns',
-                    height: ko.unwrap(params.gridHeight) || '600px',
-                    placeholder: 'Waiting for data',
-                    // groupBy: groupBy,
-                    groupStartOpen: groupOpen === 'true',
-                    ajaxLoader: true // ???
-                };
 
                 const datagridConfig = $(element)
                     .find('vdlx-datagrid-column')
@@ -213,7 +205,112 @@
                     }
                 });
 
-                console.log(indices, entities);
+                var scenarioList = _(entities).filter(function (item) {
+                    return !isNullOrUndefined(item);
+                }).map(function (item) {
+                    return ko.unwrap(item.scenario);
+                }).uniq().sortBy().value();
+
+                var overrides = stripEmpties({
+                    paging: params.pageMode,
+                    pageLength: params.pageSize,
+                    searching: params.showFilter,
+                    columnFilter: params.columnFilter
+                });
+
+                var tableOptions = {
+                    tableId: params.tableId,
+                    columnOptions: entities,
+                    addRemoveRow: params.addRemoveRow,
+                    selectionAndNavigation: params.selectionNavigation,
+                    overrides: overrides,
+                    onError: _.bindKey(self, '_wrapAlert'),
+                    alwaysShowSelection: params.alwaysShowSelection
+                };
+
+                if (params.saveState === false) {
+                    tableOptions.saveState = params.saveState;
+                }
+
+                if (params.rowFilter) {
+                    var filterObservable = ko.observable().extend({
+                        functionObservable: {
+                            onDependenciesChange: function () {
+                                self.tableUpdate();
+                            },
+                            read: params.rowFilter
+                        }
+                    });
+
+                    tableOptions.rowFilter = function () {
+                        filterObservable.apply(null, arguments);
+                        return filterObservable.peek();
+                    };
+                }
+
+                if (_.keys(indices).length) {
+                    tableOptions.indicesOptions = indices;
+                }
+
+                tableOptions = stripEmpties(tableOptions);
+
+                if (!_.isUndefined(params.modifier)) {
+                    if (_.isFunction(params.modifier)) {
+                        // Pass cloned options so they cannot modify the original table options object
+                        var modifiedTableOptions = params.modifier(_.cloneDeep(tableOptions));
+                        if (_.isPlainObject(modifiedTableOptions)) {
+                            tableOptions = modifiedTableOptions;
+                        }
+                    } else {
+                        // console.error('vdl-table (' + self.tableId + '): "modifier" attribute must be a function.');
+                    }
+                }
+
+                if (tableOptions.addRemoveRow) {
+                    var isEditable = tableOptions.columnOptions.some(function (column) {
+                        return !!column.editable;
+                    });
+
+                    if (!isEditable) {
+                        tableOptions.addRemoveRow = false;
+                        // not a hard error as this is used as a feature when making a table read only based on permissions
+                        // console.log('vdl-table (' + self.tableId + "): add/remove rows disabled. Table needs to have at least one editable column to use this feature.");
+                    }
+                }
+
+                if (_.isEmpty(scenarioList) || _.isEmpty(tableOptions.columnOptions)) {
+                    // console.debug('vdl-table (' + self.tableId + '): Scenario list or table column configuration is empty, ignoring update');
+
+                    // if (resolve) {
+                    //     resolve(tableOptions);
+                    // }
+
+                    // empty table element, to get rid of old configuration
+                    // $table && $table.empty();
+                    return;
+                }
+
+                // functions should not be used in the equality comparison
+                const noFns = _.partialRight(_.omit, _.isFunction);
+                if (_.isEqual(noFns(this._appliedTableOptions), noFns(tableOptions))) {
+                    // console.debug('vdl-table (' + self.tableId + '): Table configuration unchanged, ignoring update');
+                    // if (resolve) {
+                    //     resolve(tableOptions);
+                    // }
+                    return;
+                }
+
+                datagridInstance.updateConfig(tableOptions);
+
+                tableOptions = {
+                    columns: vm.columnConfig,
+                    layout: 'fitColumns',
+                    height: ko.unwrap(params.gridHeight) || '600px',
+                    placeholder: 'Waiting for data',
+                    // groupBy: groupBy,
+                    groupStartOpen: groupOpen === 'true',
+                    ajaxLoader: true // ???
+                };
 
                 tableOptions.columns = _.flatten(
                     _.map(indices, (setArray, setName) => {
@@ -226,9 +323,6 @@
                 tableOptions.columns = tableOptions.columns.concat(
                     _.map(entities, entity => _.assign(entity, { title: entity.name, field: entity.name }))
                 );
-
-                datagridInstance.updateConfig(tableOptions);
-
                 vm.table = new Tabulator('#' + params.tableId, tableOptions);
                 vm.table
                     .setData(params.gridData)
