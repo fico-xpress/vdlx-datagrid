@@ -4,8 +4,8 @@
     "description": "",
     "main": "generate-data.js",
     "scripts": {
-        "test": "./node_modules/.bin/testcafe chrome test/ -e --screenshots-on-fails -s screenshots",
-        "test-headless": "./node_modules/.bin/testcafe \"chrome:headless\" test/ -e --screenshots-on-fails -s screenshots"
+        "test": "./node_modules/.bin/testcafe chrome test/ui/ -e --screenshots-on-fails -s screenshots",
+        "test-headless": "./node_modules/.bin/testcafe \"chrome:headless\" test/ui/ -e --screenshots-on-fails -s screenshots"
     },
     "keywords": [],
     "author": "",
