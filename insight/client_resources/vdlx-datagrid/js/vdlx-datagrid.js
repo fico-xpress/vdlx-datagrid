@@ -23,7 +23,8 @@ const VXDAttributes = [
     },
     {
         name: 'height',
-        description: 'Table height'
+        description: 'Table height',
+        acceptsExpression: true
     },
     {
         name: 'show-filter',
@@ -140,7 +141,7 @@ VDL('vdlx-datagrid', {
             var tableOptions = {
                 columns: vm.columnConfig,
                 layout: "fitColumns",
-                height: '600px',
+                height: ko.unwrap(params.gridHeight) || '600px',
                 placeholder: 'Waiting for data',
                 // groupBy: groupBy,
                 groupStartOpen: groupOpen === 'true',
@@ -358,7 +359,15 @@ VDL('vdlx-datagrid', {
             paramsBuilder.addParam('gridData', gridData.expression.value, true);
         }
 
-        // $element.children().wrapAll($('<div class="table-configuration">'));
+        var gridHeight = attributes['height'];
+        if (gridHeight) {
+            if(gridHeight.expression.isString) {
+                paramsBuilder.addParam('gridHeight', gridHeight.rawValue, false);
+            } else {
+                paramsBuilder.addParam('gridHeight', gridHeight.expression.value, true);
+            }
+        }
+
         $tableDiv = $('<div/>');
         $tableDiv.attr('id', tableId.rawValue);
         $tableDiv.addClass('table-striped table-bordered table-condensed');
