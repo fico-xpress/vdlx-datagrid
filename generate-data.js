@@ -35,7 +35,9 @@ class Table {
     }
 }
 
-let table1 = new Table([
+let tables = {};
+
+tables['table1'] = new Table([
     // 5 indices
     _.partial(column, 4),
     _.partial(column, 3),
@@ -65,7 +67,7 @@ let table1 = new Table([
     'Col6',
 ], 2000, 11110);
 
-let table2 = new Table([
+tables['table2'] = new Table([
     // 6 indices
     _.partial(column, 5),
     _.partial(column, 4),
@@ -93,7 +95,7 @@ let table2 = new Table([
     'Col4',
 ], 10000, 111110);
 
-let table3 = new Table([
+tables['table3'] = new Table([
     // 6 indices
     _.partial(column, 5),
     _.partial(column, 4),
@@ -121,7 +123,7 @@ let table3 = new Table([
     'Col4',
 ], 100000, 111110);
 
-let table4 = new Table([
+tables['table4'] = new Table([
     // 6 indices
     _.partial(column, 5),
     _.partial(column, 4),
@@ -149,7 +151,7 @@ let table4 = new Table([
     'Col4',
 ], 500000, 111110);
 
-let table5 = new Table([
+tables['table5'] = new Table([
     // 6 indices
     _.partial(column, 5),
     _.partial(column, 4),
@@ -177,24 +179,30 @@ let table5 = new Table([
     'Col4',
 ], 1000000, 111110);
 
-let table = table4;
+let table;
 
-let rows = _.map(_.range(0, table.numRows - 1), (idx) => {
-    let num = table.startNum + idx;
-    let funcs = table.funcs;
-    let row = _.map(funcs, (fn, key) => {
-        return fn(num);
-    });
-    return row;
-})
+for(var i=1; i < 6; i++) {
+    table = tables[`table${i}`];
 
-// add in the header row
-rows.unshift(table.headers);
+    console.log(`Generating data for table${i}`, table);
 
-stringify(rows, (err, output) => {
-    fs.writeFile(table.filename + '.csv', output, 'utf8', () => {
+    let rows = _.map(_.range(0, table.numRows - 1), (idx) => {
+        let num = table.startNum + idx;
+        let funcs = table.funcs;
+        let row = _.map(funcs, (fn, key) => {
+            return fn(num);
+        });
+        return row;
+    })
+
+    // add in the header row
+    rows.unshift(table.headers);
+
+    let output = stringify(rows);
+
+    fs.writeFileSync('insight/model_resources/' + table.filename + '.csv', output, 'utf8', () => {
         console.log('finished! ' + table.filename);
     });
-});
 
-console.log(rows.length);
+    console.log(rows.length);
+}
