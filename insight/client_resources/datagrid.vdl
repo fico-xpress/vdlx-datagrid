@@ -13,7 +13,6 @@
 
         </script>
 
-        <!--<vdlx-datagrid-column></vdlx-datagrid-column>-->
         <vdl-section heading="Datagrid example">
             <vdl-row>
                 <vdl-column size="6">
@@ -26,13 +25,6 @@
                 </vdl-column>
             </vdl-row>
         </vdl-section>
-        <!--
-                <vdl-section heading="Table example">
-                    <vdl-table>
-                        <vdl-table-column></vdl-table-column>
-                    </vdl-table>
-                </vdl-section>-->
-
     </vdl-page>
 </vdl>
 
