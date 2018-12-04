@@ -22,6 +22,10 @@ const VXDAttributes = [
         description: 'By default the table will show all rows. Set this attribute to "paged" to enable table pagination.'
     },
     {
+        name: 'height',
+        description: 'Table height'
+    },
+    {
         name: 'show-filter',
         description: 'Set this to "true" to enable the table filter. This will show a single input above the table to filter across all table cells.'
     },
@@ -136,6 +140,7 @@ VDL('vdlx-datagrid', {
             var tableOptions = {
                 columns: vm.columnConfig,
                 layout: "fitColumns",
+                height: '600px',
                 placeholder: 'Waiting for data',
                 // groupBy: groupBy,
                 groupStartOpen: groupOpen === 'true',
