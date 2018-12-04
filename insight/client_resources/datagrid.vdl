@@ -6,10 +6,10 @@
         <script>
 
             var gridData = [
-                {a: 10, b: 20, c: 30},
-                {a: 11, b: 21, c: 31},
-                {a: 12, b: 22, c: 32},
-                {a: 13, b: 23, c: 33},
+                {SupportLevels: 10, ServiceLevelAgreements: 20, SupportCosts: 30},
+                {SupportLevels: 11, ServiceLevelAgreements: 21, SupportCosts: 31},
+                {SupportLevels: 12, ServiceLevelAgreements: 22, SupportCosts: 32},
+                {SupportLevels: 13, ServiceLevelAgreements: 23, SupportCosts: 33},
             ]
 
         </script>
@@ -20,8 +20,9 @@
                 <vdl-column size="6">
                     <vdlx-datagrid id="demo1" grid-data="=gridData">
                         <vdlx-datagrid-column set="SupportLevels"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ServiceLevelAgreements"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ServiceLevelAgreements" scenario="1"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
             </vdl-row>

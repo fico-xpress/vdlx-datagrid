@@ -125,19 +125,33 @@ VDL('vdlx-datagrid', {
             vm.tableWidth = params.width.replace('px', '');
         }
 
-        const element = componentInfo.element
+        const element = componentInfo.element;
 
         const defaultScenario = params.scenarioId || 0;
 
         function buildTable() {
-            const autoTableConfig = $(element).find('vdlx-datagrid-column').map(function (idx, element) {
+
+            var groupOpen = 'true';
+
+            var tableOptions = {
+                columns: vm.columnConfig,
+                layout: "fitColumns",
+                placeholder: 'Waiting for data',
+                // groupBy: groupBy,
+                groupStartOpen: groupOpen === 'true',
+                ajaxLoader: true, // ???
+            };
+
+
+
+            const datagridConfig = $(element).find('vdlx-datagrid-column').map(function (idx, element) {
                 return _.clone(element['autotableConfig']);
             });
 
-            var config = [];
+            var entities = [];
             var indices = {};
 
-            _.forEach(autoTableConfig, (function (configItem) {
+            _.forEach(datagridConfig, (function (configItem) {
                 var scenarioNum = parseIntOrKeep(configItem.scenario || defaultScenario);
                 if (_.isNumber(scenarioNum)) {
                     if (scenarioNum < 0) {
@@ -148,7 +162,7 @@ VDL('vdlx-datagrid', {
                 if (!!configItem.entity) {
                     configItem.name = configItem.entity;
                     delete configItem.entity;
-                    config.push(_.omit(configItem, isNullOrUndefined));
+                    entities.push(_.omit(configItem, isNullOrUndefined));
                 } else if (!!configItem.set) {
                     if (!_.has(indices, [configItem.set])) {
                         indices[configItem.set] = [];
@@ -178,7 +192,15 @@ VDL('vdlx-datagrid', {
                 }
             }));
 
-            console.log(indices, config);
+            console.log(indices, entities);
+
+            tableOptions.columns = _.flatten(_.map(indices, (setArray, setName)=> {
+                return _.map(setArray, (setObject, setPosition) => {
+                    return _.assign(setObject, {title: setObject.set, field: setObject.set, setPosition: setPosition});
+                })
+            }));
+
+            tableOptions.columns = tableOptions.columns.concat(_.map(entities, (entity) => _.assign(entity, {title: entity.name, field: entity.name})));
 
             vm.table = new Tabulator('#' + params.tableId, tableOptions);
 
@@ -190,35 +212,6 @@ VDL('vdlx-datagrid', {
                     debugger;
                 });
         }
-
-        vm.columnConfig = [
-            {
-                title: 'A',
-                field: 'a',
-                resizable: true,
-            },
-            {
-                title: 'B',
-                field: 'b',
-                resizable: true,
-            },
-            {
-                title: 'C',
-                field: 'c',
-                resizable: true,
-            },
-        ];
-
-        var groupOpen = 'true';
-
-        var tableOptions = {
-            columns: vm.columnConfig,
-            layout: "fitColumns",
-            placeholder: 'Waiting for data',
-            // groupBy: groupBy,
-            groupStartOpen: groupOpen === 'true',
-            ajaxLoader: true, // ???
-        };
 
         const throttledBuildTable = _.throttle(
                 buildTable,
