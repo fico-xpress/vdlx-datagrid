@@ -1,7 +1,6 @@
-// var ko = insightModules.load('knockout');
+const COLUMN_UPDATE_DELAY = 100;
 
-
-var VXDAttributes = [
+const VXDAttributes = [
     {
         name: 'id',
         description: 'Specify an element id for the table. Useful if you later want to target the table using a selector. ' +
@@ -100,12 +99,23 @@ var VXDAttributes = [
     }
 ];
 
+function parseIntOrKeep(val) {
+    var result = _.parseInt(val);
+    if (_.isNaN(result)) {
+        return val;
+    }
+    return result;
+}
+
+function isNullOrUndefined(val) {
+    return _.isNull(val) || _.isUndefined(val);
+}
+
 VDL('vdlx-datagrid', {
     tag: 'vdlx-datagrid',
     attributes: VXDAttributes,
     createViewModel: function (params, componentInfo) {
-
-        var view = insight.getView();
+        const view = insight.getView();
 
         var vm = {};
         // debugger;
@@ -113,6 +123,72 @@ VDL('vdlx-datagrid', {
 
         if (params.width) {
             vm.tableWidth = params.width.replace('px', '');
+        }
+
+        const element = componentInfo.element
+
+        const defaultScenario = params.scenarioId || 0;
+
+        function buildTable() {
+            const autoTableConfig = $(element).find('vdlx-datagrid-column').map(function (idx, element) {
+                return _.clone(element['autotableConfig']);
+            });
+
+            var config = [];
+            var indices = {};
+
+            _.forEach(autoTableConfig, (function (configItem) {
+                var scenarioNum = parseIntOrKeep(configItem.scenario || defaultScenario);
+                if (_.isNumber(scenarioNum)) {
+                    if (scenarioNum < 0) {
+                        // reject('Scenario index must be a positive integer.');
+                    }
+                }
+                configItem.scenario = scenarioNum;
+                if (!!configItem.entity) {
+                    configItem.name = configItem.entity;
+                    delete configItem.entity;
+                    config.push(_.omit(configItem, isNullOrUndefined));
+                } else if (!!configItem.set) {
+                    if (!_.has(indices, [configItem.set])) {
+                        indices[configItem.set] = [];
+                    }
+                    const indexList = indices[configItem.set];
+                    const cleanItem = _.omit(configItem, isNullOrUndefined);
+                    const setPosn = configItem.setPosition;
+                    if (setPosn == null) {
+                        indexList.push(cleanItem);
+                    } else if (indexList[setPosn]) {
+                        // reject('Table column for set "' + configItem.set + '" at position ' + setPosn
+                        //     + ' specified more than once');
+                    } else {
+                        indexList[setPosn] = cleanItem;
+                        // if we have increased the length, then need to
+                        // explicitly inserts null/undefined here, or some
+                        // standard algorithms behave oddly. (E.g. _.map
+                        // will count the missing items, but [].map won't)
+                        _.range(indexList.length).forEach(function (j) {
+                            if (!indexList[j]) {
+                                indexList[j] = null;
+                            }
+                        });
+                    }
+                } else {
+                    // reject('Unknown column type');
+                }
+            }));
+
+            console.log(indices, config);
+
+            vm.table = new Tabulator('#' + params.tableId, tableOptions);
+
+            vm.table.setData(params.gridData)
+                .then(function () {
+                    vm.table.redraw();
+                })
+                .catch(function (err) {
+                    debugger;
+                });
         }
 
         vm.columnConfig = [
@@ -144,18 +220,13 @@ VDL('vdlx-datagrid', {
             ajaxLoader: true, // ???
         };
 
-        vm.table = new Tabulator('#' + params.tableId, tableOptions);
-
-        vm.table.setData(params.gridData)
-            .then(function () {
-                vm.table.redraw();
-            })
-            .catch(function (err) {
-                debugger;
-            });
+        const throttledBuildTable = _.throttle(
+                buildTable,
+                COLUMN_UPDATE_DELAY,
+                {leading: false});
 
         vm.tableUpdate = function () {
-            // debugger;
+            throttledBuildTable();
         };
 
         vm.tableValidate = function () {
@@ -166,7 +237,7 @@ VDL('vdlx-datagrid', {
             debugger;
         };
 
-
+        buildTable();
         return vm;
     },
     transform: function (element, attributes, api) {
