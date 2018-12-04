@@ -1,7 +1,6 @@
-// var ko = insightModules.load('knockout');
+const COLUMN_UPDATE_DELAY = 100;
 
-
-var VXDAttributes = [
+const VXDAttributes = [
     {
         name: 'id',
         description: 'Specify an element id for the table. Useful if you later want to target the table using a selector. ' +
@@ -115,6 +114,25 @@ VDL('vdlx-datagrid', {
             vm.tableWidth = params.width.replace('px', '');
         }
 
+        const element = componentInfo.element
+
+        function buildTable() {
+            const columns = $(element).find('vdlx-datagrid-column').map(function (idx, element) {
+                return _.clone(element['autotableConfig']);
+            });
+            console.log(columns);
+
+            vm.table = new Tabulator('#' + params.tableId, tableOptions);
+
+            vm.table.setData(params.gridData)
+                .then(function () {
+                    vm.table.redraw();
+                })
+                .catch(function (err) {
+                    debugger;
+                });
+        }
+
         vm.columnConfig = [
             {
                 title: 'A',
@@ -144,18 +162,13 @@ VDL('vdlx-datagrid', {
             ajaxLoader: true, // ???
         };
 
-        vm.table = new Tabulator('#' + params.tableId, tableOptions);
-
-        vm.table.setData(params.gridData)
-            .then(function () {
-                vm.table.redraw();
-            })
-            .catch(function (err) {
-                debugger;
-            });
+        const throttledBuildTable = _.throttle(
+                buildTable,
+                COLUMN_UPDATE_DELAY,
+                {leading: false});
 
         vm.tableUpdate = function () {
-            // debugger;
+            throttledBuildTable();
         };
 
         vm.tableValidate = function () {
@@ -166,7 +179,7 @@ VDL('vdlx-datagrid', {
             debugger;
         };
 
-
+        buildTable();
         return vm;
     },
     transform: function (element, attributes, api) {
