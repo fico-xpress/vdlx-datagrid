@@ -14,6 +14,9 @@ var insightGetter = insightModules.load('insight-getter');
 var RenderCallbacks = insightModules.load('components/table/render-callbacks');
 var DataUtils = insightModules.load('utils/data-utils');
 
+var COLUMN_BUILD_DELAY = 50;
+var AUTOCOLUMN_PROP_NAME = 'autotableConfig';
+
 /*
     vdlx-datagrid-column attributes
 
@@ -165,8 +168,6 @@ VDL('vdlx-datagrid-column', {
     modifiesDescendants: false,
 
     createViewModel: function (params, componentInfo) {
-
-        debugger;
 
         var indexFilters$ = ko.observable({});
         var filters$ = ko.pureComputed(function () {

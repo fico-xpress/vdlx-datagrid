@@ -16,16 +16,22 @@
 
         <!--<vdlx-datagrid-column></vdlx-datagrid-column>-->
         <vdl-section heading="Datagrid example">
-            <vdlx-datagrid id="demo1" grid-data="=gridData">
-                <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
-            </vdlx-datagrid>
+            <vdl-row>
+                <vdl-column size="6">
+                    <vdlx-datagrid id="demo1" grid-data="=gridData">
+                        <vdlx-datagrid-column set="SupportLevels"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ServiceLevelAgreements"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+            </vdl-row>
         </vdl-section>
-<!--
-        <vdl-section heading="Table example">
-            <vdl-table>
-                <vdl-table-column></vdl-table-column>
-            </vdl-table>
-        </vdl-section>-->
+        <!--
+                <vdl-section heading="Table example">
+                    <vdl-table>
+                        <vdl-table-column></vdl-table-column>
+                    </vdl-table>
+                </vdl-section>-->
 
     </vdl-page>
 </vdl>

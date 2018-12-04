@@ -8,3 +8,4 @@ build.sh
 node_modules/
 insight/model_resources/*.csv
 *.zip
+screenshots

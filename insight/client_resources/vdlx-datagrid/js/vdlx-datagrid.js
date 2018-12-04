@@ -105,8 +105,6 @@ VDL('vdlx-datagrid', {
     attributes: VXDAttributes,
     createViewModel: function (params, componentInfo) {
 
-        debugger;
-
         var view = insight.getView();
 
         var vm = {};
@@ -121,21 +119,21 @@ VDL('vdlx-datagrid', {
             {
                 title: 'A',
                 field: 'a',
-                resizable: false,
+                resizable: true,
             },
             {
                 title: 'B',
                 field: 'b',
-                resizable: false,
+                resizable: true,
             },
             {
                 title: 'C',
                 field: 'c',
-                resizable: false,
+                resizable: true,
             },
         ];
 
-        var groupOpen = 'false';
+        var groupOpen = 'true';
 
         var tableOptions = {
             columns: vm.columnConfig,
@@ -157,7 +155,7 @@ VDL('vdlx-datagrid', {
             });
 
         vm.tableUpdate = function () {
-            debugger;
+            // debugger;
         };
 
         vm.tableValidate = function () {
