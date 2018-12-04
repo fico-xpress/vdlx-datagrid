@@ -208,6 +208,15 @@
                 tableOptions.columns = tableOptions.columns.concat(_.map(entities, (entity) => _.assign(entity, { title: entity.name, field: entity.name })));
 
                 datagridInstance.updateConfig(tableOptions);
+
+                vm.table = new Tabulator('#' + params.tableId, tableOptions);
+                vm.table.setData(params.gridData)
+                    .then(function () {
+                        vm.table.redraw();
+                    })
+                    .catch(function (err) {
+                        debugger;
+                    });
             }
 
             const throttledBuildTable = _.throttle(
