@@ -224,6 +224,7 @@
                     addRemoveRow: params.addRemoveRow,
                     selectionAndNavigation: params.selectionNavigation,
                     overrides: overrides,
+                    scenarioList: scenarioList,
                     onError: _.bindKey(self, '_wrapAlert'),
                     alwaysShowSelection: params.alwaysShowSelection
                 };
