@@ -16,52 +16,52 @@
             </vdl-row>
             <vdl-row>
                 <vdl-column>
-                    <vdl-table page-size="=2" page-mode="paged" show-filter="true" column-filter="true">
-                        <vdl-table-column entity="SupportCosts" editable="true" heading="SUPPORT COSTS"></vdl-table-column>
-                        <vdl-table-column entity="ServiceLevelAgreements" editable="true">Agreements</vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid page-size="=2" page-mode="paged" show-filter="true" column-filter="true">
+                        <vdlx-datagrid-column entity="SupportCosts" editable="true" heading="SUPPORT COSTS"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ServiceLevelAgreements" editable="true">Agreements</vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
             </vdl-row>
         </vdl-section>
 
         <vdl-section heading="Inside vdl-section" heading-level="3">
-            <vdl-table show-filter="3">
-                <vdl-table-column set="AGENCY">ID</vdl-table-column>
-                <vdl-table-column entity="AGENCYNAME">Agency</vdl-table-column>
-                <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
-                <vdl-table-column entity="MAX_AGENT_ACCOUNTS">Max Acct.</vdl-table-column>
-                <vdl-table-column entity="MAX_PERC_AGENCY">Max %</vdl-table-column>
-                <vdl-table-column entity="MIN_AGENT_ACCOUNTS">Min. Acct.</vdl-table-column>
-                <vdl-table-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdl-table-column>
-            </vdl-table>
+            <vdlx-datagrid show-filter="3">
+                <vdlx-datagrid-column set="AGENCY">ID</vdlx-datagrid-column>
+                <vdlx-datagrid-column entity="AGENCYNAME">Agency</vdlx-datagrid-column>
+                <vdlx-datagrid-column entity="NAGENTS">Num Agents</vdlx-datagrid-column>
+                <vdlx-datagrid-column entity="MAX_AGENT_ACCOUNTS">Max Acct.</vdlx-datagrid-column>
+                <vdlx-datagrid-column entity="MAX_PERC_AGENCY">Max %</vdlx-datagrid-column>
+                <vdlx-datagrid-column entity="MIN_AGENT_ACCOUNTS">Min. Acct.</vdlx-datagrid-column>
+                <vdlx-datagrid-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdlx-datagrid-column>
+            </vdlx-datagrid>
         </vdl-section>
 
         <vdl-section heading="Inside vdl-row" heading-level="3">
             <vdl-row>
-                <vdl-table show-filter="3">
-                    <vdl-table-column set="AGENCY">ID</vdl-table-column>
-                    <vdl-table-column entity="AGENCYNAME">Agency</vdl-table-column>
-                    <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
-                    <vdl-table-column entity="MAX_AGENT_ACCOUNTS">Max Acct.</vdl-table-column>
-                    <vdl-table-column entity="MAX_PERC_AGENCY">Max %</vdl-table-column>
-                    <vdl-table-column entity="MIN_AGENT_ACCOUNTS">Min. Acct.</vdl-table-column>
-                    <vdl-table-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdl-table-column>
-                </vdl-table>
+                <vdlx-datagrid show-filter="3">
+                    <vdlx-datagrid-column set="AGENCY">ID</vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="AGENCYNAME">Agency</vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="NAGENTS">Num Agents</vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="MAX_AGENT_ACCOUNTS">Max Acct.</vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="MAX_PERC_AGENCY">Max %</vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="MIN_AGENT_ACCOUNTS">Min. Acct.</vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdlx-datagrid-column>
+                </vdlx-datagrid>
             </vdl-row>
         </vdl-section>
 
         <vdl-section heading="Inside vdl-column (unsized)" heading-level="3">
             <vdl-row>
                 <vdl-column>
-                    <vdl-table>
-                        <vdl-table-column set="AGENCY">ID</vdl-table-column>
-                        <vdl-table-column entity="AGENCYNAME">Agency</vdl-table-column>
-                        <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
-                        <vdl-table-column entity="MAX_AGENT_ACCOUNTS">Max Acct.</vdl-table-column>
-                        <vdl-table-column entity="MAX_PERC_AGENCY">Max %</vdl-table-column>
-                        <vdl-table-column entity="MIN_AGENT_ACCOUNTS">Min. Acct.</vdl-table-column>
-                        <vdl-table-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column set="AGENCY">ID</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="AGENCYNAME">Agency</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="NAGENTS">Num Agents</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="MAX_AGENT_ACCOUNTS">Max Acct.</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="MAX_PERC_AGENCY">Max %</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="MIN_AGENT_ACCOUNTS">Min. Acct.</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
             </vdl-row>
         </vdl-section>
@@ -69,15 +69,15 @@
         <vdl-section heading="With some fixed columns" heading-level="3">
             <vdl-row>
                 <vdl-column>
-                    <vdl-table>
-                        <vdl-table-column set="AGENCY">ID</vdl-table-column>
-                        <vdl-table-column entity="AGENCYNAME">Agency</vdl-table-column>
-                        <vdl-table-column entity="NAGENTS" width="120">Num Agents</vdl-table-column>
-                        <vdl-table-column entity="MAX_AGENT_ACCOUNTS"  width="32">Max Acct.</vdl-table-column>
-                        <vdl-table-column entity="MAX_PERC_AGENCY"  width="120">Max %</vdl-table-column>
-                        <vdl-table-column entity="MIN_AGENT_ACCOUNTS">Min. Acct.</vdl-table-column>
-                        <vdl-table-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column set="AGENCY">ID</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="AGENCYNAME">Agency</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="NAGENTS" width="120">Num Agents</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="MAX_AGENT_ACCOUNTS"  width="32">Max Acct.</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="MAX_PERC_AGENCY"  width="120">Max %</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="MIN_AGENT_ACCOUNTS">Min. Acct.</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="MIN_AGENT_COMMISSION">Minimum Agent Commission</vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
             </vdl-row>
         </vdl-section>

@@ -12,24 +12,24 @@
                 <p>Controlling the size of an individual column for minimum width tables.</p>
                 <code-panel>
     &lt;vdl-section&gt;
-        &lt;vdl-table&gt;
-            &lt;vdl-table-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdl-table-column&gt;
-            &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; width=&quot;400&quot;&gt;Agency&lt;/vdl-table-column&gt;
-            &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
-            &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;64&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
-        &lt;/vdl-table&gt;
+        &lt;vdlx-datagrid&gt;
+            &lt;vdlx-datagrid-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdlx-datagrid-column&gt;
+            &lt;vdlx-datagrid-column entity=&quot;AGENCYNAME&quot; width=&quot;400&quot;&gt;Agency&lt;/vdlx-datagrid-column&gt;
+            &lt;vdlx-datagrid-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdlx-datagrid-column&gt;
+            &lt;vdlx-datagrid-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;64&quot;&gt;Minimum Agent Commission&lt;/vdlx-datagrid-column&gt;
+        &lt;/vdlx-datagrid&gt;
     &lt;/vdl-section&gt;
                 </code-panel>
             </vdl-column>
         </vdl-section>
 
         <vdl-section>
-            <vdl-table>
-                <vdl-table-column set="AGENCY">ID</vdl-table-column>
-                <vdl-table-column entity="AGENCYNAME" width="400">Agency</vdl-table-column>
-                <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
-                <vdl-table-column entity="MIN_AGENT_COMMISSION" width="64">Minimum Agent Commission</vdl-table-column>
-            </vdl-table>
+            <vdlx-datagrid>
+                <vdlx-datagrid-column set="AGENCY">ID</vdlx-datagrid-column>
+                <vdlx-datagrid-column entity="AGENCYNAME" width="400">Agency</vdlx-datagrid-column>
+                <vdlx-datagrid-column entity="NAGENTS">Num Agents</vdlx-datagrid-column>
+                <vdlx-datagrid-column entity="MIN_AGENT_COMMISSION" width="64">Minimum Agent Commission</vdlx-datagrid-column>
+            </vdlx-datagrid>
         </vdl-section>
 
 
@@ -37,24 +37,24 @@
             <vdl-column size="12">
                 <code-panel>
     &lt;vdl-section&gt;
-        &lt;vdl-table&gt;
-            &lt;vdl-table-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdl-table-column&gt;
-            &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; width=&quot;320&quot;&gt;Agency&lt;/vdl-table-column&gt;
-            &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
-            &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;320&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
-        &lt;/vdl-table&gt;
+        &lt;vdlx-datagrid&gt;
+            &lt;vdlx-datagrid-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdlx-datagrid-column&gt;
+            &lt;vdlx-datagrid-column entity=&quot;AGENCYNAME&quot; width=&quot;320&quot;&gt;Agency&lt;/vdlx-datagrid-column&gt;
+            &lt;vdlx-datagrid-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdlx-datagrid-column&gt;
+            &lt;vdlx-datagrid-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;320&quot;&gt;Minimum Agent Commission&lt;/vdlx-datagrid-column&gt;
+        &lt;/vdlx-datagrid&gt;
     &lt;/vdl-section&gt;
                 </code-panel>
             </vdl-column>
         </vdl-section>
 
         <vdl-section>
-            <vdl-table>
-                <vdl-table-column set="AGENCY">ID</vdl-table-column>
-                <vdl-table-column entity="AGENCYNAME" width="320">Agency</vdl-table-column>
-                <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
-                <vdl-table-column entity="MIN_AGENT_COMMISSION" width="320">Minimum Agent Commission</vdl-table-column>
-            </vdl-table>
+            <vdlx-datagrid>
+                <vdlx-datagrid-column set="AGENCY">ID</vdlx-datagrid-column>
+                <vdlx-datagrid-column entity="AGENCYNAME" width="320">Agency</vdlx-datagrid-column>
+                <vdlx-datagrid-column entity="NAGENTS">Num Agents</vdlx-datagrid-column>
+                <vdlx-datagrid-column entity="MIN_AGENT_COMMISSION" width="320">Minimum Agent Commission</vdlx-datagrid-column>
+            </vdlx-datagrid>
         </vdl-section>
     </vdl-page>
 </vdl>

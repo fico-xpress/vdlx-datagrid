@@ -38,21 +38,21 @@
             </vdl-row>
             <vdl-row>
                 <vdl-column heading="Form with conditional column" size="6">
-                    <vdl-table>
-                        <vdl-table-column entity="FactorySupply">Factory Supply</vdl-table-column>
-                        <vdl-table-column vdl-if="=scenario.entities.MyBool.value" entity="FactoryDemand">Factory
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column entity="FactorySupply">Factory Supply</vdlx-datagrid-column>
+                        <vdlx-datagrid-column vdl-if="=scenario.entities.MyBool.value" entity="FactoryDemand">Factory
                             Demand
-                        </vdl-table-column>
-                    </vdl-table>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column heading="VDL source:" size="6">
                     <code-panel>
-&lt;vdl-table&gt;
-    &lt;vdl-table-column entity=&quot;FactorySupply&quot;&gt;Factory Supply&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column vdl-if=&quot;=scenario.entities.MyBool.value&quot; entity=&quot;FactoryDemand&quot;&gt;Factory
+&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot;&gt;Factory Supply&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column vdl-if=&quot;=scenario.entities.MyBool.value&quot; entity=&quot;FactoryDemand&quot;&gt;Factory
         Demand
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
 
                 </vdl-column>

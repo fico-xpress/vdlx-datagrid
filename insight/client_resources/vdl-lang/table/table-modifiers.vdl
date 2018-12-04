@@ -97,11 +97,11 @@
             <vdl-row>
                 <vdl-column size="6">
                     <h5>Table</h5>
-                    <vdl-table id="table-1"
+                    <vdlx-datagrid id="table-1"
                                    modifier="=function(config) {config = capitalizeHeaders(config); logTableConfig(config); return config;}">
-                        <vdl-table-column heading="support costs" entity="SupportCosts"></vdl-table-column>
-                        <vdl-table-column heading="service level" entity="ServiceLevelAgreements"></vdl-table-column>
-                    </vdl-table>
+                        <vdlx-datagrid-column heading="support costs" entity="SupportCosts"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column heading="service level" entity="ServiceLevelAgreements"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="5" offset="1">
                     <h5>Custom configuration options passed to table</h5>
@@ -146,11 +146,11 @@ function logTableConfig(config) {
             <vdl-row>
                 <vdl-column heading="VDL Source">
                     <code-panel>
-&lt;vdl-table id=&quot;table-1&quot;
+&lt;vdlx-datagrid id=&quot;table-1&quot;
            modifier=&quot;=function(config) {config = capitalizeHeaders(config); logTableConfig(config); return config;}&quot;&gt;
-    &lt;vdl-table-column heading=&quot;support costs&quot; entity=&quot;SupportCosts&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column heading=&quot;service level&quot; entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+    &lt;vdlx-datagrid-column heading=&quot;support costs&quot; entity=&quot;SupportCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column heading=&quot;service level&quot; entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>
@@ -164,11 +164,11 @@ function logTableConfig(config) {
             <vdl-row>
                 <vdl-column size="6">
                     <h5>Table</h5>
-                    <vdl-table id="table-2"
+                    <vdlx-datagrid id="table-2"
                                    modifier="=function(config) {config = makeEditable(config); logTableConfig(config); return config;}">
-                        <vdl-table-column heading="support costs" entity="SupportCosts"></vdl-table-column>
-                        <vdl-table-column heading="service level" entity="ServiceLevelAgreements"></vdl-table-column>
-                    </vdl-table>
+                        <vdlx-datagrid-column heading="support costs" entity="SupportCosts"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column heading="service level" entity="ServiceLevelAgreements"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="5" offset="1">
                     <h5>Custom configuration options passed to table</h5>
@@ -202,11 +202,11 @@ function makeEditable(config) {
             <vdl-row>
                 <vdl-column heading="VDL Source">
                     <code-panel>
-&lt;vdl-table id=&quot;table-2&quot;
+&lt;vdlx-datagrid id=&quot;table-2&quot;
            modifier=&quot;=function(config) {config = makeEditable(config); logTableConfig(config); return config;}&quot;&gt;
-    &lt;vdl-table-column heading=&quot;support costs&quot; entity=&quot;SupportCosts&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column heading=&quot;service level&quot; entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+    &lt;vdlx-datagrid-column heading=&quot;support costs&quot; entity=&quot;SupportCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column heading=&quot;service level&quot; entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>
@@ -220,10 +220,10 @@ function makeEditable(config) {
             <vdl-row>
                 <vdl-column size="6">
                     <h5>Table</h5>
-                    <vdl-table id="table-3" modifier="=allTableModifiers">
-                        <vdl-table-column heading="support costs" entity="SupportCosts"></vdl-table-column>
-                        <vdl-table-column heading="service level" entity="ServiceLevelAgreements"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid id="table-3" modifier="=allTableModifiers">
+                        <vdlx-datagrid-column heading="support costs" entity="SupportCosts"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column heading="service level" entity="ServiceLevelAgreements"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="5" offset="1">
                     <h5>Custom configuration options passed to table</h5>
@@ -253,10 +253,10 @@ function allTableModifiers(config) {
             <vdl-row>
                 <vdl-column heading="VDL Source">
                     <code-panel>
-&lt;vdl-table id=&quot;table-3&quot; modifier=&quot;=allTableModifiers&quot;&gt;
-    &lt;vdl-table-column heading=&quot;support costs&quot; entity=&quot;SupportCosts&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column heading=&quot;service level&quot; entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+&lt;vdlx-datagrid id=&quot;table-3&quot; modifier=&quot;=allTableModifiers&quot;&gt;
+    &lt;vdlx-datagrid-column heading=&quot;support costs&quot; entity=&quot;SupportCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column heading=&quot;service level&quot; entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>
@@ -273,14 +273,14 @@ function allTableModifiers(config) {
             </vdl-row>
             <vdl-row>
                 <vdl-column size="12">
-                    <vdl-table modifier="=styleSecondDataColumn">
-                        <vdl-table-column entity="FactoryCapacities" editable="true" heading="Capacity"></vdl-table-column>
-                        <vdl-table-column entity="FactoryDemand" editable="true"
+                    <vdlx-datagrid modifier="=styleSecondDataColumn">
+                        <vdlx-datagrid-column entity="FactoryCapacities" editable="true" heading="Capacity"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactoryDemand" editable="true"
                                           heading="='Demand (' + m.label + ')'"
                                           vdl-repeat="=m in scenario.entities.MonthsOfYear">
                             <vdl-index-filter set="MonthsOfYear" value="=m.value"></vdl-index-filter>
-                        </vdl-table-column>
-                    </vdl-table>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
             </vdl-row>
 
@@ -304,14 +304,14 @@ function styleSecondDataColumn(config) {
             <vdl-row>
                 <vdl-column heading="VDL Source">
                     <code-panel>
-&lt;vdl-table modifier=&quot;=styleSecondDataColumn&quot;&gt;
-    &lt;vdl-table-column entity=&quot;FactoryCapacities&quot; editable=&quot;true&quot; heading=&quot;Capacity&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;
+&lt;vdlx-datagrid modifier=&quot;=styleSecondDataColumn&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryCapacities&quot; editable=&quot;true&quot; heading=&quot;Capacity&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;
                       heading=&quot;='Demand (' + m.label + ')'&quot;
                       vdl-repeat=&quot;=m in scenario.entities.MonthsOfYear&quot;&gt;
         &lt;vdl-index-filter set=&quot;MonthsOfYear&quot; value=&quot;=m.value&quot;&gt;&lt;/vdl-index-filter&gt;
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>
@@ -319,16 +319,16 @@ function styleSecondDataColumn(config) {
 
         <vdl-section heading="Table modifiers: invalid modifier expression">
             <vdl-row>
-                The modifier attribute for this vdl-table results in a console error because at runtime it resolves
+                The modifier attribute for this vdlx-datagrid results in a console error because at runtime it resolves
                 to a number value rather than a function.
             </vdl-row>
             <vdl-row>
                 <vdl-column size="5">
                     <h5>Table</h5>
-                    <vdl-table modifier="=2+1">
-                        <vdl-table-column heading="support costs" entity="SupportCosts"></vdl-table-column>
-                        <vdl-table-column heading="service level" entity="ServiceLevelAgreements"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid modifier="=2+1">
+                        <vdlx-datagrid-column heading="support costs" entity="SupportCosts"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column heading="service level" entity="ServiceLevelAgreements"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="5">
                     <div class="table-sidenote">

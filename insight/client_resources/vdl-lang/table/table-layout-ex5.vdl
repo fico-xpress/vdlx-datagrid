@@ -21,20 +21,20 @@
                 <code-panel>
     &lt;vdl-section&gt;
         &lt;column size=&quot;6&quot;&gt;
-            &lt;vdl-table&gt;
-                &lt;vdl-table-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdl-table-column&gt;
-                &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; width=&quot;200&quot;&gt;Agency&lt;/vdl-table-column&gt;
-                &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
-                &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;64&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
-            &lt;/vdl-table&gt;
+            &lt;vdlx-datagrid&gt;
+                &lt;vdlx-datagrid-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdlx-datagrid-column&gt;
+                &lt;vdlx-datagrid-column entity=&quot;AGENCYNAME&quot; width=&quot;200&quot;&gt;Agency&lt;/vdlx-datagrid-column&gt;
+                &lt;vdlx-datagrid-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdlx-datagrid-column&gt;
+                &lt;vdlx-datagrid-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;64&quot;&gt;Minimum Agent Commission&lt;/vdlx-datagrid-column&gt;
+            &lt;/vdlx-datagrid&gt;
         &lt;/column&gt;
         &lt;column size=&quot;6&quot;&gt;
-            &lt;vdl-table&gt;
-                &lt;vdl-table-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdl-table-column&gt;
-                &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; width=&quot;200&quot;&gt;Agency&lt;/vdl-table-column&gt;
-                &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdl-table-column&gt;
-                &lt;vdl-table-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;64&quot;&gt;Minimum Agent Commission&lt;/vdl-table-column&gt;
-            &lt;/vdl-table&gt;
+            &lt;vdlx-datagrid&gt;
+                &lt;vdlx-datagrid-column set=&quot;AGENCY&quot;&gt;ID&lt;/vdlx-datagrid-column&gt;
+                &lt;vdlx-datagrid-column entity=&quot;AGENCYNAME&quot; width=&quot;200&quot;&gt;Agency&lt;/vdlx-datagrid-column&gt;
+                &lt;vdlx-datagrid-column entity=&quot;NAGENTS&quot;&gt;Num Agents&lt;/vdlx-datagrid-column&gt;
+                &lt;vdlx-datagrid-column entity=&quot;MIN_AGENT_COMMISSION&quot; width=&quot;64&quot;&gt;Minimum Agent Commission&lt;/vdlx-datagrid-column&gt;
+            &lt;/vdlx-datagrid&gt;
         &lt;/column&gt;
     &lt;/vdl-section&gt;
                 </code-panel>
@@ -44,20 +44,20 @@
         <vdl-section>
             <vdl-row>
                 <vdl-column size="6">
-                    <vdl-table>
-                        <vdl-table-column set="AGENCY">ID</vdl-table-column>
-                        <vdl-table-column entity="AGENCYNAME" width="200">Agency</vdl-table-column>
-                        <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
-                        <vdl-table-column entity="MIN_AGENT_COMMISSION" width="64">Minimum Agent Commission</vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column set="AGENCY">ID</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="AGENCYNAME" width="200">Agency</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="NAGENTS">Num Agents</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="MIN_AGENT_COMMISSION" width="64">Minimum Agent Commission</vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
-                    <vdl-table>
-                        <vdl-table-column set="AGENCY">ID</vdl-table-column>
-                        <vdl-table-column entity="AGENCYNAME" width="200">Agency</vdl-table-column>
-                        <vdl-table-column entity="NAGENTS">Num Agents</vdl-table-column>
-                        <vdl-table-column entity="MIN_AGENT_COMMISSION" width="64">Minimum Agent Commission</vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column set="AGENCY">ID</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="AGENCYNAME" width="200">Agency</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="NAGENTS">Num Agents</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="MIN_AGENT_COMMISSION" width="64">Minimum Agent Commission</vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
             </vdl-row>
         </vdl-section>
@@ -67,11 +67,11 @@
 
             <vdl-row>
                 <vdl-column heading="Simple autotable" size="6">
-                    <vdl-table class="framed-table">
-                        <vdl-table-column set="SupportLevels" width="100" class="hide">Support L.</vdl-table-column>
-                        <vdl-table-column editable="false" entity="SupportCosts"></vdl-table-column>
-                        <vdl-table-column editable="true" entity="ServiceLevelAgreements"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid class="framed-table">
+                        <vdlx-datagrid-column set="SupportLevels" width="100" class="hide">Support L.</vdlx-datagrid-column>
+                        <vdlx-datagrid-column editable="false" entity="SupportCosts"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column editable="true" entity="ServiceLevelAgreements"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="VDL Source">
                     <code-panel>&lt;style&gt;
@@ -81,9 +81,9 @@
     }
 &lt;/style&gt;
 
-&lt;vdl-table scenario=&quot;0&quot; class=&quot;framed-table&quot;&gt;
+&lt;vdlx-datagrid scenario=&quot;0&quot; class=&quot;framed-table&quot;&gt;
     ...
-&lt;/vdl-table&gt;</code-panel>
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
 

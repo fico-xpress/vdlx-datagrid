@@ -1,5 +1,4 @@
 <vdl version="4.1">
-    <vdl-include src="project-settings.vdl"></vdl-include>
     <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
 
     <style>
@@ -31,13 +30,13 @@
                     </vdl-form>
                 </vdl-row>
                 <vdl-row>
-                    <vdl-table vdl-repeat-contents="=s,i in scenarios">
-                        <vdl-table-column entity="SupportCosts" editable="true" heading="SUPPORT COSTS"
-                                          scenario="=i"></vdl-table-column>
-                        <vdl-table-column entity="ServiceLevelAgreements" editable="=s.entities.MyBool.value" scenario="=i">
+                    <vdlx-datagrid vdl-repeat-contents="=s,i in scenarios">
+                        <vdlx-datagrid-column entity="SupportCosts" editable="true" heading="SUPPORT COSTS"
+                                          scenario="=i"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ServiceLevelAgreements" editable="=s.entities.MyBool.value" scenario="=i">
                             Agreements
-                        </vdl-table-column>
-                    </vdl-table>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-row>
             </vdl-column>
 
@@ -50,17 +49,17 @@
             label=&quot;=&apos;Make &apos; + s.props.name + &apos; agreements editable&apos;&quot;&gt;
     &lt;/vdl-field&gt;
 &lt;/vdl-form&gt;
-&lt;vdl-table vdl-repeat-contents=&quot;=s,i in scenarios&quot;&gt;
-    &lt;vdl-table-column
+&lt;vdlx-datagrid vdl-repeat-contents=&quot;=s,i in scenarios&quot;&gt;
+    &lt;vdlx-datagrid-column
             entity=&quot;SupportCosts&quot;
             editable=&quot;true&quot;
             heading=&quot;SUPPORT COSTS&quot;
-            scenario=&quot;=i&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column
+            scenario=&quot;=i&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column
             entity=&quot;ServiceLevelAgreements&quot;
             editable=&quot;=s.entities.MyBool.value&quot;
-            scenario=&quot;=i&quot;&gt;Agreements&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+            scenario=&quot;=i&quot;&gt;Agreements&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                 </code-panel>
             </vdl-column>
         </vdl-section>
@@ -74,25 +73,25 @@
                 </vdl-row>
 
                 <vdl-column size="6">
-                    <vdl-table page-size="10" page-mode="paged" show-filter="true" column-filter="true">
-                        <vdl-table-column set="SupportLevels" editable="true" filter-by-formatted="true"></vdl-table-column>
-                        <vdl-table-column entity="SupportRenewed" editable="true"></vdl-table-column>
-                        <vdl-table-column entity="SupportRenewed" heading="Support Not Renewed" editable="true" editor-checked-value="false" editor-unchecked-value="true"></vdl-table-column>
-                        <vdl-table-column entity="SupportPaid" editable="true" editor-type="checkbox" editor-unchecked-value="Pending" editor-checked-value="Paid"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid page-size="10" page-mode="paged" show-filter="true" column-filter="true">
+                        <vdlx-datagrid-column set="SupportLevels" editable="true" filter-by-formatted="true"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="SupportRenewed" editable="true"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="SupportRenewed" heading="Support Not Renewed" editable="true" editor-checked-value="false" editor-unchecked-value="true"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="SupportPaid" editable="true" editor-type="checkbox" editor-unchecked-value="Pending" editor-checked-value="Paid"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="Source code">
                     <code-panel>
-&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot; column-filter=&quot;true&quot;&gt;
-    &lt;vdl-table-column entity=&quot;SupportRenewed&quot; editable=&quot;true&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;SupportRenewed&quot; heading=&quot;Support Not Renewed"
+&lt;vdlx-datagrid page-size=&quot;10&quot; page-mode=&quot;paged&quot; column-filter=&quot;true&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportRenewed&quot; editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportRenewed&quot; heading=&quot;Support Not Renewed"
             editable=&quot;true&quot;
             editor-checked-value=&quot;false&quot;
-            editor-unchecked-value=&quot;true&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;SupportPaid&quot; editable=&quot;true&quot;
+            editor-unchecked-value=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportPaid&quot; editable=&quot;true&quot;
             editor-type="checkbox" editor-unchecked-value=&quot;Pending&quot;
-            editor-checked-value=&quot;Paid&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+            editor-checked-value=&quot;Paid&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
         </vdl-section>
@@ -105,17 +104,17 @@
                     </vdl-column>
                 </vdl-row>
                 <vdl-column size="6">
-                    <vdl-table add-remove-row="true" page-size="10" page-mode="paged">
-                        <vdl-table-column entity="FactorySupply" editable="true"></vdl-table-column>
-                        <vdl-table-column entity="FactoryDemand" editable="true"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid add-remove-row="true" page-size="10" page-mode="paged">
+                        <vdlx-datagrid-column entity="FactorySupply" editable="true"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactoryDemand" editable="true"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="Source code">
                     <code-panel>
-&lt;vdl-table add-remove-row=&quot;true&quot; page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
-    &lt;vdl-table-column entity=&quot;FactorySupply&quot; editable=&quot;true&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+&lt;vdlx-datagrid add-remove-row=&quot;true&quot; page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot; editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>
@@ -129,15 +128,15 @@
                     </vdl-column>
                 </vdl-row>
                 <vdl-column size="6">
-                    <vdl-table add-remove-row="addrow-autoinc">
-                        <vdl-table-column entity="PlanetNamesFromInteger" editable="true"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid add-remove-row="addrow-autoinc">
+                        <vdlx-datagrid-column entity="PlanetNamesFromInteger" editable="true"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="Source code">
                     <code-panel>
-&lt;vdl-table add-remove-row=&quot;addrow-autoinc&quot;&gt;
-    &lt;vdl-table-column entity=&quot;PlanetNamesFromInteger&quot; editable=&quot;true&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+&lt;vdlx-datagrid add-remove-row=&quot;addrow-autoinc&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;PlanetNamesFromInteger&quot; editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>

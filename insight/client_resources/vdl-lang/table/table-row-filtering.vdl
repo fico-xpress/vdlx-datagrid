@@ -22,27 +22,27 @@
         <vdl-section heading="Examples">
             <vdl-row>
                 <vdl-column heading="Row filtering with an expression" size="6">
-                    <vdl-table row-filter="=(indices[0] === 'Paris' || indices[1] === 'August') && rowData[2] >= 20">
-                        <vdl-table-column set="Factories"></vdl-table-column>
-                        <vdl-table-column entity="FactoryDemand" ></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid row-filter="=(indices[0] === 'Paris' || indices[1] === 'August') && rowData[2] >= 20">
+                        <vdlx-datagrid-column set="Factories"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactoryDemand" ></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="VDL source:">
                     <code-panel>
-&lt;vdl-table row-filter=&quot;=(indices[0] === 'Paris' || indices[1] === 'August') &amp;&amp; rowData[2] &gt;= 20&quot;&gt;
-    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; &gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+&lt;vdlx-datagrid row-filter=&quot;=(indices[0] === 'Paris' || indices[1] === 'August') &amp;&amp; rowData[2] &gt;= 20&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; &gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>
 
             <vdl-row>
                 <vdl-column heading="Row filtering with a function identifier" size="6">
-                    <vdl-table row-filter="=greaterThan10">
-                        <vdl-table-column set="Factories"></vdl-table-column>
-                        <vdl-table-column entity="FactoryDemand" ></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid row-filter="=greaterThan10">
+                        <vdlx-datagrid-column set="Factories"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactoryDemand" ></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="VDL source:">
                     <code-panel>
@@ -52,26 +52,26 @@
     }
 &lt;/script&gt;
 
-&lt;vdl-table row-filter=&quot;=greaterThan10&quot;&gt;
-    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; &gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+&lt;vdlx-datagrid row-filter=&quot;=greaterThan10&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; &gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row>
                 <vdl-column heading="Row filtering with an inline function" size="6">
-                    <vdl-table row-filter="=function(rowData) { return rowData[2] > 10;}">
-                        <vdl-table-column set="Factories"></vdl-table-column>
-                        <vdl-table-column entity="FactoryDemand" ></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid row-filter="=function(rowData) { return rowData[2] > 10;}">
+                        <vdlx-datagrid-column set="Factories"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactoryDemand" ></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="VDL source:">
                     <code-panel>
-&lt;vdl-table row-filter=&quot;=function(rowData) { return rowData[2] &gt; 10;}&quot;&gt;
-    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; &gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+&lt;vdlx-datagrid row-filter=&quot;=function(rowData) { return rowData[2] &gt; 10;}&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; &gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>

@@ -1,5 +1,4 @@
 <vdl version="4.1">
-    <vdl-include src="project-settings.vdl"></vdl-include>
     <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
 
     <style>
@@ -25,17 +24,17 @@
                 </vdl-row>
 
                 <vdl-column size="6">
-                    <vdl-table page-size="10" page-mode="paged" show-filter="true">
-                        <vdl-table-column entity="StockSizes" editable="true"
-                                          editor-options-set="StockSizeValues"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid page-size="10" page-mode="paged" show-filter="true">
+                        <vdlx-datagrid-column entity="StockSizes" editable="true"
+                                          editor-options-set="StockSizeValues"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="Source code">
                     <code-panel>
-&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
-    &lt;vdl-table-column entity=&quot;StockSizes&quot; editable=&quot;true&quot;
-        editor-options-set=&quot;StockSizeValues&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+&lt;vdlx-datagrid page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;StockSizes&quot; editable=&quot;true&quot;
+        editor-options-set=&quot;StockSizeValues&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row class="example">
@@ -45,17 +44,17 @@
                     </vdl-column>
                 </vdl-row>
                 <vdl-column size="6">
-                    <vdl-table page-size="10" page-mode="paged">
-                        <vdl-table-column entity="FactoryDemand" editable="true"
-                                          editor-options="=[0,1,2]"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid page-size="10" page-mode="paged">
+                        <vdlx-datagrid-column entity="FactoryDemand" editable="true"
+                                          editor-options="=[0,1,2]"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="Source code">
                     <code-panel>
-&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;
-        editor-options=&quot;=[0,1,2]&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+&lt;vdlx-datagrid page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;
+        editor-options=&quot;=[0,1,2]&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row class="example">
@@ -69,17 +68,17 @@ editor-options=&quot;=[{key: 0, value: 'first'}, {key: 1, value: 'second'}, {key
                     </vdl-column>
                 </vdl-row>
                 <vdl-column size="6">
-                    <vdl-table page-size="10" page-mode="paged">
-                        <vdl-table-column entity="StockSizes" editable="true"
-                                          editor-options="={0: 'Small', 1: 'Medium', 2: 'Large'}"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid page-size="10" page-mode="paged">
+                        <vdlx-datagrid-column entity="StockSizes" editable="true"
+                                          editor-options="={0: 'Small', 1: 'Medium', 2: 'Large'}"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="Source code">
                     <code-panel>
-&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
-    &lt;vdl-table-column entity=&quot;StockSizes&quot; editable=&quot;true&quot;
-        editor-options=&quot;={0: 'Small', 1: 'Medium', 2: 'Large'}&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+&lt;vdlx-datagrid page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;StockSizes&quot; editable=&quot;true&quot;
+        editor-options=&quot;={0: 'Small', 1: 'Medium', 2: 'Large'}&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row class="example">
@@ -98,18 +97,18 @@ editor-options=&quot;=[{key: 0, value: 'first'}, {key: 1, value: 'second'}, {key
                     </vdl-column>
                 </vdl-row>
                 <vdl-column size="6">
-                    <vdl-table page-size="10" page-mode="paged">
-                        <vdl-table-column entity="StockSizes" editable="true"
-                                          editor-options="=rowData[0] === 'New York' ? {0: 'Small'} : {0: 'Small', 1: 'Medium', 2: 'Large'}"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid page-size="10" page-mode="paged">
+                        <vdlx-datagrid-column entity="StockSizes" editable="true"
+                                          editor-options="=rowData[0] === 'New York' ? {0: 'Small'} : {0: 'Small', 1: 'Medium', 2: 'Large'}"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="Source code">
                     <code-panel>
-&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
-    &lt;vdl-table-column entity=&quot;StockSizes&quot; editable=&quot;true&quot;
+&lt;vdlx-datagrid page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;StockSizes&quot; editable=&quot;true&quot;
         editor-options=&quot;=rowData[0] === {0: 'Small'} : {0: 'Small', 1: 'Medium', 2: 'Large'}&quot;
-    &gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+    &gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>
@@ -124,23 +123,23 @@ editor-options=&quot;=[{key: 0, value: 'first'}, {key: 1, value: 'second'}, {key
             </vdl-row>
 
             <vdl-column size="6">
-                <vdl-table page-size="10" page-mode="paged" show-filter="true">
-                    <vdl-table-column entity="StockSizes" editable="true" editor-options-set="StockSizeValues">
-                    </vdl-table-column>
-                    <vdl-table-column editable="true" editor-options="=[0,1,2]" entity="FactoryDemand">
+                <vdlx-datagrid page-size="10" page-mode="paged" show-filter="true">
+                    <vdlx-datagrid-column entity="StockSizes" editable="true" editor-options-set="StockSizeValues">
+                    </vdlx-datagrid-column>
+                    <vdlx-datagrid-column editable="true" editor-options="=[0,1,2]" entity="FactoryDemand">
                         Factory Demand
-                    </vdl-table-column>
-                </vdl-table>
+                    </vdlx-datagrid-column>
+                </vdlx-datagrid>
             </vdl-column>
             <vdl-column size="6" heading="Source code">
                 <code-panel>
-&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot; show-filter=&quot;true&quot;&gt;
-    &lt;vdl-table-column entity=&quot;StockSizes&quot; editable=&quot;true&quot; editor-type=&quot;select&quot;
-        editor-options-set=&quot;StockSizeValues&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column editable=&quot;true&quot; editor-options=&quot;=[0,1,2]&quot; entity=&quot;FactoryDemand&quot;&gt;Factory
+&lt;vdlx-datagrid page-size=&quot;10&quot; page-mode=&quot;paged&quot; show-filter=&quot;true&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;StockSizes&quot; editable=&quot;true&quot; editor-type=&quot;select&quot;
+        editor-options-set=&quot;StockSizeValues&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column editable=&quot;true&quot; editor-options=&quot;=[0,1,2]&quot; entity=&quot;FactoryDemand&quot;&gt;Factory
     Demand
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                 </code-panel>
             </vdl-column>
         </vdl-section>
@@ -156,21 +155,21 @@ editor-options=&quot;=[{key: 0, value: 'first'}, {key: 1, value: 'second'}, {key
                     </vdl-column>
                 </vdl-row>
                 <vdl-column size="6">
-                    <vdl-table page-size="10" page-mode="paged">
-                        <vdl-table-column entity="AGENCYNAME" editable="true"
+                    <vdlx-datagrid page-size="10" page-mode="paged">
+                        <vdlx-datagrid-column entity="AGENCYNAME" editable="true"
                                           editor-options-include-empty="true"
-                                          editor-options-set="AGENCY" scenario="0"></vdl-table-column>
-                        <vdl-table-column entity="MAX_AGENT_ACCOUNTS" editable="true"></vdl-table-column>
-                    </vdl-table>
+                                          editor-options-set="AGENCY" scenario="0"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="MAX_AGENT_ACCOUNTS" editable="true"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="Source code">
                     <code-panel>
-&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
-    &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; editable=&quot;true&quot;
+&lt;vdlx-datagrid page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;AGENCYNAME&quot; editable=&quot;true&quot;
         editor-options-include-empty=&quot;true&quot;
-        editor-options-set=&quot;AGENCY&quot; scenario=&quot;1&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;MAX_AGENT_ACCOUNTS&quot; editable=&quot;true&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+        editor-options-set=&quot;AGENCY&quot; scenario=&quot;1&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;MAX_AGENT_ACCOUNTS&quot; editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row class="example">
@@ -183,23 +182,23 @@ editor-options=&quot;=[{key: 0, value: 'first'}, {key: 1, value: 'second'}, {key
                     </vdl-column>
                 </vdl-row>
                 <vdl-column size="6">
-                    <vdl-table page-size="10" page-mode="paged">
-                        <vdl-table-column entity="StockSizes" editable="true"
+                    <vdlx-datagrid page-size="10" page-mode="paged">
+                        <vdlx-datagrid-column entity="StockSizes" editable="true"
                                           editor-options-include-empty="true"
                                           editor-options="={0: 'Small', 1: 'Medium', 2: 'Large'}">
-                        </vdl-table-column>
-                        <vdl-table-column entity="FactoryDemand" editable="true"></vdl-table-column>
-                    </vdl-table>
+                        </vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactoryDemand" editable="true"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="Source code">
                     <code-panel>
-&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
-    &lt;vdl-table-column entity=&quot;StockSizes&quot; editable=&quot;true&quot;
+&lt;vdlx-datagrid page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;StockSizes&quot; editable=&quot;true&quot;
         editor-options-include-empty=&quot;true&quot;
         editor-options=&quot;={0: 'Small', 1: 'Medium', 2: 'Large'}&quot;&gt;
-    &lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+    &lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
         </vdl-section>

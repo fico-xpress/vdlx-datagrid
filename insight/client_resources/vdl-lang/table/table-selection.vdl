@@ -12,7 +12,7 @@
                     </p>
                     <p>
                         See the Table component API for a description of the events <a target="_blank" href="http://www.fico.com/fico-xpress-optimization/docs/latest/insight/javascript_api/Table.html">Table API</a>
-                        and <a target="_blank" href="http://www.fico.com/fico-xpress-optimization/docs/latest/insight/vdl_reference/vdl-table.html">vdl-target</a> for the "row-filter" attribute.
+                        and <a target="_blank" href="http://www.fico.com/fico-xpress-optimization/docs/latest/insight/vdl_reference/vdlx-datagrid.html">vdl-target</a> for the "row-filter" attribute.
                     </p>
                 </vdl-column>
                 <vdl-column>
@@ -31,15 +31,15 @@
     }
 &lt;/script&gt;
 &lt;vdl-column size=&quot;6&quot; heading=&quot;Master table&quot;&gt;
-    &lt;vdl-table id=&quot;master-table&quot; vdl-event=&quot;'selection-changed':rowSelect, 'selection-removed':rowSelect&quot;&gt;
-        &lt;vdl-table-column entity=&quot;StockSizeLabels&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;/vdl-table&gt;
+    &lt;vdlx-datagrid id=&quot;master-table&quot; vdl-event=&quot;'selection-changed':rowSelect, 'selection-removed':rowSelect&quot;&gt;
+        &lt;vdlx-datagrid-column entity=&quot;StockSizeLabels&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;/vdlx-datagrid&gt;
 &lt;/vdl-column&gt;
 &lt;vdl-column size=&quot;6&quot; heading=&quot;Child table&quot;&gt;
-    &lt;vdl-table vdl-if=&quot;=showChildFilteredTable&quot; id=&quot;child-table&quot; row-filter=&quot;=function(rowData, indices) {return rowData[3] === childFilteredTableIndex()[0];}&quot;&gt;
-        &lt;vdl-table-column entity=&quot;FactorySupply&quot;&gt;&lt;/vdl-table-column&gt;
-        &lt;vdl-table-column entity=&quot;StockSizes&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;/vdl-table&gt;
+    &lt;vdlx-datagrid vdl-if=&quot;=showChildFilteredTable&quot; id=&quot;child-table&quot; row-filter=&quot;=function(rowData, indices) {return rowData[3] === childFilteredTableIndex()[0];}&quot;&gt;
+        &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+        &lt;vdlx-datagrid-column entity=&quot;StockSizes&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;/vdlx-datagrid&gt;
 &lt;/vdl-column&gt;
                     </code-panel>
                 </vdl-column>
@@ -60,15 +60,15 @@
                     }
                 </script>
                 <vdl-column size="6" heading="Master table">
-                    <vdl-table id="master-table" vdl-event="'selection-changed':rowSelect, 'selection-removed':rowSelect">
-                        <vdl-table-column entity="StockSizeLabels"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid id="master-table" vdl-event="'selection-changed':rowSelect, 'selection-removed':rowSelect">
+                        <vdlx-datagrid-column entity="StockSizeLabels"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="Child table">
-                    <vdl-table vdl-if="=showChildFilteredTable" id="child-table" row-filter="=function(rowData, indices) {return rowData[3] === childFilteredTableIndex()[0];}">
-                        <vdl-table-column entity="FactorySupply"></vdl-table-column>
-                        <vdl-table-column entity="StockSizes"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid vdl-if="=showChildFilteredTable" id="child-table" row-filter="=function(rowData, indices) {return rowData[3] === childFilteredTableIndex()[0];}">
+                        <vdlx-datagrid-column entity="FactorySupply"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="StockSizes"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                     <div vdl-if="=!showChildFilteredTable()">
                         Select a row in this Master table to show a filtered table here.
                     </div>
@@ -118,10 +118,10 @@
 &lt;/script&gt;
 
 &lt;vdl-column size=&quot;6&quot; heading=&quot;Master table&quot;&gt;
-    &lt;vdl-table vdl-event=&quot;'selection-changed':rowDetail, 'selection-removed':rowDetail&quot;&gt;
-        &lt;vdl-table-column entity=&quot;AGENCYNAME&quot;&gt;&lt;/vdl-table-column&gt;
-        &lt;vdl-table-column entity=&quot;NAGENTS&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;/vdl-table&gt;
+    &lt;vdlx-datagrid vdl-event=&quot;'selection-changed':rowDetail, 'selection-removed':rowDetail&quot;&gt;
+        &lt;vdlx-datagrid-column entity=&quot;AGENCYNAME&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+        &lt;vdlx-datagrid-column entity=&quot;NAGENTS&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;/vdlx-datagrid&gt;
 &lt;/vdl-column&gt;
 &lt;vdl-column size=&quot;6&quot; heading=&quot;Detail form&quot; vdl&gt;
     &lt;vdl-form vdl-if=&quot;=showChildDetailTable&quot;&gt;
@@ -136,10 +136,10 @@
             </vdl-row>
             <vdl-row>
                 <vdl-column size="6" heading="Master table">
-                    <vdl-table vdl-event="'selection-changed':rowDetail, 'selection-removed':rowDetail">
-                        <vdl-table-column entity="AGENCYNAME"></vdl-table-column>
-                        <vdl-table-column entity="NAGENTS"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid vdl-event="'selection-changed':rowDetail, 'selection-removed':rowDetail">
+                        <vdlx-datagrid-column entity="AGENCYNAME"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="NAGENTS"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="Detail form">
                     <vdl-form vdl-if="=showChildDetailTable">

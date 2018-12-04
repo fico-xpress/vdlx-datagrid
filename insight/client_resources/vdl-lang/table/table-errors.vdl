@@ -18,138 +18,138 @@
         <vdl-section heading="Autotable errors">
             <vdl-row>
                 <vdl-column size="6">
-                    <p>Error shown when <code>vdl-table-column</code> is not contained within <code>vdl-table</code>.</p>
-                    <vdl-table-column entity="FactoryDemand" editable="false" width="4">Factory Demand</vdl-table-column>
+                    <p>Error shown when <code>vdlx-datagrid-column</code> is not contained within <code>vdlx-datagrid</code>.</p>
+                    <vdlx-datagrid-column entity="FactoryDemand" editable="false" width="4">Factory Demand</vdlx-datagrid-column>
                 </vdl-column>
                 <vdl-column size="6">
                     <h5>VDL source code:</h5>
                 <code-panel>
-&lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;false&quot; width=&quot;4&quot;&gt;Factory Demand&lt;/vdl-table-column&gt;</code-panel>
+&lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;false&quot; width=&quot;4&quot;&gt;Factory Demand&lt;/vdlx-datagrid-column&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row>
                 <vdl-column size="6">
-                    <p>Error shown when trying to bind a <code>vdl-table-column</code> to a set.</p>
-                    <vdl-table>
-                        <vdl-table-column entity="Factories">Factories</vdl-table-column>
-                    </vdl-table>
+                    <p>Error shown when trying to bind a <code>vdlx-datagrid-column</code> to a set.</p>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column entity="Factories">Factories</vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
                     <h5>VDL source code:</h5>
-                <code-panel>&lt;vdl-table&gt;
-    &lt;vdl-table-column entity=&quot;Factories&quot;&gt;Factories&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+                <code-panel>&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column entity=&quot;Factories&quot;&gt;Factories&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row>
                 <vdl-column size="6">
-                    <p>Error shown when trying to bind a <code>vdl-table-column</code> to a scalar.</p>
-                    <vdl-table>
-                        <vdl-table-column entity="demand">demand</vdl-table-column>
-                    </vdl-table>
+                    <p>Error shown when trying to bind a <code>vdlx-datagrid-column</code> to a scalar.</p>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column entity="demand">demand</vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
                     <h5>VDL source code:</h5>
-                <code-panel>&lt;vdl-table&gt;
-    &lt;vdl-table-column entity=&quot;demand&quot;&gt;demand&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+                <code-panel>&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column entity=&quot;demand&quot;&gt;demand&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row>
                 <vdl-column size="6">
                     <p>Error shown when trying to show two arrays with different indices.</p>
-                    <vdl-table>
-                        <vdl-table-column entity="FactorySupply"></vdl-table-column>
-                        <vdl-table-column entity="IntArray"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column entity="FactorySupply"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="IntArray"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
                     <h5>VDL source code:</h5>
-                <code-panel>&lt;vdl-table&gt;
-    &lt;vdl-table-column entity=&quot;FactorySupply&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;IntArray&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+                <code-panel>&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;IntArray&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row>
                 <vdl-column size="6">
                     <p>Error shown when trying to show array and unrelated set.</p>
-                    <vdl-table>
-                        <vdl-table-column set="DAYS"></vdl-table-column>
-                        <vdl-table-column entity="FactorySupply"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column set="DAYS"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactorySupply"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
                     <h5>VDL source code:</h5>
-                <code-panel>&lt;vdl-table&gt;
-    &lt;vdl-table-column set=&quot;DAYS&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactorySupply&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+                <code-panel>&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column set=&quot;DAYS&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row>
                 <vdl-column size="6">
                     <p>Missing Index Filter on single dimension array</p>
                     <p>Two single dimension arrays, index filtering on one.</p>
-                    <vdl-table>
-                        <vdl-table-column entity="IntArray">
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column entity="IntArray">
                             <vdl-index-filter set="Indices" value="New York"></vdl-index-filter>
-                        </vdl-table-column>
-                        <vdl-table-column entity="RealArray"></vdl-table-column>
-                    </vdl-table>
+                        </vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="RealArray"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
-                    <code-panel>&lt;vdl-table&gt;
-    &lt;vdl-table-column entity=&quot;IntArray&quot;&gt;
+                    <code-panel>&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column entity=&quot;IntArray&quot;&gt;
         &lt;vdl-index-filter set=&quot;Indices&quot; value=&quot;New York&quot;&gt;&lt;/vdl-index-filter&gt;
-    &lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;RealArray&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+    &lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;RealArray&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row>
                 <vdl-column size="6">
                     <p>Error shown when trying to show two arrays with different indices and index filtering.</p>
-                    <vdl-table>
-                        <vdl-table-column entity="IntArray"></vdl-table-column>
-                        <vdl-table-column entity="FactorySupply">
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column entity="IntArray"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactorySupply">
                             <vdl-index-filter set="Factories" value="Paris"></vdl-index-filter>
-                        </vdl-table-column>
-                    </vdl-table>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
                     <h5>VDL source code:</h5>
-                <code-panel>&lt;vdl-table&gt;
-    &lt;vdl-table-column entity=&quot;IntArray&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactorySupply&quot;&gt;
+                <code-panel>&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column entity=&quot;IntArray&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot;&gt;
         &lt;vdl-index-filter set=&quot;Factories&quot; value=&quot;Paris&quot;&gt;&lt;/vdl-index-filter&gt;
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row>
                 <vdl-column size="6">
-                    <p>Error shown when trying to show two arrays with same indices and index filtering only on one <code>vdl-table-column</code>.</p>
-                    <vdl-table>
-                        <vdl-table-column entity="FactoryDemand"></vdl-table-column>
-                        <vdl-table-column entity="FactorySupply">
+                    <p>Error shown when trying to show two arrays with same indices and index filtering only on one <code>vdlx-datagrid-column</code>.</p>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column entity="FactoryDemand"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactorySupply">
                             <vdl-index-filter set="Factories" value="Paris"></vdl-index-filter>
-                        </vdl-table-column>
-                    </vdl-table>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
                     <h5>VDL source code:</h5>
-                <code-panel>&lt;vdl-table&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactorySupply&quot;&gt;
+                <code-panel>&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot;&gt;
         &lt;vdl-index-filter set=&quot;Factories&quot; value=&quot;Paris&quot;&gt;&lt;/vdl-index-filter&gt;
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row>
                 <vdl-column size="6">
-                    <p>Error shown when <code>vdl-index-filter</code> is not contained within an <code>vdl-table-column</code> or a <code>vdl-table</code></p>
+                    <p>Error shown when <code>vdl-index-filter</code> is not contained within an <code>vdlx-datagrid-column</code> or a <code>vdlx-datagrid</code></p>
                     <vdl-index-filter set="Depots" value="Columbus"></vdl-index-filter>
                 </vdl-column>
                 <vdl-column size="6">
@@ -160,98 +160,98 @@
             </vdl-row>
             <vdl-row>
                 <vdl-column size="6">
-                    <p>Error shown when <code>vdl-index-filter</code> is not contained within an <code>vdl-table-column</code></p>
-                    <vdl-table>
+                    <p>Error shown when <code>vdl-index-filter</code> is not contained within an <code>vdlx-datagrid-column</code></p>
+                    <vdlx-datagrid>
                         <vdl-index-filter set="Depots" value="Columbus"></vdl-index-filter>
-                    </vdl-table>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
                     <h5>VDL source code:</h5>
                     <code-panel>
-&lt;vdl-table&gt;
+&lt;vdlx-datagrid&gt;
     &lt;vdl-index-filter set=&quot;Depots&quot; value=&quot;Columbus&quot;&gt;&lt;/vdl-index-filter&gt;
-&lt;/vdl-table&gt;</code-panel>
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row>
                 <vdl-column size="6">
-                    <vdl-table>
-                        <vdl-table-column entity="SupportLevels" editor-type="select"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column entity="SupportLevels" editor-type="select"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
                     <h5>VDL source code:</h5>
                     <code-panel>
-&lt;vdl-table&gt;
-    &lt;vdl-table-column entity=&quot;SupportLevels&quot; editor-type=&quot;select&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportLevels&quot; editor-type=&quot;select&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row>
                 <vdl-column size="6">
-                    <p>A vdl-index-filter element can only be used within a vdl-table-column that is bound to an entity, not a set.</p>
-                    <vdl-table>
-                        <vdl-table-column set="Factories">
+                    <p>A vdl-index-filter element can only be used within a vdlx-datagrid-column that is bound to an entity, not a set.</p>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column set="Factories">
                             <vdl-index-filter set="Factories" value="=scenario.entities.MyScalar.value"
                                               vdl-if="=scenario.entities.MyBool.value"></vdl-index-filter>
-                        </vdl-table-column>
-                        <vdl-table-column entity="FactoryDemand" editable="=scenario.entities.MyBool.value">
+                        </vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactoryDemand" editable="=scenario.entities.MyBool.value">
                             <vdl-index-filter set="Factories" value="=scenario.entities.MyScalar.value"
                                               vdl-if="=scenario.entities.MyBool.value"></vdl-index-filter>
-                        </vdl-table-column>
-                    </vdl-table>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
                     <h5>VDL source code:</h5>
                     <code-panel>
-&lt;vdl-table&gt;
-    &lt;vdl-table-column set=&quot;Factories&quot;&gt;
+&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot;&gt;
         &lt;vdl-index-filter set=&quot;Factories&quot; value=&quot;=scenario.entities.MyScalar.value&quot;
                           vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;&lt;/vdl-index-filter&gt;
-    &lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;=scenario.entities.MyBool.value&quot;&gt;
+    &lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;=scenario.entities.MyBool.value&quot;&gt;
         &lt;vdl-index-filter set=&quot;Factories&quot; value=&quot;=scenario.entities.MyScalar.value&quot;
                           vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;&lt;/vdl-index-filter&gt;
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
             <vdl-row>
                 <vdl-column size="6">
-                    <p>Cannot specify an entity and a set for a vdl-table-column.</p>
-                    <vdl-table>
-                        <vdl-table-column set="Factories" entity="FactoryDemand"></vdl-table-column>
-                        <vdl-table-column entity="FactoryDemand" editable="=scenario.entities.MyBool.value">
+                    <p>Cannot specify an entity and a set for a vdlx-datagrid-column.</p>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column set="Factories" entity="FactoryDemand"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactoryDemand" editable="=scenario.entities.MyBool.value">
                             <vdl-index-filter set="Factories" value="=scenario.entities.MyScalar.value"
                                               vdl-if="=scenario.entities.MyBool.value"></vdl-index-filter>
-                        </vdl-table-column>
-                    </vdl-table>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
                     <h5>VDL source code:</h5>
                     <code-panel>
-&lt;vdl-table&gt;
-    &lt;vdl-table-column set=&quot;Factories&quot; entity=&quot;FactoryDemand&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;=scenario.entities.MyBool.value&quot;&gt;
+&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot; entity=&quot;FactoryDemand&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;=scenario.entities.MyBool.value&quot;&gt;
         &lt;vdl-index-filter set=&quot;Factories&quot; value=&quot;=scenario.entities.MyScalar.value&quot;
                           vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;&lt;/vdl-index-filter&gt;
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;</code-panel>
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code-panel>
                 </vdl-column>
             </vdl-row>
 
             <vdl-row>
                 <vdl-column size="6" heading="Result:">
-                    <vdl-table page-size="10" page-mode="paged">
-                        <vdl-table-column entity="AGENCYNAME" format="£#,###.00"></vdl-table-column>
-                    </vdl-table>
+                    <vdlx-datagrid page-size="10" page-mode="paged">
+                        <vdlx-datagrid-column entity="AGENCYNAME" format="£#,###.00"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
 
                 <vdl-column size="6" heading="VDL source:">
                     <code-panel>
-&lt;vdl-table page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
-    &lt;vdl-table-column entity=&quot;AGENCYNAME&quot; format=&quot;&#163;#,###.00&quot;&gt;&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+&lt;vdlx-datagrid page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;AGENCYNAME&quot; format=&quot;&#163;#,###.00&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
 

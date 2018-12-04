@@ -53,107 +53,107 @@
             <vdl-section heading="Examples">
                 <vdl-row>
                     <vdl-column heading="Specifying a scenario id" size="6">
-                        <vdl-table scenario="1">
-                            <vdl-table-column entity="SupportCosts" >Support Costs</vdl-table-column>
-                            <vdl-table-column entity="ServiceLevelAgreements">Agreements</vdl-table-column>
-                        </vdl-table>
+                        <vdlx-datagrid scenario="1">
+                            <vdlx-datagrid-column entity="SupportCosts" >Support Costs</vdlx-datagrid-column>
+                            <vdlx-datagrid-column entity="ServiceLevelAgreements">Agreements</vdlx-datagrid-column>
+                        </vdlx-datagrid>
                     </vdl-column>
                     <vdl-column heading="VDL source:" size="6">
                         <code-panel>
-&lt;vdl-table scenario=&quot;1&quot;&gt;
-    &lt;vdl-table-column entity=&quot;SupportCosts&quot; &gt;Support Costs&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;ServiceLevelAgreements&quot;&gt;Agreements&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+&lt;vdlx-datagrid scenario=&quot;1&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot; &gt;Support Costs&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot;&gt;Agreements&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                         </code-panel>
                     </vdl-column>
                 </vdl-row>
 
                 <vdl-row>
                     <vdl-column heading="Mixed scenario table" size="6">
-                        <vdl-table >
-                            <vdl-table-column entity="SupportCosts">Support Costs (Default 0)</vdl-table-column>
-                            <vdl-table-column entity="ServiceLevelAgreements" scenario="1">Agreements (Scenario #1)
-                            </vdl-table-column>
-                        </vdl-table>
+                        <vdlx-datagrid >
+                            <vdlx-datagrid-column entity="SupportCosts">Support Costs (Default 0)</vdlx-datagrid-column>
+                            <vdlx-datagrid-column entity="ServiceLevelAgreements" scenario="1">Agreements (Scenario #1)
+                            </vdlx-datagrid-column>
+                        </vdlx-datagrid>
                     </vdl-column>
                     <vdl-column heading="Source code" size="6">
                         <code-panel>
-&lt;vdl-table &gt;
-    &lt;vdl-table-column entity=&quot;SupportCosts&quot;&gt;Support Costs (Default 0)&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;ServiceLevelAgreements&quot;
-                      scenario=&quot;1&quot;&gt;Agreements (Scenario #1)&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+&lt;vdlx-datagrid &gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot;&gt;Support Costs (Default 0)&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot;
+                      scenario=&quot;1&quot;&gt;Agreements (Scenario #1)&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                         </code-panel>
                     </vdl-column>
                 </vdl-row>
 
                 <vdl-row>
                     <vdl-column heading="Looping over scenarios (columns grouped by scenario)" size="6">
-                        <vdl-table >
-                            <vdl-table-column vdl-repeat="=s,i in scenarios" scenario="=i" entity="SupportCosts"
-                                            heading="=s.props.name + ' Costs'"></vdl-table-column>
-                            <vdl-table-column vdl-repeat="=s,i in scenarios" scenario="=i" entity="ServiceLevelAgreements"
+                        <vdlx-datagrid >
+                            <vdlx-datagrid-column vdl-repeat="=s,i in scenarios" scenario="=i" entity="SupportCosts"
+                                            heading="=s.props.name + ' Costs'"></vdlx-datagrid-column>
+                            <vdlx-datagrid-column vdl-repeat="=s,i in scenarios" scenario="=i" entity="ServiceLevelAgreements"
                                             heading="=s.props.name + ' SLA'">
-                            </vdl-table-column>
-                        </vdl-table>
+                            </vdlx-datagrid-column>
+                        </vdlx-datagrid>
                     </vdl-column>
 
                     <vdl-column heading="VDL source:" size="6">
                         <code-panel>
-&lt;vdl-table &gt;
-    &lt;vdl-table-column vdl-repeat=&quot;=s,i in scenarios&quot;
+&lt;vdlx-datagrid &gt;
+    &lt;vdlx-datagrid-column vdl-repeat=&quot;=s,i in scenarios&quot;
                       scenario=&quot;=i&quot;
                       entity=&quot;SupportCosts&quot;
                       heading=&quot;=s.props.name + &apos; Costs&apos;&quot;&gt;
-    &lt;/vdl-table-column&gt;
-    &lt;vdl-table-column vdl-repeat=&quot;=s,i in scenarios&quot;
+    &lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column vdl-repeat=&quot;=s,i in scenarios&quot;
                       scenario=&quot;=i&quot;
                       entity=&quot;ServiceLevelAgreements&quot;
                       heading=&quot;=s.props.name + &apos; SLA&apos;&quot;&gt;
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                         </code-panel>
                     </vdl-column>
                 </vdl-row>
 
                 <vdl-row>
                     <vdl-column heading="Looping over scenarios (columns grouped by entity)" size="6">
-                        <vdl-table vdl-repeat-contents="=s,i in scenarios">
-                            <vdl-table-column scenario="=i" entity="SupportCosts"
-                                            heading="=s.props.name + ' Costs'"></vdl-table-column>
-                            <vdl-table-column scenario="=i" entity="ServiceLevelAgreements"
+                        <vdlx-datagrid vdl-repeat-contents="=s,i in scenarios">
+                            <vdlx-datagrid-column scenario="=i" entity="SupportCosts"
+                                            heading="=s.props.name + ' Costs'"></vdlx-datagrid-column>
+                            <vdlx-datagrid-column scenario="=i" entity="ServiceLevelAgreements"
                                             heading="=s.props.name + ' SLA'">
-                            </vdl-table-column>
-                        </vdl-table>
+                            </vdlx-datagrid-column>
+                        </vdlx-datagrid>
                     </vdl-column>
 
                     <vdl-column heading="VDL source:" size="6">
                         <code-panel>
-&lt;vdl-table vdl-repeat-contents=&quot;=s,i in scenarios&quot;&gt;
-    &lt;vdl-table-column scenario=&quot;=i&quot; entity=&quot;SupportCosts&quot;
-                      heading=&quot;=s.props.name + &apos; Costs&apos;&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column scenario=&quot;=i&quot; entity=&quot;ServiceLevelAgreements&quot;
+&lt;vdlx-datagrid vdl-repeat-contents=&quot;=s,i in scenarios&quot;&gt;
+    &lt;vdlx-datagrid-column scenario=&quot;=i&quot; entity=&quot;SupportCosts&quot;
+                      heading=&quot;=s.props.name + &apos; Costs&apos;&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column scenario=&quot;=i&quot; entity=&quot;ServiceLevelAgreements&quot;
                       heading=&quot;=s.props.name + &apos; SLA&apos;&quot;&gt;
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                         </code-panel>
                     </vdl-column>
                 </vdl-row>
 
                 <vdl-row>
                     <vdl-column heading="Looping over scenarios (table per scenario)" size="6">
-                        <vdl-table vdl-repeat="=s,i in scenarios" scenario="=i">
-                            <vdl-table-column entity="SupportCosts">Support Costs
-                            </vdl-table-column>
-                        </vdl-table>
+                        <vdlx-datagrid vdl-repeat="=s,i in scenarios" scenario="=i">
+                            <vdlx-datagrid-column entity="SupportCosts">Support Costs
+                            </vdlx-datagrid-column>
+                        </vdlx-datagrid>
                     </vdl-column>
 
                     <vdl-column heading="VDL source:" size="6">
                         <code-panel>
-&lt;vdl-table vdl-repeat=&quot;=s,i in scenarios&quot; scenario=&quot;=i&quot;&gt;
-    &lt;vdl-table-column entity=&quot;SupportCosts&quot;&gt;Support Costs
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+&lt;vdlx-datagrid vdl-repeat=&quot;=s,i in scenarios&quot; scenario=&quot;=i&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot;&gt;Support Costs
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                         </code-panel>
 
                     </vdl-column>
@@ -161,17 +161,17 @@
 
                 <vdl-row>
                     <vdl-column heading="Overriding scenario ids" size="6">
-                        <vdl-table scenario="1">
-                            <vdl-table-column entity="SupportCosts" scenario="0">Scenario 0</vdl-table-column>
-                            <vdl-table-column entity="SupportCosts" scenario="1">Scenario 1</vdl-table-column>
-                        </vdl-table>
+                        <vdlx-datagrid scenario="1">
+                            <vdlx-datagrid-column entity="SupportCosts" scenario="0">Scenario 0</vdlx-datagrid-column>
+                            <vdlx-datagrid-column entity="SupportCosts" scenario="1">Scenario 1</vdlx-datagrid-column>
+                        </vdlx-datagrid>
                     </vdl-column>
                     <vdl-column heading="VDL source:" size="6">
                         <code-panel>
-&lt;vdl-table scenario=&quot;1&quot;&gt;
-    &lt;vdl-table-column entity=&quot;SupportCosts&quot; scenario=&quot;0&quot;&gt;Scenario 0&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;SupportCosts&quot; scenario=&quot;1&quot;&gt;Scenario 1&lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+&lt;vdlx-datagrid scenario=&quot;1&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot; scenario=&quot;0&quot;&gt;Scenario 0&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot; scenario=&quot;1&quot;&gt;Scenario 1&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                         </code-panel>
                     </vdl-column>
                 </vdl-row>
