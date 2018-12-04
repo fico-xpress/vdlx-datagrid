@@ -6,12 +6,14 @@
     const VXDAttributes = [
         {
             name: 'id',
-            description: 'Specify an element id for the table. Useful if you later want to target the table using a selector. ' +
+            description:
+                'Specify an element id for the table. Useful if you later want to target the table using a selector. ' +
                 'If not given then an id will be generated.'
         },
         {
             name: 'scenario',
-            description: 'The default scenario to use for fetching data in the table. This can be overridden per column but the default ' +
+            description:
+                'The default scenario to use for fetching data in the table. This can be overridden per column but the default ' +
                 'will be used when a column does not specify a particular scenario and the index sets will be fetched from the default scenario.',
             acceptsExpression: true
         },
@@ -25,27 +27,37 @@
             description: 'By default the table will show all rows. Set this attribute to "paged" to enable table pagination.'
         },
         {
+            name: 'height',
+            description: 'Table height',
+            acceptsExpression: true
+        },
+        {
             name: 'show-filter',
-            description: 'Set this to "true" to enable the table filter. This will show a single input above the table to filter across all table cells.'
+            description:
+                'Set this to "true" to enable the table filter. This will show a single input above the table to filter across all table cells.'
         },
         {
             name: 'column-filter',
-            description: 'Set this to "true" to enable the column filters. This will show a header row with filter inputs for each column.'
+            description:
+                'Set this to "true" to enable the column filters. This will show a header row with filter inputs for each column.'
         },
         {
             name: 'add-remove-row',
-            description: 'Setting this will show the add-remove row buttons at the bottom of the table. Set to "true" ' +
+            description:
+                'Setting this will show the add-remove row buttons at the bottom of the table. Set to "true" ' +
                 'to prompt for index selection on row add. Set to "addrow-autoinc" will switch the behaviour to allow new ' +
                 'index values to be created, incrementing from the highest value in the set(s).'
         },
         {
             name: 'selection-navigation',
-            description: 'Enable/disable table navigation, selection and clipboard features. Set to "false" to disable ' +
+            description:
+                'Enable/disable table navigation, selection and clipboard features. Set to "false" to disable ' +
                 'these features. Defaults to true.'
         },
         {
             name: 'modifier',
-            description: 'Table modifier function. Will be called after the table configuration ' +
+            description:
+                'Table modifier function. Will be called after the table configuration ' +
                 'has been built. Provides a way to change the configuration before the table is rendered. Must ' +
                 'be an expression that resolves to a function. Takes the table configuration object and ' +
                 'should return the modified configuration. If an object is not returned then the table will be unaffected.',
@@ -53,9 +65,10 @@
         },
         {
             name: 'width',
-            description: 'Set the table to a fixed width, in pixels. Accepts an integer value. ' +
+            description:
+                'Set the table to a fixed width, in pixels. Accepts an integer value. ' +
                 'If set to the string "custom" then the table width is calculated by adding up all the widths of the columns in the table. ' +
-                'If a column doesn\'t have a width specified then it is given a default value of 100px.',
+                "If a column doesn't have a width specified then it is given a default value of 100px.",
             acceptsExpression: false
         },
         {
@@ -65,12 +78,14 @@
         },
         {
             name: 'always-show-selection',
-            description: 'Whether to display selection on inactive tables. Set to "true" to keep selection on a table when it becomes inactive. Defaults to false.',
+            description:
+                'Whether to display selection on inactive tables. Set to "true" to keep selection on a table when it becomes inactive. Defaults to false.',
             acceptsExpression: false
         },
         {
             name: 'row-filter',
-            description: 'Expression to be used for filtering the rows of a <vdl-table>. This must be an expression and ' +
+            description:
+                'Expression to be used for filtering the rows of a <vdl-table>. This must be an expression and ' +
                 'should resolve to either a function or a boolean value. If a function it will be executed when table updates. ' +
                 'The function will have the following signature (rowData, indices) and should return a boolean.',
             acceptsExpression: true,
@@ -90,7 +105,8 @@
         },
         {
             name: 'save-state',
-            description: 'Set this to "false" to disable table state saving. By default table state is stored in the ' +
+            description:
+                'Set this to "false" to disable table state saving. By default table state is stored in the ' +
                 "user's browser session so that user settings (e.g. page, sorting and search) are preserved if table data " +
                 'is reloaded. Defaults to true.',
             acceptsExpression: false,
@@ -98,11 +114,11 @@
         },
         {
             name: 'grid-data',
-            acceptsExpression: true,
+            acceptsExpression: true
         }
     ];
 
-    function parseIntOrKeep (val) {
+    function parseIntOrKeep(val) {
         var result = _.parseInt(val);
         if (_.isNaN(result)) {
             return val;
@@ -135,28 +151,28 @@
             var datagridInstance = new Datagrid();
 
             function buildTable () {
-
                 var groupOpen = 'true';
 
                 var tableOptions = {
                     columns: vm.columnConfig,
-                    layout: "fitColumns",
+                    layout: 'fitColumns',
+                    height: ko.unwrap(params.gridHeight) || '600px',
                     placeholder: 'Waiting for data',
                     // groupBy: groupBy,
                     groupStartOpen: groupOpen === 'true',
-                    ajaxLoader: true, // ???
+                    ajaxLoader: true // ???
                 };
 
-
-
-                const datagridConfig = $(element).find('vdlx-datagrid-column').map(function (idx, element) {
-                    return _.clone(element['autotableConfig']);
-                });
+                const datagridConfig = $(element)
+                    .find('vdlx-datagrid-column')
+                    .map(function (idx, element) {
+                        return _.clone(element['autotableConfig']);
+                    });
 
                 var entities = [];
                 var indices = {};
 
-                _.forEach(datagridConfig, (function (configItem) {
+                _.forEach(datagridConfig, function (configItem) {
                     var scenarioNum = parseIntOrKeep(configItem.scenario || defaultScenario);
                     if (_.isNumber(scenarioNum)) {
                         if (scenarioNum < 0) {
@@ -195,22 +211,27 @@
                     } else {
                         // reject('Unknown column type');
                     }
-                }));
+                });
 
                 console.log(indices, entities);
 
-                tableOptions.columns = _.flatten(_.map(indices, (setArray, setName) => {
-                    return _.map(setArray, (setObject, setPosition) => {
-                        return _.assign(setObject, { title: setObject.set, field: setObject.set, setPosition: setPosition });
+                tableOptions.columns = _.flatten(
+                    _.map(indices, (setArray, setName) => {
+                        return _.map(setArray, (setObject, setPosition) => {
+                            return _.assign(setObject, { title: setObject.set, field: setObject.set, setPosition: setPosition });
+                        });
                     })
-                }));
+                );
 
-                tableOptions.columns = tableOptions.columns.concat(_.map(entities, (entity) => _.assign(entity, { title: entity.name, field: entity.name })));
+                tableOptions.columns = tableOptions.columns.concat(
+                    _.map(entities, entity => _.assign(entity, { title: entity.name, field: entity.name }))
+                );
 
                 datagridInstance.updateConfig(tableOptions);
 
                 vm.table = new Tabulator('#' + params.tableId, tableOptions);
-                vm.table.setData(params.gridData)
+                vm.table
+                    .setData(params.gridData)
                     .then(function () {
                         vm.table.redraw();
                     })
@@ -219,10 +240,7 @@
                     });
             }
 
-            const throttledBuildTable = _.throttle(
-                buildTable,
-                COLUMN_UPDATE_DELAY,
-                { leading: false });
+            const throttledBuildTable = _.throttle(buildTable, COLUMN_UPDATE_DELAY, { leading: false });
 
             vm.tableUpdate = function () {
                 throttledBuildTable();
@@ -236,15 +254,13 @@
                 debugger;
             };
 
-            vm.dispose = function () {
-            };
+            vm.dispose = function () { };
 
             buildTable();
 
             return vm;
         },
         transform: function (element, attributes, api) {
-
             var paramsBuilder = api.getComponentParamsBuilder(element);
             var $element = $(element);
 
@@ -351,10 +367,7 @@
                     throw Error('The vdl-table "row-filter" attribute must be supplied as an expression');
                 }
 
-                paramsBuilder.addFunctionOrExpressionParam(
-                    'rowFilter',
-                    rowFilter.expression.value,
-                    ['rowData', 'indices']);
+                paramsBuilder.addFunctionOrExpressionParam('rowFilter', rowFilter.expression.value, ['rowData', 'indices']);
             }
 
             // TODO temporary data
@@ -363,7 +376,15 @@
                 paramsBuilder.addParam('gridData', gridData.expression.value, true);
             }
 
-            // $element.children().wrapAll($('<div class="table-configuration">'));
+            var gridHeight = attributes['height'];
+            if (gridHeight) {
+                if (gridHeight.expression.isString) {
+                    paramsBuilder.addParam('gridHeight', gridHeight.rawValue, false);
+                } else {
+                    paramsBuilder.addParam('gridHeight', gridHeight.expression.value, true);
+                }
+            }
+
             $tableDiv = $('<div/>');
             $tableDiv.attr('id', tableId.rawValue);
             $tableDiv.addClass('table-striped table-bordered table-condensed');

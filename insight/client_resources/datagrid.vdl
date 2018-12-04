@@ -5,16 +5,14 @@
 
         <script>
 
-            var gridData = [
-                {SupportLevels: 10, ServiceLevelAgreements: 20, SupportCosts: 30},
-                {SupportLevels: 11, ServiceLevelAgreements: 21, SupportCosts: 31},
-                {SupportLevels: 12, ServiceLevelAgreements: 22, SupportCosts: 32},
-                {SupportLevels: 13, ServiceLevelAgreements: 23, SupportCosts: 33},
-            ]
+            const num_rows = 1000;
+
+            var gridData = _.map(_.range(num_rows), n => {
+                return {SupportLevels: n + 1, ServiceLevelAgreements: (num_rows * 2) - (n * 2), SupportCosts: _.random(num_rows)};
+            });
 
         </script>
 
-        <!--<vdlx-datagrid-column></vdlx-datagrid-column>-->
         <vdl-section heading="Datagrid example">
             <vdl-row>
                 <vdl-column size="6">
@@ -27,13 +25,6 @@
                 </vdl-column>
             </vdl-row>
         </vdl-section>
-        <!--
-                <vdl-section heading="Table example">
-                    <vdl-table>
-                        <vdl-table-column></vdl-table-column>
-                    </vdl-table>
-                </vdl-section>-->
-
     </vdl-page>
 </vdl>
 
