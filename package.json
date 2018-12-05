@@ -5,14 +5,17 @@
     "main": "generate-data.js",
     "scripts": {
         "test": "./node_modules/.bin/testcafe chrome test/ui/ -e --screenshots-on-fails -s screenshots",
-        "test-headless": "./node_modules/.bin/testcafe \"chrome:headless\" test/ui/ -e --screenshots-on-fails -s screenshots"
+        "test-headless": "./node_modules/.bin/testcafe \"chrome:headless\" test/ui/ -e --screenshots-on-fails -s screenshots",
+        "watch": "parcel watch -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --no-hmr src/js/index.js",
+        "build": "parcel build -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js src/js/index.js"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "devDependencies": {
         "csv-stringify": "^4.3.1",
-        "lodash": "^4.17.11"
+        "lodash": "^4.17.11",
+        "parcel-bundler": "^1.10.3"
     },
     "dependencies": {
         "immutable": "^4.0.0-rc.12",
