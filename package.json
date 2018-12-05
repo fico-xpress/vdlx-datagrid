@@ -7,7 +7,7 @@
         "test": "./node_modules/.bin/testcafe chrome test/ui/ -e --screenshots-on-fails -s screenshots",
         "test-headless": "./node_modules/.bin/testcafe \"chrome:headless\" test/ui/ -e --screenshots-on-fails -s screenshots",
         "watch": "parcel watch -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --no-hmr src/js/index.js",
-        "build": "parcel build -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js src/js/index.js"
+        "build": "parcel build -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --no-minify src/js/index.js"
     },
     "keywords": [],
     "author": "",
