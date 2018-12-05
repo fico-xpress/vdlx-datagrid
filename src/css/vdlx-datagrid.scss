@@ -1,0 +1,167 @@
+//colors
+$black: #000000;
+$color-table-header: #d2e9f4;
+$color-medium-grey: #cccccc;
+$color-light-grey: #f2f2f2;
+$color-selected: #fff8c1;
+
+vdlx-datagrid {
+  display: block;
+  color: $black;
+  .tabulator {
+    &.table-striped {
+      .tabulator-table {
+      }
+      .tabulator-loader {
+      }
+      .tabulator-loader-msg {
+      }
+      .tabulator-loading {
+      }
+      .tabulator-error {
+      }
+      .tabulator-placeholder {
+      }
+      .tabulator-moving {
+      }
+      .tabulator-block-select {
+      }
+      .tabulator-movingrow-sending {
+      }
+      .tabulator-movingrow-receiving {
+      }
+      .tabulator-header {
+        background-color: $color-table-header;
+        border-bottom: 1px solid $color-medium-grey;
+        .tabulator-col {
+          background-color: $color-table-header;
+          line-height: 17px;
+        }
+      }
+      .tabulator-headers {
+      }
+      .tabulator-calcs-holder {
+      }
+      .tabulator-col {
+      }
+      .tabulator-col-content {
+        text-align: center;
+        font-weight: 400;
+      }
+      .tabulator-col-title {
+      }
+      .tabulator-col-group {
+      }
+      .tabulator-col-group-cols {
+      }
+      .tabulator-handle {
+      }
+      .tabulator-title-editor {
+      }
+      .tabulator-header-filter {
+      }
+      .tabulator-sortable {
+      }
+      .tabulator-frozen {
+      }
+      .tabulator-frozen-left {
+      }
+      .tabulator-frozen-right {
+      }
+      .tabulator-row-resize-handle {
+      }
+      .tabulator-col-vertical {
+      }
+      .tabulator-col-vertical-flip {
+      }
+      .tabulator-row {
+        border-bottom: 1px solid $color-medium-grey;
+        &:nth-child(2n) {
+          background-color: $color-light-grey;
+        }
+      }
+      .tabulator-row-odd {
+      }
+      .tabulator-row-even {
+      }
+      .tabulator-selectable {
+      }
+      .tabulator-unselectable {
+      }
+      .tabulator-selected {
+      }
+      .tabulator-validation-fail {
+      }
+      .tabulator-group {
+      }
+      .tabulator-group-visible {
+      }
+      .tabulator-group-level-X {
+      }
+      .tabulator-calcs {
+      }
+      .tabulator-calcs-top {
+      }
+      .tabulator-calcs-bottom {
+      }
+      .tabulator-row-handle {
+      }
+      .tabulator-row-handle-box {
+      }
+      .tabulator-row-handle-bar {
+      }
+      .tabulator-responsive-collapse {
+      }
+      .tabulator-footer {
+      }
+      .tabulator-paginator {
+      }
+      .tabulator-pages {
+      }
+      .tabulator-page {
+      }
+      .tabulator-tableHolder {
+        .tabulator-cell {
+          .checkbox-editor {
+            text-align: center;
+            line-height: 17px;
+          }
+          &.index-numeric {
+            text-align: right;
+            font-weight: 700;
+          }
+          &.editable-numeric {
+            text-align: right;
+          }
+          &.numeric {
+            text-align: right;
+          }
+        }
+      }
+    }
+    &.table-bordered {
+      border: 1px solid $color-medium-grey;
+      .tabulator-header .tabulator-col {
+        border-color: $color-medium-grey;
+      }
+    }
+    &.table-condensed .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+      padding: 5px 9px;
+      &.tabulator-editing {
+        padding: 0;
+        background-color: $color-selected;
+      }
+      &.editable-numeric.tabulator-editing input {
+        text-align: right;
+        padding: 5px 9px !important;
+      }
+    }
+  }
+  &.scrolling .tabulator-tableHolder {
+    max-height: 600px;
+  }
+}
+
+.tabulator.table-bordered .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+  border-color: $color-medium-grey;
+}
