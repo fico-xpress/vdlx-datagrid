@@ -123,8 +123,8 @@ export default function (element, attributes, api) {
         }
     }
 
-    $tableDiv = $('<div/>');
+    const $tableDiv = $('<div/>');
     $tableDiv.attr('id', tableId.rawValue);
     $tableDiv.addClass('table-striped table-bordered table-condensed');
     $element.append($tableDiv);
-        }
+}

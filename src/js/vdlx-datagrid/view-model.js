@@ -1,3 +1,4 @@
+import withData from './data-loader';
 import Datagrid from './datagrid';
 
 const COLUMN_UPDATE_DELAY = 100;
@@ -14,12 +15,12 @@ function isNullOrUndefined (val) {
     return _.isNull(val) || _.isUndefined(val);
 }
 
+const stripEmpties = _.partialRight(_.pick, _.flow(_.identity, _.negate(isNullOrUndefined)));
+
 export default function (params, componentInfo) {
     const view = insight.getView();
 
     var vm = {};
-    // debugger;
-    vm.columnConfig = [];
 
     if (params.width) {
         vm.tableWidth = params.width.replace('px', '');
@@ -29,11 +30,13 @@ export default function (params, componentInfo) {
 
     const defaultScenario = params.scenarioId || 0;
 
-    var datagridInstance = new Datagrid();
+    const tableOptions$ = ko.observable({});
+
+    const tableOptionsWithData$ = withData(tableOptions$);
+
+    var datagrid = new Datagrid(tableOptionsWithData$);
 
     function buildTable () {
-        var groupOpen = 'true';
-
         const datagridConfig = $(element)
             .find('vdlx-datagrid-column')
             .map(function (idx, element) {
@@ -105,7 +108,9 @@ export default function (params, componentInfo) {
             overrides: overrides,
             scenarioList: scenarioList,
             onError: _.bindKey(self, '_wrapAlert'),
-            alwaysShowSelection: params.alwaysShowSelection
+            alwaysShowSelection: params.alwaysShowSelection,
+            gridHeight: params.gridHeight,
+            gridData: params.gridData
         };
 
         if (params.saveState === false) {
@@ -180,38 +185,8 @@ export default function (params, componentInfo) {
             return;
         }
 
-        datagridInstance.updateConfig(tableOptions);
+        tableOptions$(tableOptions);
 
-        tableOptions = {
-            columns: vm.columnConfig,
-            layout: 'fitColumns',
-            height: ko.unwrap(params.gridHeight) || '600px',
-            placeholder: 'Waiting for data',
-            // groupBy: groupBy,
-            groupStartOpen: groupOpen === 'true',
-            ajaxLoader: true // ???
-        };
-
-        tableOptions.columns = _.flatten(
-            _.map(indices, (setArray, setName) => {
-                return _.map(setArray, (setObject, setPosition) => {
-                    return _.assign(setObject, { title: setObject.set, field: setObject.set, setPosition: setPosition });
-                });
-            })
-        );
-
-        tableOptions.columns = tableOptions.columns.concat(
-            _.map(entities, entity => _.assign(entity, { title: entity.name, field: entity.name }))
-        );
-        vm.table = new Tabulator('#' + params.tableId, tableOptions);
-        vm.table
-            .setData(params.gridData)
-            .then(function () {
-                vm.table.redraw();
-            })
-            .catch(function (err) {
-                debugger;
-            });
     }
 
     const throttledBuildTable = _.throttle(buildTable, COLUMN_UPDATE_DELAY, { leading: false });
@@ -233,4 +208,4 @@ export default function (params, componentInfo) {
     buildTable();
 
     return vm;
-        }
+}
