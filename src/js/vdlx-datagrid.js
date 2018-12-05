@@ -1,3 +1,8 @@
+    insightModules.define('blah', [], function() {
+        debugger;
+    });
+
+
 const COLUMN_UPDATE_DELAY = 100;
 
 const VXDAttributes = [
@@ -134,6 +139,9 @@ VDL('vdlx-datagrid', {
 
         const defaultScenario = params.scenarioId || 0;
 
+        const pageMode = params.pageMode;
+        const gridHeight = ko.unwrap(params.gridHeight);
+
         function buildTable() {
 
             var groupOpen = 'true';
@@ -141,14 +149,12 @@ VDL('vdlx-datagrid', {
             var tableOptions = {
                 columns: vm.columnConfig,
                 layout: "fitColumns",
-                height: ko.unwrap(params.gridHeight) || '600px',
+                // height: '600px',
                 placeholder: 'Waiting for data',
                 // groupBy: groupBy,
                 groupStartOpen: groupOpen === 'true',
                 ajaxLoader: true, // ???
             };
-
-
 
             const datagridConfig = $(element).find('vdlx-datagrid-column').map(function (idx, element) {
                 return _.clone(element['autotableConfig']);

@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.js"],"names":["alert"],"mappings":";;;AAGA,aAFA,QAAA,4BAEAA,MAAM","file":"vdlx-datagrid.map","sourceRoot":"../../../src/js","sourcesContent":["\nimport '../css/vdlx-datagrid.css';\n\nalert('hey!');"]}
