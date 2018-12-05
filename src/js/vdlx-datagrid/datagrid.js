@@ -1,3 +1,5 @@
+import dataTransform from './data-transform';
+
 class Datagrid {
 
     constructor(options$) {
@@ -15,6 +17,8 @@ class Datagrid {
             ajaxLoader: true
         };
 
+        const data = dataTransform(options);
+
         defaults.columns = _.flatten(
             _.map(options.indicesOptions, (setArray, setName) => {
                 return _.map(setArray, (setObject, setPosition) => {
@@ -31,7 +35,7 @@ class Datagrid {
 
         const table = new Tabulator('#' + options.tableId, tableOptions);
         table
-            .setData(options.gridData)
+            .setData(options.gridData || data)
             .then(function () {
                 table.redraw();
             })

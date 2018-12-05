@@ -525,6 +525,120 @@ function withData(config$) {
 ;
 var _default = withData;
 exports.default = _default;
+},{}],"vdlx-datagrid/data-transform.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var DataUtils = insightModules.load('utils/data-utils');
+var createDenseData = insightModules.load('components/table/create-dense-data');
+
+var getAllColumnIndices = function getAllColumnIndices(schema, columnOptions) {
+  return columnOptions.map(function (option) {
+    return schema.getEntity(option.name).getIndexSets();
+  });
+};
+
+var getDisplayIndices = function getDisplayIndices(columnIndices, columnOptions) {
+  var setCount = {};
+  var numColumns = columnIndices.length;
+
+  var _loop = function _loop() {
+    var indices = columnIndices[i],
+        options = columnOptions[i];
+    var setPosns = DataUtils.getIndexPosns(indices);
+    indices.forEach(function (setName, i) {
+      var setPosn = setPosns[i];
+
+      if (DataUtils.getFilterValue(options.filters, setName, setPosn) == null) {
+        // i.e. if there is no filter, then this index is to be used
+        var key = {
+          name: setName,
+          position: setPosn
+        },
+            keyJson = JSON.stringify(key);
+        setCount[keyJson] = (setCount[keyJson] || 0) + 1;
+      }
+    });
+  };
+
+  for (var i = 0; i < numColumns; i++) {
+    _loop();
+  }
+
+  return _(setCount).pick(function (count) {
+    return count === numColumns;
+  }).keys().map(function (k) {
+    return JSON.parse(k);
+  }).value();
+}; // Build a key from the index set columns of a row. This may be partial, if not all index sets are displayed in the row
+
+
+var getPartialExposedKey = function getPartialExposedKey(setNameAndPosns, rowData) {
+  // Assume index columns always start at the beginning of the rowData array
+  return rowData.slice(0, setNameAndPosns.length);
+};
+
+var generateCompositeKey = function generateCompositeKey(setValues, setNameAndPosns, arrayIndices, arrayOptions) {
+  var setPosns = DataUtils.getIndexPosns(arrayIndices);
+  return arrayIndices.map(function (setName, i) {
+    var setPosn = setPosns[i];
+
+    var setIndex = _.findIndex(setNameAndPosns, {
+      name: setName,
+      position: setPosn
+    });
+
+    var filterValue = DataUtils.getFilterValue(arrayOptions.filters, setName, setPosn);
+
+    if (setIndex !== -1) {
+      return setValues[setIndex];
+    } else if (filterValue != null) {
+      return filterValue;
+    } else {
+      throw Error('Cannot generate table with incomplete index configuration. Missing indices: ' + setName + ' for entity: ' + arrayOptions.name);
+    }
+  });
+};
+
+var _default = function _default(config) {
+  var schema = insight.getView().getProject().getModelSchema();
+  var columnOptions = config.columnOptions || [];
+  var defaultScenario = config.scenario;
+  /** @type {string[][]} */
+
+  var columnIndices = getAllColumnIndices(schema, columnOptions);
+  /** @type {AutoTable~SetNameAndPosition} */
+
+  var setNameAndPosns = getDisplayIndices(columnIndices, columnOptions);
+
+  var indexScenarios = _(columnOptions).map('scenario').map(function (scenario) {
+    // Columns with no scenario specified use the default scenario
+    return scenario || defaultScenario;
+  }).uniq().value();
+
+  var arrayNames = _.map(columnOptions, 'name');
+
+  var arrays = _.map(columnOptions, function (column) {
+    return column.scenario.getArray(column.name);
+  });
+
+  var setNames = _.map(setNameAndPosns, 'name');
+
+  var sets = _.map(setNameAndPosns, function (setNameAndPosn) {
+    return _(indexScenarios).map(function (scenario) {
+      return scenario.getSet(setNameAndPosn.name);
+    }).flatten().uniq().value();
+  });
+
+  var createRow = _.partial(_.zipObject, setNames.concat(arrayNames));
+
+  return _.map(createDenseData(sets, arrays, setNameAndPosns, columnIndices, columnOptions, generateCompositeKey), createRow);
+};
+
+exports.default = _default;
 },{}],"vdlx-datagrid/datagrid.js":[function(require,module,exports) {
 "use strict";
 
@@ -532,6 +646,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+
+var _dataTransform = _interopRequireDefault(require("./data-transform"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -559,6 +677,7 @@ function () {
         groupStartOpen: false,
         ajaxLoader: true
       };
+      var data = (0, _dataTransform.default)(options);
       tableOptions.columns = _.flatten(_.map(options.indicesOptions, function (setArray, setName) {
         return _.map(setArray, function (setObject, setPosition) {
           return _.assign(setObject, {
@@ -575,8 +694,7 @@ function () {
         });
       }));
       var table = new Tabulator('#' + options.tableId, tableOptions);
-      debugger;
-      table.setData(options.gridData).then(function () {
+      table.setData(options.gridData || data).then(function () {
         table.redraw();
       }).catch(function (err) {
         debugger;
@@ -590,7 +708,7 @@ function () {
 ;
 var _default = Datagrid;
 exports.default = _default;
-},{}],"vdlx-datagrid/view-model.js":[function(require,module,exports) {
+},{"./data-transform":"vdlx-datagrid/data-transform.js"}],"vdlx-datagrid/view-model.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
