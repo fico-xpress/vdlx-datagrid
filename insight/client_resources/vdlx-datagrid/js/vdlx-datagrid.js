@@ -1,5 +1,5 @@
 (function (window) {
-    const Datagrid = window.DATAGRID.datagrid;
+    const withData = window.DATAGRID.withData;
 
     const COLUMN_UPDATE_DELAY = 100;
 
@@ -150,7 +150,15 @@
 
             const defaultScenario = params.scenarioId || 0;
 
-            var datagridInstance = new Datagrid();
+            const tableOptions$ = ko.observable({});
+
+            const tableOptionsWithData$ = withData(tableOptions$);
+
+            tableOptionsWithData$.subscribe(function (options) {
+                console.log('options', options);
+            });
+
+            // var datagridInstance = new Datagrid();
 
             function buildTable () {
                 var groupOpen = 'true';
@@ -301,7 +309,8 @@
                     return;
                 }
 
-                datagridInstance.updateConfig(tableOptions);
+                tableOptions$(tableOptions);
+                // datagridInstance.updateConfig(tableOptions);
 
                 tableOptions = {
                     columns: vm.columnConfig,

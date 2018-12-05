@@ -1,7 +1,7 @@
 <vdl version="4.1">
     <link href="vdlx-datagrid/css/bootstrap/tabulator_bootstrap.min.css" rel="stylesheet">
     <script src="vdlx-datagrid/js/tabulator.js"></script>
-    <script src="vdlx-datagrid/js/datagrid.js"></script>
+    <script src="vdlx-datagrid/js/data-loader.js"></script>
     <script src="vdlx-datagrid/js/vdlx-datagrid.js"></script>
     <script src="vdlx-datagrid/js/vdlx-datagrid-column.js"></script>
     <link rel="stylesheet" href="vdlx-datagrid/css/vdlx-datagrid.css">
