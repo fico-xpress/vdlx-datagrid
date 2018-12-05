@@ -16,7 +16,7 @@
         <vdl-section heading="Datagrid example">
             <vdl-row>
                 <vdl-column size="6">
-                    <vdlx-datagrid id="demo1" grid-data="=gridData">
+                    <vdlx-datagrid id="demo1" grid-data="=gridData" page-mode="paged" page-size="10">
                         <vdlx-datagrid-column set="SupportLevels"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ServiceLevelAgreements"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ServiceLevelAgreements" scenario="1"></vdlx-datagrid-column>
