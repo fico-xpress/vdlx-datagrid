@@ -119,13 +119,12 @@ export default function (params, componentInfo) {
         // }
 
         var pageMode = params['pageMode'];
-        debugger;
+
         if (pageMode === 'paged') {
             tableOptions.pagination = 'local';
             tableOptions.paginationSize = params.pageSize || 15;
         } else if (!pageMode || pageMode === 'none') {
-            // tableOptions.height = params.tableHeight || '1130px';
-            // tableOptions.height = '600px';
+            tableOptions.height = false;
         }
 
         if (params.rowFilter) {

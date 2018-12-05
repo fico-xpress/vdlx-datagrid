@@ -11,7 +11,6 @@ class Datagrid {
 
         const defaults = {
             layout: 'fitColumns',
-            // height: options.gridHeight || '600px', TODO is there ever a time that height is needed?
             placeholder: 'Waiting for data',
             groupStartOpen: false,
             ajaxLoader: true
