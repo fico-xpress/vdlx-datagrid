@@ -1,4 +1,4 @@
-import withData from './data-loader';
+import withScenarioData from './data-loader';
 import Datagrid from './datagrid';
 
 const COLUMN_UPDATE_DELAY = 100;
@@ -32,9 +32,7 @@ export default function (params, componentInfo) {
 
     const tableOptions$ = ko.observable({});
 
-    const tableOptionsWithData$ = withData(tableOptions$);
-
-    var datagrid = new Datagrid(tableOptionsWithData$);
+    var datagrid = new Datagrid(tableOptions$);
 
     function buildTable () {
         const datagridConfig = $(element)

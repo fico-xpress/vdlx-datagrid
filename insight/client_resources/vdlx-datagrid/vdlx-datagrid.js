@@ -332,17 +332,65 @@ function _default(element, attributes, api) {
   $tableDiv.addClass('table-striped table-bordered table-condensed');
   $element.append($tableDiv);
 }
-},{}],"vdlx-datagrid/data-loader.js":[function(require,module,exports) {
+},{}],"vdlx-datagrid/ko-utils.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.onSubscriptionDispose = onSubscriptionDispose;
+exports.onSubscribe = exports.filter = exports.combineAndMap = exports.combineLatest = exports.map = void 0;
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+/** @type {KnockoutStatic} */
+ko;
 
-console.log('data-loader');
+var map = _.curry(function (f, observable) {
+  return ko.pureComputed(function () {
+    return f(ko.unwrap(observable));
+  });
+}, 2);
+
+exports.map = map;
+
+var combineLatest = function combineLatest(observables) {
+  return ko.pureComputed(function () {
+    return _.map([].concat(observables), function (observable) {
+      return ko.unwrap(observable);
+    });
+  });
+};
+/**
+ * @param {Function} f
+ * @param {...KnockoutObservable} observables
+ * @returns {KnockoutObservable}
+*/
+
+
+exports.combineLatest = combineLatest;
+
+var combineAndMap = _.curry(function (f) {
+  for (var _len = arguments.length, observables = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    observables[_key - 1] = arguments[_key];
+  }
+
+  return map(f, combineLatest.apply(void 0, observables));
+}, 2);
+
+exports.combineAndMap = combineAndMap;
+
+var filter = _.curry(function (predicate, observable) {
+  var previousValue;
+  return map(function (val) {
+    if (predicate(val)) {
+      previousValue = val;
+      return val;
+    }
+
+    return previousValue;
+  }, observable);
+}, 2);
+
+exports.filter = filter;
 
 var onSubscribe = _.curry(function (f, observable) {
   var subscribe = observable.subscribe;
@@ -356,6 +404,8 @@ var onSubscribe = _.curry(function (f, observable) {
   return observable;
 }, 2);
 
+exports.onSubscribe = onSubscribe;
+
 function onSubscriptionDispose(f, subscription) {
   var dispose = subscription.dispose;
 
@@ -366,14 +416,23 @@ function onSubscriptionDispose(f, subscription) {
 
   return subscription;
 }
-/**
- * Lookup a scenario by index or id.
- *
- * @param {Array.<Scenario>} scenarios list of available scenarios
- * @param {(number|string)} identifier either scenario index or id to look up
- * @returns {Scenario} the matching scenario
- */
+},{}],"vdlx-datagrid/data-loader.js":[function(require,module,exports) {
+"use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _koUtils = require("./ko-utils");
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function findScenario(scenarios, identifier) {
   var result = null; // Find scenario by ID.
@@ -403,92 +462,71 @@ function findScenario(scenarios, identifier) {
   return result;
 }
 
-function getLabelsEntity(entityName) {
-  var modelSchema = insight.getView().getProject().getModelSchema();
-  return modelSchema.getEntity(entityName).getLabelsEntity();
-}
-
 function getAutoTableEntities(columnOptions) {
   var modelSchema = insight.getView().getProject().getModelSchema();
-  var entities = columnOptions.map(function (column) {
-    return column.name;
-  }).reduce(function (memo, current) {
-    memo.push(current);
-    return memo.concat(modelSchema.getEntity(current).getIndexSets());
-  }, []); // Also add entities from editor options set.
 
-  entities = columnOptions.filter(function (column) {
-    return column.editorOptionsSet;
-  }).map(function (column) {
-    return column.editorOptionsSet;
-  }).reduce(function (memo, current) {
-    return memo.concat(current);
-  }, entities);
+  var entities = _.map(columnOptions, 'name'); // and index sets
+
+
+  entities = entities.concat(_.flatten(_.map(entities, function (entity) {
+    return modelSchema.getEntity(entity).getIndexSets();
+  }))); // Also add entities from editor options set.
+
+  entities = entities.concat(_.filter(_.map(columnOptions, 'editorOptionsSet'), _.identity));
   entities = _.uniq(entities);
-  return entities.concat(entities.map(getLabelsEntity).filter(_.identity));
+  return entities.concat(_.filter(_.map(entities, function (entity) {
+    return modelSchema.getEntity(entity).getLabelsEntity();
+  }), _.identity));
 }
 
-function updateAutoTable(config, scenarios) {
+function getScenarios(config, scenarios) {
   scenarios = [].concat(scenarios);
-  var defaultScenario; // Bind a scenario per table.
+  var defaultScenario = _.isUndefined(config.scenario) ? scenarios[0] : findScenario(scenarios, config.scenario); // Bind a scenario per column - single table.
 
-  if (typeof config.scenario !== 'undefined') {
-    defaultScenario = findScenario(scenarios, config.scenario);
+  var columnsAndScenarios = _.zipObject(_.filter(_.map(config.columnOptions, function (currentColumn) {
+    return [currentColumn.id, findScenario(scenarios, currentColumn.scenario)];
+  }), function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+        columnId = _ref2[0],
+        scenario = _ref2[1];
 
-    if (!defaultScenario) {// return config;
-      // throw new Error(': Unable to bind AutoTable, scenario ' + config.scenario + ' not found');
-      // MODULE_NAME + ': Unable to bind AutoTable, scenario ' + config.scenario + ' not found');
-    }
-  } else {
-    defaultScenario = scenarios[0];
-  } // Bind a scenario per column - single table.
+    return !!scenario;
+  }));
 
-
-  config.columnOptions = _.map(config.columnOptions, function (currentColumn) {
-    if (currentColumn.scenario === undefined) {
-      return currentColumn;
-    }
-
-    var scenarioIdOrIndex;
-
-    if (_typeof(currentColumn.scenario) === 'object') {
-      scenarioIdOrIndex = currentColumn.scenario.getId();
-    } else {
-      // The user initially passes the scenario ID or index; we then overwrite it with the scenario.
-      scenarioIdOrIndex = currentColumn.scenario;
-    }
-
-    var scenario = findScenario(scenarios, scenarioIdOrIndex);
-
-    if (!scenario) {
-      return currentColumn; // throw new Error(': Unable to bind AutoTable, scenario ' + scenarioIdOrIndex + ' not found');
-    }
-
-    return _.assign(currentColumn, {
-      scenario: scenario
-    });
-  });
-
-  var autoTableOptions = _.extend({}, config, {
-    scenario: defaultScenario
-  });
-
-  return autoTableOptions;
+  return {
+    defaultScenario: defaultScenario,
+    scenarios: columnsAndScenarios
+  };
 }
+/**
+ *
+ * @param {*} config$
+ * @returns {KnockoutObservable<{defaultScenario: Scenario, scenarios: Scenario[]}>}
+ */
 
-function withData(config$) {
+
+function withScenarioData(config$) {
   var hasSubscription = false;
   var scenarios$ = ko.observable([]);
-  var configWithData$ = ko.pureComputed(function () {
-    var scenarios = ko.unwrap(scenarios$);
-    var config = ko.unwrap(config$);
 
-    if (!_.isEmpty(config) && !_.isEmpty(scenarios)) {
-      return updateAutoTable(ko.unwrap(config$), ko.unwrap(scenarios$));
+  var scenarioData$ = _.compose((0, _koUtils.map)(function (configAndScenarios) {
+    if (!configAndScenarios) {
+      return undefined;
     }
 
-    return undefined;
-  });
+    var _configAndScenarios = _slicedToArray(configAndScenarios, 2),
+        config = _configAndScenarios[0],
+        scenarios = _configAndScenarios[1];
+
+    return getScenarios(config, scenarios);
+  }), (0, _koUtils.filter)(function (_ref3) {
+    var _ref4 = _slicedToArray(_ref3, 2),
+        config = _ref4[0],
+        scenarios = _ref4[1];
+
+    return !_.isEmpty(config) && !_.isEmpty(scenarios);
+  }), _koUtils.combineLatest)([config$, scenarios$]);
+
   var scenarioObserverSubscription$ = ko.pureComputed(function () {
     var config = ko.unwrap(config$);
 
@@ -500,7 +538,7 @@ function withData(config$) {
 
     return undefined;
   });
-  return onSubscribe(function (subscription) {
+  return (0, _koUtils.onSubscribe)(function (subscription) {
     var subscriptions = [];
 
     if (!hasSubscription) {
@@ -510,36 +548,44 @@ function withData(config$) {
       hasSubscription = true;
     }
 
-    onSubscriptionDispose(function () {
-      hasSubscription = !!configWithData$.getSubscriptionsCount();
+    (0, _koUtils.onSubscriptionDispose)(function () {
+      hasSubscription = !!scenarioData$.getSubscriptionsCount();
 
       if (!hasSubscription) {
         _.each(subscriptions, function (sub) {
-          sub.dispose();
+          return sub.dispose();
         });
       }
     }, subscription);
-  }, configWithData$);
+  }, scenarioData$);
 }
 
 ;
-var _default = withData;
+var _default = withScenarioData;
 exports.default = _default;
-},{}],"vdlx-datagrid/data-transform.js":[function(require,module,exports) {
+},{"./ko-utils":"vdlx-datagrid/ko-utils.js"}],"vdlx-datagrid/data-transform.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.default = exports.getDisplayIndices = exports.getAllColumnIndices = void 0;
 var DataUtils = insightModules.load('utils/data-utils');
 var createDenseData = insightModules.load('components/table/create-dense-data');
 
-var getAllColumnIndices = function getAllColumnIndices(schema, columnOptions) {
-  return columnOptions.map(function (option) {
+var getAllColumnIndices = _.curry(function (schema, columnOptions) {
+  return _.map(columnOptions, function (option) {
     return schema.getEntity(option.name).getIndexSets();
   });
-};
+}, 2);
+/**
+ * @typedef {{name: string, position: number}} SetNameAndPosition 
+ */
+
+/** @returns {SetNameAndPosition[]} */
+
+
+exports.getAllColumnIndices = getAllColumnIndices;
 
 var getDisplayIndices = function getDisplayIndices(columnIndices, columnOptions) {
   var setCount = {};
@@ -573,13 +619,9 @@ var getDisplayIndices = function getDisplayIndices(columnIndices, columnOptions)
   }).keys().map(function (k) {
     return JSON.parse(k);
   }).value();
-}; // Build a key from the index set columns of a row. This may be partial, if not all index sets are displayed in the row
-
-
-var getPartialExposedKey = function getPartialExposedKey(setNameAndPosns, rowData) {
-  // Assume index columns always start at the beginning of the rowData array
-  return rowData.slice(0, setNameAndPosns.length);
 };
+
+exports.getDisplayIndices = getDisplayIndices;
 
 var generateCompositeKey = function generateCompositeKey(setValues, setNameAndPosns, arrayIndices, arrayOptions) {
   var setPosns = DataUtils.getIndexPosns(arrayIndices);
@@ -603,39 +645,30 @@ var generateCompositeKey = function generateCompositeKey(setValues, setNameAndPo
   });
 };
 
-var _default = function _default(config) {
-  var schema = insight.getView().getProject().getModelSchema();
-  var columnOptions = config.columnOptions || [];
-  var defaultScenario = config.scenario;
-  /** @type {string[][]} */
+var _default = function _default(allColumnIndices, columnOptions, setNamePosnsAndOptions, scenariosData) {
+  var defaultScenario = scenariosData.defaultScenario;
 
-  var columnIndices = getAllColumnIndices(schema, columnOptions);
-  /** @type {AutoTable~SetNameAndPosition} */
+  var indexScenarios = _.uniq(_.map(_.map(columnOptions, 'id'), function (id) {
+    return _.get(scenariosData.scenarios, id, defaultScenario);
+  }));
 
-  var setNameAndPosns = getDisplayIndices(columnIndices, columnOptions);
+  var arrayIds = _.map(columnOptions, 'id');
 
-  var indexScenarios = _(columnOptions).map('scenario').map(function (scenario) {
-    // Columns with no scenario specified use the default scenario
-    return scenario || defaultScenario;
-  }).uniq().value();
-
-  var arrayNames = _.map(columnOptions, 'name');
+  var setIds = _.map(setNamePosnsAndOptions, 'options.id');
 
   var arrays = _.map(columnOptions, function (column) {
-    return column.scenario.getArray(column.name);
+    return _.get(scenariosData.scenarios, column.id, defaultScenario).getArray(column.name);
   });
 
-  var setNames = _.map(setNameAndPosns, 'name');
-
-  var sets = _.map(setNameAndPosns, function (setNameAndPosn) {
+  var sets = _.map(setNamePosnsAndOptions, function (setNameAndPosn) {
     return _(indexScenarios).map(function (scenario) {
       return scenario.getSet(setNameAndPosn.name);
     }).flatten().uniq().value();
   });
 
-  var createRow = _.partial(_.zipObject, setNames.concat(arrayNames));
+  var createRow = _.partial(_.zipObject, setIds.concat(arrayIds));
 
-  return _.map(createDenseData(sets, arrays, setNameAndPosns, columnIndices, columnOptions, generateCompositeKey), createRow);
+  return _.map(createDenseData(sets, arrays, setNamePosnsAndOptions, allColumnIndices, columnOptions, generateCompositeKey), createRow);
 };
 
 exports.default = _default;
@@ -647,68 +680,157 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _dataTransform = _interopRequireDefault(require("./data-transform"));
+var _dataTransform = _interopRequireWildcard(require("./data-transform"));
+
+var _koUtils = require("./ko-utils");
+
+var _dataLoader = _interopRequireDefault(require("./data-loader"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+var createTabulatorFactory = function createTabulatorFactory(selector) {
+  return function (config) {
+    return new Tabulator(selector, config);
+  };
+};
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+var SelectOptions = insightModules.load('components/autotable-select-options');
 
-var Datagrid =
-/*#__PURE__*/
-function () {
-  function Datagrid(options$) {
-    _classCallCheck(this, Datagrid);
+var Datagrid = function Datagrid(options$) {
+  _classCallCheck(this, Datagrid);
 
-    options$.subscribe(this.buildTable);
-  }
+  var schema = insight.getView().getProject().getModelSchema();
+  var scenariosData$ = (0, _dataLoader.default)(options$);
+  var indicesOptions$ = (0, _koUtils.map)(_.property('indicesOptions'), options$);
+  var entitiesOptions$ = (0, _koUtils.map)(_.property('columnOptions'), options$);
+  var allColumnIndices$ = (0, _koUtils.map)((0, _dataTransform.getAllColumnIndices)(schema), entitiesOptions$);
+  /** @type {KnockoutComputed<import('./data-transform').SetNameAndPosition[]>} */
 
-  _createClass(Datagrid, [{
-    key: "buildTable",
-    value: function buildTable(options) {
-      $('#' + options.tableId).empty();
-      var tableOptions = {
-        layout: 'fitColumns',
-        height: options.gridHeight || '600px',
-        placeholder: 'Waiting for data',
-        groupStartOpen: false,
-        ajaxLoader: true
-      };
-      var data = (0, _dataTransform.default)(options);
-      tableOptions.columns = _.flatten(_.map(options.indicesOptions, function (setArray, setName) {
-        return _.map(setArray, function (setObject, setPosition) {
-          return _.assign(setObject, {
-            title: setObject.set,
-            field: setObject.set,
-            setPosition: setPosition
-          });
-        });
-      }));
-      tableOptions.columns = tableOptions.columns.concat(_.map(options.columnOptions, function (entity) {
-        return _.assign(entity, {
-          title: entity.name,
-          field: entity.name
-        });
-      }));
-      var table = new Tabulator('#' + options.tableId, tableOptions);
-      table.setData(options.gridData || data).then(function () {
-        table.redraw();
-      }).catch(function (err) {
-        debugger;
+  var setNameAndPosns$ = (0, _koUtils.combineAndMap)(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+        columnIndices = _ref2[0],
+        entitiesOptions = _ref2[1];
+
+    return (0, _dataTransform.getDisplayIndices)(columnIndices, entitiesOptions);
+  }, [allColumnIndices$, entitiesOptions$]);
+  var setNamePosnsAndOptions$ = (0, _koUtils.combineAndMap)(function (_ref3) {
+    var _ref4 = _slicedToArray(_ref3, 2),
+        setNameAndPosns = _ref4[0],
+        indicesOptions = _ref4[1];
+
+    return _.map(setNameAndPosns, function (setNameAndPosn) {
+      return _objectSpread({}, setNameAndPosn, {
+        options: _.get(indicesOptions, "".concat(setNameAndPosn.name, ".").concat(setNameAndPosn.position), {
+          id: "".concat(setNameAndPosn.name, ".").concat(setNameAndPosn.position)
+        })
       });
-    }
-  }]);
+    });
+  }, [setNameAndPosns$, indicesOptions$]);
+  var allScenarios$ = (0, _koUtils.map)(function (scenariosData) {
+    return scenariosData && _.uniq([scenariosData.defaultScenario].concat(_.values(scenariosData.scenarios)));
+  }, scenariosData$);
+  var indicesColumns$ = (0, _koUtils.combineAndMap)(function (_ref5) {
+    var _ref6 = _slicedToArray(_ref5, 2),
+        setNamePosnsAndOptions = _ref6[0],
+        allScenarios = _ref6[1];
 
-  return Datagrid;
-}();
+    return _.map(setNamePosnsAndOptions, function (setNameAndPosn) {
+      var name = setNameAndPosn.name,
+          options = setNameAndPosn.options;
+      var entity = schema.getEntity(name);
+      return {
+        title: String(options.title || entity.getAbbreviation() || name),
+        field: options.id,
+        mutatorData: function mutatorData(value, data, type, params) {
+          return SelectOptions.getLabel(schema, allScenarios, entity, value);
+        }
+      };
+    });
+  }, [setNamePosnsAndOptions$, allScenarios$]);
+  var entitiesColumns$ = (0, _koUtils.map)(function (entitiesOptions) {
+    return _.map(entitiesOptions, function (entity) {
+      return _.assign(entity, {
+        title: entity.name,
+        field: entity.id
+      });
+    });
+  }, entitiesOptions$);
+  var columns$ = (0, _koUtils.combineAndMap)(_.flatten, [indicesColumns$, entitiesColumns$]);
+  columns$.subscribe(console.log);
+  var tabulatorFactory$ = (0, _koUtils.map)(function (options) {
+    return options.tableId ? createTabulatorFactory("#".concat(options.tableId)) : _.noop;
+  }, options$);
+  var tabulatorOptions$ = (0, _koUtils.map)(function (options) {
+    return {
+      layout: 'fitColumns',
+      height: options.gridHeight || '600px',
+      placeholder: 'Waiting for data',
+      groupStartOpen: false,
+      ajaxLoader: true,
+      columns: []
+    };
+  }, options$);
+  tabulatorOptions$.subscribe(console.log);
+  var table$ = (0, _koUtils.combineAndMap)(function (_ref7) {
+    var _ref8 = _slicedToArray(_ref7, 2),
+        factory = _ref8[0],
+        options = _ref8[1];
 
-;
+    return factory(options);
+  }, [tabulatorFactory$, tabulatorOptions$]);
+  table$.subscribe(function (oldTable) {
+    return oldTable && oldTable.destroy();
+  }, null, 'beforeChange');
+  var data$ = (0, _koUtils.combineAndMap)(function (params) {
+    return !_.some(params, _.isEmpty) && _dataTransform.default.apply(void 0, _toConsumableArray(params));
+  }, [allColumnIndices$, entitiesColumns$, setNamePosnsAndOptions$, scenariosData$]);
+  (0, _koUtils.combineAndMap)(function (_ref9) {
+    var _ref10 = _slicedToArray(_ref9, 2),
+        table = _ref10[0],
+        data = _ref10[1];
+
+    return table && data && table.setData(data).then(function () {
+      table.redraw();
+    }).catch(function (err) {
+      debugger;
+    });
+  }, [table$, data$]).subscribe(_.noop);
+  (0, _koUtils.combineAndMap)(function (_ref11) {
+    var _ref12 = _slicedToArray(_ref11, 2),
+        table = _ref12[0],
+        columns = _ref12[1];
+
+    return table && columns && table.setColumns(columns);
+  }, [table$, columns$]).subscribe(_.noop);
+};
+
 var _default = Datagrid;
 exports.default = _default;
-},{"./data-transform":"vdlx-datagrid/data-transform.js"}],"vdlx-datagrid/view-model.js":[function(require,module,exports) {
+},{"./data-transform":"vdlx-datagrid/data-transform.js","./ko-utils":"vdlx-datagrid/ko-utils.js","./data-loader":"vdlx-datagrid/data-loader.js"}],"vdlx-datagrid/view-model.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -751,8 +873,7 @@ function _default(params, componentInfo) {
   var element = componentInfo.element;
   var defaultScenario = params.scenarioId || 0;
   var tableOptions$ = ko.observable({});
-  var tableOptionsWithData$ = (0, _dataLoader.default)(tableOptions$);
-  var datagrid = new _datagrid.default(tableOptionsWithData$);
+  var datagrid = new _datagrid.default(tableOptions$);
 
   function buildTable() {
     var datagridConfig = $(element).find('vdlx-datagrid-column').map(function (idx, element) {
@@ -1079,6 +1200,8 @@ VDL('vdlx-datagrid', {
         }, {});
       });
 
+      var columnId = _.uniqueId('datagrid-column');
+
       var buildColumn = _.throttle(function (done) {
         console.log('vdlx-datagrid update column');
 
@@ -1097,7 +1220,8 @@ VDL('vdlx-datagrid', {
           selectNull: params.editorOptionsIncludeEmpty,
           checkedValue: params.editorCheckedValue,
           uncheckedValue: params.editorUncheckedValue,
-          editorType: params.editorType
+          editorType: params.editorType,
+          id: columnId
         };
 
         if (params.editorOptions) {

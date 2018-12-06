@@ -26,9 +26,9 @@
                 <vdl-column size="6">
                     <vdl-table id="demo2" height="600">
                         <vdl-table-column set="SupportLevels"></vdl-table-column>
-                        <vdl-table-column entity="ServiceLevelAgreements"></vdl-table-column>
-                        <vdl-table-column entity="ServiceLevelAgreements" scenario="1"></vdl-table-column>
-                        <vdl-table-column entity="SupportCosts"></vdl-table-column>
+                        <vdl-table-column editable="true" entity="ServiceLevelAgreements"></vdl-table-column>
+                        <vdl-table-column editable="true" entity="ServiceLevelAgreements" scenario="1"></vdl-table-column>
+                        <vdl-table-column editable="true" entity="SupportCosts"></vdl-table-column>
                     </vdl-table>
                 </vdl-column>
             </vdl-row>
