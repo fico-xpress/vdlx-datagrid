@@ -168,6 +168,10 @@ vdlx-datagrid {
     background-color: lightblue;
     margin-bottom: 20px;
   }
+
+  vdlx-datagrid-column {
+    display: none;
+  }
 }
 
 .tabulator.table-bordered .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
