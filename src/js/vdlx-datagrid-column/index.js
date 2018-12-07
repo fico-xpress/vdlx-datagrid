@@ -177,6 +177,8 @@
                 }, {});
             });
 
+            const columnId = _.uniqueId('datagrid-column');
+
             var buildColumn = _.throttle(function (done) {
                 console.log('vdlx-datagrid update column');
                 var columnReady = $(componentInfo.element).find('vdl-index-filter').length === _.size(indexFilters$());
@@ -194,7 +196,8 @@
                     selectNull: params.editorOptionsIncludeEmpty,
                     checkedValue: params.editorCheckedValue,
                     uncheckedValue: params.editorUncheckedValue,
-                    editorType: params.editorType
+                    editorType: params.editorType,
+                    id: columnId 
                 };
 
                 if (params.editorOptions) {

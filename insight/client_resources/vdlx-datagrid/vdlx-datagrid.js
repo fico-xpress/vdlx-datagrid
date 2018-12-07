@@ -230,8 +230,11 @@ function _default(element, attributes, api) {
 
   var pageMode = attributes['page-mode'];
 
-  if (pageMode) {
+  if (pageMode && pageMode.rawValue === 'paged') {
     paramsBuilder.addParam('pageMode', pageMode.rawValue);
+  } else {
+    paramsBuilder.addParam('pageMode', 'scrolling');
+    $(element).addClass('scrolling');
   } // TODO No table search in vdlx-datagrid
   // var showFilter = attributes['show-filter'];
   // if (showFilter) {
@@ -326,226 +329,51 @@ function _default(element, attributes, api) {
       paramsBuilder.addParam('gridHeight', gridHeight.expression.value, true);
     }
   }
+  /*
+  Create the DIV placeholder to attach Tabulator component to. 
+   */
+
 
   var $tableDiv = $('<div/>');
   $tableDiv.attr('id', tableId.rawValue);
   $tableDiv.addClass('table-striped table-bordered table-condensed');
   $element.append($tableDiv);
-}
-},{}],"vdlx-datagrid/data-loader.js":[function(require,module,exports) {
-"use strict";
+  /*
+  Create to DIV to hide the built-in pagination
+   */
+
+  var $hiddenFooter = $('<div class="hidden-footer-toolbar" style="display: none"/>');
+  $element.append($hiddenFooter);
+  /*
+  Create the Footer toolbar with FICO pagination control.
+   */
 
   var $footerToolBar = $('<div class="footer-toolbar"/>');
   $element.append($footerToolBar);
 }
-},{}],"vdlx-datagrid/data-loader.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-console.log('data-loader');
-
-var onSubscribe = _.curry(function (f, observable) {
-  var subscribe = observable.subscribe;
-
-  observable.subscribe = function () {
-    var subscription = subscribe.apply(observable, arguments);
-    f(subscription);
-    return subscription;
-  };
-
-  return observable;
-}, 2);
-
-function onSubscriptionDispose(f, subscription) {
-  var dispose = subscription.dispose;
-
-  subscription.dispose = function () {
-    dispose.apply(subscription, arguments);
-    f();
-  };
-
-  return subscription;
-}
-/**
- * Lookup a scenario by index or id.
- *
- * @param {Array.<Scenario>} scenarios list of available scenarios
- * @param {(number|string)} identifier either scenario index or id to look up
- * @returns {Scenario} the matching scenario
- */
-
-
-function findScenario(scenarios, identifier) {
-  var result = null; // Find scenario by ID.
-
-  scenarios.some(function (currentScenario) {
-    if (currentScenario.getId() === identifier) {
-      result = currentScenario;
-      return true;
-    }
-
-    return false;
-  });
-
-  if (result) {
-    return result;
-  } // Find by position.
-
-
-  scenarios.some(function (currentScenario) {
-    if (currentScenario.getSelectionIndex() === identifier) {
-      result = currentScenario;
-      return true;
-    }
-
-    return false;
-  });
-  return result;
-}
-
-function getLabelsEntity(entityName) {
-  var modelSchema = insight.getView().getProject().getModelSchema();
-  return modelSchema.getEntity(entityName).getLabelsEntity();
-}
-
-function getAutoTableEntities(columnOptions) {
-  var modelSchema = insight.getView().getProject().getModelSchema();
-  var entities = columnOptions.map(function (column) {
-    return column.name;
-  }).reduce(function (memo, current) {
-    memo.push(current);
-    return memo.concat(modelSchema.getEntity(current).getIndexSets());
-  }, []); // Also add entities from editor options set.
-
-  entities = columnOptions.filter(function (column) {
-    return column.editorOptionsSet;
-  }).map(function (column) {
-    return column.editorOptionsSet;
-  }).reduce(function (memo, current) {
-    return memo.concat(current);
-  }, entities);
-  entities = _.uniq(entities);
-  return entities.concat(entities.map(getLabelsEntity).filter(_.identity));
-}
-
-function updateAutoTable(config, scenarios) {
-  scenarios = [].concat(scenarios);
-  var defaultScenario; // Bind a scenario per table.
-
-  if (typeof config.scenario !== 'undefined') {
-    defaultScenario = findScenario(scenarios, config.scenario);
-
-    if (!defaultScenario) {// return config;
-      // throw new Error(': Unable to bind AutoTable, scenario ' + config.scenario + ' not found');
-      // MODULE_NAME + ': Unable to bind AutoTable, scenario ' + config.scenario + ' not found');
-    }
-  } else {
-    defaultScenario = scenarios[0];
-  } // Bind a scenario per column - single table.
-
-
-  config.columnOptions = _.map(config.columnOptions, function (currentColumn) {
-    if (currentColumn.scenario === undefined) {
-      return currentColumn;
-    }
-
-    var scenarioIdOrIndex;
-
-    if (_typeof(currentColumn.scenario) === 'object') {
-      scenarioIdOrIndex = currentColumn.scenario.getId();
-    } else {
-      // The user initially passes the scenario ID or index; we then overwrite it with the scenario.
-      scenarioIdOrIndex = currentColumn.scenario;
-    }
-
-    var scenario = findScenario(scenarios, scenarioIdOrIndex);
-
-    if (!scenario) {
-      return currentColumn; // throw new Error(': Unable to bind AutoTable, scenario ' + scenarioIdOrIndex + ' not found');
-    }
-
-    return _.assign(currentColumn, {
-      scenario: scenario
-    });
-  });
-
-  var autoTableOptions = _.extend({}, config, {
-    scenario: defaultScenario
-  });
-
-  return autoTableOptions;
-}
-
-function withData(config$) {
-  var hasSubscription = false;
-  var scenarios$ = ko.observable([]);
-  var configWithData$ = ko.pureComputed(function () {
-    var scenarios = ko.unwrap(scenarios$);
-    var config = ko.unwrap(config$);
-
-    if (!_.isEmpty(config) && !_.isEmpty(scenarios)) {
-      return updateAutoTable(ko.unwrap(config$), ko.unwrap(scenarios$));
-    }
-
-    return undefined;
-  });
-  var scenarioObserverSubscription$ = ko.pureComputed(function () {
-    var config = ko.unwrap(config$);
-
-    if (!_.isEmpty(config.scenarioList) && !_.isEmpty(config.columnOptions)) {
-      return insight.getView().withScenarios(config.scenarioList).withEntities(getAutoTableEntities(config.columnOptions)).notify(function (scenarios) {
-        scenarios$(scenarios);
-      }).start();
-    }
-
-    return undefined;
-  });
-  return onSubscribe(function (subscription) {
-    var subscriptions = [];
-
-    if (!hasSubscription) {
-      subscriptions = [scenarioObserverSubscription$.subscribe(_.noop), scenarioObserverSubscription$.subscribe(function (oldScenarioObserver) {
-        oldScenarioObserver && oldScenarioObserver.dispose();
-      }, null, 'beforeChange')];
-      hasSubscription = true;
-    }
-
-    onSubscriptionDispose(function () {
-      hasSubscription = !!configWithData$.getSubscriptionsCount();
-
-      if (!hasSubscription) {
-        _.each(subscriptions, function (sub) {
-          sub.dispose();
-        });
-      }
-    }, subscription);
-  }, configWithData$);
-}
-
-;
-var _default = withData;
-exports.default = _default;
 },{}],"vdlx-datagrid/data-transform.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.default = exports.getDisplayIndices = exports.getAllColumnIndices = void 0;
 var DataUtils = insightModules.load('utils/data-utils');
 var createDenseData = insightModules.load('components/table/create-dense-data');
 
-var getAllColumnIndices = function getAllColumnIndices(schema, columnOptions) {
-  return columnOptions.map(function (option) {
+var getAllColumnIndices = _.curry(function (schema, columnOptions) {
+  return _.map(columnOptions, function (option) {
     return schema.getEntity(option.name).getIndexSets();
   });
-};
+}, 2);
+/**
+ * @typedef {{name: string, position: number}} SetNameAndPosition 
+ */
+
+/** @returns {SetNameAndPosition[]} */
+
+
+exports.getAllColumnIndices = getAllColumnIndices;
 
 var getDisplayIndices = function getDisplayIndices(columnIndices, columnOptions) {
   var setCount = {};
@@ -579,13 +407,9 @@ var getDisplayIndices = function getDisplayIndices(columnIndices, columnOptions)
   }).keys().map(function (k) {
     return JSON.parse(k);
   }).value();
-}; // Build a key from the index set columns of a row. This may be partial, if not all index sets are displayed in the row
-
-
-var getPartialExposedKey = function getPartialExposedKey(setNameAndPosns, rowData) {
-  // Assume index columns always start at the beginning of the rowData array
-  return rowData.slice(0, setNameAndPosns.length);
 };
+
+exports.getDisplayIndices = getDisplayIndices;
 
 var generateCompositeKey = function generateCompositeKey(setValues, setNameAndPosns, arrayIndices, arrayOptions) {
   var setPosns = DataUtils.getIndexPosns(arrayIndices);
@@ -609,43 +433,295 @@ var generateCompositeKey = function generateCompositeKey(setValues, setNameAndPo
   });
 };
 
-var _default = function _default(config) {
-  var schema = insight.getView().getProject().getModelSchema();
-  var columnOptions = config.columnOptions || [];
-  var defaultScenario = config.scenario;
-  /** @type {string[][]} */
+var _default = function _default(allColumnIndices, columnOptions, setNamePosnsAndOptions, scenariosData) {
+  var defaultScenario = scenariosData.defaultScenario;
 
-  var columnIndices = getAllColumnIndices(schema, columnOptions);
-  /** @type {AutoTable~SetNameAndPosition} */
+  var indexScenarios = _.uniq(_.map(_.map(columnOptions, 'id'), function (id) {
+    return _.get(scenariosData.scenarios, id, defaultScenario);
+  }));
 
-  var setNameAndPosns = getDisplayIndices(columnIndices, columnOptions);
+  var arrayIds = _.map(columnOptions, 'id');
 
-  var indexScenarios = _(columnOptions).map('scenario').map(function (scenario) {
-    // Columns with no scenario specified use the default scenario
-    return scenario || defaultScenario;
-  }).uniq().value();
-
-  var arrayNames = _.map(columnOptions, 'name');
+  var setIds = _.map(setNamePosnsAndOptions, 'options.id');
 
   var arrays = _.map(columnOptions, function (column) {
-    return column.scenario.getArray(column.name);
+    return _.get(scenariosData.scenarios, column.id, defaultScenario).getArray(column.name);
   });
 
-  var setNames = _.map(setNameAndPosns, 'name');
-
-  var sets = _.map(setNameAndPosns, function (setNameAndPosn) {
+  var sets = _.map(setNamePosnsAndOptions, function (setNameAndPosn) {
     return _(indexScenarios).map(function (scenario) {
       return scenario.getSet(setNameAndPosn.name);
     }).flatten().uniq().value();
   });
 
-  var createRow = _.partial(_.zipObject, setNames.concat(arrayNames));
+  var createRow = _.partial(_.zipObject, setIds.concat(arrayIds));
 
-  return _.map(createDenseData(sets, arrays, setNameAndPosns, columnIndices, columnOptions, generateCompositeKey), createRow);
+  return _.map(createDenseData(sets, arrays, setNamePosnsAndOptions, allColumnIndices, columnOptions, generateCompositeKey), createRow);
 };
 
 exports.default = _default;
-},{}],"vdlx-datagrid/paginator.js":[function(require,module,exports) {
+},{}],"vdlx-datagrid/ko-utils.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.onSubscriptionDispose = onSubscriptionDispose;
+exports.withDeepEquals = exports.withEqualityComparer = exports.onSubscribe = exports.startWith = exports.filter = exports.combineMap = exports.combineLatest = exports.map = void 0;
+
+/** @type {KnockoutStatic} */
+ko;
+
+var map = _.curry(function (f, observable) {
+  return ko.pureComputed(function () {
+    return f(ko.unwrap(observable));
+  });
+}, 2);
+
+exports.map = map;
+
+var combineLatest = function combineLatest(observables) {
+  return ko.pureComputed(function () {
+    return _.map([].concat(observables), function (observable) {
+      return ko.unwrap(observable);
+    });
+  });
+};
+/**
+ * @param {Function} f
+ * @param {...KnockoutObservable} observables
+ * @returns {KnockoutObservable}
+*/
+
+
+exports.combineLatest = combineLatest;
+
+var combineMap = _.curry(function (f) {
+  for (var _len = arguments.length, observables = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    observables[_key - 1] = arguments[_key];
+  }
+
+  return map(f, combineLatest.apply(void 0, observables));
+}, 2);
+
+exports.combineMap = combineMap;
+
+var filter = _.curry(function (predicate, observable) {
+  var previousValue = ko.unwrap(observable);
+  return map(function (val) {
+    if (predicate(val)) {
+      previousValue = val;
+      return val;
+    }
+
+    return previousValue;
+  }, observable);
+}, 2);
+
+exports.filter = filter;
+
+var startWith = _.curry(function (value, o2) {
+  var res = ko.observable(ko.unwrap(value));
+  var anotherSubscription;
+  return onSubscribe(function (subscription) {
+    if (!anotherSubscription) {
+      anotherSubscription = o2.subscribe(function (anotherValue) {
+        return res(anotherValue);
+      });
+    }
+
+    onSubscriptionDispose(function () {
+      if (!!res.getSubscriptionsCount()) {
+        anotherSubscription.dispose();
+        anotherSubscription = null;
+      }
+    }, subscription);
+  }, res);
+}, 2);
+
+exports.startWith = startWith;
+
+var onSubscribe = _.curry(function (f, observable) {
+  var subscribe = observable.subscribe;
+
+  observable.subscribe = function () {
+    var subscription = subscribe.apply(observable, arguments);
+    f(subscription);
+    return subscription;
+  };
+
+  return observable;
+}, 2);
+
+exports.onSubscribe = onSubscribe;
+
+function onSubscriptionDispose(f, subscription) {
+  var dispose = subscription.dispose;
+
+  subscription.dispose = function () {
+    dispose.apply(subscription, arguments);
+    f();
+  };
+
+  return subscription;
+}
+
+var withEqualityComparer = _.curry(function (f, obs) {
+  obs.equalityComparer = f;
+  return obs;
+}, 2);
+
+exports.withEqualityComparer = withEqualityComparer;
+var withDeepEquals = withEqualityComparer(_.isEqual);
+exports.withDeepEquals = withDeepEquals;
+},{}],"vdlx-datagrid/data-loader.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _koUtils = require("./ko-utils");
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function findScenario(scenarios, identifier) {
+  var result = null; // Find scenario by ID.
+
+  scenarios.some(function (currentScenario) {
+    if (currentScenario.getId() === identifier) {
+      result = currentScenario;
+      return true;
+    }
+
+    return false;
+  });
+
+  if (result) {
+    return result;
+  } // Find by position.
+
+
+  scenarios.some(function (currentScenario) {
+    if (currentScenario.getSelectionIndex() === identifier) {
+      result = currentScenario;
+      return true;
+    }
+
+    return false;
+  });
+  return result;
+}
+
+function getAutoTableEntities(columnOptions) {
+  var modelSchema = insight.getView().getProject().getModelSchema();
+
+  var entities = _.map(columnOptions, 'name'); // and index sets
+
+
+  entities = entities.concat(_.flatten(_.map(entities, function (entity) {
+    return modelSchema.getEntity(entity).getIndexSets();
+  }))); // Also add entities from editor options set.
+
+  entities = entities.concat(_.filter(_.map(columnOptions, 'editorOptionsSet'), _.identity));
+  entities = _.uniq(entities);
+  return entities.concat(_.filter(_.map(entities, function (entity) {
+    return modelSchema.getEntity(entity).getLabelsEntity();
+  }), _.identity));
+}
+
+function getScenarios(config, scenarios) {
+  scenarios = [].concat(scenarios);
+  var defaultScenario = _.isUndefined(config.scenario) ? scenarios[0] : findScenario(scenarios, config.scenario); // Bind a scenario per column - single table.
+
+  var columnsAndScenarios = _.zipObject(_.filter(_.map(config.columnOptions, function (currentColumn) {
+    return [currentColumn.id, findScenario(scenarios, currentColumn.scenario)];
+  }), function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+        columnId = _ref2[0],
+        scenario = _ref2[1];
+
+    return !!scenario;
+  }));
+
+  return {
+    defaultScenario: defaultScenario,
+    scenarios: columnsAndScenarios
+  };
+}
+/**
+ *
+ * @param {*} config$
+ * @returns {KnockoutObservable<{defaultScenario: Scenario, scenarios: Scenario[]}>}
+ */
+
+
+function withScenarioData(config$) {
+  var hasSubscription = false;
+  var scenarios$ = ko.observable([]);
+
+  var scenarioData$ = _.compose((0, _koUtils.map)(function (configAndScenarios) {
+    if (!configAndScenarios) {
+      return undefined;
+    }
+
+    var _configAndScenarios = _slicedToArray(configAndScenarios, 2),
+        config = _configAndScenarios[0],
+        scenarios = _configAndScenarios[1];
+
+    return getScenarios(config, scenarios);
+  }), (0, _koUtils.filter)(function (_ref3) {
+    var _ref4 = _slicedToArray(_ref3, 2),
+        config = _ref4[0],
+        scenarios = _ref4[1];
+
+    return !_.isEmpty(config) && !_.isEmpty(scenarios);
+  }), _koUtils.combineLatest)([config$, scenarios$]);
+
+  var scenarioObserverSubscription$ = ko.pureComputed(function () {
+    var config = ko.unwrap(config$);
+
+    if (!_.isEmpty(config.scenarioList) && !_.isEmpty(config.columnOptions)) {
+      return insight.getView().withScenarios(config.scenarioList).withEntities(getAutoTableEntities(config.columnOptions)).notify(function (scenarios) {
+        scenarios$(scenarios);
+      }).start();
+    }
+
+    return undefined;
+  });
+  return (0, _koUtils.onSubscribe)(function (subscription) {
+    var subscriptions = [];
+
+    if (!hasSubscription) {
+      subscriptions = [scenarioObserverSubscription$.subscribe(_.noop), scenarioObserverSubscription$.subscribe(function (oldScenarioObserver) {
+        oldScenarioObserver && oldScenarioObserver.dispose();
+      }, null, 'beforeChange')];
+      hasSubscription = true;
+    }
+
+    (0, _koUtils.onSubscriptionDispose)(function () {
+      hasSubscription = !!scenarioData$.getSubscriptionsCount();
+
+      if (!hasSubscription) {
+        _.each(subscriptions, function (sub) {
+          return sub.dispose();
+        });
+      }
+    }, subscription);
+  }, scenarioData$);
+}
+
+;
+var _default = withScenarioData;
+exports.default = _default;
+},{"./ko-utils":"vdlx-datagrid/ko-utils.js"}],"vdlx-datagrid/paginator.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -666,18 +742,70 @@ function () {
     _classCallCheck(this, Paginator);
 
     this.table = table;
-    debugger;
 
-    if (table) {
-      this.currentPage = table.getPage();
-      this.maxPage = table.getMaxPage();
+    if (table) {// this.currentPage = table.getPage();
+      // this.maxPage = table.getPageMax();
+      // this.pageSize = table.getPageSize();
     }
 
-    options$.subscribe(this.buildTable);
+    this.$paginationControl = $("<div class=\"datagrid-pagination-control\">\n    <div class=\"pull-right\">\n        <div class=\"paging_fico\">\n            <button class=\"reveal-btn btn\"><span class=\"paginate-control-text\">page 1 of 1 </span><i class=\"fico-arrow-down5\"></i>\n            </button>\n            <ul class=\"pager jumpto-pager\">\n                <li><a class=\"pagination-button-previous disabled\"><i class=\"fico-chevron-left\"></i></a></li>\n                <li><a class=\"pagination-button-next\"><i class=\"fico-chevron-right\"></i></a></li>\n            </ul>\n            <div class=\"jumpto-pagination hide\">\n                <div>\n                    <div class=\"jumpto-pagination-label\">Jump to page:</div>\n                    <input type=\"number\" class=\"jumpto-pagination-input\" value=\"1\"></div>\n                <div class=\"results-per-page\">\n                    <div class=\"jumpto-pagination-label\">Items per page:</div>\n                    <select class=\"results-per-page-selector\">\n                        <option value=\"5\">5</option>\n                        <option value=\"10\" selected>10</option>\n                        <option value=\"25\">25</option>\n                        <option value=\"50\">50</option>\n                        <option value=\"100\">100</option>\n<!--                        <option value=\"-1\">All</option>-->\n                    </select></div>\n            </div>\n        </div>\n    </div>\n</div>");
   }
+  /*
+  Tabulator Pagination methods
+    table.setPage(5);
+  table.nextPage();
+  table.previousPage();
+  table.setPageSize(50);
+  var pageSize = table.getPageSize();
+  table.getPage();
+  table.getPageMax();
+     */
 
 
   _createClass(Paginator, [{
+    key: "updatePageIndicators",
+    value: function updatePageIndicators() {
+      var pageNum = this.currentPage;
+      this.$pageInput.val(pageNum);
+
+      if (pageNum === 1) {
+        this.$prevBtn.addClass('disabled');
+      } else {
+        this.$prevBtn.removeClass('disabled');
+      }
+
+      if (pageNum === this.maxPage) {
+        this.$nextBtn.addClass('disabled');
+      } else {
+        this.$nextBtn.removeClass('disabled');
+      }
+
+      this.$pageNumbersSpan.text("Page ".concat(this.currentPage, " of ").concat(this.maxPage));
+    }
+  }, {
+    key: "previousPage",
+    value: function previousPage() {
+      if (this.currentPage > 1) {
+        this.table.previousPage();
+        this.updatePageIndicators();
+      }
+    }
+  }, {
+    key: "nextPage",
+    value: function nextPage() {
+      if (this.currentPage < this.maxPage) {
+        this.table.nextPage();
+        this.updatePageIndicators();
+      }
+    }
+  }, {
+    key: "goToPage",
+    value: function goToPage(pageNum) {
+      var currentPage = Math.max(1, Math.min(this.maxPage, pageNum));
+      this.currentPage = currentPage;
+      return currentPage;
+    }
+  }, {
     key: "appendTo",
     value: function appendTo($container) {
       var _this = this;
@@ -685,19 +813,57 @@ function () {
       $container.append(this.$paginationControl);
       this.$revealBtn = this.$paginationControl.find('.paging_fico .reveal-btn');
       this.$dropdown = this.$paginationControl.find('.paging_fico .jumpto-pagination');
+      this.$prevBtn = this.$paginationControl.find('.pagination-button-previous');
+      this.$nextBtn = this.$paginationControl.find('.pagination-button-next');
+      this.$pageInput = this.$paginationControl.find('.paging_fico .jumpto-pagination-input');
+      this.$perPageSelector = this.$paginationControl.find('.results-per-page-selector');
+      this.$pageNumbersSpan = this.$paginationControl.find('.paginate-control-text');
       this.$revealBtn.on('mousedown', function () {
         _this.$revealBtn.toggleClass('active-pager-btn');
 
         _this.$dropdown.toggleClass('hide');
       });
-      this.$prevBtn = this.$paginationControl.find('.pagination-button-previous');
       this.$prevBtn.on('mouseup', function () {
-        _this.table.previousPage();
+        _this.previousPage();
       });
-      this.$nextBtn = this.$paginationControl.find('.pagination-button-next');
       this.$nextBtn.on('mouseup', function () {
-        _this.table.nextPage();
+        _this.nextPage();
       });
+      this.$pageInput.on('input', function (evt) {
+        var val = _.parseInt(evt.target.value);
+
+        if (_.isNumber(val)) {
+          var actual = _this.goToPage(val);
+
+          if (actual !== val) {
+            _this.updatePageIndicators();
+          }
+        }
+      });
+      this.$perPageSelector.on('input', function (evt) {
+        var val = _.parseInt(evt.target.value);
+
+        _this.table.setPageSize(val);
+
+        _this.updatePageIndicators();
+      });
+
+      _.defer(function () {
+        _this.updatePageIndicators();
+      });
+    }
+  }, {
+    key: "currentPage",
+    get: function get() {
+      return this.table.getPage();
+    },
+    set: function set(num) {
+      return this.table.setPage(num);
+    }
+  }, {
+    key: "maxPage",
+    get: function get() {
+      return this.table.getPageMax();
     }
   }]);
 
@@ -713,11 +879,37 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _dataTransform = _interopRequireDefault(require("./data-transform"));
+var _dataTransform = _interopRequireWildcard(require("./data-transform"));
+
+var _koUtils = require("./ko-utils");
+
+var _dataLoader = _interopRequireDefault(require("./data-loader"));
 
 var _paginator = _interopRequireDefault(require("./paginator"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -725,64 +917,156 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+var SelectOptions = insightModules.load('components/autotable-select-options');
+
+var createTabulatorFactory = function createTabulatorFactory(selector) {
+  return function (config) {
+    return new Tabulator(selector, config);
+  };
+};
+
+var someEmpty = function someEmpty(values) {
+  return _.some(values, _.isEmpty);
+};
+
+var notSomeEmpty = _.negate(someEmpty);
+
 var Datagrid =
 /*#__PURE__*/
 function () {
-  /**
-   *
-   * @param options$ Table Options for passing to the Tabulator Library
-   * @param root of the VDLX-DATAGRID component
-   */
-  function Datagrid(options$, root) {
+  function Datagrid(root, options$, columnOptions$) {
     _classCallCheck(this, Datagrid);
 
-    debugger;
-    options$.subscribe(this.buildTable, this);
+    this.options$ = options$;
+    this.columnOptions$ = columnOptions$;
     this.componentRoot = root;
     this.table = undefined;
+    this.buildTable();
   }
 
   _createClass(Datagrid, [{
     key: "buildTable",
-    value: function buildTable(options) {
-      $('#' + options.tableId).empty();
-      var tableOptions = {
-        layout: 'fitColumns',
-        height: options.gridHeight || '600px',
-        placeholder: 'Waiting for data',
-        groupStartOpen: false,
-        ajaxLoader: true
-      };
-      var data = (0, _dataTransform.default)(options);
-      defaults.columns = _.flatten(_.map(options.indicesOptions, function (setArray, setName) {
-        return _.map(setArray, function (setObject, setPosition) {
-          return _.assign(setObject, {
-            title: setObject.set,
-            field: setObject.set,
-            setPosition: setPosition
+    value: function buildTable() {
+      var _this = this;
+
+      var columnOptions$ = this.columnOptions$;
+      var options$ = this.options$;
+      var schema = insight.getView().getProject().getModelSchema();
+
+      var scenariosData$ = _.compose((0, _koUtils.filter)(function (v) {
+        return v && v.defaultScenario;
+      }), (0, _koUtils.startWith)(undefined), _dataLoader.default)(columnOptions$);
+
+      var indicesOptions$ = (0, _koUtils.map)(_.property('indicesOptions'), columnOptions$);
+      var entitiesOptions$ = (0, _koUtils.map)(_.property('columnOptions'), columnOptions$);
+      var allColumnIndices$ = (0, _koUtils.map)((0, _dataTransform.getAllColumnIndices)(schema), entitiesOptions$);
+      var setNameAndPosns$ = (0, _koUtils.combineMap)(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            columnIndices = _ref2[0],
+            entitiesOptions = _ref2[1];
+
+        return (0, _dataTransform.getDisplayIndices)(columnIndices, entitiesOptions);
+      }, [allColumnIndices$, entitiesOptions$]);
+      var setNamePosnsAndOptions$ = (0, _koUtils.combineMap)(function (_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 2),
+            setNameAndPosns = _ref4[0],
+            indicesOptions = _ref4[1];
+
+        return _.map(setNameAndPosns, function (setNameAndPosn) {
+          return _objectSpread({}, setNameAndPosn, {
+            options: _.get(indicesOptions, "".concat(setNameAndPosn.name, ".").concat(setNameAndPosn.position), {
+              id: "".concat(setNameAndPosn.name, "_").concat(setNameAndPosn.position)
+            })
           });
         });
-      }));
-      tableOptions.columns = tableOptions.columns.concat(_.map(options.columnOptions, function (entity) {
-        return _.assign(entity, {
-          title: entity.name,
-          field: entity.name
+      }, [setNameAndPosns$, indicesOptions$]);
+      var allScenarios$ = (0, _koUtils.map)(function (scenariosData) {
+        return scenariosData && _.uniq([scenariosData.defaultScenario].concat(_.values(scenariosData.scenarios)));
+      }, scenariosData$);
+
+      var indicesColumns$ = _.compose((0, _koUtils.map)(function (values) {
+        var _values = _slicedToArray(values, 2),
+            setNamePosnsAndOptions = _values[0],
+            allScenarios = _values[1];
+
+        return _.map(setNamePosnsAndOptions, function (setNameAndPosn) {
+          var name = setNameAndPosn.name,
+              options = setNameAndPosn.options;
+          var entity = schema.getEntity(name);
+          return {
+            title: String(options.title || entity.getAbbreviation() || name),
+            field: options.id,
+            mutator: function mutator(value, data, type, params) {
+              return SelectOptions.getLabel(schema, allScenarios, entity, value);
+            }
+          };
         });
-      }));
-      var table = new Tabulator('#' + options.tableId, tableOptions);
-      table.setData(options.gridData || data).then(function () {
-        table.redraw();
-      }).catch(function (err) {
-        debugger;
-      });
+      }), _koUtils.withDeepEquals, (0, _koUtils.filter)(notSomeEmpty), (0, _koUtils.startWith)([]), _koUtils.combineLatest)([setNamePosnsAndOptions$, allScenarios$]);
+
+      var entitiesColumns$ = (0, _koUtils.map)(function (entitiesOptions) {
+        return _.map(entitiesOptions, function (entityOptions) {
+          var entity = schema.getEntity(entityOptions.name);
+          return _.assign(entityOptions, {
+            title: String(entityOptions.title || entity.getAbbreviation() || entityOptions.name),
+            field: entityOptions.id
+          });
+        });
+      }, entitiesOptions$);
+
+      var columns$ = _.compose((0, _koUtils.map)(_.flatten), (0, _koUtils.filter)(notSomeEmpty), (0, _koUtils.startWith)([]), _koUtils.combineLatest)([indicesColumns$, entitiesColumns$]);
+
+      var tabulatorFactory$ = (0, _koUtils.map)(function (options) {
+        return options.tableId ? createTabulatorFactory("#".concat(options.tableId)) : _.noop;
+      }, options$);
+      var tabulatorOptions$ = (0, _koUtils.map)(function (options) {
+        return {
+          layout: 'fitColumns',
+          placeholder: 'Waiting for data',
+          groupStartOpen: false,
+          ajaxLoader: true,
+          columns: [],
+          tableBuilt: _.partial(_this.tableBuilt, _this)
+        };
+      }, options$);
+      var table$ = (0, _koUtils.combineMap)(function (_ref5) {
+        var _ref6 = _slicedToArray(_ref5, 2),
+            factory = _ref6[0],
+            options = _ref6[1];
+
+        return factory(options);
+      }, [tabulatorFactory$, tabulatorOptions$]);
+      table$.subscribe(function (oldTable) {
+        return oldTable && oldTable.destroy();
+      }, null, 'beforeChange');
+
+      var data$ = _.compose((0, _koUtils.map)(function (params) {
+        return params && _dataTransform.default.apply(void 0, _toConsumableArray(params));
+      }), (0, _koUtils.filter)(notSomeEmpty), (0, _koUtils.startWith)(undefined), _koUtils.combineLatest)([allColumnIndices$, entitiesColumns$, setNamePosnsAndOptions$, scenariosData$]);
+
+      _.compose((0, _koUtils.map)(function (values) {
+        if (!values) {
+          return false;
+        }
+
+        var _values2 = _slicedToArray(values, 3),
+            table = _values2[0],
+            columns = _values2[1],
+            data = _values2[2];
+
+        table.setColumns(columns);
+        return table.setData(data).then(function () {
+          table.redraw();
+        }).catch(function (err) {
+          debugger;
+        });
+      }), (0, _koUtils.filter)(notSomeEmpty), (0, _koUtils.startWith)(undefined), _koUtils.combineLatest)([table$, columns$, data$]).subscribe(_.noop);
     }
   }, {
     key: "tableBuilt",
-    value: function tableBuilt() {
-      var $componentRoot = $(this.componentRoot);
+    value: function tableBuilt(self) {
+      var $componentRoot = $(self.componentRoot);
       var $footerToolBar = $componentRoot.find('.footer-toolbar');
-      debugger;
-      var paginatorControl = new _paginator.default(this.table);
+      var paginatorControl = new _paginator.default(this);
       paginatorControl.appendTo($footerToolBar);
     }
   }]);
@@ -792,15 +1076,13 @@ function () {
 
 var _default = Datagrid;
 exports.default = _default;
-},{"./data-transform":"vdlx-datagrid/data-transform.js","./paginator":"vdlx-datagrid/paginator.js"}],"vdlx-datagrid/view-model.js":[function(require,module,exports) {
+},{"./data-transform":"vdlx-datagrid/data-transform.js","./ko-utils":"vdlx-datagrid/ko-utils.js","./data-loader":"vdlx-datagrid/data-loader.js","./paginator":"vdlx-datagrid/paginator.js"}],"vdlx-datagrid/view-model.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = _default;
-
-var _dataLoader = _interopRequireDefault(require("./data-loader"));
 
 var _datagrid = _interopRequireDefault(require("./datagrid"));
 
@@ -809,6 +1091,7 @@ var _paginator = _interopRequireDefault(require("./paginator"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var COLUMN_UPDATE_DELAY = 100;
+var DEFAULT_GRID_PAGE_SIZE = 10;
 
 function parseIntOrKeep(val) {
   var result = _.parseInt(val);
@@ -826,8 +1109,68 @@ function isNullOrUndefined(val) {
 
 var stripEmpties = _.partialRight(_.pick, _.flow(_.identity, _.negate(isNullOrUndefined)));
 
+var getTableOptions = function getTableOptions(params) {
+  return function () {
+    var overrides = stripEmpties({
+      paging: params.pageMode,
+      pageLength: params.pageSize,
+      searching: params.showFilter,
+      columnFilter: params.columnFilter
+    });
+    var tableOptions = {
+      tableId: params.tableId,
+      addRemoveRow: params.addRemoveRow,
+      selectionAndNavigation: params.selectionNavigation,
+      overrides: overrides,
+      onError: _.bindKey(self, '_wrapAlert'),
+      alwaysShowSelection: params.alwaysShowSelection,
+      gridHeight: params.gridHeight,
+      gridData: params.gridData
+    };
+    var pageMode = params['pageMode'];
+
+    if (pageMode === 'paged') {
+      tableOptions.pagination = 'local';
+      tableOptions.paginationSize = params.pageSize || DEFAULT_GRID_PAGE_SIZE;
+      tableOptions.paginationElement = $('.hidden-footer-toolbar').get(0); // hide the built-in paginator
+    } else if (!pageMode || pageMode === 'none') {
+      tableOptions.height = false;
+    }
+
+    if (_.isFunction(params.rowFilter)) {
+      tableOptions.rowFilter = params.rowFilter;
+    }
+
+    tableOptions = stripEmpties(tableOptions);
+
+    if (!_.isUndefined(params.modifier)) {
+      if (_.isFunction(params.modifier)) {
+        // Pass cloned options so they cannot modify the original table options object
+        var modifiedTableOptions = params.modifier(_.cloneDeep(tableOptions));
+
+        if (_.isPlainObject(modifiedTableOptions)) {
+          tableOptions = modifiedTableOptions;
+        }
+      } else {// console.error('vdl-table (' + self.tableId + '): "modifier" attribute must be a function.');
+      }
+    }
+
+    if (tableOptions.addRemoveRow) {
+      var isEditable = tableOptions.columnOptions.some(function (column) {
+        return !!column.editable;
+      });
+
+      if (!isEditable) {
+        tableOptions.addRemoveRow = false; // not a hard error as this is used as a feature when making a table read only based on permissions
+        // console.log('vdl-table (' + self.tableId + "): add/remove rows disabled. Table needs to have at least one editable column to use this feature.");
+      }
+    }
+
+    return tableOptions;
+  };
+};
+
 function _default(params, componentInfo) {
-  var view = insight.getView();
   var vm = {};
 
   if (params.width) {
@@ -836,9 +1179,9 @@ function _default(params, componentInfo) {
 
   var element = componentInfo.element;
   var defaultScenario = params.scenarioId || 0;
-  var tableOptions$ = ko.observable({});
-  var tableOptionsWithData$ = (0, _dataLoader.default)(tableOptions$);
-  var datagrid = new _datagrid.default(tableOptionsWithData$, componentInfo.element);
+  var tableOptions$ = ko.pureComputed(getTableOptions(params));
+  var columnConfig$ = ko.observable({});
+  var datagrid = new _datagrid.default(componentInfo.element, tableOptions$, columnConfig$);
 
   function buildTable() {
     var datagridConfig = $(element).find('vdlx-datagrid-column').map(function (idx, element) {
@@ -898,75 +1241,7 @@ function _default(params, componentInfo) {
       return ko.unwrap(item.scenario);
     }).uniq().sortBy().value();
 
-    var overrides = stripEmpties({
-      paging: params.pageMode,
-      pageLength: params.pageSize,
-      searching: params.showFilter,
-      columnFilter: params.columnFilter
-    });
-    var tableOptions = {
-      tableId: params.tableId,
-      columnOptions: entities,
-      addRemoveRow: params.addRemoveRow,
-      selectionAndNavigation: params.selectionNavigation,
-      overrides: overrides,
-      scenarioList: scenarioList,
-      onError: _.bindKey(self, '_wrapAlert'),
-      alwaysShowSelection: params.alwaysShowSelection,
-      gridHeight: params.gridHeight,
-      gridData: params.gridData
-    };
-
-    if (params.saveState === false) {
-      tableOptions.saveState = params.saveState;
-    }
-
-    if (params.rowFilter) {
-      var filterObservable = ko.observable().extend({
-        functionObservable: {
-          onDependenciesChange: function onDependenciesChange() {
-            self.tableUpdate();
-          },
-          read: params.rowFilter
-        }
-      });
-
-      tableOptions.rowFilter = function () {
-        filterObservable.apply(null, arguments);
-        return filterObservable.peek();
-      };
-    }
-
-    if (_.keys(indices).length) {
-      tableOptions.indicesOptions = indices;
-    }
-
-    tableOptions = stripEmpties(tableOptions);
-
-    if (!_.isUndefined(params.modifier)) {
-      if (_.isFunction(params.modifier)) {
-        // Pass cloned options so they cannot modify the original table options object
-        var modifiedTableOptions = params.modifier(_.cloneDeep(tableOptions));
-
-        if (_.isPlainObject(modifiedTableOptions)) {
-          tableOptions = modifiedTableOptions;
-        }
-      } else {// console.error('vdl-table (' + self.tableId + '): "modifier" attribute must be a function.');
-      }
-    }
-
-    if (tableOptions.addRemoveRow) {
-      var isEditable = tableOptions.columnOptions.some(function (column) {
-        return !!column.editable;
-      });
-
-      if (!isEditable) {
-        tableOptions.addRemoveRow = false; // not a hard error as this is used as a feature when making a table read only based on permissions
-        // console.log('vdl-table (' + self.tableId + "): add/remove rows disabled. Table needs to have at least one editable column to use this feature.");
-      }
-    }
-
-    if (_.isEmpty(scenarioList) || _.isEmpty(tableOptions.columnOptions)) {
+    if (_.isEmpty(scenarioList) || _.isEmpty(entities)) {
       // console.debug('vdl-table (' + self.tableId + '): Scenario list or table column configuration is empty, ignoring update');
       // if (resolve) {
       //     resolve(tableOptions);
@@ -974,20 +1249,13 @@ function _default(params, componentInfo) {
       // empty table element, to get rid of old configuration
       // $table && $table.empty();
       return;
-    } // functions should not be used in the equality comparison
-
-
-    var noFns = _.partialRight(_.omit, _.isFunction);
-
-    if (_.isEqual(noFns(this._appliedTableOptions), noFns(tableOptions))) {
-      // console.debug('vdl-table (' + self.tableId + '): Table configuration unchanged, ignoring update');
-      // if (resolve) {
-      //     resolve(tableOptions);
-      // }
-      return;
     }
 
-    tableOptions$(tableOptions);
+    columnConfig$({
+      columnOptions: entities,
+      indicesOptions: indices,
+      scenarioList: scenarioList
+    });
   }
 
   var throttledBuildTable = _.throttle(buildTable, COLUMN_UPDATE_DELAY, {
@@ -1011,7 +1279,7 @@ function _default(params, componentInfo) {
   buildTable();
   return vm;
 }
-},{"./data-loader":"vdlx-datagrid/data-loader.js","./datagrid":"vdlx-datagrid/datagrid.js","./paginator":"vdlx-datagrid/paginator.js"}],"vdlx-datagrid/index.js":[function(require,module,exports) {
+},{"./datagrid":"vdlx-datagrid/datagrid.js","./paginator":"vdlx-datagrid/paginator.js"}],"vdlx-datagrid/index.js":[function(require,module,exports) {
 "use strict";
 
 var _attributes = _interopRequireDefault(require("./attributes"));
@@ -1165,6 +1433,8 @@ VDL('vdlx-datagrid', {
         }, {});
       });
 
+      var columnId = _.uniqueId('datagrid-column');
+
       var buildColumn = _.throttle(function (done) {
         console.log('vdlx-datagrid update column');
 
@@ -1183,7 +1453,8 @@ VDL('vdlx-datagrid', {
           selectNull: params.editorOptionsIncludeEmpty,
           checkedValue: params.editorCheckedValue,
           uncheckedValue: params.editorUncheckedValue,
-          editorType: params.editorType
+          editorType: params.editorType,
+          id: columnId
         };
 
         if (params.editorOptions) {

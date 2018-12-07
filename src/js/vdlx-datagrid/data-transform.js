@@ -1,13 +1,18 @@
 const DataUtils = insightModules.load('utils/data-utils');
 const createDenseData = insightModules.load('components/table/create-dense-data');
 
-const getAllColumnIndices = (schema, columnOptions) => {
-    return columnOptions.map(function (option) {
+export const getAllColumnIndices = _.curry((schema, columnOptions) => {
+    return _.map(columnOptions, function (option) {
         return schema.getEntity(option.name).getIndexSets();
     });
-};
+}, 2);
 
-const getDisplayIndices = (columnIndices, columnOptions) => {
+/**
+ * @typedef {{name: string, position: number}} SetNameAndPosition 
+ */
+
+/** @returns {SetNameAndPosition[]} */
+export const getDisplayIndices = (columnIndices, columnOptions) => {
     var setCount = {};
     var numColumns = columnIndices.length;
 
@@ -33,13 +38,7 @@ const getDisplayIndices = (columnIndices, columnOptions) => {
             return JSON.parse(k);
         })
         .value();
-
 }
-// Build a key from the index set columns of a row. This may be partial, if not all index sets are displayed in the row
-const getPartialExposedKey = function (setNameAndPosns, rowData) {
-    // Assume index columns always start at the beginning of the rowData array
-    return rowData.slice(0, setNameAndPosns.length);
-};
 
 const generateCompositeKey = function (setValues, setNameAndPosns, arrayIndices, arrayOptions) {
     const setPosns = DataUtils.getIndexPosns(arrayIndices);
@@ -58,33 +57,22 @@ const generateCompositeKey = function (setValues, setNameAndPosns, arrayIndices,
     });
 };
 
+export default (allColumnIndices, columnOptions, setNamePosnsAndOptions, scenariosData) => {
 
-export default (config) => {
-    var schema = insight.getView().getProject().getModelSchema();
-    var columnOptions = config.columnOptions || [];
-    var defaultScenario = config.scenario;
+    var defaultScenario = scenariosData.defaultScenario;
+    const indexScenarios = _.uniq(_.map(_.map(columnOptions, 'id'), id =>
+        _.get(scenariosData.scenarios, id, defaultScenario)
+    ));
 
-    /** @type {string[][]} */
-    var columnIndices = getAllColumnIndices(schema, columnOptions);
+    const arrayIds = _.map(columnOptions, 'id');
+    const setIds = _.map(setNamePosnsAndOptions, 'options.id');
 
-    /** @type {AutoTable~SetNameAndPosition} */
-    var setNameAndPosns = getDisplayIndices(columnIndices, columnOptions);
+    const arrays = _.map(columnOptions, column =>
+        _.get(scenariosData.scenarios, column.id, defaultScenario).getArray(column.name)
+    );
 
-    var indexScenarios = _(columnOptions)
-        .map('scenario')
-        .map(function (scenario) {
-            // Columns with no scenario specified use the default scenario
-            return scenario || defaultScenario;
-        })
-        .uniq()
-        .value();
-
-    const arrayNames = _.map(columnOptions, 'name');
-    const arrays = _.map(columnOptions, (column) => column.scenario.getArray(column.name));
-
-    const setNames = _.map(setNameAndPosns, 'name');
-    const sets = _.map(setNameAndPosns, setNameAndPosn => {
-        return _(indexScenarios) 
+    const sets = _.map(setNamePosnsAndOptions, setNameAndPosn => {
+        return _(indexScenarios)
             .map(function (scenario) {
                 return scenario.getSet(setNameAndPosn.name);
             })
@@ -93,7 +81,7 @@ export default (config) => {
             .value();
     });
 
-    const createRow = _.partial(_.zipObject, setNames.concat(arrayNames));
+    const createRow = _.partial(_.zipObject, setIds.concat(arrayIds));
 
-    return _.map(createDenseData(sets, arrays, setNameAndPosns, columnIndices, columnOptions, generateCompositeKey), createRow);
+    return _.map(createDenseData(sets, arrays, setNamePosnsAndOptions, allColumnIndices, columnOptions, generateCompositeKey), createRow);
 };

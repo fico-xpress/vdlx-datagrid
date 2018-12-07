@@ -1,34 +1,5 @@
-console.log('data-loader');
+import { onSubscribe, onSubscriptionDispose, combineLatest, filter, map } from "./ko-utils";
 
-var onSubscribe = _.curry(function (f, observable) {
-    var subscribe = observable.subscribe;
-    observable.subscribe = function () {
-        var subscription = subscribe.apply(observable, arguments);
-        f(subscription);
-        return subscription;
-    };
-
-    return observable;
-}, 2);
-
-function onSubscriptionDispose (f, subscription) {
-    var dispose = subscription.dispose;
-
-    subscription.dispose = function () {
-        dispose.apply(subscription, arguments);
-        f();
-    };
-
-    return subscription;
-}
-
-/**
- * Lookup a scenario by index or id.
- *
- * @param {Array.<Scenario>} scenarios list of available scenarios
- * @param {(number|string)} identifier either scenario index or id to look up
- * @returns {Scenario} the matching scenario
- */
 function findScenario (scenarios, identifier) {
     var result = null;
 
@@ -57,98 +28,60 @@ function findScenario (scenarios, identifier) {
     return result;
 }
 
-function getLabelsEntity (entityName) {
-    var modelSchema = insight.getView().getProject().getModelSchema();
-    return modelSchema.getEntity(entityName).getLabelsEntity();
-}
-
 function getAutoTableEntities (columnOptions) {
     var modelSchema = insight.getView().getProject().getModelSchema();
 
-    var entities = columnOptions
-        .map(function (column) {
-            return column.name;
-        })
-        .reduce(function (memo, current) {
-            memo.push(current);
-            return memo.concat(modelSchema.getEntity(current).getIndexSets());
-        }, []);
+    let entities = _.map(columnOptions, 'name');
+    // and index sets
+    entities = entities.concat(
+        _.flatten(_.map(entities, entity => modelSchema.getEntity(entity).getIndexSets()))
+    );
 
     // Also add entities from editor options set.
-    entities = columnOptions
-        .filter(function (column) {
-            return column.editorOptionsSet;
-        })
-        .map(function (column) {
-            return column.editorOptionsSet;
-        })
-        .reduce(function (memo, current) {
-            return memo.concat(current);
-        }, entities);
+    entities = entities.concat(
+        _.filter(_.map(columnOptions, 'editorOptionsSet'), _.identity)
+    );
 
     entities = _.uniq(entities);
 
-    return entities.concat(entities.map(getLabelsEntity).filter(_.identity));
+    return entities.concat(
+        _.filter(_.map(entities, (entity) => modelSchema.getEntity(entity).getLabelsEntity()), _.identity)
+    );
 }
 
-function updateAutoTable (config, scenarios) {
+function getScenarios (config, scenarios) {
     scenarios = [].concat(scenarios);
-    var defaultScenario;
-
-    // Bind a scenario per table.
-    if (typeof config.scenario !== 'undefined') {
-        defaultScenario = findScenario(scenarios, config.scenario);
-        if (!defaultScenario) {
-            // return config;
-            // throw new Error(': Unable to bind AutoTable, scenario ' + config.scenario + ' not found');
-            // MODULE_NAME + ': Unable to bind AutoTable, scenario ' + config.scenario + ' not found');
-        }
-    } else {
-        defaultScenario = scenarios[0];
-    }
+    const defaultScenario = _.isUndefined(config.scenario) ? scenarios[0] : findScenario(scenarios, config.scenario);
 
     // Bind a scenario per column - single table.
-    config.columnOptions = _.map(config.columnOptions, function (currentColumn) {
-        if (currentColumn.scenario === undefined) {
-            return currentColumn;
-        }
+    const columnsAndScenarios = _.zipObject(_.filter(_.map(config.columnOptions, currentColumn => [
+        currentColumn.id,
+        findScenario(scenarios, currentColumn.scenario)
+    ]), ([columnId, scenario]) => !!scenario));
 
-        var scenarioIdOrIndex;
-        if (typeof currentColumn.scenario === 'object') {
-            scenarioIdOrIndex = currentColumn.scenario.getId();
-        } else {
-            // The user initially passes the scenario ID or index; we then overwrite it with the scenario.
-            scenarioIdOrIndex = currentColumn.scenario;
-        }
-
-        var scenario = findScenario(scenarios, scenarioIdOrIndex);
-
-        if (!scenario) {
-            return currentColumn;
-            // throw new Error(': Unable to bind AutoTable, scenario ' + scenarioIdOrIndex + ' not found');
-        }
-
-        return _.assign(currentColumn, { scenario: scenario });
-    });
-
-    var autoTableOptions = _.extend({}, config, { scenario: defaultScenario });
-
-    return autoTableOptions;
+    return { defaultScenario: defaultScenario, scenarios: columnsAndScenarios };
 }
 
-function withData (config$) {
-
+/**
+ *
+ * @param {*} config$
+ * @returns {KnockoutObservable<{defaultScenario: Scenario, scenarios: Scenario[]}>}
+ */
+function withScenarioData (config$) {
     let hasSubscription = false;
     const scenarios$ = ko.observable([]);
 
-    const configWithData$ = ko.pureComputed(function () {
-        const scenarios = ko.unwrap(scenarios$);
-        const config = ko.unwrap(config$);
-        if (!_.isEmpty(config) && !_.isEmpty(scenarios)) {
-            return updateAutoTable(ko.unwrap(config$), ko.unwrap(scenarios$));
-        }
-        return undefined;
-    });
+    const scenarioData$ = _.compose(
+        map((configAndScenarios) => {
+            if (!configAndScenarios) {
+                return undefined;
+            }
+            const [config, scenarios] = configAndScenarios;
+            return getScenarios(config, scenarios);
+        }),
+        filter(([config, scenarios]) => !_.isEmpty(config) && !_.isEmpty(scenarios)),
+        combineLatest
+    )([config$, scenarios$]);
 
     const scenarioObserverSubscription$ = ko.pureComputed(function () {
         let config = ko.unwrap(config$);
@@ -176,13 +109,13 @@ function withData (config$) {
         }
 
         onSubscriptionDispose(function () {
-            hasSubscription = !!configWithData$.getSubscriptionsCount();
+            hasSubscription = !!scenarioData$.getSubscriptionsCount();
             if (!hasSubscription) {
-                _.each(subscriptions, function (sub) { sub.dispose(); });
+                _.each(subscriptions, sub => sub.dispose());
             }
         }, subscription);
 
-    }, configWithData$);
+    }, scenarioData$);
 };
 
-export default withData;
+export default withScenarioData;
