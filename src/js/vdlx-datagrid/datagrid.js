@@ -1,23 +1,30 @@
 import dataTransform, { getAllColumnIndices, getDisplayIndices } from './data-transform';
-import { map, combineMap } from './ko-utils';
+import { map, combineMap, filter, startWith, combineLatest, withDeepEquals } from './ko-utils';
 import withScenarioData from './data-loader';
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
 
 const createTabulatorFactory = selector => config => new Tabulator(selector, config);
+const someEmpty = values => _.some(values, _.isEmpty);
+const notSomeEmpty = _.negate(someEmpty);
 
 class Datagrid {
-  constructor(options$) {
+  constructor(options$, columnOptions$) {
     const schema = insight
       .getView()
       .getProject()
       .getModelSchema();
-    const scenariosData$ = withScenarioData(options$);
-    const indicesOptions$ = map(_.property('indicesOptions'), options$);
-    const entitiesOptions$ = map(_.property('columnOptions'), options$);
+
+    const scenariosData$ = _.compose(
+      filter(v => v && v.defaultScenario),
+      startWith(undefined),
+      withScenarioData
+    )(columnOptions$);
+
+    const indicesOptions$ = map(_.property('indicesOptions'), columnOptions$);
+    const entitiesOptions$ = map(_.property('columnOptions'), columnOptions$);
     const allColumnIndices$ = map(getAllColumnIndices(schema), entitiesOptions$);
 
-    /** @type {KnockoutComputed<import('./data-transform').SetNameAndPosition[]>} */
     const setNameAndPosns$ = combineMap(
       ([columnIndices, entitiesOptions]) => getDisplayIndices(columnIndices, entitiesOptions),
       [allColumnIndices$, entitiesOptions$]
@@ -40,8 +47,9 @@ class Datagrid {
       scenariosData$
     );
 
-    const indicesColumns$ = combineMap(
-      ([setNamePosnsAndOptions, allScenarios]) => {
+    const indicesColumns$ = _.compose(
+      map(values => {
+        const [setNamePosnsAndOptions, allScenarios] = values;
         return _.map(setNamePosnsAndOptions, setNameAndPosn => {
           const { name, options } = setNameAndPosn;
           const entity = schema.getEntity(name);
@@ -49,20 +57,27 @@ class Datagrid {
           return {
             title: String(options.title || entity.getAbbreviation() || name),
             field: options.id,
-            mutatorData: (value, data, type, params) => SelectOptions.getLabel(schema, allScenarios, entity, value)
+            mutator: (value, data, type, params) => SelectOptions.getLabel(schema, allScenarios, entity, value)
           };
         });
-      },
-      [setNamePosnsAndOptions$, allScenarios$]
-    );
+      }),
+      withDeepEquals,
+      filter(notSomeEmpty),
+      startWith([]),
+      combineLatest
+    )([setNamePosnsAndOptions$, allScenarios$]);
 
     const entitiesColumns$ = map(
       entitiesOptions => _.map(entitiesOptions, entity => _.assign(entity, { title: entity.name, field: entity.id })),
       entitiesOptions$
     );
 
-    const columns$ = combineMap(_.flatten, [indicesColumns$, entitiesColumns$]);
-    columns$.subscribe(console.log);
+    const columns$ = _.compose(
+      map(_.flatten),
+      filter(notSomeEmpty),
+      startWith([]),
+      combineLatest
+    )([indicesColumns$, entitiesColumns$]);
 
     const tabulatorFactory$ = map(
       options => (options.tableId ? createTabulatorFactory(`#${options.tableId}`) : _.noop),
@@ -80,37 +95,38 @@ class Datagrid {
       options$
     );
 
-    tabulatorOptions$.subscribe(console.log);
-
     const table$ = combineMap(([factory, options]) => factory(options), [tabulatorFactory$, tabulatorOptions$]);
 
     table$.subscribe(oldTable => oldTable && oldTable.destroy(), null, 'beforeChange');
 
-    const data$ = combineMap(params => !_.some(params, _.isEmpty) && dataTransform(...params), [
-      allColumnIndices$,
-      entitiesColumns$,
-      setNamePosnsAndOptions$,
-      scenariosData$
-    ]);
+    const data$ = _.compose(
+      map(params => params && dataTransform(...params)),
+      filter(notSomeEmpty),
+      startWith(undefined),
+      combineLatest
+    )([allColumnIndices$, entitiesColumns$, setNamePosnsAndOptions$, scenariosData$]);
 
-    combineMap(
-      ([table, data]) =>
-        table &&
-        data &&
-        table
+    _.compose(
+      map(values => {
+        if (!values) {
+          return false;
+        }
+        const [table, columns, data] = values;
+        table.setColumns(columns);
+
+        return table
           .setData(data)
-          .then(function () {
+          .then(function() {
             table.redraw();
           })
-          .catch(function (err) {
+          .catch(function(err) {
             debugger;
-          }),
-      [table$, data$]
-    ).subscribe(_.noop);
-
-    combineMap(([table, columns]) => table && columns && table.setColumns(columns), [table$, columns$]).subscribe(
-      _.noop
-    );
+          });
+      }),
+      filter(notSomeEmpty),
+      startWith(undefined),
+      combineLatest
+    )([table$, columns$, data$]).subscribe(_.noop);
   }
 }
 

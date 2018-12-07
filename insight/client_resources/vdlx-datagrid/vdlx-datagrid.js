@@ -335,6 +335,115 @@ function _default(element, attributes, api) {
   $tableDiv.addClass('table-striped table-bordered table-condensed');
   $element.append($tableDiv);
 }
+},{}],"vdlx-datagrid/data-transform.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.getDisplayIndices = exports.getAllColumnIndices = void 0;
+var DataUtils = insightModules.load('utils/data-utils');
+var createDenseData = insightModules.load('components/table/create-dense-data');
+
+var getAllColumnIndices = _.curry(function (schema, columnOptions) {
+  return _.map(columnOptions, function (option) {
+    return schema.getEntity(option.name).getIndexSets();
+  });
+}, 2);
+/**
+ * @typedef {{name: string, position: number}} SetNameAndPosition 
+ */
+
+/** @returns {SetNameAndPosition[]} */
+
+
+exports.getAllColumnIndices = getAllColumnIndices;
+
+var getDisplayIndices = function getDisplayIndices(columnIndices, columnOptions) {
+  var setCount = {};
+  var numColumns = columnIndices.length;
+
+  var _loop = function _loop() {
+    var indices = columnIndices[i],
+        options = columnOptions[i];
+    var setPosns = DataUtils.getIndexPosns(indices);
+    indices.forEach(function (setName, i) {
+      var setPosn = setPosns[i];
+
+      if (DataUtils.getFilterValue(options.filters, setName, setPosn) == null) {
+        // i.e. if there is no filter, then this index is to be used
+        var key = {
+          name: setName,
+          position: setPosn
+        },
+            keyJson = JSON.stringify(key);
+        setCount[keyJson] = (setCount[keyJson] || 0) + 1;
+      }
+    });
+  };
+
+  for (var i = 0; i < numColumns; i++) {
+    _loop();
+  }
+
+  return _(setCount).pick(function (count) {
+    return count === numColumns;
+  }).keys().map(function (k) {
+    return JSON.parse(k);
+  }).value();
+};
+
+exports.getDisplayIndices = getDisplayIndices;
+
+var generateCompositeKey = function generateCompositeKey(setValues, setNameAndPosns, arrayIndices, arrayOptions) {
+  var setPosns = DataUtils.getIndexPosns(arrayIndices);
+  return arrayIndices.map(function (setName, i) {
+    var setPosn = setPosns[i];
+
+    var setIndex = _.findIndex(setNameAndPosns, {
+      name: setName,
+      position: setPosn
+    });
+
+    var filterValue = DataUtils.getFilterValue(arrayOptions.filters, setName, setPosn);
+
+    if (setIndex !== -1) {
+      return setValues[setIndex];
+    } else if (filterValue != null) {
+      return filterValue;
+    } else {
+      throw Error('Cannot generate table with incomplete index configuration. Missing indices: ' + setName + ' for entity: ' + arrayOptions.name);
+    }
+  });
+};
+
+var _default = function _default(allColumnIndices, columnOptions, setNamePosnsAndOptions, scenariosData) {
+  var defaultScenario = scenariosData.defaultScenario;
+
+  var indexScenarios = _.uniq(_.map(_.map(columnOptions, 'id'), function (id) {
+    return _.get(scenariosData.scenarios, id, defaultScenario);
+  }));
+
+  var arrayIds = _.map(columnOptions, 'id');
+
+  var setIds = _.map(setNamePosnsAndOptions, 'options.id');
+
+  var arrays = _.map(columnOptions, function (column) {
+    return _.get(scenariosData.scenarios, column.id, defaultScenario).getArray(column.name);
+  });
+
+  var sets = _.map(setNamePosnsAndOptions, function (setNameAndPosn) {
+    return _(indexScenarios).map(function (scenario) {
+      return scenario.getSet(setNameAndPosn.name);
+    }).flatten().uniq().value();
+  });
+
+  var createRow = _.partial(_.zipObject, setIds.concat(arrayIds));
+
+  return _.map(createDenseData(sets, arrays, setNamePosnsAndOptions, allColumnIndices, columnOptions, generateCompositeKey), createRow);
+};
+
+exports.default = _default;
 },{}],"vdlx-datagrid/ko-utils.js":[function(require,module,exports) {
 "use strict";
 
@@ -342,7 +451,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.onSubscriptionDispose = onSubscriptionDispose;
-exports.onSubscribe = exports.filter = exports.combineMap = exports.combineLatest = exports.map = void 0;
+exports.withDeepEquals = exports.withEqualityComparer = exports.onSubscribe = exports.startWith = exports.filter = exports.combineMap = exports.combineLatest = exports.map = void 0;
 
 /** @type {KnockoutStatic} */
 ko;
@@ -382,7 +491,7 @@ var combineMap = _.curry(function (f) {
 exports.combineMap = combineMap;
 
 var filter = _.curry(function (predicate, observable) {
-  var previousValue;
+  var previousValue = ko.unwrap(observable);
   return map(function (val) {
     if (predicate(val)) {
       previousValue = val;
@@ -394,6 +503,27 @@ var filter = _.curry(function (predicate, observable) {
 }, 2);
 
 exports.filter = filter;
+
+var startWith = _.curry(function (value, o2) {
+  var res = ko.observable(ko.unwrap(value));
+  var anotherSubscription;
+  return onSubscribe(function (subscription) {
+    if (!anotherSubscription) {
+      anotherSubscription = o2.subscribe(function (anotherValue) {
+        return res(anotherValue);
+      });
+    }
+
+    onSubscriptionDispose(function () {
+      if (!!res.getSubscriptionsCount()) {
+        anotherSubscription.dispose();
+        anotherSubscription = null;
+      }
+    }, subscription);
+  }, res);
+}, 2);
+
+exports.startWith = startWith;
 
 var onSubscribe = _.curry(function (f, observable) {
   var subscribe = observable.subscribe;
@@ -419,6 +549,15 @@ function onSubscriptionDispose(f, subscription) {
 
   return subscription;
 }
+
+var withEqualityComparer = _.curry(function (f, obs) {
+  obs.equalityComparer = f;
+  return obs;
+}, 2);
+
+exports.withEqualityComparer = withEqualityComparer;
+var withDeepEquals = withEqualityComparer(_.isEqual);
+exports.withDeepEquals = withDeepEquals;
 },{}],"vdlx-datagrid/data-loader.js":[function(require,module,exports) {
 "use strict";
 
@@ -566,116 +705,7 @@ function withScenarioData(config$) {
 ;
 var _default = withScenarioData;
 exports.default = _default;
-},{"./ko-utils":"vdlx-datagrid/ko-utils.js"}],"vdlx-datagrid/data-transform.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = exports.getDisplayIndices = exports.getAllColumnIndices = void 0;
-var DataUtils = insightModules.load('utils/data-utils');
-var createDenseData = insightModules.load('components/table/create-dense-data');
-
-var getAllColumnIndices = _.curry(function (schema, columnOptions) {
-  return _.map(columnOptions, function (option) {
-    return schema.getEntity(option.name).getIndexSets();
-  });
-}, 2);
-/**
- * @typedef {{name: string, position: number}} SetNameAndPosition 
- */
-
-/** @returns {SetNameAndPosition[]} */
-
-
-exports.getAllColumnIndices = getAllColumnIndices;
-
-var getDisplayIndices = function getDisplayIndices(columnIndices, columnOptions) {
-  var setCount = {};
-  var numColumns = columnIndices.length;
-
-  var _loop = function _loop() {
-    var indices = columnIndices[i],
-        options = columnOptions[i];
-    var setPosns = DataUtils.getIndexPosns(indices);
-    indices.forEach(function (setName, i) {
-      var setPosn = setPosns[i];
-
-      if (DataUtils.getFilterValue(options.filters, setName, setPosn) == null) {
-        // i.e. if there is no filter, then this index is to be used
-        var key = {
-          name: setName,
-          position: setPosn
-        },
-            keyJson = JSON.stringify(key);
-        setCount[keyJson] = (setCount[keyJson] || 0) + 1;
-      }
-    });
-  };
-
-  for (var i = 0; i < numColumns; i++) {
-    _loop();
-  }
-
-  return _(setCount).pick(function (count) {
-    return count === numColumns;
-  }).keys().map(function (k) {
-    return JSON.parse(k);
-  }).value();
-};
-
-exports.getDisplayIndices = getDisplayIndices;
-
-var generateCompositeKey = function generateCompositeKey(setValues, setNameAndPosns, arrayIndices, arrayOptions) {
-  var setPosns = DataUtils.getIndexPosns(arrayIndices);
-  return arrayIndices.map(function (setName, i) {
-    var setPosn = setPosns[i];
-
-    var setIndex = _.findIndex(setNameAndPosns, {
-      name: setName,
-      position: setPosn
-    });
-
-    var filterValue = DataUtils.getFilterValue(arrayOptions.filters, setName, setPosn);
-
-    if (setIndex !== -1) {
-      return setValues[setIndex];
-    } else if (filterValue != null) {
-      return filterValue;
-    } else {
-      throw Error('Cannot generate table with incomplete index configuration. Missing indices: ' + setName + ' for entity: ' + arrayOptions.name);
-    }
-  });
-};
-
-var _default = function _default(allColumnIndices, columnOptions, setNamePosnsAndOptions, scenariosData) {
-  var defaultScenario = scenariosData.defaultScenario;
-
-  var indexScenarios = _.uniq(_.map(_.map(columnOptions, 'id'), function (id) {
-    return _.get(scenariosData.scenarios, id, defaultScenario);
-  }));
-
-  var arrayIds = _.map(columnOptions, 'id');
-
-  var setIds = _.map(setNamePosnsAndOptions, 'options.id');
-
-  var arrays = _.map(columnOptions, function (column) {
-    return _.get(scenariosData.scenarios, column.id, defaultScenario).getArray(column.name);
-  });
-
-  var sets = _.map(setNamePosnsAndOptions, function (setNameAndPosn) {
-    return _(indexScenarios).map(function (scenario) {
-      return scenario.getSet(setNameAndPosn.name);
-    }).flatten().uniq().value();
-  });
-
-  var createRow = _.partial(_.zipObject, setIds.concat(arrayIds));
-
-  return _.map(createDenseData(sets, arrays, setNamePosnsAndOptions, allColumnIndices, columnOptions, generateCompositeKey), createRow);
-};
-
-exports.default = _default;
-},{}],"vdlx-datagrid/datagrid.js":[function(require,module,exports) {
+},{"./ko-utils":"vdlx-datagrid/ko-utils.js"}],"vdlx-datagrid/datagrid.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -723,16 +753,24 @@ var createTabulatorFactory = function createTabulatorFactory(selector) {
   };
 };
 
-var Datagrid = function Datagrid(options$) {
+var someEmpty = function someEmpty(values) {
+  return _.some(values, _.isEmpty);
+};
+
+var notSomeEmpty = _.negate(someEmpty);
+
+var Datagrid = function Datagrid(options$, columnOptions$) {
   _classCallCheck(this, Datagrid);
 
   var schema = insight.getView().getProject().getModelSchema();
-  var scenariosData$ = (0, _dataLoader.default)(options$);
-  var indicesOptions$ = (0, _koUtils.map)(_.property('indicesOptions'), options$);
-  var entitiesOptions$ = (0, _koUtils.map)(_.property('columnOptions'), options$);
-  var allColumnIndices$ = (0, _koUtils.map)((0, _dataTransform.getAllColumnIndices)(schema), entitiesOptions$);
-  /** @type {KnockoutComputed<import('./data-transform').SetNameAndPosition[]>} */
 
+  var scenariosData$ = _.compose((0, _koUtils.filter)(function (v) {
+    return v && v.defaultScenario;
+  }), (0, _koUtils.startWith)(undefined), _dataLoader.default)(columnOptions$);
+
+  var indicesOptions$ = (0, _koUtils.map)(_.property('indicesOptions'), columnOptions$);
+  var entitiesOptions$ = (0, _koUtils.map)(_.property('columnOptions'), columnOptions$);
+  var allColumnIndices$ = (0, _koUtils.map)((0, _dataTransform.getAllColumnIndices)(schema), entitiesOptions$);
   var setNameAndPosns$ = (0, _koUtils.combineMap)(function (_ref) {
     var _ref2 = _slicedToArray(_ref, 2),
         columnIndices = _ref2[0],
@@ -756,10 +794,11 @@ var Datagrid = function Datagrid(options$) {
   var allScenarios$ = (0, _koUtils.map)(function (scenariosData) {
     return scenariosData && _.uniq([scenariosData.defaultScenario].concat(_.values(scenariosData.scenarios)));
   }, scenariosData$);
-  var indicesColumns$ = (0, _koUtils.combineMap)(function (_ref5) {
-    var _ref6 = _slicedToArray(_ref5, 2),
-        setNamePosnsAndOptions = _ref6[0],
-        allScenarios = _ref6[1];
+
+  var indicesColumns$ = _.compose((0, _koUtils.map)(function (values) {
+    var _values = _slicedToArray(values, 2),
+        setNamePosnsAndOptions = _values[0],
+        allScenarios = _values[1];
 
     return _.map(setNamePosnsAndOptions, function (setNameAndPosn) {
       var name = setNameAndPosn.name,
@@ -768,12 +807,13 @@ var Datagrid = function Datagrid(options$) {
       return {
         title: String(options.title || entity.getAbbreviation() || name),
         field: options.id,
-        mutatorData: function mutatorData(value, data, type, params) {
+        mutator: function mutator(value, data, type, params) {
           return SelectOptions.getLabel(schema, allScenarios, entity, value);
         }
       };
     });
-  }, [setNamePosnsAndOptions$, allScenarios$]);
+  }), _koUtils.withDeepEquals, (0, _koUtils.filter)(notSomeEmpty), (0, _koUtils.startWith)([]), _koUtils.combineLatest)([setNamePosnsAndOptions$, allScenarios$]);
+
   var entitiesColumns$ = (0, _koUtils.map)(function (entitiesOptions) {
     return _.map(entitiesOptions, function (entity) {
       return _.assign(entity, {
@@ -782,8 +822,9 @@ var Datagrid = function Datagrid(options$) {
       });
     });
   }, entitiesOptions$);
-  var columns$ = (0, _koUtils.combineMap)(_.flatten, [indicesColumns$, entitiesColumns$]);
-  columns$.subscribe(console.log);
+
+  var columns$ = _.compose((0, _koUtils.map)(_.flatten), (0, _koUtils.filter)(notSomeEmpty), (0, _koUtils.startWith)([]), _koUtils.combineLatest)([indicesColumns$, entitiesColumns$]);
+
   var tabulatorFactory$ = (0, _koUtils.map)(function (options) {
     return options.tableId ? createTabulatorFactory("#".concat(options.tableId)) : _.noop;
   }, options$);
@@ -796,38 +837,38 @@ var Datagrid = function Datagrid(options$) {
       columns: []
     };
   }, options$);
-  tabulatorOptions$.subscribe(console.log);
-  var table$ = (0, _koUtils.combineMap)(function (_ref7) {
-    var _ref8 = _slicedToArray(_ref7, 2),
-        factory = _ref8[0],
-        options = _ref8[1];
+  var table$ = (0, _koUtils.combineMap)(function (_ref5) {
+    var _ref6 = _slicedToArray(_ref5, 2),
+        factory = _ref6[0],
+        options = _ref6[1];
 
     return factory(options);
   }, [tabulatorFactory$, tabulatorOptions$]);
   table$.subscribe(function (oldTable) {
     return oldTable && oldTable.destroy();
   }, null, 'beforeChange');
-  var data$ = (0, _koUtils.combineMap)(function (params) {
-    return !_.some(params, _.isEmpty) && _dataTransform.default.apply(void 0, _toConsumableArray(params));
-  }, [allColumnIndices$, entitiesColumns$, setNamePosnsAndOptions$, scenariosData$]);
-  (0, _koUtils.combineMap)(function (_ref9) {
-    var _ref10 = _slicedToArray(_ref9, 2),
-        table = _ref10[0],
-        data = _ref10[1];
 
-    return table && data && table.setData(data).then(function () {
+  var data$ = _.compose((0, _koUtils.map)(function (params) {
+    return params && _dataTransform.default.apply(void 0, _toConsumableArray(params));
+  }), (0, _koUtils.filter)(notSomeEmpty), (0, _koUtils.startWith)(undefined), _koUtils.combineLatest)([allColumnIndices$, entitiesColumns$, setNamePosnsAndOptions$, scenariosData$]);
+
+  _.compose((0, _koUtils.map)(function (values) {
+    if (!values) {
+      return false;
+    }
+
+    var _values2 = _slicedToArray(values, 3),
+        table = _values2[0],
+        columns = _values2[1],
+        data = _values2[2];
+
+    table.setColumns(columns);
+    return table.setData(data).then(function () {
       table.redraw();
     }).catch(function (err) {
       debugger;
     });
-  }, [table$, data$]).subscribe(_.noop);
-  (0, _koUtils.combineMap)(function (_ref11) {
-    var _ref12 = _slicedToArray(_ref11, 2),
-        table = _ref12[0],
-        columns = _ref12[1];
-
-    return table && columns && table.setColumns(columns);
-  }, [table$, columns$]).subscribe(_.noop);
+  }), (0, _koUtils.filter)(notSomeEmpty), (0, _koUtils.startWith)(undefined), _koUtils.combineLatest)([table$, columns$, data$]).subscribe(_.noop);
 };
 
 var _default = Datagrid;
@@ -839,8 +880,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = _default;
-
-var _dataLoader = _interopRequireDefault(require("./data-loader"));
 
 var _datagrid = _interopRequireDefault(require("./datagrid"));
 
@@ -864,8 +903,67 @@ function isNullOrUndefined(val) {
 
 var stripEmpties = _.partialRight(_.pick, _.flow(_.identity, _.negate(isNullOrUndefined)));
 
+var getTableOptions = function getTableOptions(params) {
+  return function () {
+    var overrides = stripEmpties({
+      paging: params.pageMode,
+      pageLength: params.pageSize,
+      searching: params.showFilter,
+      columnFilter: params.columnFilter
+    });
+    var tableOptions = {
+      tableId: params.tableId,
+      addRemoveRow: params.addRemoveRow,
+      selectionAndNavigation: params.selectionNavigation,
+      overrides: overrides,
+      onError: _.bindKey(self, '_wrapAlert'),
+      alwaysShowSelection: params.alwaysShowSelection,
+      gridHeight: params.gridHeight,
+      gridData: params.gridData
+    };
+    var pageMode = params['pageMode'];
+
+    if (pageMode === 'paged') {
+      tableOptions.pagination = 'local';
+      tableOptions.paginationSize = params.pageSize || 15;
+    } else if (!pageMode || pageMode === 'none') {
+      tableOptions.height = false;
+    }
+
+    if (_.isFunction(params.rowFilter)) {
+      tableOptions.rowFilter = params.rowFilter;
+    }
+
+    tableOptions = stripEmpties(tableOptions);
+
+    if (!_.isUndefined(params.modifier)) {
+      if (_.isFunction(params.modifier)) {
+        // Pass cloned options so they cannot modify the original table options object
+        var modifiedTableOptions = params.modifier(_.cloneDeep(tableOptions));
+
+        if (_.isPlainObject(modifiedTableOptions)) {
+          tableOptions = modifiedTableOptions;
+        }
+      } else {// console.error('vdl-table (' + self.tableId + '): "modifier" attribute must be a function.');
+      }
+    }
+
+    if (tableOptions.addRemoveRow) {
+      var isEditable = tableOptions.columnOptions.some(function (column) {
+        return !!column.editable;
+      });
+
+      if (!isEditable) {
+        tableOptions.addRemoveRow = false; // not a hard error as this is used as a feature when making a table read only based on permissions
+        // console.log('vdl-table (' + self.tableId + "): add/remove rows disabled. Table needs to have at least one editable column to use this feature.");
+      }
+    }
+
+    return tableOptions;
+  };
+};
+
 function _default(params, componentInfo) {
-  var view = insight.getView();
   var vm = {};
 
   if (params.width) {
@@ -874,8 +972,9 @@ function _default(params, componentInfo) {
 
   var element = componentInfo.element;
   var defaultScenario = params.scenarioId || 0;
-  var tableOptions$ = ko.observable({});
-  var datagrid = new _datagrid.default(tableOptions$);
+  var tableOptions$ = ko.pureComputed(getTableOptions(params));
+  var columnConfig$ = ko.observable({});
+  var datagrid = new _datagrid.default(tableOptions$, columnConfig$);
 
   function buildTable() {
     var datagridConfig = $(element).find('vdlx-datagrid-column').map(function (idx, element) {
@@ -935,83 +1034,7 @@ function _default(params, componentInfo) {
       return ko.unwrap(item.scenario);
     }).uniq().sortBy().value();
 
-    var overrides = stripEmpties({
-      paging: params.pageMode,
-      pageLength: params.pageSize,
-      searching: params.showFilter,
-      columnFilter: params.columnFilter
-    });
-    var tableOptions = {
-      tableId: params.tableId,
-      columnOptions: entities,
-      addRemoveRow: params.addRemoveRow,
-      selectionAndNavigation: params.selectionNavigation,
-      overrides: overrides,
-      scenarioList: scenarioList,
-      onError: _.bindKey(self, '_wrapAlert'),
-      alwaysShowSelection: params.alwaysShowSelection,
-      gridHeight: params.gridHeight,
-      gridData: params.gridData
-    }; // TODO stretch goal
-    // if (params.saveState === false) {
-    //     tableOptions.saveState = params.saveState;
-    // }
-
-    var pageMode = params['pageMode'];
-
-    if (pageMode === 'paged') {
-      tableOptions.pagination = 'local';
-      tableOptions.paginationSize = params.pageSize || 15;
-    } else if (!pageMode || pageMode === 'none') {
-      tableOptions.height = false;
-    }
-
-    if (params.rowFilter) {
-      var filterObservable = ko.observable().extend({
-        functionObservable: {
-          onDependenciesChange: function onDependenciesChange() {
-            self.tableUpdate();
-          },
-          read: params.rowFilter
-        }
-      });
-
-      tableOptions.rowFilter = function () {
-        filterObservable.apply(null, arguments);
-        return filterObservable.peek();
-      };
-    }
-
-    if (_.keys(indices).length) {
-      tableOptions.indicesOptions = indices;
-    }
-
-    tableOptions = stripEmpties(tableOptions);
-
-    if (!_.isUndefined(params.modifier)) {
-      if (_.isFunction(params.modifier)) {
-        // Pass cloned options so they cannot modify the original table options object
-        var modifiedTableOptions = params.modifier(_.cloneDeep(tableOptions));
-
-        if (_.isPlainObject(modifiedTableOptions)) {
-          tableOptions = modifiedTableOptions;
-        }
-      } else {// console.error('vdl-table (' + self.tableId + '): "modifier" attribute must be a function.');
-      }
-    }
-
-    if (tableOptions.addRemoveRow) {
-      var isEditable = tableOptions.columnOptions.some(function (column) {
-        return !!column.editable;
-      });
-
-      if (!isEditable) {
-        tableOptions.addRemoveRow = false; // not a hard error as this is used as a feature when making a table read only based on permissions
-        // console.log('vdl-table (' + self.tableId + "): add/remove rows disabled. Table needs to have at least one editable column to use this feature.");
-      }
-    }
-
-    if (_.isEmpty(scenarioList) || _.isEmpty(tableOptions.columnOptions)) {
+    if (_.isEmpty(scenarioList) || _.isEmpty(entities)) {
       // console.debug('vdl-table (' + self.tableId + '): Scenario list or table column configuration is empty, ignoring update');
       // if (resolve) {
       //     resolve(tableOptions);
@@ -1019,20 +1042,13 @@ function _default(params, componentInfo) {
       // empty table element, to get rid of old configuration
       // $table && $table.empty();
       return;
-    } // functions should not be used in the equality comparison
-
-
-    var noFns = _.partialRight(_.omit, _.isFunction);
-
-    if (_.isEqual(noFns(this._appliedTableOptions), noFns(tableOptions))) {
-      // console.debug('vdl-table (' + self.tableId + '): Table configuration unchanged, ignoring update');
-      // if (resolve) {
-      //     resolve(tableOptions);
-      // }
-      return;
     }
 
-    tableOptions$(tableOptions);
+    columnConfig$({
+      columnOptions: entities,
+      indicesOptions: indices,
+      scenarioList: scenarioList
+    });
   }
 
   var throttledBuildTable = _.throttle(buildTable, COLUMN_UPDATE_DELAY, {
@@ -1056,7 +1072,7 @@ function _default(params, componentInfo) {
   buildTable();
   return vm;
 }
-},{"./data-loader":"vdlx-datagrid/data-loader.js","./datagrid":"vdlx-datagrid/datagrid.js"}],"vdlx-datagrid/index.js":[function(require,module,exports) {
+},{"./datagrid":"vdlx-datagrid/datagrid.js"}],"vdlx-datagrid/index.js":[function(require,module,exports) {
 "use strict";
 
 var _attributes = _interopRequireDefault(require("./attributes"));

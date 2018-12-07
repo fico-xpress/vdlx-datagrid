@@ -24,7 +24,7 @@ export const combineMap = _.curry((f, ...observables) => {
 }, 2);
 
 export const filter = _.curry(function (predicate, observable) {
-    var previousValue;
+    var previousValue = ko.unwrap(observable);
 
     return map(function (val) {
         if (predicate(val)) {
@@ -33,6 +33,24 @@ export const filter = _.curry(function (predicate, observable) {
         }
         return previousValue;
     }, observable);
+}, 2);
+
+export const startWith = _.curry((value, o2) => {
+    const res = ko.observable(ko.unwrap(value));
+
+    let anotherSubscription;
+    return onSubscribe(subscription => {
+        if (!anotherSubscription) {
+            anotherSubscription = o2.subscribe(anotherValue => res(anotherValue));
+        }
+
+        onSubscriptionDispose(() => {
+            if (!!res.getSubscriptionsCount()) {
+                anotherSubscription.dispose();
+                anotherSubscription = null;
+            }
+        }, subscription);
+    }, res);
 }, 2);
 
 export const onSubscribe = _.curry(function (f, observable) {
@@ -56,3 +74,10 @@ export function onSubscriptionDispose (f, subscription) {
 
     return subscription;
 }
+
+export const withEqualityComparer = _.curry(function (f, obs) {
+    obs.equalityComparer = f;
+    return obs;
+}, 2);
+
+export const  withDeepEquals = withEqualityComparer(_.isEqual);
