@@ -19,7 +19,7 @@ export const combineLatest = function (observables) {
  * @param {...KnockoutObservable} observables
  * @returns {KnockoutObservable}
 */
-export const combineAndMap = _.curry((f, ...observables) => {
+export const combineMap = _.curry((f, ...observables) => {
     return map(f, combineLatest(...observables));
 }, 2);
 

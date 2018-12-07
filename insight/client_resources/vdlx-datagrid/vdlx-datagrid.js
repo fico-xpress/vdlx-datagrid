@@ -339,7 +339,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.onSubscriptionDispose = onSubscriptionDispose;
-exports.onSubscribe = exports.filter = exports.combineAndMap = exports.combineLatest = exports.map = void 0;
+exports.onSubscribe = exports.filter = exports.combineMap = exports.combineLatest = exports.map = void 0;
 
 /** @type {KnockoutStatic} */
 ko;
@@ -368,7 +368,7 @@ var combineLatest = function combineLatest(observables) {
 
 exports.combineLatest = combineLatest;
 
-var combineAndMap = _.curry(function (f) {
+var combineMap = _.curry(function (f) {
   for (var _len = arguments.length, observables = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
     observables[_key - 1] = arguments[_key];
   }
@@ -376,7 +376,7 @@ var combineAndMap = _.curry(function (f) {
   return map(f, combineLatest.apply(void 0, observables));
 }, 2);
 
-exports.combineAndMap = combineAndMap;
+exports.combineMap = combineMap;
 
 var filter = _.curry(function (predicate, observable) {
   var previousValue;
@@ -712,13 +712,13 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var SelectOptions = insightModules.load('components/autotable-select-options');
+
 var createTabulatorFactory = function createTabulatorFactory(selector) {
   return function (config) {
     return new Tabulator(selector, config);
   };
 };
-
-var SelectOptions = insightModules.load('components/autotable-select-options');
 
 var Datagrid = function Datagrid(options$) {
   _classCallCheck(this, Datagrid);
@@ -730,14 +730,14 @@ var Datagrid = function Datagrid(options$) {
   var allColumnIndices$ = (0, _koUtils.map)((0, _dataTransform.getAllColumnIndices)(schema), entitiesOptions$);
   /** @type {KnockoutComputed<import('./data-transform').SetNameAndPosition[]>} */
 
-  var setNameAndPosns$ = (0, _koUtils.combineAndMap)(function (_ref) {
+  var setNameAndPosns$ = (0, _koUtils.combineMap)(function (_ref) {
     var _ref2 = _slicedToArray(_ref, 2),
         columnIndices = _ref2[0],
         entitiesOptions = _ref2[1];
 
     return (0, _dataTransform.getDisplayIndices)(columnIndices, entitiesOptions);
   }, [allColumnIndices$, entitiesOptions$]);
-  var setNamePosnsAndOptions$ = (0, _koUtils.combineAndMap)(function (_ref3) {
+  var setNamePosnsAndOptions$ = (0, _koUtils.combineMap)(function (_ref3) {
     var _ref4 = _slicedToArray(_ref3, 2),
         setNameAndPosns = _ref4[0],
         indicesOptions = _ref4[1];
@@ -745,7 +745,7 @@ var Datagrid = function Datagrid(options$) {
     return _.map(setNameAndPosns, function (setNameAndPosn) {
       return _objectSpread({}, setNameAndPosn, {
         options: _.get(indicesOptions, "".concat(setNameAndPosn.name, ".").concat(setNameAndPosn.position), {
-          id: "".concat(setNameAndPosn.name, ".").concat(setNameAndPosn.position)
+          id: "".concat(setNameAndPosn.name, "_").concat(setNameAndPosn.position)
         })
       });
     });
@@ -753,7 +753,7 @@ var Datagrid = function Datagrid(options$) {
   var allScenarios$ = (0, _koUtils.map)(function (scenariosData) {
     return scenariosData && _.uniq([scenariosData.defaultScenario].concat(_.values(scenariosData.scenarios)));
   }, scenariosData$);
-  var indicesColumns$ = (0, _koUtils.combineAndMap)(function (_ref5) {
+  var indicesColumns$ = (0, _koUtils.combineMap)(function (_ref5) {
     var _ref6 = _slicedToArray(_ref5, 2),
         setNamePosnsAndOptions = _ref6[0],
         allScenarios = _ref6[1];
@@ -779,7 +779,7 @@ var Datagrid = function Datagrid(options$) {
       });
     });
   }, entitiesOptions$);
-  var columns$ = (0, _koUtils.combineAndMap)(_.flatten, [indicesColumns$, entitiesColumns$]);
+  var columns$ = (0, _koUtils.combineMap)(_.flatten, [indicesColumns$, entitiesColumns$]);
   columns$.subscribe(console.log);
   var tabulatorFactory$ = (0, _koUtils.map)(function (options) {
     return options.tableId ? createTabulatorFactory("#".concat(options.tableId)) : _.noop;
@@ -795,7 +795,7 @@ var Datagrid = function Datagrid(options$) {
     };
   }, options$);
   tabulatorOptions$.subscribe(console.log);
-  var table$ = (0, _koUtils.combineAndMap)(function (_ref7) {
+  var table$ = (0, _koUtils.combineMap)(function (_ref7) {
     var _ref8 = _slicedToArray(_ref7, 2),
         factory = _ref8[0],
         options = _ref8[1];
@@ -805,10 +805,10 @@ var Datagrid = function Datagrid(options$) {
   table$.subscribe(function (oldTable) {
     return oldTable && oldTable.destroy();
   }, null, 'beforeChange');
-  var data$ = (0, _koUtils.combineAndMap)(function (params) {
+  var data$ = (0, _koUtils.combineMap)(function (params) {
     return !_.some(params, _.isEmpty) && _dataTransform.default.apply(void 0, _toConsumableArray(params));
   }, [allColumnIndices$, entitiesColumns$, setNamePosnsAndOptions$, scenariosData$]);
-  (0, _koUtils.combineAndMap)(function (_ref9) {
+  (0, _koUtils.combineMap)(function (_ref9) {
     var _ref10 = _slicedToArray(_ref9, 2),
         table = _ref10[0],
         data = _ref10[1];
@@ -819,7 +819,7 @@ var Datagrid = function Datagrid(options$) {
       debugger;
     });
   }, [table$, data$]).subscribe(_.noop);
-  (0, _koUtils.combineAndMap)(function (_ref11) {
+  (0, _koUtils.combineMap)(function (_ref11) {
     var _ref12 = _slicedToArray(_ref11, 2),
         table = _ref12[0],
         columns = _ref12[1];

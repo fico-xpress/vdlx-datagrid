@@ -1,10 +1,10 @@
 import dataTransform, { getAllColumnIndices, getDisplayIndices } from './data-transform';
-import { map, combineAndMap } from './ko-utils';
+import { map, combineMap } from './ko-utils';
 import withScenarioData from './data-loader';
 
-const createTabulatorFactory = selector => config => new Tabulator(selector, config);
-
 const SelectOptions = insightModules.load('components/autotable-select-options');
+
+const createTabulatorFactory = selector => config => new Tabulator(selector, config);
 
 class Datagrid {
   constructor(options$) {
@@ -18,17 +18,17 @@ class Datagrid {
     const allColumnIndices$ = map(getAllColumnIndices(schema), entitiesOptions$);
 
     /** @type {KnockoutComputed<import('./data-transform').SetNameAndPosition[]>} */
-    const setNameAndPosns$ = combineAndMap(
+    const setNameAndPosns$ = combineMap(
       ([columnIndices, entitiesOptions]) => getDisplayIndices(columnIndices, entitiesOptions),
       [allColumnIndices$, entitiesOptions$]
     );
 
-    const setNamePosnsAndOptions$ = combineAndMap(
+    const setNamePosnsAndOptions$ = combineMap(
       ([setNameAndPosns, indicesOptions]) =>
         _.map(setNameAndPosns, setNameAndPosn => ({
           ...setNameAndPosn,
           options: _.get(indicesOptions, `${setNameAndPosn.name}.${setNameAndPosn.position}`, {
-            id: `${setNameAndPosn.name}.${setNameAndPosn.position}`
+            id: `${setNameAndPosn.name}_${setNameAndPosn.position}`
           })
         })),
       [setNameAndPosns$, indicesOptions$]
@@ -40,7 +40,7 @@ class Datagrid {
       scenariosData$
     );
 
-    const indicesColumns$ = combineAndMap(
+    const indicesColumns$ = combineMap(
       ([setNamePosnsAndOptions, allScenarios]) => {
         return _.map(setNamePosnsAndOptions, setNameAndPosn => {
           const { name, options } = setNameAndPosn;
@@ -61,8 +61,7 @@ class Datagrid {
       entitiesOptions$
     );
 
-    const columns$ = combineAndMap(_.flatten, [indicesColumns$, entitiesColumns$]);
-
+    const columns$ = combineMap(_.flatten, [indicesColumns$, entitiesColumns$]);
     columns$.subscribe(console.log);
 
     const tabulatorFactory$ = map(
@@ -84,33 +83,33 @@ class Datagrid {
 
     tabulatorOptions$.subscribe(console.log);
 
-    const table$ = combineAndMap(([factory, options]) => factory(options), [tabulatorFactory$, tabulatorOptions$]);
+    const table$ = combineMap(([factory, options]) => factory(options), [tabulatorFactory$, tabulatorOptions$]);
 
     table$.subscribe(oldTable => oldTable && oldTable.destroy(), null, 'beforeChange');
 
-    const data$ = combineAndMap(params => !_.some(params, _.isEmpty) && dataTransform(...params), [
+    const data$ = combineMap(params => !_.some(params, _.isEmpty) && dataTransform(...params), [
       allColumnIndices$,
       entitiesColumns$,
       setNamePosnsAndOptions$,
       scenariosData$
     ]);
 
-    combineAndMap(
+    combineMap(
       ([table, data]) =>
         table &&
         data &&
         table
           .setData(data)
-          .then(function() {
+          .then(function () {
             table.redraw();
           })
-          .catch(function(err) {
+          .catch(function (err) {
             debugger;
           }),
       [table$, data$]
     ).subscribe(_.noop);
 
-    combineAndMap(([table, columns]) => table && columns && table.setColumns(columns), [table$, columns$]).subscribe(
+    combineMap(([table, columns]) => table && columns && table.setColumns(columns), [table$, columns$]).subscribe(
       _.noop
     );
   }
