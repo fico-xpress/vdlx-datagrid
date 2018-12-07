@@ -12,7 +12,6 @@
             });
 
         </script>
-
         <vdl-section heading="Datagrid example">
             <vdl-row>
                 <vdl-column size="6">
