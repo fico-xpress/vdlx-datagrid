@@ -7,7 +7,7 @@
         "test": "./node_modules/.bin/testcafe chrome test/ui/ -e --screenshots-on-fails -s screenshots",
         "test-headless": "./node_modules/.bin/testcafe \"chrome:headless\" test/ui/ -e --screenshots-on-fails -s screenshots",
         "watch": "parcel watch -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --no-hmr src/js/index.js",
-        "build": "parcel build -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js src/js/index.js"
+        "build": "parcel build -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --experimental-scope-hoisting src/js/index.js"
     },
     "keywords": [],
     "author": "",
@@ -16,7 +16,9 @@
         "@types/knockout": "^3.4.60",
         "@types/lodash": "^3.10.2",
         "csv-stringify": "^4.3.1",
+        "lodash": "^4.17.11",
         "parcel-bundler": "^1.10.3",
+        "sass": "^1.15.2",
         "typescript": "^3.2.1"
     },
     "dependencies": {

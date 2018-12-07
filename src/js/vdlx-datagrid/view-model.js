@@ -111,8 +111,18 @@ export default function (params, componentInfo) {
             gridData: params.gridData
         };
 
-        if (params.saveState === false) {
-            tableOptions.saveState = params.saveState;
+        // TODO stretch goal
+        // if (params.saveState === false) {
+        //     tableOptions.saveState = params.saveState;
+        // }
+
+        var pageMode = params['pageMode'];
+
+        if (pageMode === 'paged') {
+            tableOptions.pagination = 'local';
+            tableOptions.paginationSize = params.pageSize || 15;
+        } else if (!pageMode || pageMode === 'none') {
+            tableOptions.height = false;
         }
 
         if (params.rowFilter) {
@@ -134,6 +144,7 @@ export default function (params, componentInfo) {
         if (_.keys(indices).length) {
             tableOptions.indicesOptions = indices;
         }
+
 
         tableOptions = stripEmpties(tableOptions);
 

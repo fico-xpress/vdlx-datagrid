@@ -32,8 +32,11 @@ export default function (element, attributes, api) {
     }
 
     var pageMode = attributes['page-mode'];
-    if (pageMode) {
+    if (pageMode && pageMode.rawValue === 'paged') {
         paramsBuilder.addParam('pageMode', pageMode.rawValue);
+    } else {
+        paramsBuilder.addParam('pageMode', 'scrolling');
+        $(element).addClass('scrolling');
     }
 
     // TODO No table search in vdlx-datagrid

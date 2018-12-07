@@ -5,7 +5,7 @@
 
         <script>
 
-            const num_rows = 300;
+            const num_rows = 15;
 
             var gridData = _.map(_.range(num_rows), n => {
                 return {SupportLevels: n + 1, ServiceLevelAgreements: (num_rows * 2) - (n * 2), SupportCosts: _.random(num_rows)};
@@ -16,7 +16,7 @@
         <vdl-section heading="Datagrid example">
             <vdl-row>
                 <vdl-column size="6">
-                    <vdlx-datagrid id="demo1">
+                    <vdlx-datagrid id="demo1" page-mode="paged" grid-data="=gridData">
                         <vdlx-datagrid-column set="SupportLevels"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ServiceLevelAgreements"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ServiceLevelAgreements" scenario="1"></vdlx-datagrid-column>
@@ -26,9 +26,9 @@
                 <vdl-column size="6">
                     <vdl-table id="demo2" height="600">
                         <vdl-table-column set="SupportLevels"></vdl-table-column>
-                        <vdl-table-column editable="true" entity="ServiceLevelAgreements"></vdl-table-column>
-                        <vdl-table-column editable="true" entity="ServiceLevelAgreements" scenario="1"></vdl-table-column>
-                        <vdl-table-column editable="true" entity="SupportCosts"></vdl-table-column>
+                        <vdl-table-column entity="ServiceLevelAgreements" editable="true" ></vdl-table-column>
+                        <vdl-table-column entity="ServiceLevelAgreements"  editable="true" scenario="1"></vdl-table-column>
+                        <vdl-table-column entity="SupportCosts"></vdl-table-column>
                     </vdl-table>
                 </vdl-column>
             </vdl-row>
