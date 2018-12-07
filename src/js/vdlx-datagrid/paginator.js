@@ -12,7 +12,7 @@ export default class Paginator {
         this.$paginationControl = $(`<div class="datagrid-pagination-control">
     <div class="pull-right">
         <div class="paging_fico">
-            <button class="reveal-btn btn"><span class="paginate-control-text">page 1 of 8 </span><i class="fico-arrow-down5"></i>
+            <button class="reveal-btn btn"><span class="paginate-control-text">page 1 of 1 </span><i class="fico-arrow-down5"></i>
             </button>
             <ul class="pager jumpto-pager">
                 <li><a class="pagination-button-previous disabled"><i class="fico-chevron-left"></i></a></li>
@@ -77,6 +77,7 @@ export default class Paginator {
         } else {
             this.$nextBtn.removeClass('disabled');
         }
+        this.$pageNumbersSpan.text(`Page ${this.currentPage} of ${this.maxPage}`);
     }
 
     previousPage() {
@@ -84,7 +85,6 @@ export default class Paginator {
             this.table.previousPage();
             this.updatePageIndicators();
         }
-
     }
 
     nextPage() {
@@ -110,6 +110,7 @@ export default class Paginator {
         this.$nextBtn = this.$paginationControl.find('.pagination-button-next');
         this.$pageInput = this.$paginationControl.find('.paging_fico .jumpto-pagination-input');
         this.$perPageSelector = this.$paginationControl.find('.results-per-page-selector');
+        this.$pageNumbersSpan = this.$paginationControl.find('.paginate-control-text');
 
         this.$revealBtn.on('mousedown', () => {
             this.$revealBtn.toggleClass('active-pager-btn');
@@ -137,6 +138,10 @@ export default class Paginator {
         this.$perPageSelector.on('input', evt => {
             let val = _.parseInt(evt.target.value);
             this.table.setPageSize(val);
+            this.updatePageIndicators();
+        });
+
+        _.defer(()=> {
             this.updatePageIndicators();
         });
     }
