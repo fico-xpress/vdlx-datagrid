@@ -68,7 +68,15 @@ class Datagrid {
     )([setNamePosnsAndOptions$, allScenarios$]);
 
     const entitiesColumns$ = map(
-      entitiesOptions => _.map(entitiesOptions, entity => _.assign(entity, { title: entity.name, field: entity.id })),
+      entitiesOptions => _.map(entitiesOptions, entityOptions => {
+        const entity = schema.getEntity(entityOptions.name);
+
+        return _.assign(entityOptions, {
+          title: String(entityOptions.title || entity.getAbbreviation() || entityOptions.name),
+          field: entityOptions.id
+        });
+
+      }),
       entitiesOptions$
     );
 

@@ -32,13 +32,13 @@
                     </vdl-table>
                 </vdl-column>
             </vdl-row>
-            <vdl-row>
+            <!-- <vdl-row>
                 <vdl-column size="6">
                     <vdlx-datagrid id="demo2">
                         <vdlx-datagrid-column entity="StockSizes"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
-            </vdl-row>
+            </vdl-row> -->
         </vdl-section>
 
     </vdl-page>

@@ -815,10 +815,11 @@ var Datagrid = function Datagrid(options$, columnOptions$) {
   }), _koUtils.withDeepEquals, (0, _koUtils.filter)(notSomeEmpty), (0, _koUtils.startWith)([]), _koUtils.combineLatest)([setNamePosnsAndOptions$, allScenarios$]);
 
   var entitiesColumns$ = (0, _koUtils.map)(function (entitiesOptions) {
-    return _.map(entitiesOptions, function (entity) {
-      return _.assign(entity, {
-        title: entity.name,
-        field: entity.id
+    return _.map(entitiesOptions, function (entityOptions) {
+      var entity = schema.getEntity(entityOptions.name);
+      return _.assign(entityOptions, {
+        title: String(entityOptions.title || entity.getAbbreviation() || entityOptions.name),
+        field: entityOptions.id
       });
     });
   }, entitiesOptions$);
