@@ -263,13 +263,17 @@ function _default(element, attributes, api) {
   // }
 
 
-  var tableId = attributes['id'];
+  var tableIdAttr = attributes['id'];
+  var tableId;
 
-  if (tableId) {
+  if (tableIdAttr) {
     $element.attr('id', null);
-    paramsBuilder.addParam('tableId', tableId.rawValue);
+    tableId = tableIdAttr.rawValue;
+  } else {
+    tableId = _.uniqueId('vdlx-datagrid-');
   }
 
+  paramsBuilder.addParam('tableId', tableId);
   var width = attributes['width'];
 
   if (width) {
@@ -335,7 +339,7 @@ function _default(element, attributes, api) {
 
 
   var $tableDiv = $('<div/>');
-  $tableDiv.attr('id', tableId.rawValue);
+  $tableDiv.attr('id', tableId);
   $tableDiv.addClass('table-striped table-bordered table-condensed');
   $element.append($tableDiv);
   /*
