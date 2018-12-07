@@ -48,6 +48,12 @@ public declarations
     t5Col3: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of string
     t5Col4: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of integer
 
+    ! Scalars
+
+    MyScalar: string
+    MyBool: boolean
+    Month: string
+
     ! VDL Language App - Table Data
 
     !@insight.alias Support level
@@ -164,7 +170,11 @@ writeln('size t5 ', t5Col1.size)
     SupportPaid :: ['Pending', 'Paid', 'Pending']
     ServiceLevelAgreements :: [48, 24, 1]
 
-writeln("Finished")
+    MyScalar := "MyScalar"
+    MyBool := TRUE
+    Month := "March"
+
+    writeln("Finished")
 
 end-model
 
