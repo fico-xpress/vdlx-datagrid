@@ -5,7 +5,7 @@
 
         <script>
 
-            const num_rows = 15;
+            const num_rows = 35;
 
             var gridData = _.map(_.range(num_rows), n => {
                 return {SupportLevels: n + 1, ServiceLevelAgreements: (num_rows * 2) - (n * 2), SupportCosts: _.random(num_rows)};
@@ -14,32 +14,42 @@
         </script>
 
         <vdl-section heading="Datagrid example">
-            <vdl-row>
+            <!-- <vdl-row>
                 <vdl-column size="6">
                     <vdlx-datagrid id="demo1" page-mode="paged" grid-data="=gridData">
-                        <!-- <vdlx-datagrid-column set="SupportLevels"></vdlx-datagrid-column> -->
+                        <vdlx-datagrid-column set="SupportLevels"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ServiceLevelAgreements"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ServiceLevelAgreements" scenario="1"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
-                    <vdl-table id="demo2" height="600">
+                    <vdl-table id="demo2" height="600" page-mode="paged" page-size="2">
                         <vdl-table-column set="SupportLevels"></vdl-table-column>
                         <vdl-table-column entity="ServiceLevelAgreements" editable="true" ></vdl-table-column>
                         <vdl-table-column entity="ServiceLevelAgreements"  editable="true" scenario="1"></vdl-table-column>
                         <vdl-table-column entity="SupportCosts"></vdl-table-column>
                     </vdl-table>
                 </vdl-column>
-            </vdl-row>
-            <!-- <vdl-row>
+            </vdl-row> -->
+            <vdl-row>
                 <vdl-column size="6">
-                    <vdlx-datagrid id="demo2">
+                    <vdlx-datagrid id="demo2" page-mode="paged" >
                         <vdlx-datagrid-column entity="StockSizes"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
-            </vdl-row> -->
+            </vdl-row>
         </vdl-section>
+<!-- 
+        <vdl-section>
+            <vdl-row>
+                <vdl-column size="6">
+                    <vdl-table>
+                        <vdl-table-column entity="StockSizes"></vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section> -->
 
     </vdl-page>
 </vdl>

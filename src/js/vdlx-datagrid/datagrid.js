@@ -1,6 +1,7 @@
 import dataTransform, { getAllColumnIndices, getDisplayIndices } from './data-transform';
 import { map, combineMap, filter, startWith, combineLatest, withDeepEquals } from './ko-utils';
 import withScenarioData from './data-loader';
+import Paginator from "./paginator";
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
 
@@ -9,7 +10,18 @@ const someEmpty = values => _.some(values, _.isEmpty);
 const notSomeEmpty = _.negate(someEmpty);
 
 class Datagrid {
-  constructor(options$, columnOptions$) {
+  constructor(root, options$, columnOptions$) {
+    this.options$ = options$;
+    this.columnOptions$ = columnOptions$;
+    this.componentRoot = root;
+    this.table = undefined;
+    this.buildTable();
+  }
+
+  buildTable () {
+    const columnOptions$ = this.columnOptions$;
+    const options$ = this.options$;
+    
     const schema = insight
       .getView()
       .getProject()
@@ -98,7 +110,8 @@ class Datagrid {
         placeholder: 'Waiting for data',
         groupStartOpen: false,
         ajaxLoader: true,
-        columns: []
+        columns: [],
+        tableBuilt: _.partial(this.tableBuilt, this)
       }),
       options$
     );
@@ -124,10 +137,10 @@ class Datagrid {
 
         return table
           .setData(data)
-          .then(function() {
+          .then(function () {
             table.redraw();
           })
-          .catch(function(err) {
+          .catch(function (err) {
             debugger;
           });
       }),
@@ -135,6 +148,13 @@ class Datagrid {
       startWith(undefined),
       combineLatest
     )([table$, columns$, data$]).subscribe(_.noop);
+  }
+
+  tableBuilt (self) {
+    let $componentRoot = $(self.componentRoot);
+    let $footerToolBar = $componentRoot.find('.footer-toolbar');
+    const paginatorControl = new Paginator(this);
+    paginatorControl.appendTo($footerToolBar);
   }
 }
 

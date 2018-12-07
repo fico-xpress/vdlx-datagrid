@@ -9,6 +9,8 @@ vdlx-datagrid {
   display: block;
   color: $black;
   .tabulator {
+    margin-bottom: 0;
+
     &.table-striped {
       .tabulator-table {
       }
@@ -159,6 +161,12 @@ vdlx-datagrid {
   }
   &.scrolling .tabulator-tableHolder {
     max-height: 600px;
+  }
+
+  .footer-toolbar {
+    width: 100%;
+    background-color: lightblue;
+    margin-bottom: 20px;
   }
 }
 

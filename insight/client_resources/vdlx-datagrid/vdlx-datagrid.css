@@ -2,6 +2,9 @@ vdlx-datagrid {
   display: block;
   color: #000000;
 }
+vdlx-datagrid .tabulator {
+  margin-bottom: 0;
+}
 vdlx-datagrid .tabulator.table-striped .tabulator-header {
   background-color: #d2e9f4;
   border-bottom: 1px solid #cccccc;
@@ -53,6 +56,11 @@ vdlx-datagrid .tabulator.table-condensed .tabulator-tableHolder .tabulator-table
 }
 vdlx-datagrid.scrolling .tabulator-tableHolder {
   max-height: 600px;
+}
+vdlx-datagrid .footer-toolbar {
+  width: 100%;
+  background-color: lightblue;
+  margin-bottom: 20px;
 }
 
 .tabulator.table-bordered .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {

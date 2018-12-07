@@ -1,6 +1,8 @@
 import Datagrid from './datagrid';
+import Paginator from "./paginator";
 
 const COLUMN_UPDATE_DELAY = 100;
+const DEFAULT_GRID_PAGE_SIZE = 10;
 
 function parseIntOrKeep (val) {
     var result = _.parseInt(val);
@@ -39,7 +41,8 @@ const getTableOptions = (params) => () => {
 
     if (pageMode === 'paged') {
         tableOptions.pagination = 'local';
-        tableOptions.paginationSize = params.pageSize || 15;
+        tableOptions.paginationSize = params.pageSize || DEFAULT_GRID_PAGE_SIZE;
+        tableOptions.paginationElement = $('.hidden-footer-toolbar').get(0); // hide the built-in paginator
     } else if (!pageMode || pageMode === 'none') {
         tableOptions.height = false;
     }
@@ -91,7 +94,7 @@ export default function (params, componentInfo) {
     const tableOptions$ = ko.pureComputed(getTableOptions(params));
     const columnConfig$ = ko.observable({}); 
 
-    var datagrid = new Datagrid(tableOptions$, columnConfig$);
+    var datagrid = new Datagrid(componentInfo.element, tableOptions$, columnConfig$);
 
     function buildTable () {
         const datagridConfig = $(element)
@@ -149,7 +152,6 @@ export default function (params, componentInfo) {
         }).map(function (item) {
             return ko.unwrap(item.scenario);
         }).uniq().sortBy().value();
-
 
         if (_.isEmpty(scenarioList) || _.isEmpty(entities)) {
             // console.debug('vdl-table (' + self.tableId + '): Scenario list or table column configuration is empty, ignoring update');
