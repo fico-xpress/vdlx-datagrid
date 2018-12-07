@@ -6,13 +6,6 @@ const SelectOptions = insightModules.load('components/autotable-select-options')
 
 const createTabulatorFactory = selector => config => new Tabulator(selector, config);
 
-const defaults = {
-  layout: 'fitColumns',
-  placeholder: 'Waiting for data',
-  groupStartOpen: false,
-  ajaxLoader: true
-};
-
 class Datagrid {
   constructor(options$) {
     const schema = insight
@@ -79,7 +72,6 @@ class Datagrid {
     const tabulatorOptions$ = map(
       options => ({
         layout: 'fitColumns',
-        height: options.gridHeight || '600px',
         placeholder: 'Waiting for data',
         groupStartOpen: false,
         ajaxLoader: true,

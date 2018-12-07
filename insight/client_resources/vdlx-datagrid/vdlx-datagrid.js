@@ -104,7 +104,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   // Override the current require with this new one
   return newRequire;
-})({"../css/vdlx-datagrid.css":[function(require,module,exports) {
+})({"../css/vdlx-datagrid.scss":[function(require,module,exports) {
 
 },{}],"vdlx-datagrid/attributes.js":[function(require,module,exports) {
 "use strict";
@@ -230,8 +230,11 @@ function _default(element, attributes, api) {
 
   var pageMode = attributes['page-mode'];
 
-  if (pageMode) {
+  if (pageMode && pageMode.rawValue === 'paged') {
     paramsBuilder.addParam('pageMode', pageMode.rawValue);
+  } else {
+    paramsBuilder.addParam('pageMode', 'scrolling');
+    $(element).addClass('scrolling');
   } // TODO No table search in vdlx-datagrid
   // var showFilter = attributes['show-filter'];
   // if (showFilter) {
@@ -787,7 +790,6 @@ var Datagrid = function Datagrid(options$) {
   var tabulatorOptions$ = (0, _koUtils.map)(function (options) {
     return {
       layout: 'fitColumns',
-      height: options.gridHeight || '600px',
       placeholder: 'Waiting for data',
       groupStartOpen: false,
       ajaxLoader: true,
@@ -950,10 +952,18 @@ function _default(params, componentInfo) {
       alwaysShowSelection: params.alwaysShowSelection,
       gridHeight: params.gridHeight,
       gridData: params.gridData
-    };
+    }; // TODO stretch goal
+    // if (params.saveState === false) {
+    //     tableOptions.saveState = params.saveState;
+    // }
 
-    if (params.saveState === false) {
-      tableOptions.saveState = params.saveState;
+    var pageMode = params['pageMode'];
+
+    if (pageMode === 'paged') {
+      tableOptions.pagination = 'local';
+      tableOptions.paginationSize = params.pageSize || 15;
+    } else if (!pageMode || pageMode === 'none') {
+      tableOptions.height = false;
     }
 
     if (params.rowFilter) {
@@ -1551,10 +1561,10 @@ VDL('vdlx-datagrid', {
 },{}],"index.js":[function(require,module,exports) {
 "use strict";
 
-require("../css/vdlx-datagrid.css");
+require("../css/vdlx-datagrid.scss");
 
 require("./vdlx-datagrid");
 
 require("./vdlx-datagrid-column");
-},{"../css/vdlx-datagrid.css":"../css/vdlx-datagrid.css","./vdlx-datagrid":"vdlx-datagrid/index.js","./vdlx-datagrid-column":"vdlx-datagrid-column/index.js"}]},{},["index.js"], null)
+},{"../css/vdlx-datagrid.scss":"../css/vdlx-datagrid.scss","./vdlx-datagrid":"vdlx-datagrid/index.js","./vdlx-datagrid-column":"vdlx-datagrid-column/index.js"}]},{},["index.js"], null)
 //# sourceMappingURL=/vdlx-datagrid.map
