@@ -1,4 +1,4 @@
-import dataTransform, { getAllColumnIndices, getDisplayIndices } from './data-transform';
+import dataTransform, { getAllColumnIndices, getDisplayIndices, getPartialExposedKey, generateCompositeKey } from './data-transform';
 import { map, combineMap, filter, startWith, combineLatest, withDeepEquals } from './ko-utils';
 import withScenarioData from './data-loader';
 import Paginator from "./paginator";
@@ -15,6 +15,10 @@ class Datagrid {
         this.columnOptions$ = columnOptions$;
         this.componentRoot = root;
         this.table = undefined;
+        this.schema = insight
+            .getView()
+            .getProject()
+            .getModelSchema();
         this.buildTable();
     }
 
@@ -22,82 +26,12 @@ class Datagrid {
         const columnOptions$ = this.columnOptions$;
         const options$ = this.options$;
 
-        const schema = insight
-            .getView()
-            .getProject()
-            .getModelSchema();
 
         const scenariosData$ = _.compose(
             filter(v => v && v.defaultScenario),
             startWith(undefined),
             withScenarioData
         )(columnOptions$);
-
-        const indicesOptions$ = map(_.property('indicesOptions'), columnOptions$);
-        const entitiesOptions$ = map(_.property('columnOptions'), columnOptions$);
-        const allColumnIndices$ = map(getAllColumnIndices(schema), entitiesOptions$);
-
-        const setNameAndPosns$ = combineMap(
-            ([columnIndices, entitiesOptions]) => getDisplayIndices(columnIndices, entitiesOptions),
-            [allColumnIndices$, entitiesOptions$]
-        );
-
-        const setNamePosnsAndOptions$ = combineMap(
-            ([setNameAndPosns, indicesOptions]) =>
-                _.map(setNameAndPosns, setNameAndPosn => ({
-                    ...setNameAndPosn,
-                    options: _.get(indicesOptions, `${setNameAndPosn.name}.${setNameAndPosn.position}`, {
-                        id: `${setNameAndPosn.name}_${setNameAndPosn.position}`
-                    })
-                })),
-            [setNameAndPosns$, indicesOptions$]
-        );
-
-        const allScenarios$ = map(
-            scenariosData =>
-                scenariosData && _.uniq([scenariosData.defaultScenario].concat(_.values(scenariosData.scenarios))),
-            scenariosData$
-        );
-
-        const indicesColumns$ = _.compose(
-            map(values => {
-                const [setNamePosnsAndOptions, allScenarios] = values;
-                return _.map(setNamePosnsAndOptions, setNameAndPosn => {
-                    const { name, options } = setNameAndPosn;
-                    const entity = schema.getEntity(name);
-
-                    return {
-                        title: String(options.title || entity.getAbbreviation() || name),
-                        field: options.id,
-                        mutator: (value, data, type, params) => SelectOptions.getLabel(schema, allScenarios, entity, value)
-                    };
-                });
-            }),
-            withDeepEquals,
-            filter(notSomeEmpty),
-            startWith([]),
-            combineLatest
-        )([setNamePosnsAndOptions$, allScenarios$]);
-
-        const entitiesColumns$ = map(
-            entitiesOptions => _.map(entitiesOptions, entityOptions => {
-                const entity = schema.getEntity(entityOptions.name);
-
-                return _.assign(entityOptions, {
-                    title: String(entityOptions.title || entity.getAbbreviation() || entityOptions.name),
-                    field: entityOptions.id
-                });
-
-            }),
-            entitiesOptions$
-        );
-
-        const columns$ = _.compose(
-            map(_.flatten),
-            filter(notSomeEmpty),
-            startWith([]),
-            combineLatest
-        )([indicesColumns$, entitiesColumns$]);
 
         const tabulatorFactory$ = map(
             options => (options.tableId ? createTabulatorFactory(`#${options.tableId}`) : _.noop),
@@ -120,34 +54,19 @@ class Datagrid {
 
         table$.subscribe(oldTable => oldTable && oldTable.destroy(), null, 'beforeChange');
 
-        const data$ = _.compose(
-            map(params => params && dataTransform(...params)),
-            filter(notSomeEmpty),
-            startWith(undefined),
-            combineLatest
-        )([allColumnIndices$, entitiesColumns$, setNamePosnsAndOptions$, scenariosData$]);
-
         _.compose(
-            map(values => {
+            map((values) => {
                 if (!values) {
-                    return false;
+                    return
                 }
-                const [table, columns, data] = values;
-                table.setColumns(columns);
 
-                return table
-                    .setData(data)
-                    .then(function () {
-                        table.redraw();
-                    })
-                    .catch(function (err) {
-                        debugger;
-                    });
+                return this.setColumnsAndData(...values);
             }),
             filter(notSomeEmpty),
             startWith(undefined),
             combineLatest
-        )([table$, columns$, data$]).subscribe(_.noop);
+        )([table$, columnOptions$, scenariosData$]).subscribe(_.noop);
+
     }
 
     tableBuilt (self) {
@@ -155,6 +74,69 @@ class Datagrid {
         let $footerToolBar = $componentRoot.find('.footer-toolbar');
         const paginatorControl = new Paginator(this);
         paginatorControl.appendTo($footerToolBar);
+    }
+
+
+    setColumnsAndData(table, columnOptions, scenariosData) {
+        const schema = this.schema;
+        const indicesOptions = columnOptions.indicesOptions
+        const entitiesOptions =columnOptions.columnOptions
+        const allColumnIndices = getAllColumnIndices(schema, entitiesOptions);
+
+        const setNameAndPosns = getDisplayIndices(allColumnIndices, entitiesOptions);
+
+        const setNamePosnsAndOptions = _.map(setNameAndPosns, setNameAndPosn => ({
+            ...setNameAndPosn,
+            options: _.get(indicesOptions, `${setNameAndPosn.name}.${setNameAndPosn.position}`, {
+                id: `${setNameAndPosn.name}_${setNameAndPosn.position}`
+            })
+        }))
+
+        const allScenarios = _.uniq([scenariosData.defaultScenario].concat(_.values(scenariosData.scenarios)));
+
+        const indicesColumns = _.map(setNamePosnsAndOptions, setNameAndPosn => {
+            const { name, options } = setNameAndPosn;
+            const entity = schema.getEntity(name);
+
+            return {
+                title: String(options.title || entity.getAbbreviation() || name),
+                field: options.id,
+                mutatorData: (value, data, type, params) => SelectOptions.getLabel(schema, allScenarios, entity, value)
+            };
+        });
+
+        const entitiesIds = _.map(entitiesOptions, 'id');
+
+        const entitiesColumns =  _.map(entitiesOptions, entityOptions => {
+            const entity = schema.getEntity(entityOptions.name);
+
+            return _.assign(entityOptions, {
+                title: String(entityOptions.title || entity.getAbbreviation() || entityOptions.name),
+                field: entityOptions.id,
+                mutatorData: (value, data) => {
+                    // const rowData = _.map(entitiesIds, _.propertyOf(data));
+                    // const tableKeys = getPartialExposedKey(setNameAndPosns, data);
+                    // const keys = generateCompositeKey(tableKeys, setNameAndPosns, columnIndices[columnNumber], entityOptions);
+                    // const cellValue = window.insight.Formatter.getFormattedLabel(entity, columnScenario, value, keys);
+
+                    return value;
+                }
+            });
+        });
+        const columns = [].concat(indicesColumns, entitiesColumns);
+
+        const data = dataTransform(allColumnIndices, entitiesColumns, setNamePosnsAndOptions, scenariosData)
+
+        table.setColumns(columns);
+
+        return table
+            .setData(data)
+            .then(function () {
+                table.redraw();
+            })
+            .catch(function (err) {
+                debugger;
+            });
     }
 }
 
