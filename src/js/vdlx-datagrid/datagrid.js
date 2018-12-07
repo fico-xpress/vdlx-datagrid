@@ -41,7 +41,7 @@ class Datagrid {
                 tableBuilt: _.partial(this.tableBuilt, this)
             };
 
-            return new Tabulator(options.tableId, tabulatorOptions);
+            return new Tabulator(`#${options.tableId}`, tabulatorOptions);
         }, options$)
 
         table$.subscribe(oldTable => oldTable && oldTable.destroy(), null, 'beforeChange');
@@ -96,21 +96,20 @@ class Datagrid {
             };
         });
 
-        const entitiesIds = _.map(entitiesOptions, 'id');
+        const columnsIds = _.map(setNamePosnsAndOptions, 'options.id').concat(_.map(entitiesOptions, 'id'));
 
-        const entitiesColumns =  _.map(entitiesOptions, entityOptions => {
+        const entitiesColumns =  _.map(entitiesOptions, (entityOptions, columnNumber) => {
             const entity = schema.getEntity(entityOptions.name);
 
             return _.assign(entityOptions, {
                 title: String(entityOptions.title || entity.getAbbreviation() || entityOptions.name),
                 field: entityOptions.id,
                 mutatorData: (value, data) => {
-                    // const rowData = _.map(entitiesIds, _.propertyOf(data));
-                    // const tableKeys = getPartialExposedKey(setNameAndPosns, data);
-                    // const keys = generateCompositeKey(tableKeys, setNameAndPosns, columnIndices[columnNumber], entityOptions);
-                    // const cellValue = window.insight.Formatter.getFormattedLabel(entity, columnScenario, value, keys);
-
-                    return value;
+                    const rowData = _.map(columnsIds, _.propertyOf(data));
+                    const tableKeys = getPartialExposedKey(setNameAndPosns, rowData);
+                    const keys = generateCompositeKey(tableKeys, setNameAndPosns, allColumnIndices[columnNumber], entityOptions);
+                    const columnScenario = _.get(scenariosData.scenarios, entityOptions.id, scenariosData.defaultScenario);
+                    return window.insight.Formatter.getFormattedLabel(entity, columnScenario, value, keys);
                 }
             });
         });

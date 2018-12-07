@@ -12,7 +12,7 @@
             });
 
         </script>
-        <vdl-section heading="Datagrid example">
+        <!-- <vdl-section heading="Datagrid example">
             <vdl-row>
                 <vdl-column size="6">
                     <vdlx-datagrid id="demo1" page-mode="paged" grid-data="=gridData">
@@ -31,7 +31,7 @@
                     </vdl-table>
                 </vdl-column>
             </vdl-row>
-        </vdl-section>
+        </vdl-section> -->
 
         <vdl-section>
             <vdl-row>
