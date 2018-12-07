@@ -65,11 +65,15 @@ export default function (element, attributes, api) {
     //     paramsBuilder.addParam('selectionNavigation', false);
     // }
 
-    var tableId = attributes['id'];
-    if (tableId) {
+    var tableIdAttr = attributes['id'];
+    let tableId;
+    if (tableIdAttr) {
         $element.attr('id', null);
-        paramsBuilder.addParam('tableId', tableId.rawValue);
+        tableId = tableIdAttr.rawValue;
+    } else {
+        tableId = _.uniqueId('vdlx-datagrid-')
     }
+    paramsBuilder.addParam('tableId', tableId);
 
     var width = attributes['width'];
     if (width) {
@@ -130,7 +134,7 @@ export default function (element, attributes, api) {
     Create the DIV placeholder to attach Tabulator component to. 
      */
     const $tableDiv = $('<div/>');
-    $tableDiv.attr('id', tableId.rawValue);
+    $tableDiv.attr('id', tableId);
     $tableDiv.addClass('table-striped table-bordered table-condensed');
     $element.append($tableDiv);
 
