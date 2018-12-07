@@ -40,7 +40,12 @@ export const getDisplayIndices = (columnIndices, columnOptions) => {
         .value();
 }
 
-const generateCompositeKey = function (setValues, setNameAndPosns, arrayIndices, arrayOptions) {
+// Build a key from the index set columns of a row. This may be partial, if not all index sets are displayed in the row
+export const getPartialExposedKey = (setNameAndPosns, rowData) => 
+    // Assume index columns always start at the beginning of the rowData array
+    rowData.slice(0, setNameAndPosns.length);
+
+export const generateCompositeKey = function (setValues, setNameAndPosns, arrayIndices, arrayOptions) {
     const setPosns = DataUtils.getIndexPosns(arrayIndices);
     return arrayIndices.map(function (setName, i) {
         const setPosn = setPosns[i];
