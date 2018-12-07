@@ -104,7 +104,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   // Override the current require with this new one
   return newRequire;
-})({"../css/vdlx-datagrid.css":[function(require,module,exports) {
+})({"../css/vdlx-datagrid.scss":[function(require,module,exports) {
 
 },{}],"vdlx-datagrid/attributes.js":[function(require,module,exports) {
 "use strict";
@@ -331,6 +331,12 @@ function _default(element, attributes, api) {
   $tableDiv.attr('id', tableId.rawValue);
   $tableDiv.addClass('table-striped table-bordered table-condensed');
   $element.append($tableDiv);
+}
+},{}],"vdlx-datagrid/data-loader.js":[function(require,module,exports) {
+"use strict";
+
+  var $footerToolBar = $('<div class="footer-toolbar"/>');
+  $element.append($footerToolBar);
 }
 },{}],"vdlx-datagrid/data-loader.js":[function(require,module,exports) {
 "use strict";
@@ -639,6 +645,66 @@ var _default = function _default(config) {
 };
 
 exports.default = _default;
+},{}],"vdlx-datagrid/paginator.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Paginator =
+/*#__PURE__*/
+function () {
+  function Paginator(table) {
+    _classCallCheck(this, Paginator);
+
+    this.table = table;
+    debugger;
+
+    if (table) {
+      this.currentPage = table.getPage();
+      this.maxPage = table.getMaxPage();
+    }
+
+    options$.subscribe(this.buildTable);
+  }
+
+
+  _createClass(Paginator, [{
+    key: "appendTo",
+    value: function appendTo($container) {
+      var _this = this;
+
+      $container.append(this.$paginationControl);
+      this.$revealBtn = this.$paginationControl.find('.paging_fico .reveal-btn');
+      this.$dropdown = this.$paginationControl.find('.paging_fico .jumpto-pagination');
+      this.$revealBtn.on('mousedown', function () {
+        _this.$revealBtn.toggleClass('active-pager-btn');
+
+        _this.$dropdown.toggleClass('hide');
+      });
+      this.$prevBtn = this.$paginationControl.find('.pagination-button-previous');
+      this.$prevBtn.on('mouseup', function () {
+        _this.table.previousPage();
+      });
+      this.$nextBtn = this.$paginationControl.find('.pagination-button-next');
+      this.$nextBtn.on('mouseup', function () {
+        _this.table.nextPage();
+      });
+    }
+  }]);
+
+  return Paginator;
+}();
+
+exports.default = Paginator;
 },{}],"vdlx-datagrid/datagrid.js":[function(require,module,exports) {
 "use strict";
 
@@ -648,6 +714,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 var _dataTransform = _interopRequireDefault(require("./data-transform"));
+
+var _paginator = _interopRequireDefault(require("./paginator"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -660,10 +728,18 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var Datagrid =
 /*#__PURE__*/
 function () {
-  function Datagrid(options$) {
+  /**
+   *
+   * @param options$ Table Options for passing to the Tabulator Library
+   * @param root of the VDLX-DATAGRID component
+   */
+  function Datagrid(options$, root) {
     _classCallCheck(this, Datagrid);
 
-    options$.subscribe(this.buildTable);
+    debugger;
+    options$.subscribe(this.buildTable, this);
+    this.componentRoot = root;
+    this.table = undefined;
   }
 
   _createClass(Datagrid, [{
@@ -678,7 +754,7 @@ function () {
         ajaxLoader: true
       };
       var data = (0, _dataTransform.default)(options);
-      tableOptions.columns = _.flatten(_.map(options.indicesOptions, function (setArray, setName) {
+      defaults.columns = _.flatten(_.map(options.indicesOptions, function (setArray, setName) {
         return _.map(setArray, function (setObject, setPosition) {
           return _.assign(setObject, {
             title: setObject.set,
@@ -700,15 +776,23 @@ function () {
         debugger;
       });
     }
+  }, {
+    key: "tableBuilt",
+    value: function tableBuilt() {
+      var $componentRoot = $(this.componentRoot);
+      var $footerToolBar = $componentRoot.find('.footer-toolbar');
+      debugger;
+      var paginatorControl = new _paginator.default(this.table);
+      paginatorControl.appendTo($footerToolBar);
+    }
   }]);
 
   return Datagrid;
 }();
 
-;
 var _default = Datagrid;
 exports.default = _default;
-},{"./data-transform":"vdlx-datagrid/data-transform.js"}],"vdlx-datagrid/view-model.js":[function(require,module,exports) {
+},{"./data-transform":"vdlx-datagrid/data-transform.js","./paginator":"vdlx-datagrid/paginator.js"}],"vdlx-datagrid/view-model.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -719,6 +803,8 @@ exports.default = _default;
 var _dataLoader = _interopRequireDefault(require("./data-loader"));
 
 var _datagrid = _interopRequireDefault(require("./datagrid"));
+
+var _paginator = _interopRequireDefault(require("./paginator"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -752,7 +838,7 @@ function _default(params, componentInfo) {
   var defaultScenario = params.scenarioId || 0;
   var tableOptions$ = ko.observable({});
   var tableOptionsWithData$ = (0, _dataLoader.default)(tableOptions$);
-  var datagrid = new _datagrid.default(tableOptionsWithData$);
+  var datagrid = new _datagrid.default(tableOptionsWithData$, componentInfo.element);
 
   function buildTable() {
     var datagridConfig = $(element).find('vdlx-datagrid-column').map(function (idx, element) {
@@ -925,7 +1011,7 @@ function _default(params, componentInfo) {
   buildTable();
   return vm;
 }
-},{"./data-loader":"vdlx-datagrid/data-loader.js","./datagrid":"vdlx-datagrid/datagrid.js"}],"vdlx-datagrid/index.js":[function(require,module,exports) {
+},{"./data-loader":"vdlx-datagrid/data-loader.js","./datagrid":"vdlx-datagrid/datagrid.js","./paginator":"vdlx-datagrid/paginator.js"}],"vdlx-datagrid/index.js":[function(require,module,exports) {
 "use strict";
 
 var _attributes = _interopRequireDefault(require("./attributes"));
@@ -1427,10 +1513,10 @@ VDL('vdlx-datagrid', {
 },{}],"index.js":[function(require,module,exports) {
 "use strict";
 
-require("../css/vdlx-datagrid.css");
+require("../css/vdlx-datagrid.scss");
 
 require("./vdlx-datagrid");
 
 require("./vdlx-datagrid-column");
-},{"../css/vdlx-datagrid.css":"../css/vdlx-datagrid.css","./vdlx-datagrid":"vdlx-datagrid/index.js","./vdlx-datagrid-column":"vdlx-datagrid-column/index.js"}]},{},["index.js"], null)
+},{"../css/vdlx-datagrid.scss":"../css/vdlx-datagrid.scss","./vdlx-datagrid":"vdlx-datagrid/index.js","./vdlx-datagrid-column":"vdlx-datagrid-column/index.js"}]},{},["index.js"], null)
 //# sourceMappingURL=/vdlx-datagrid.map

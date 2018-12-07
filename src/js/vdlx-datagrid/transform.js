@@ -126,8 +126,23 @@ export default function (element, attributes, api) {
         }
     }
 
+    /*
+    Create the DIV placeholder to attach Tabulator component to. 
+     */
     const $tableDiv = $('<div/>');
     $tableDiv.attr('id', tableId.rawValue);
     $tableDiv.addClass('table-striped table-bordered table-condensed');
     $element.append($tableDiv);
+
+    /*
+    Create to DIV to hide the built-in pagination
+     */
+    const $hiddenFooter = $('<div class="hidden-footer-toolbar" style="display: none"/>');
+    $element.append($hiddenFooter);
+
+    /*
+    Create the Footer toolbar with FICO pagination control.
+     */
+    const $footerToolBar = $('<div class="footer-toolbar"/>');
+    $element.append($footerToolBar);
 }

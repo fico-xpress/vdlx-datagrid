@@ -1,7 +1,9 @@
 import withData from './data-loader';
 import Datagrid from './datagrid';
+import Paginator from "./paginator";
 
 const COLUMN_UPDATE_DELAY = 100;
+const DEFAULT_GRID_PAGE_SIZE = 10;
 
 function parseIntOrKeep (val) {
     var result = _.parseInt(val);
@@ -34,7 +36,7 @@ export default function (params, componentInfo) {
 
     const tableOptionsWithData$ = withData(tableOptions$);
 
-    var datagrid = new Datagrid(tableOptionsWithData$);
+    var datagrid = new Datagrid(tableOptionsWithData$, componentInfo.element);
 
     function buildTable () {
         const datagridConfig = $(element)
@@ -122,7 +124,8 @@ export default function (params, componentInfo) {
 
         if (pageMode === 'paged') {
             tableOptions.pagination = 'local';
-            tableOptions.paginationSize = params.pageSize || 15;
+            tableOptions.paginationSize = params.pageSize || DEFAULT_GRID_PAGE_SIZE;
+            tableOptions.paginationElement = $('.hidden-footer-toolbar').get(0); // hide the built-in paginator
         } else if (!pageMode || pageMode === 'none') {
             tableOptions.height = false;
         }
