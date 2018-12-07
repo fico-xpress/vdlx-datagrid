@@ -1,11 +1,10 @@
 import dataTransform, { getAllColumnIndices, getDisplayIndices, getPartialExposedKey, generateCompositeKey } from './data-transform';
-import { map, combineMap, filter, startWith, combineLatest, withDeepEquals } from './ko-utils';
+import { map, filter, startWith, combineLatest, withDeepEquals } from './ko-utils';
 import withScenarioData from './data-loader';
 import Paginator from "./paginator";
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
 
-const createTabulatorFactory = selector => config => new Tabulator(selector, config);
 const someEmpty = values => _.some(values, _.isEmpty);
 const notSomeEmpty = _.negate(someEmpty);
 
@@ -26,31 +25,24 @@ class Datagrid {
         const columnOptions$ = this.columnOptions$;
         const options$ = this.options$;
 
-
         const scenariosData$ = _.compose(
             filter(v => v && v.defaultScenario),
             startWith(undefined),
             withScenarioData
         )(columnOptions$);
 
-        const tabulatorFactory$ = map(
-            options => (options.tableId ? createTabulatorFactory(`#${options.tableId}`) : _.noop),
-            options$
-        );
-
-        const tabulatorOptions$ = map(
-            options => ({
+        const table$ = map(options => {
+            const tabulatorOptions = {
                 layout: 'fitColumns',
                 placeholder: 'Waiting for data',
                 groupStartOpen: false,
                 ajaxLoader: true,
                 columns: [],
                 tableBuilt: _.partial(this.tableBuilt, this)
-            }),
-            options$
-        );
+            };
 
-        const table$ = combineMap(([factory, options]) => factory(options), [tabulatorFactory$, tabulatorOptions$]);
+            return new Tabulator(options.tableId, tabulatorOptions);
+        }, options$)
 
         table$.subscribe(oldTable => oldTable && oldTable.destroy(), null, 'beforeChange');
 
@@ -75,7 +67,6 @@ class Datagrid {
         const paginatorControl = new Paginator(this);
         paginatorControl.appendTo($footerToolBar);
     }
-
 
     setColumnsAndData(table, columnOptions, scenariosData) {
         const schema = this.schema;
