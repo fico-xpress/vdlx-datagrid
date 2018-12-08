@@ -1,11 +1,10 @@
 import dataTransform, { getAllColumnIndices, getDisplayIndices, getPartialExposedKey, generateCompositeKey } from './data-transform';
-import { map, combineMap, filter, startWith, combineLatest, withDeepEquals } from './ko-utils';
+import { map, filter, startWith, combineLatest, withDeepEquals } from './ko-utils';
 import withScenarioData from './data-loader';
 import Paginator from "./paginator";
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
 
-const createTabulatorFactory = selector => config => new Tabulator(selector, config);
 const someEmpty = values => _.some(values, _.isEmpty);
 const notSomeEmpty = _.negate(someEmpty);
 
@@ -26,31 +25,24 @@ class Datagrid {
         const columnOptions$ = this.columnOptions$;
         const options$ = this.options$;
 
-
         const scenariosData$ = _.compose(
             filter(v => v && v.defaultScenario),
             startWith(undefined),
             withScenarioData
         )(columnOptions$);
 
-        const tabulatorFactory$ = map(
-            options => (options.tableId ? createTabulatorFactory(`#${options.tableId}`) : _.noop),
-            options$
-        );
-
-        const tabulatorOptions$ = map(
-            options => ({
+        const table$ = map(options => {
+            const tabulatorOptions = {
                 layout: 'fitColumns',
                 placeholder: 'Waiting for data',
                 groupStartOpen: false,
                 ajaxLoader: true,
                 columns: [],
                 tableBuilt: _.partial(this.tableBuilt, this)
-            }),
-            options$
-        );
+            };
 
-        const table$ = combineMap(([factory, options]) => factory(options), [tabulatorFactory$, tabulatorOptions$]);
+            return new Tabulator(`#${options.tableId}`, tabulatorOptions);
+        }, options$)
 
         table$.subscribe(oldTable => oldTable && oldTable.destroy(), null, 'beforeChange');
 
@@ -75,7 +67,6 @@ class Datagrid {
         const paginatorControl = new Paginator(this);
         paginatorControl.appendTo($footerToolBar);
     }
-
 
     setColumnsAndData(table, columnOptions, scenariosData) {
         const schema = this.schema;
@@ -105,21 +96,20 @@ class Datagrid {
             };
         });
 
-        const entitiesIds = _.map(entitiesOptions, 'id');
+        const columnsIds = _.map(setNamePosnsAndOptions, 'options.id').concat(_.map(entitiesOptions, 'id'));
 
-        const entitiesColumns =  _.map(entitiesOptions, entityOptions => {
+        const entitiesColumns =  _.map(entitiesOptions, (entityOptions, columnNumber) => {
             const entity = schema.getEntity(entityOptions.name);
 
             return _.assign(entityOptions, {
                 title: String(entityOptions.title || entity.getAbbreviation() || entityOptions.name),
                 field: entityOptions.id,
                 mutatorData: (value, data) => {
-                    // const rowData = _.map(entitiesIds, _.propertyOf(data));
-                    // const tableKeys = getPartialExposedKey(setNameAndPosns, data);
-                    // const keys = generateCompositeKey(tableKeys, setNameAndPosns, columnIndices[columnNumber], entityOptions);
-                    // const cellValue = window.insight.Formatter.getFormattedLabel(entity, columnScenario, value, keys);
-
-                    return value;
+                    const rowData = _.map(columnsIds, _.propertyOf(data));
+                    const tableKeys = getPartialExposedKey(setNameAndPosns, rowData);
+                    const keys = generateCompositeKey(tableKeys, setNameAndPosns, allColumnIndices[columnNumber], entityOptions);
+                    const columnScenario = _.get(scenariosData.scenarios, entityOptions.id, scenariosData.defaultScenario);
+                    return window.insight.Formatter.getFormattedLabel(entity, columnScenario, value, keys);
                 }
             });
         });
