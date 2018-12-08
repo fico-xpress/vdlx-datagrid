@@ -1,5 +1,7 @@
 /** @type {KnockoutStatic} */ ko;
 
+// TODO consider renaming 'ko-utils::map' to 'ko-utils::apply' and reversing the order of parameters to match lodash.
+// TODO is the currying necessary? Is it actually used in practice or simply adding complexity?
 export const map = _.curry(function (f, observable) {
     return ko.pureComputed(function () {
         return f(ko.unwrap(observable));
@@ -23,6 +25,8 @@ export const combineMap = _.curry((f, ...observables) => {
     return map(f, combineLatest(...observables));
 }, 2);
 
+// TODO this isn't filter as it's generally understood
+// TODO considering renaming it 'guard' or similar
 export const filter = _.curry(function (predicate, observable) {
     var previousValue = ko.unwrap(observable);
 

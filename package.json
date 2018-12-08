@@ -1,28 +1,40 @@
 {
-    "name": "table-performance",
-    "version": "1.0.0",
-    "description": "",
-    "main": "generate-data.js",
-    "scripts": {
-        "test": "./node_modules/.bin/testcafe chrome test/ui/ -e --screenshots-on-fails -s screenshots",
-        "test-headless": "./node_modules/.bin/testcafe \"chrome:headless\" test/ui/ -e --screenshots-on-fails -s screenshots",
-        "watch": "parcel watch -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --no-hmr src/js/index.js",
-        "build": "parcel build -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --experimental-scope-hoisting src/js/index.js"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "devDependencies": {
-        "@types/knockout": "^3.4.60",
-        "@types/lodash": "^3.10.2",
-        "csv-stringify": "^4.3.1",
-        "lodash": "^4.17.11",
-        "parcel-bundler": "^1.10.3",
-        "sass": "^1.15.2",
-        "typescript": "^3.2.1"
-    },
-    "dependencies": {
-        "immutable": "^4.0.0-rc.12",
-        "testcafe": "^0.23.2"
-    }
+  "name": "table-performance",
+  "version": "1.0.0",
+  "description": "",
+  "main": "generate-data.js",
+  "scripts": {
+    "ui-test": "./node_modules/.bin/testcafe chrome test/ui/ -e --screenshots-on-fails -s screenshots",
+    "ui-test-headless": "./node_modules/.bin/testcafe \"chrome:headless\" test/ui/ -e --screenshots-on-fails -s screenshots",
+    "unit-test": "jest",
+    "watch": "parcel watch -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --no-hmr src/js/index.js",
+    "build": "parcel build -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --experimental-scope-hoisting src/js/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/knockout": "^3.4.60",
+    "@types/lodash": "^3.10.2",
+    "csv-stringify": "^4.3.1",
+    "@babel/core": "*",
+    "@babel/preset-env": "*",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "*",
+    "jest": "^23.6.0",
+    "lodash": "^4.17.11",
+    "parcel-bundler": "^1.10.3",
+    "sass": "^1.15.2",
+    "typescript": "^3.2.1",
+    "immutable": "^4.0.0-rc.12",
+    "testcafe": "^0.23.2"
+  },
+  "dependencies": {
+    "knockout": "^3.4.2"
+  },
+  "jest": {
+    "setupFiles": [
+      "./test/jest/globals.js"
+    ]
+  }
 }
