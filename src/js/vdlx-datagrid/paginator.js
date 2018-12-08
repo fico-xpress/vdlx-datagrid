@@ -1,14 +1,7 @@
 export default class Paginator {
 
     constructor(table) {
-
         this.table = table;
-        if(table) {
-            // this.currentPage = table.getPage();
-            // this.maxPage = table.getPageMax();
-            // this.pageSize = table.getPageSize();
-        }
-
         this.$paginationControl = $(`<div class="datagrid-pagination-control">
     <div class="pull-right">
         <div class="paging_fico">
@@ -30,13 +23,11 @@ export default class Paginator {
                         <option value="25">25</option>
                         <option value="50">50</option>
                         <option value="100">100</option>
-<!--                        <option value="-1">All</option>-->
                     </select></div>
+                </div>
             </div>
         </div>
-    </div>
-</div>`);
-
+    </div>`);
     }
 
     /*
@@ -52,19 +43,37 @@ export default class Paginator {
 
      */
 
+
+    /**
+     * get the currentPage as integer
+     * @returns {number}
+     */
     get currentPage() {
         return this.table.getPage();
     }
 
+    /**
+     * Set the current page as integer
+     * @param {number} num
+     * @returns {*|boolean}
+     */
     set currentPage(num) {
         return this.table.setPage(num);
     }
 
+    /**
+     * get the number of the last page.
+     * @returns {number} last page
+     */
     get maxPage() {
         return this.table.getPageMax();
     }
 
+    /**
+     * Refresh all the Paginator controls to display the correct pages, the enabled start of the previous and next buttons, ect..
+     */
     updatePageIndicators() {
+        debugger;
         let pageNum = this.currentPage;
         this.$pageInput.val(pageNum);
         if(pageNum === 1) {
@@ -80,6 +89,9 @@ export default class Paginator {
         this.$pageNumbersSpan.text(`Page ${this.currentPage} of ${this.maxPage}`);
     }
 
+    /**
+     * Navigate the grid to the previous page.
+     */
     previousPage() {
         if(this.currentPage > 1) {
             this.table.previousPage();
@@ -87,6 +99,9 @@ export default class Paginator {
         }
     }
 
+    /**
+     * Navigate the grid to the next page.
+     */
     nextPage() {
         if(this.currentPage < this.maxPage) {
             this.table.nextPage();
