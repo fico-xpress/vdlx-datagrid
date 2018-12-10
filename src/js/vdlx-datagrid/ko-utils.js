@@ -1,4 +1,5 @@
 /** @type {KnockoutStatic} */ ko;
+/** @type {import('lodash').LoDashStatic} */ _;
 
 export const onSubscribe = _.curry(function (f, observable) {
     var subscribe = observable.subscribe;

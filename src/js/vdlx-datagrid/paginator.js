@@ -163,9 +163,5 @@ export default class Paginator {
             this.table.setPageSize(val);
             this.updatePageIndicators();
         });
-
-        _.defer(()=> {
-            this.updatePageIndicators();
-        });
     }
 }
