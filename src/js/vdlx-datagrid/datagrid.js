@@ -94,7 +94,7 @@ class Datagrid {
             options: _.get(indicesOptions, `${setNameAndPosn.name}.${setNameAndPosn.position}`, {
                 id: `${setNameAndPosn.name}_${setNameAndPosn.position}`
             })
-        }))
+        }));
 
         const allScenarios = _.uniq([scenariosData.defaultScenario].concat(_.values(scenariosData.scenarios)));
 
