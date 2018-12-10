@@ -1,0 +1,25 @@
+<vdl version="4.1">
+    <vdl-page>
+        <vdl-section>
+            <vdl-row>
+                <vdl-column size="12">
+                    <!--
+                    t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF,t3Col1,t3Col2,t3Col3,t3Col4
+                    -->
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column set="t3IndexA"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t3IndexB"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t3IndexC"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t3IndexD"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t3IndexE"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t3IndexF"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="t3Col1"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="t3Col2"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="t3Col3"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="t3Col4"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+    </vdl-page>
+</vdl>
