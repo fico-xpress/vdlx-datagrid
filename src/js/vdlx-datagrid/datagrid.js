@@ -1,12 +1,18 @@
-import dataTransform, { getAllColumnIndices, getDisplayIndices, getPartialExposedKey, generateCompositeKey } from './data-transform';
+import dataTransform, {
+    getAllColumnIndices,
+    getDisplayIndices,
+    getPartialExposedKey,
+    generateCompositeKey
+} from './data-transform';
 import withScenarioData from './data-loader';
 import Paginator from "./paginator";
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
 
 class Datagrid {
-    constructor(root, options$, columnOptions$) {
-        this.options$ = options$;
+    constructor(root, gridOptions$, columnOptions$) {
+
+        this.gridOptions$ = gridOptions$;
         this.columnOptions$ = columnOptions$;
         this.componentRoot = root;
         this.table = undefined;
@@ -15,7 +21,7 @@ class Datagrid {
             .getProject()
             .getModelSchema();
 
-        const options = ko.unwrap(options$);
+        const options = ko.unwrap(gridOptions$);
 
         this.table = this.createTable(options);
 
@@ -24,18 +30,18 @@ class Datagrid {
         this.buildTable();
     }
 
-    buildTable () {
+    buildTable() {
         const columnOptions$ = this.columnOptions$;
-        const options$ = this.options$;
+        const gridOptions$ = this.gridOptions$;
         const scenariosData$ = withScenarioData(columnOptions$);
 
         ko.pureComputed(() => {
-            const options = ko.unwrap(options$());
+            const gridOptions = ko.unwrap(gridOptions$());
             const columnOptions = columnOptions$();
             const scenariosData = scenariosData$();
 
-            if (options && columnOptions && scenariosData) {
-                this.setColumnsAndData(options, columnOptions, scenariosData);
+            if (gridOptions && columnOptions && scenariosData) {
+                this.setColumnsAndData(gridOptions, columnOptions, scenariosData);
             }
             return undefined;
         }).subscribe(_.noop);
@@ -77,8 +83,8 @@ class Datagrid {
     setColumnsAndData(options, columnOptions, scenariosData) {
         const table = this.table;
         const schema = this.schema;
-        const indicesOptions = columnOptions.indicesOptions
-        const entitiesOptions = columnOptions.columnOptions
+        const indicesOptions = columnOptions.indicesOptions;
+        const entitiesOptions = columnOptions.columnOptions;
         const allColumnIndices = getAllColumnIndices(schema, entitiesOptions);
 
         const setNameAndPosns = getDisplayIndices(allColumnIndices, entitiesOptions);
@@ -93,7 +99,7 @@ class Datagrid {
         const allScenarios = _.uniq([scenariosData.defaultScenario].concat(_.values(scenariosData.scenarios)));
 
         const indicesColumns = _.map(setNamePosnsAndOptions, setNameAndPosn => {
-            const { name, options } = setNameAndPosn;
+            const {name, options} = setNameAndPosn;
             const entity = schema.getEntity(name);
 
             return {
@@ -106,7 +112,7 @@ class Datagrid {
 
         const columnsIds = _.map(setNamePosnsAndOptions, 'options.id').concat(_.map(entitiesOptions, 'id'));
 
-        const entitiesColumns =  _.map(entitiesOptions, (entityOptions, columnNumber) => {
+        const entitiesColumns = _.map(entitiesOptions, (entityOptions, columnNumber) => {
             const entity = schema.getEntity(entityOptions.name);
 
             return _.assign(entityOptions, {
@@ -122,9 +128,18 @@ class Datagrid {
                 }
             });
         });
-        const columns = [].concat(indicesColumns, entitiesColumns);
+
+
+        const overrides = this.gridOptions$().overrides;
+        const columns = _.map([].concat(indicesColumns, entitiesColumns), col => {
+            if (!!overrides.columnFilter) {
+                col.headerFilter = true;
+            }
+            return col;
+        });
 
         const data = dataTransform(allColumnIndices, entitiesColumns, setNamePosnsAndOptions, scenariosData, options.rowFilter)
+
 
         table.setColumns(columns);
 
