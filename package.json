@@ -7,6 +7,7 @@
     "ui-test": "./node_modules/.bin/testcafe chrome test/ui/ -e --screenshots-on-fails -s screenshots",
     "ui-test-headless": "./node_modules/.bin/testcafe \"chrome:headless\" test/ui/ -e --screenshots-on-fails -s screenshots",
     "unit-test": "jest",
+    "unit-test-debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "watch": "parcel watch -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --no-hmr src/js/index.js",
     "build": "parcel build -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --experimental-scope-hoisting src/js/index.js"
   },
