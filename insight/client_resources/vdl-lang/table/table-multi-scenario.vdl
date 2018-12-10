@@ -1,10 +1,7 @@
 <vdl version="4.1">
     <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
 
-    <ol class="todo">
-        <li>Intro text/explanation</li>
-        <li>Finish VDL source and usage snippets</li>
-    </ol>
+    <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
     <style>
         .column-class-attribute {
