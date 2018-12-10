@@ -80,7 +80,7 @@ class Datagrid {
         }
     }
 
-    setColumnsAndData(options, columnOptions, scenariosData) {
+    setColumnsAndData(gridOptions, columnOptions, scenariosData) {
         const table = this.table;
         const schema = this.schema;
         const indicesOptions = columnOptions.indicesOptions;
@@ -130,7 +130,7 @@ class Datagrid {
         });
 
 
-        const overrides = this.gridOptions$().overrides;
+        const overrides = gridOptions.overrides;
         const columns = _.map([].concat(indicesColumns, entitiesColumns), col => {
             if (!!overrides.columnFilter) {
                 col.headerFilter = true;
@@ -138,8 +138,7 @@ class Datagrid {
             return col;
         });
 
-        const data = dataTransform(allColumnIndices, entitiesColumns, setNamePosnsAndOptions, scenariosData, options.rowFilter)
-
+        const data = dataTransform(allColumnIndices, entitiesColumns, setNamePosnsAndOptions, scenariosData, gridOptions.rowFilter)
 
         table.setColumns(columns);
 
