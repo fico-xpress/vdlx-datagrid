@@ -2,7 +2,7 @@ import {onSubscribe} from '../../src/js/vdlx-datagrid/ko-utils';
 
 describe('ko-utils::onSubscribe', () => {
 
-    test('onSubscribe notifies when ', done => {
+    test('onSubscribe notifies when Knockout subscribes to an observable.', done => {
 
         const START_VALUE = 3;
         const OBSERVABLE = ko.observable(START_VALUE);
