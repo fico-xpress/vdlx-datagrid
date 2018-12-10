@@ -72,9 +72,13 @@ export default (allColumnIndices, columnOptions, setNamePosnsAndOptions, scenari
     const arrayIds = _.map(columnOptions, 'id');
     const setIds = _.map(setNamePosnsAndOptions, 'options.id');
 
-    const arrays = _.map(columnOptions, column =>
-        _.get(scenariosData.scenarios, column.id, defaultScenario).getArray(column.name)
-    );
+    const arrays = _.filter(_.map(columnOptions, column => {
+        try {
+            return _.get(scenariosData.scenarios, column.id, defaultScenario).getArray(column.name)
+        } catch (err) {
+            return undefined;
+        } 
+    }));
 
     const sets = _.map(setNamePosnsAndOptions, setNameAndPosn => {
         return _(indexScenarios)
