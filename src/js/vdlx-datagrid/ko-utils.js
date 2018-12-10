@@ -26,7 +26,7 @@ export const combineMap = _.curry((f, ...observables) => {
 }, 2);
 
 // TODO this isn't filter as it's generally understood
-// TODO considering renaming it 'guard' or similar
+// TODO consider renaming it 'guard' or similar
 export const filter = _.curry(function (predicate, observable) {
     var previousValue = ko.unwrap(observable);
 
