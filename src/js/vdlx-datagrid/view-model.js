@@ -1,5 +1,4 @@
 import Datagrid from './datagrid';
-import Paginator from "./paginator";
 
 const COLUMN_UPDATE_DELAY = 100;
 const DEFAULT_GRID_PAGE_SIZE = 10;
@@ -78,35 +77,55 @@ const getTableOptions = (params) => () => {
     }
 
     return tableOptions;
-}
+};
 
-export default function (params, componentInfo) {
+/**
+ * VDL Extensions callback.
+ *
+ * It is this functions responsibility to create the ViewModel that supplies data and behaviour to the <vdlx-datagrid> UI template.
+ *
+ * @param {object} params - an object where each property is a static or dynamic runtime value for this VDL extension.
+ * @param {object} componentInfo - An object containing info describing the component.
+ * @param {HTMLElement} componentInfo.element the DOM node for this instance of the VDL extension.
+ */
+export default function createViewModel(params, componentInfo) {
+    // Create the ViewModel object
     var vm = {};
 
+    // Strip off the 'px' units if present.
     if (params.width) {
         vm.tableWidth = params.width.replace('px', '');
     }
 
     const element = componentInfo.element;
-
     const defaultScenario = params.scenarioId || 0;
 
+    /**
+     * Wrap the options for the
+     */
     const tableOptions$ = ko.pureComputed(getTableOptions(params));
     const columnConfig$ = ko.observable({}); 
 
     var datagrid = new Datagrid(componentInfo.element, tableOptions$, columnConfig$);
 
     function buildTable () {
-        const datagridConfig = $(element)
+
+        /*
+        Collect the column information from the child VDL extensions (vdlx-datagrid-column)
+         */
+        const columnConfigs = $(element)
             .find('vdlx-datagrid-column')
             .map(function (idx, element) {
                 return _.clone(element['autotableConfig']);
             });
+        if(!columnConfigs.length) {
+            return;
+        }
 
         var entities = [];
         var indices = {};
 
-        _.forEach(datagridConfig, function (configItem) {
+        _.forEach(columnConfigs, function (configItem) {
             var scenarioNum = parseIntOrKeep(configItem.scenario || defaultScenario);
             if (_.isNumber(scenarioNum)) {
                 if (scenarioNum < 0) {
