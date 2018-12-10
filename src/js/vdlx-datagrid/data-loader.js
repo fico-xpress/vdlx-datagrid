@@ -71,20 +71,18 @@ function withScenarioData (config$) {
     let hasSubscription = false;
     const scenarios$ = ko.observable([]);
 
-    const scenarioData$ = _.compose(
-        map((configAndScenarios) => {
-            if (!configAndScenarios) {
-                return undefined;
-            }
-            const [config, scenarios] = configAndScenarios;
-            return getScenarios(config, scenarios);
-        }),
-        filter(([config, scenarios]) => !_.isEmpty(config) && !_.isEmpty(scenarios)),
-        combineLatest
-    )([config$, scenarios$]);
+    const scenarioData$ = ko.pureComputed(() => {
+        const config = ko.unwrap(config$);
+        const scenarios = ko.unwrap(scenarios$);
+        if (_.isEmpty(config) || _.isEmpty(scenarios)) {
+            return undefined;
+        }
+
+        return getScenarios(config, scenarios);
+    });
 
     const scenarioObserverSubscription$ = ko.pureComputed(function () {
-        let config = ko.unwrap(config$);
+        const config = ko.unwrap(config$);
         if (!_.isEmpty(config.scenarioList) && !_.isEmpty(config.columnOptions)) {
             return insight.getView()
                 .withScenarios(config.scenarioList)

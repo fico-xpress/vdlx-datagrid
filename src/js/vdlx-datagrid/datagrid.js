@@ -1,12 +1,8 @@
 import dataTransform, { getAllColumnIndices, getDisplayIndices, getPartialExposedKey, generateCompositeKey } from './data-transform';
-import { map, filter, startWith, combineLatest, withDeepEquals } from './ko-utils';
 import withScenarioData from './data-loader';
 import Paginator from "./paginator";
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
-
-const someEmpty = values => _.some(values, _.isEmpty);
-const notSomeEmpty = _.negate(someEmpty);
 
 class Datagrid {
     constructor(root, options$, columnOptions$) {
@@ -25,13 +21,10 @@ class Datagrid {
         const columnOptions$ = this.columnOptions$;
         const options$ = this.options$;
 
-        const scenariosData$ = _.compose(
-            filter(v => v && v.defaultScenario),
-            startWith(undefined),
-            withScenarioData
-        )(columnOptions$);
+        const scenariosData$ = withScenarioData(columnOptions$);
 
-        const table$ = map(options => {
+        const table$ = ko.pureComputed(() => {
+            const options = options$();
             const tabulatorOptions = {
                 layout: 'fitColumns',
                 placeholder: 'Waiting for data',
@@ -42,23 +35,20 @@ class Datagrid {
             };
 
             return new Tabulator(`#${options.tableId}`, tabulatorOptions);
-        }, options$)
+        });
 
         table$.subscribe(oldTable => oldTable && oldTable.destroy(), null, 'beforeChange');
 
-        _.compose(
-            map((values) => {
-                if (!values) {
-                    return
-                }
+        ko.pureComputed(() => {
+            const table = table$();
+            const columnOptions = columnOptions$();
+            const scenariosData = scenariosData$();
 
-                return this.setColumnsAndData(...values);
-            }),
-            filter(notSomeEmpty),
-            startWith(undefined),
-            combineLatest
-        )([table$, columnOptions$, scenariosData$]).subscribe(_.noop);
-
+            if (table && columnOptions && scenariosData) {
+                this.setColumnsAndData(table, columnOptions, scenariosData);
+            }
+            return undefined;
+        }).subscribe(_.noop);
     }
 
     tableBuilt (self) {
