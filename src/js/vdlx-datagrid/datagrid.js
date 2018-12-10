@@ -19,7 +19,7 @@ class Datagrid {
 
         this.table = this.createTable(options);
 
-        this.paginatorControl = this.createPaginatorControl(this.componentRoot, this.table);
+        this.paginatorControl = this.createPaginatorControl(this.componentRoot, this.table, options);
 
         this.buildTable();
     }
@@ -55,12 +55,22 @@ class Datagrid {
         return new Tabulator(`#${options.tableId}`, tabulatorOptions);
     }
 
-    createPaginatorControl(componentRoot, table) {
-        let $componentRoot = $(componentRoot);
-        let $footerToolBar = $componentRoot.find('.footer-toolbar');
+    createPaginatorControl(componentRoot, table, options) {
+        if (!options.pagination) {
+            return undefined;
+        }
+
+        const $componentRoot = $(componentRoot);
+        const $footerToolBar = $componentRoot.find('.footer-toolbar');
         const paginatorControl = new Paginator(table);
         paginatorControl.appendTo($footerToolBar);
         return paginatorControl;
+    }
+
+    updatePaginator() {
+        if (this.paginatorControl) {
+            this.paginatorControl.updatePageIndicators();
+        }
     }
 
     setColumnsAndData(columnOptions, scenariosData) {
@@ -119,7 +129,7 @@ class Datagrid {
             .setData(data)
             .then(() => {
                 table.redraw();
-                this.paginatorControl.updatePageIndicators();
+                this.updatePaginator();
             })
             .catch((err) => {
                 debugger;
