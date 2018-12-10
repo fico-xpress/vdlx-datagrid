@@ -1,4 +1,4 @@
-import { onSubscribe, onSubscriptionDispose, combineLatest, filter, map } from "./ko-utils";
+import { onSubscribe, onSubscriptionDispose } from "./ko-utils";
 
 function findScenario (scenarios, identifier) {
     var result = null;
@@ -109,6 +109,8 @@ function withScenarioData (config$) {
         onSubscriptionDispose(function () {
             hasSubscription = !!scenarioData$.getSubscriptionsCount();
             if (!hasSubscription) {
+                const scenarioObserver = scenarioObserverSubscription$();
+                scenarioObserver && scenarioObserver.dispose();
                 _.each(subscriptions, sub => sub.dispose());
             }
         }, subscription);
