@@ -9,7 +9,6 @@
      */
 
     var enums = insightModules.load('enums');
-    var vdlIndexFilter = insightModules.load('vdl/extensions/vdl-index-filter');
     var validatorFactory = insightModules.load('vdl/vdl-validator-factory');
     var insightGetter = insightModules.load('insight-getter');
     var RenderCallbacks = insightModules.load('components/table/render-callbacks');
@@ -181,7 +180,7 @@
 
             var buildColumn = _.throttle(function (done) {
                 console.log('vdlx-datagrid update column');
-                var columnReady = $(componentInfo.element).find('vdl-index-filter').length === _.size(indexFilters$());
+                var columnReady = $(componentInfo.element).find('vdlx-datagrid-index-filter').length === _.size(indexFilters$());
 
                 var props = {
                     scenario: ko.unwrap(params.scenario),
