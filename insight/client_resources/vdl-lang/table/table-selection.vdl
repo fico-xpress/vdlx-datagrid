@@ -1,5 +1,5 @@
 <vdl version="4.1">
-    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+    <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
 
     <vdl-page>
         <vdl-section heading="Table Row Selection - Filter Tables">

@@ -1,5 +1,5 @@
 <vdl version="4.1">
-    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+    <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
 
     <ol class="todo">
         <li>Intro text/Explanation</li>

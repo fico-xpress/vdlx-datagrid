@@ -1,5 +1,5 @@
 <vdl version="4.1">
-    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+    <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
 
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
