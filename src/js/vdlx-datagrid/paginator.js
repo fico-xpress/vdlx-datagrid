@@ -31,7 +31,7 @@ export default class Paginator {
     }
 
     /*
-    Tabulator Pagination methods
+    Tabulator Pagination methods for reference
 
     table.setPage(5);
     table.nextPage();
@@ -73,7 +73,6 @@ export default class Paginator {
      * Refresh all the Paginator controls to display the correct pages, the enabled start of the previous and next buttons, ect..
      */
     updatePageIndicators() {
-        debugger;
         let pageNum = this.currentPage;
         this.$pageInput.val(pageNum);
         if(pageNum === 1) {
@@ -109,6 +108,11 @@ export default class Paginator {
         }
     }
 
+    /**
+     * Go to a numbered page in the grid, number is clamped to min and max page.
+     * @param {integer} pageNum
+     * @returns {number}
+     */
     goToPage(pageNum) {
         let currentPage = Math.max(1, Math.min(this.maxPage, pageNum));
         this.currentPage = currentPage;
@@ -116,6 +120,10 @@ export default class Paginator {
         return currentPage;
     }
 
+    /**
+     * Given a jQuery node, appends this Paginator to it and sets up event handling.
+     * @param (jQuery) $container
+     */
     appendTo($container) {
         $container.append(this.$paginationControl);
 
