@@ -80,8 +80,9 @@ class Datagrid {
             const entity = schema.getEntity(name);
 
             return {
-                title: String(options.title || entity.getAbbreviation() || name),
+                title: _.escape(String(options.title || entity.getAbbreviation() || name)),
                 field: options.id,
+                cssClass: 'expanding-cell-height',
                 mutatorData: (value, data, type, params) => SelectOptions.getLabel(schema, allScenarios, entity, value)
             };
         });
@@ -92,8 +93,9 @@ class Datagrid {
             const entity = schema.getEntity(entityOptions.name);
 
             return _.assign(entityOptions, {
-                title: String(entityOptions.title || entity.getAbbreviation() || entityOptions.name),
+                title: _.escape(String(entityOptions.title || entity.getAbbreviation() || entityOptions.name)),
                 field: entityOptions.id,
+                cssClass: 'expanding-cell-height',
                 mutatorData: (value, data) => {
                     const rowData = _.map(columnsIds, _.propertyOf(data));
                     const tableKeys = getPartialExposedKey(setNameAndPosns, rowData);

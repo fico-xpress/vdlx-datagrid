@@ -35,12 +35,19 @@ vdlx-datagrid {
       .tabulator-header {
         background-color: $color-table-header;
         border-bottom: 1px solid $color-medium-grey;
-        .tabulator-col {
-          background-color: $color-table-header;
-          line-height: 17px;
+        .tabulator-headers {
+          .tabulator-col {
+            background-color: $color-table-header;
+            line-height: 17px;
+            &.expanding-cell-height {
+              height: auto !important;
+              min-height: 27px !important;
+            }
+            .tabulator-col-title {
+              white-space: pre-wrap;
+            }
+          }
         }
-      }
-      .tabulator-headers {
       }
       .tabulator-calcs-holder {
       }
@@ -49,8 +56,6 @@ vdlx-datagrid {
       .tabulator-col-content {
         text-align: center;
         font-weight: 400;
-      }
-      .tabulator-col-title {
       }
       .tabulator-col-group {
       }

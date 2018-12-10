@@ -71,7 +71,7 @@ export default function (element, attributes, api) {
         $element.attr('id', null);
         tableId = tableIdAttr.rawValue;
     } else {
-        tableId = _.uniqueId('vdlx-datagrid-')
+        tableId = _.uniqueId('vdlx-datagrid-');
     }
     paramsBuilder.addParam('tableId', tableId);
 
