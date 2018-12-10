@@ -179,30 +179,27 @@ tables['table5'] = new Table([
     'Col4',
 ], 1000000, 111110);
 
-let table;
+_.reduce(tables, (acc, table, i) => 
+    acc.then(() => {
+        return new Promise((resolve, reject) => {
+            console.log(`Generating data for ${i}`, table);
 
-for(var i=1; i < 6; i++) {
-    table = tables[`table${i}`];
+            let rows = _.map(_.range(0, table.numRows - 1), (idx) => {
+                let num = table.startNum + idx;
+                let funcs = table.funcs;
+                let row = _.map(funcs, (fn, key) => {
+                    return fn(num);
+                });
+                return row;
+            })
 
-    console.log(`Generating data for table${i}`, table);
+            // add in the header row
+            rows.unshift(table.headers);
 
-    let rows = _.map(_.range(0, table.numRows - 1), (idx) => {
-        let num = table.startNum + idx;
-        let funcs = table.funcs;
-        let row = _.map(funcs, (fn, key) => {
-            return fn(num);
-        });
-        return row;
-    })
-
-    // add in the header row
-    rows.unshift(table.headers);
-
-    let output = stringify(rows);
-
-    fs.writeFileSync('insight/model_resources/' + table.filename + '.csv', output, 'utf8', () => {
-        console.log('finished! ' + table.filename);
-    });
-
-    console.log(rows.length);
-}
+            let output = stringify(rows, function (err, output) {
+                fs.writeFileSync('insight/model_resources/' + table.filename + '.csv', output, 'utf8');
+                resolve();
+            });
+        })
+    }),
+    Promise.resolve())
