@@ -361,7 +361,7 @@ function _default(element, attributes, api) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.getDisplayIndices = exports.getAllColumnIndices = void 0;
+exports.default = exports.generateCompositeKey = exports.getPartialExposedKey = exports.getDisplayIndices = exports.getAllColumnIndices = void 0;
 var DataUtils = insightModules.load('utils/data-utils');
 var createDenseData = insightModules.load('components/table/create-dense-data');
 
@@ -411,9 +411,18 @@ var getDisplayIndices = function getDisplayIndices(columnIndices, columnOptions)
   }).keys().map(function (k) {
     return JSON.parse(k);
   }).value();
-};
+}; // Build a key from the index set columns of a row. This may be partial, if not all index sets are displayed in the row
+
 
 exports.getDisplayIndices = getDisplayIndices;
+
+var getPartialExposedKey = function getPartialExposedKey(setNameAndPosns, rowData) {
+  return (// Assume index columns always start at the beginning of the rowData array
+    rowData.slice(0, setNameAndPosns.length)
+  );
+};
+
+exports.getPartialExposedKey = getPartialExposedKey;
 
 var generateCompositeKey = function generateCompositeKey(setValues, setNameAndPosns, arrayIndices, arrayOptions) {
   var setPosns = DataUtils.getIndexPosns(arrayIndices);
@@ -436,6 +445,8 @@ var generateCompositeKey = function generateCompositeKey(setValues, setNameAndPo
     }
   });
 };
+
+exports.generateCompositeKey = generateCompositeKey;
 
 var _default = function _default(allColumnIndices, columnOptions, setNamePosnsAndOptions, scenariosData) {
   var defaultScenario = scenariosData.defaultScenario;
@@ -471,79 +482,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.onSubscriptionDispose = onSubscriptionDispose;
-exports.withDeepEquals = exports.withEqualityComparer = exports.onSubscribe = exports.startWith = exports.filter = exports.combineMap = exports.combineLatest = exports.map = void 0;
+exports.onSubscribe = void 0;
 
 /** @type {KnockoutStatic} */
 ko;
+/** @type {import('lodash').LoDashStatic} */
 
-var map = _.curry(function (f, observable) {
-  return ko.pureComputed(function () {
-    return f(ko.unwrap(observable));
-  });
-}, 2);
-
-exports.map = map;
-
-var combineLatest = function combineLatest(observables) {
-  return ko.pureComputed(function () {
-    return _.map([].concat(observables), function (observable) {
-      return ko.unwrap(observable);
-    });
-  });
-};
-/**
- * @param {Function} f
- * @param {...KnockoutObservable} observables
- * @returns {KnockoutObservable}
-*/
-
-
-exports.combineLatest = combineLatest;
-
-var combineMap = _.curry(function (f) {
-  for (var _len = arguments.length, observables = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    observables[_key - 1] = arguments[_key];
-  }
-
-  return map(f, combineLatest.apply(void 0, observables));
-}, 2);
-
-exports.combineMap = combineMap;
-
-var filter = _.curry(function (predicate, observable) {
-  var previousValue = ko.unwrap(observable);
-  return map(function (val) {
-    if (predicate(val)) {
-      previousValue = val;
-      return val;
-    }
-
-    return previousValue;
-  }, observable);
-}, 2);
-
-exports.filter = filter;
-
-var startWith = _.curry(function (value, o2) {
-  var res = ko.observable(ko.unwrap(value));
-  var anotherSubscription;
-  return onSubscribe(function (subscription) {
-    if (!anotherSubscription) {
-      anotherSubscription = o2.subscribe(function (anotherValue) {
-        return res(anotherValue);
-      });
-    }
-
-    onSubscriptionDispose(function () {
-      if (!!res.getSubscriptionsCount()) {
-        anotherSubscription.dispose();
-        anotherSubscription = null;
-      }
-    }, subscription);
-  }, res);
-}, 2);
-
-exports.startWith = startWith;
+_;
 
 var onSubscribe = _.curry(function (f, observable) {
   var subscribe = observable.subscribe;
@@ -569,15 +514,6 @@ function onSubscriptionDispose(f, subscription) {
 
   return subscription;
 }
-
-var withEqualityComparer = _.curry(function (f, obs) {
-  obs.equalityComparer = f;
-  return obs;
-}, 2);
-
-exports.withEqualityComparer = withEqualityComparer;
-var withDeepEquals = withEqualityComparer(_.isEqual);
-exports.withDeepEquals = withDeepEquals;
 },{}],"vdlx-datagrid/data-loader.js":[function(require,module,exports) {
 "use strict";
 
@@ -670,25 +606,16 @@ function getScenarios(config, scenarios) {
 function withScenarioData(config$) {
   var hasSubscription = false;
   var scenarios$ = ko.observable([]);
+  var scenarioData$ = ko.pureComputed(function () {
+    var config = ko.unwrap(config$);
+    var scenarios = ko.unwrap(scenarios$);
 
-  var scenarioData$ = _.compose((0, _koUtils.map)(function (configAndScenarios) {
-    if (!configAndScenarios) {
+    if (_.isEmpty(config) || _.isEmpty(scenarios)) {
       return undefined;
     }
 
-    var _configAndScenarios = _slicedToArray(configAndScenarios, 2),
-        config = _configAndScenarios[0],
-        scenarios = _configAndScenarios[1];
-
     return getScenarios(config, scenarios);
-  }), (0, _koUtils.filter)(function (_ref3) {
-    var _ref4 = _slicedToArray(_ref3, 2),
-        config = _ref4[0],
-        scenarios = _ref4[1];
-
-    return !_.isEmpty(config) && !_.isEmpty(scenarios);
-  }), _koUtils.combineLatest)([config$, scenarios$]);
-
+  });
   var scenarioObserverSubscription$ = ko.pureComputed(function () {
     var config = ko.unwrap(config$);
 
@@ -714,6 +641,9 @@ function withScenarioData(config$) {
       hasSubscription = !!scenarioData$.getSubscriptionsCount();
 
       if (!hasSubscription) {
+        var scenarioObserver = scenarioObserverSubscription$();
+        scenarioObserver && scenarioObserver.dispose();
+
         _.each(subscriptions, function (sub) {
           return sub.dispose();
         });
@@ -746,13 +676,7 @@ function () {
     _classCallCheck(this, Paginator);
 
     this.table = table;
-
-    if (table) {// this.currentPage = table.getPage();
-      // this.maxPage = table.getPageMax();
-      // this.pageSize = table.getPageSize();
-    }
-
-    this.$paginationControl = $("<div class=\"datagrid-pagination-control\">\n    <div class=\"pull-right\">\n        <div class=\"paging_fico\">\n            <button class=\"reveal-btn btn\"><span class=\"paginate-control-text\">page 1 of 1 </span><i class=\"fico-arrow-down5\"></i>\n            </button>\n            <ul class=\"pager jumpto-pager\">\n                <li><a class=\"pagination-button-previous disabled\"><i class=\"fico-chevron-left\"></i></a></li>\n                <li><a class=\"pagination-button-next\"><i class=\"fico-chevron-right\"></i></a></li>\n            </ul>\n            <div class=\"jumpto-pagination hide\">\n                <div>\n                    <div class=\"jumpto-pagination-label\">Jump to page:</div>\n                    <input type=\"number\" class=\"jumpto-pagination-input\" value=\"1\"></div>\n                <div class=\"results-per-page\">\n                    <div class=\"jumpto-pagination-label\">Items per page:</div>\n                    <select class=\"results-per-page-selector\">\n                        <option value=\"5\">5</option>\n                        <option value=\"10\" selected>10</option>\n                        <option value=\"25\">25</option>\n                        <option value=\"50\">50</option>\n                        <option value=\"100\">100</option>\n<!--                        <option value=\"-1\">All</option>-->\n                    </select></div>\n            </div>\n        </div>\n    </div>\n</div>");
+    this.$paginationControl = $("<div class=\"datagrid-pagination-control\">\n    <div class=\"pull-right\">\n        <div class=\"paging_fico\">\n            <button class=\"reveal-btn btn\"><span class=\"paginate-control-text\">page 1 of 1 </span><i class=\"fico-arrow-down5\"></i>\n            </button>\n            <ul class=\"pager jumpto-pager\">\n                <li><a class=\"pagination-button-previous disabled\"><i class=\"fico-chevron-left\"></i></a></li>\n                <li><a class=\"pagination-button-next\"><i class=\"fico-chevron-right\"></i></a></li>\n            </ul>\n            <div class=\"jumpto-pagination hide\">\n                <div>\n                    <div class=\"jumpto-pagination-label\">Jump to page:</div>\n                    <input type=\"number\" class=\"jumpto-pagination-input\" value=\"1\"></div>\n                <div class=\"results-per-page\">\n                    <div class=\"jumpto-pagination-label\">Items per page:</div>\n                    <select class=\"results-per-page-selector\">\n                        <option value=\"5\">5</option>\n                        <option value=\"10\" selected>10</option>\n                        <option value=\"25\">25</option>\n                        <option value=\"50\">50</option>\n                        <option value=\"100\">100</option>\n                    </select></div>\n                </div>\n            </div>\n        </div>\n    </div>");
   }
   /*
   Tabulator Pagination methods
@@ -765,9 +689,18 @@ function () {
   table.getPageMax();
      */
 
+  /**
+   * get the currentPage as integer
+   * @returns {number}
+   */
+
 
   _createClass(Paginator, [{
     key: "updatePageIndicators",
+
+    /**
+     * Refresh all the Paginator controls to display the correct pages, the enabled start of the previous and next buttons, ect..
+     */
     value: function updatePageIndicators() {
       var pageNum = this.currentPage;
       this.$pageInput.val(pageNum);
@@ -786,6 +719,10 @@ function () {
 
       this.$pageNumbersSpan.text("Page ".concat(this.currentPage, " of ").concat(this.maxPage));
     }
+    /**
+     * Navigate the grid to the previous page.
+     */
+
   }, {
     key: "previousPage",
     value: function previousPage() {
@@ -794,6 +731,10 @@ function () {
         this.updatePageIndicators();
       }
     }
+    /**
+     * Navigate the grid to the next page.
+     */
+
   }, {
     key: "nextPage",
     value: function nextPage() {
@@ -851,19 +792,26 @@ function () {
 
         _this.updatePageIndicators();
       });
-
-      _.defer(function () {
-        _this.updatePageIndicators();
-      });
     }
   }, {
     key: "currentPage",
     get: function get() {
       return this.table.getPage();
-    },
+    }
+    /**
+     * Set the current page as integer
+     * @param {number} num
+     * @returns {*|boolean}
+     */
+    ,
     set: function set(num) {
       return this.table.setPage(num);
     }
+    /**
+     * get the number of the last page.
+     * @returns {number} last page
+     */
+
   }, {
     key: "maxPage",
     get: function get() {
@@ -885,8 +833,6 @@ exports.default = void 0;
 
 var _dataTransform = _interopRequireWildcard(require("./data-transform"));
 
-var _koUtils = require("./ko-utils");
-
 var _dataLoader = _interopRequireDefault(require("./data-loader"));
 
 var _paginator = _interopRequireDefault(require("./paginator"));
@@ -895,25 +841,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -922,18 +852,6 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 var SelectOptions = insightModules.load('components/autotable-select-options');
-
-var createTabulatorFactory = function createTabulatorFactory(selector) {
-  return function (config) {
-    return new Tabulator(selector, config);
-  };
-};
-
-var someEmpty = function someEmpty(values) {
-  return _.some(values, _.isEmpty);
-};
-
-var notSomeEmpty = _.negate(someEmpty);
 
 var Datagrid =
 /*#__PURE__*/
@@ -945,6 +863,10 @@ function () {
     this.columnOptions$ = columnOptions$;
     this.componentRoot = root;
     this.table = undefined;
+    this.schema = insight.getView().getProject().getModelSchema();
+    var options = ko.unwrap(options$);
+    this.table = this.createTable(options);
+    this.paginatorControl = this.createPaginatorControl(this.componentRoot, this.table);
     this.buildTable();
   }
 
@@ -954,124 +876,107 @@ function () {
       var _this = this;
 
       var columnOptions$ = this.columnOptions$;
-      var options$ = this.options$;
-      var schema = insight.getView().getProject().getModelSchema();
+      var scenariosData$ = (0, _dataLoader.default)(columnOptions$);
+      ko.pureComputed(function () {
+        var columnOptions = columnOptions$();
+        var scenariosData = scenariosData$();
 
-      var scenariosData$ = _.compose((0, _koUtils.filter)(function (v) {
-        return v && v.defaultScenario;
-      }), (0, _koUtils.startWith)(undefined), _dataLoader.default)(columnOptions$);
-
-      var indicesOptions$ = (0, _koUtils.map)(_.property('indicesOptions'), columnOptions$);
-      var entitiesOptions$ = (0, _koUtils.map)(_.property('columnOptions'), columnOptions$);
-      var allColumnIndices$ = (0, _koUtils.map)((0, _dataTransform.getAllColumnIndices)(schema), entitiesOptions$);
-      var setNameAndPosns$ = (0, _koUtils.combineMap)(function (_ref) {
-        var _ref2 = _slicedToArray(_ref, 2),
-            columnIndices = _ref2[0],
-            entitiesOptions = _ref2[1];
-
-        return (0, _dataTransform.getDisplayIndices)(columnIndices, entitiesOptions);
-      }, [allColumnIndices$, entitiesOptions$]);
-      var setNamePosnsAndOptions$ = (0, _koUtils.combineMap)(function (_ref3) {
-        var _ref4 = _slicedToArray(_ref3, 2),
-            setNameAndPosns = _ref4[0],
-            indicesOptions = _ref4[1];
-
-        return _.map(setNameAndPosns, function (setNameAndPosn) {
-          return _objectSpread({}, setNameAndPosn, {
-            options: _.get(indicesOptions, "".concat(setNameAndPosn.name, ".").concat(setNameAndPosn.position), {
-              id: "".concat(setNameAndPosn.name, "_").concat(setNameAndPosn.position)
-            })
-          });
-        });
-      }, [setNameAndPosns$, indicesOptions$]);
-      var allScenarios$ = (0, _koUtils.map)(function (scenariosData) {
-        return scenariosData && _.uniq([scenariosData.defaultScenario].concat(_.values(scenariosData.scenarios)));
-      }, scenariosData$);
-
-      var indicesColumns$ = _.compose((0, _koUtils.map)(function (values) {
-        var _values = _slicedToArray(values, 2),
-            setNamePosnsAndOptions = _values[0],
-            allScenarios = _values[1];
-
-        return _.map(setNamePosnsAndOptions, function (setNameAndPosn) {
-          var name = setNameAndPosn.name,
-              options = setNameAndPosn.options;
-          var entity = schema.getEntity(name);
-          return {
-            title: String(options.title || entity.getAbbreviation() || name),
-            field: options.id,
-            mutator: function mutator(value, data, type, params) {
-              return SelectOptions.getLabel(schema, allScenarios, entity, value);
-            }
-          };
-        });
-      }), _koUtils.withDeepEquals, (0, _koUtils.filter)(notSomeEmpty), (0, _koUtils.startWith)([]), _koUtils.combineLatest)([setNamePosnsAndOptions$, allScenarios$]);
-
-      var entitiesColumns$ = (0, _koUtils.map)(function (entitiesOptions) {
-        return _.map(entitiesOptions, function (entityOptions) {
-          var entity = schema.getEntity(entityOptions.name);
-          return _.assign(entityOptions, {
-            title: String(entityOptions.title || entity.getAbbreviation() || entityOptions.name),
-            field: entityOptions.id
-          });
-        });
-      }, entitiesOptions$);
-
-      var columns$ = _.compose((0, _koUtils.map)(_.flatten), (0, _koUtils.filter)(notSomeEmpty), (0, _koUtils.startWith)([]), _koUtils.combineLatest)([indicesColumns$, entitiesColumns$]);
-
-      var tabulatorFactory$ = (0, _koUtils.map)(function (options) {
-        return options.tableId ? createTabulatorFactory("#".concat(options.tableId)) : _.noop;
-      }, options$);
-      var tabulatorOptions$ = (0, _koUtils.map)(function (options) {
-        return {
-          layout: 'fitColumns',
-          placeholder: 'Waiting for data',
-          groupStartOpen: false,
-          ajaxLoader: true,
-          columns: [],
-          tableBuilt: _.partial(_this.tableBuilt, _this)
-        };
-      }, options$);
-      var table$ = (0, _koUtils.combineMap)(function (_ref5) {
-        var _ref6 = _slicedToArray(_ref5, 2),
-            factory = _ref6[0],
-            options = _ref6[1];
-
-        return factory(options);
-      }, [tabulatorFactory$, tabulatorOptions$]);
-      table$.subscribe(function (oldTable) {
-        return oldTable && oldTable.destroy();
-      }, null, 'beforeChange');
-
-      var data$ = _.compose((0, _koUtils.map)(function (params) {
-        return params && _dataTransform.default.apply(void 0, _toConsumableArray(params));
-      }), (0, _koUtils.filter)(notSomeEmpty), (0, _koUtils.startWith)(undefined), _koUtils.combineLatest)([allColumnIndices$, entitiesColumns$, setNamePosnsAndOptions$, scenariosData$]);
-
-      _.compose((0, _koUtils.map)(function (values) {
-        if (!values) {
-          return false;
+        if (columnOptions && scenariosData) {
+          _this.setColumnsAndData(columnOptions, scenariosData);
         }
 
-        var _values2 = _slicedToArray(values, 3),
-            table = _values2[0],
-            columns = _values2[1],
-            data = _values2[2];
-
-        table.setColumns(columns);
-        return table.setData(data).then(function () {
-          table.redraw();
-        }).catch(function (err) {
-          debugger;
-        });
-      }), (0, _koUtils.filter)(notSomeEmpty), (0, _koUtils.startWith)(undefined), _koUtils.combineLatest)([table$, columns$, data$]).subscribe(_.noop);
+        return undefined;
+      }).subscribe(_.noop);
     }
   }, {
-    key: "tableBuilt",
-    value: function tableBuilt(self) {
-      var $componentRoot = $(self.componentRoot);
+    key: "createTable",
+    value: function createTable(options) {
+      var tabulatorOptions = {
+        pagination: options.pagination,
+        paginationSize: options.paginationSize,
+        paginationElement: options.paginationElement,
+        layout: 'fitColumns',
+        placeholder: 'Waiting for data',
+        groupStartOpen: false,
+        ajaxLoader: true,
+        columns: []
+      };
+      return new Tabulator("#".concat(options.tableId), tabulatorOptions);
+    }
+  }, {
+    key: "createPaginatorControl",
+    value: function createPaginatorControl(componentRoot, table) {
+      var $componentRoot = $(componentRoot);
       var $footerToolBar = $componentRoot.find('.footer-toolbar');
-      var paginatorControl = new _paginator.default(this);
+      var paginatorControl = new _paginator.default(table);
       paginatorControl.appendTo($footerToolBar);
+      return paginatorControl;
+    }
+  }, {
+    key: "setColumnsAndData",
+    value: function setColumnsAndData(columnOptions, scenariosData) {
+      var _this2 = this;
+
+      var table = this.table;
+      var schema = this.schema;
+      var indicesOptions = columnOptions.indicesOptions;
+      var entitiesOptions = columnOptions.columnOptions;
+      var allColumnIndices = (0, _dataTransform.getAllColumnIndices)(schema, entitiesOptions);
+      var setNameAndPosns = (0, _dataTransform.getDisplayIndices)(allColumnIndices, entitiesOptions);
+
+      var setNamePosnsAndOptions = _.map(setNameAndPosns, function (setNameAndPosn) {
+        return _objectSpread({}, setNameAndPosn, {
+          options: _.get(indicesOptions, "".concat(setNameAndPosn.name, ".").concat(setNameAndPosn.position), {
+            id: "".concat(setNameAndPosn.name, "_").concat(setNameAndPosn.position)
+          })
+        });
+      });
+
+      var allScenarios = _.uniq([scenariosData.defaultScenario].concat(_.values(scenariosData.scenarios)));
+
+      var indicesColumns = _.map(setNamePosnsAndOptions, function (setNameAndPosn) {
+        var name = setNameAndPosn.name,
+            options = setNameAndPosn.options;
+        var entity = schema.getEntity(name);
+        return {
+          title: String(options.title || entity.getAbbreviation() || name),
+          field: options.id,
+          mutatorData: function mutatorData(value, data, type, params) {
+            return SelectOptions.getLabel(schema, allScenarios, entity, value);
+          }
+        };
+      });
+
+      var columnsIds = _.map(setNamePosnsAndOptions, 'options.id').concat(_.map(entitiesOptions, 'id'));
+
+      var entitiesColumns = _.map(entitiesOptions, function (entityOptions, columnNumber) {
+        var entity = schema.getEntity(entityOptions.name);
+        return _.assign(entityOptions, {
+          title: String(entityOptions.title || entity.getAbbreviation() || entityOptions.name),
+          field: entityOptions.id,
+          mutatorData: function mutatorData(value, data) {
+            var rowData = _.map(columnsIds, _.propertyOf(data));
+
+            var tableKeys = (0, _dataTransform.getPartialExposedKey)(setNameAndPosns, rowData);
+            var keys = (0, _dataTransform.generateCompositeKey)(tableKeys, setNameAndPosns, allColumnIndices[columnNumber], entityOptions);
+
+            var columnScenario = _.get(scenariosData.scenarios, entityOptions.id, scenariosData.defaultScenario);
+
+            return window.insight.Formatter.getFormattedLabel(entity, columnScenario, value, keys);
+          }
+        });
+      });
+
+      var columns = [].concat(indicesColumns, entitiesColumns);
+      var data = (0, _dataTransform.default)(allColumnIndices, entitiesColumns, setNamePosnsAndOptions, scenariosData);
+      table.setColumns(columns);
+      return table.setData(data).then(function () {
+        table.redraw();
+
+        _this2.paginatorControl.updatePageIndicators();
+      }).catch(function (err) {
+        debugger;
+      });
     }
   }]);
 
@@ -1080,17 +985,15 @@ function () {
 
 var _default = Datagrid;
 exports.default = _default;
-},{"./data-transform":"vdlx-datagrid/data-transform.js","./ko-utils":"vdlx-datagrid/ko-utils.js","./data-loader":"vdlx-datagrid/data-loader.js","./paginator":"vdlx-datagrid/paginator.js"}],"vdlx-datagrid/view-model.js":[function(require,module,exports) {
+},{"./data-transform":"vdlx-datagrid/data-transform.js","./data-loader":"vdlx-datagrid/data-loader.js","./paginator":"vdlx-datagrid/paginator.js"}],"vdlx-datagrid/view-model.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = _default;
+exports.default = createViewModel;
 
 var _datagrid = _interopRequireDefault(require("./datagrid"));
-
-var _paginator = _interopRequireDefault(require("./paginator"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1173,9 +1076,20 @@ var getTableOptions = function getTableOptions(params) {
     return tableOptions;
   };
 };
+/**
+ * VDL Extensions callback.
+ *
+ * It is this functions responsibility to create the ViewModel that supplies data and behaviour to the <vdlx-datagrid> UI template.
+ *
+ * @param {object} params - an object where each property is a static or dynamic runtime value for this VDL extension.
+ * @param {object} componentInfo - An object containing info describing the component.
+ * @param {HTMLElement} componentInfo.element the DOM node for this instance of the VDL extension.
+ */
 
-function _default(params, componentInfo) {
-  var vm = {};
+
+function createViewModel(params, componentInfo) {
+  // Create the ViewModel object
+  var vm = {}; // Strip off the 'px' units if present.
 
   if (params.width) {
     vm.tableWidth = params.width.replace('px', '');
@@ -1183,18 +1097,30 @@ function _default(params, componentInfo) {
 
   var element = componentInfo.element;
   var defaultScenario = params.scenarioId || 0;
+  /**
+   * Wrap the options for the
+   */
+
   var tableOptions$ = ko.pureComputed(getTableOptions(params));
   var columnConfig$ = ko.observable({});
   var datagrid = new _datagrid.default(componentInfo.element, tableOptions$, columnConfig$);
 
   function buildTable() {
-    var datagridConfig = $(element).find('vdlx-datagrid-column').map(function (idx, element) {
+    /*
+    Collect the column information from the child VDL extensions (vdlx-datagrid-column)
+     */
+    var columnConfigs = $(element).find('vdlx-datagrid-column').map(function (idx, element) {
       return _.clone(element['autotableConfig']);
     });
+
+    if (!columnConfigs.length) {
+      return;
+    }
+
     var entities = [];
     var indices = {};
 
-    _.forEach(datagridConfig, function (configItem) {
+    _.forEach(columnConfigs, function (configItem) {
       var scenarioNum = parseIntOrKeep(configItem.scenario || defaultScenario);
 
       if (_.isNumber(scenarioNum)) {
@@ -1283,7 +1209,7 @@ function _default(params, componentInfo) {
   buildTable();
   return vm;
 }
-},{"./datagrid":"vdlx-datagrid/datagrid.js","./paginator":"vdlx-datagrid/paginator.js"}],"vdlx-datagrid/index.js":[function(require,module,exports) {
+},{"./datagrid":"vdlx-datagrid/datagrid.js"}],"vdlx-datagrid/index.js":[function(require,module,exports) {
 "use strict";
 
 var _attributes = _interopRequireDefault(require("./attributes"));

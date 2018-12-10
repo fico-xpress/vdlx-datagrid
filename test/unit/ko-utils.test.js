@@ -2,21 +2,19 @@ import {onSubscribe} from '../../src/js/vdlx-datagrid/ko-utils';
 
 describe('ko-utils::onSubscribe', () => {
 
-    test('onSubscribe notifies when Knockout subscribes to an observable.', done => {
+    test('onSubscribe notifies when Knockout subscribes to an observable.', () => {
 
         const START_VALUE = 3;
         const OBSERVABLE = ko.observable(START_VALUE);
 
-        let doIt = callback => {
-            done();
-        };
+        const doIt = jest.fn();
 
-        let thing = onSubscribe(doIt, OBSERVABLE);
+        const thing = onSubscribe(doIt, OBSERVABLE);
 
-        OBSERVABLE.subscribe(v => {
-            // nothing needed here
-        });
+        const subscription = OBSERVABLE.subscribe(_.noop);
 
+        expect(thing).toEqual(OBSERVABLE);
+        expect(doIt).toHaveBeenCalledWith(subscription);
     });
 
 });

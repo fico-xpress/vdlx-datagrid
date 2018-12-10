@@ -14,54 +14,71 @@ class Datagrid {
             .getView()
             .getProject()
             .getModelSchema();
+
+        const options = ko.unwrap(options$);
+
+        this.table = this.createTable(options);
+
+        this.paginatorControl = this.createPaginatorControl(this.componentRoot, this.table, options);
+
         this.buildTable();
     }
 
     buildTable () {
         const columnOptions$ = this.columnOptions$;
         const options$ = this.options$;
-
         const scenariosData$ = withScenarioData(columnOptions$);
 
-        const table$ = ko.pureComputed(() => {
-            const options = options$();
-            const tabulatorOptions = {
-                layout: 'fitColumns',
-                placeholder: 'Waiting for data',
-                groupStartOpen: false,
-                ajaxLoader: true,
-                columns: [],
-                tableBuilt: _.partial(this.tableBuilt, this)
-            };
-
-            return new Tabulator(`#${options.tableId}`, tabulatorOptions);
-        });
-
-        table$.subscribe(oldTable => oldTable && oldTable.destroy(), null, 'beforeChange');
-
         ko.pureComputed(() => {
-            const table = table$();
+            const options = ko.unwrap(options$());
             const columnOptions = columnOptions$();
             const scenariosData = scenariosData$();
 
-            if (table && columnOptions && scenariosData) {
-                this.setColumnsAndData(table, columnOptions, scenariosData);
+            if (options && columnOptions && scenariosData) {
+                this.setColumnsAndData(options, columnOptions, scenariosData);
             }
             return undefined;
         }).subscribe(_.noop);
     }
 
-    tableBuilt (self) {
-        let $componentRoot = $(self.componentRoot);
-        let $footerToolBar = $componentRoot.find('.footer-toolbar');
-        const paginatorControl = new Paginator(this);
-        paginatorControl.appendTo($footerToolBar);
+    createTable(options) {
+        const tabulatorOptions = {
+            pagination: options.pagination,
+            paginationSize: options.paginationSize,
+            paginationElement: options.paginationElement,
+            layout: 'fitColumns',
+            placeholder: 'Waiting for data',
+            groupStartOpen: false,
+            ajaxLoader: true,
+            columns: [],
+        };
+
+        return new Tabulator(`#${options.tableId}`, tabulatorOptions);
     }
 
-    setColumnsAndData(table, columnOptions, scenariosData) {
+    createPaginatorControl(componentRoot, table, options) {
+        if (!options.pagination) {
+            return undefined;
+        }
+
+        const $componentRoot = $(componentRoot);
+        const $footerToolBar = $componentRoot.find('.footer-toolbar');
+        const paginatorControl = new Paginator(table);
+        paginatorControl.appendTo($footerToolBar);
+        return paginatorControl;
+    }
+
+    updatePaginator() {
+        if (this.paginatorControl) {
+            this.paginatorControl.updatePageIndicators();
+        }
+    }
+
+    setColumnsAndData(options, columnOptions, scenariosData) {
+        const table = this.table;
         const schema = this.schema;
         const indicesOptions = columnOptions.indicesOptions
-        const entitiesOptions =columnOptions.columnOptions
+        const entitiesOptions = columnOptions.columnOptions
         const allColumnIndices = getAllColumnIndices(schema, entitiesOptions);
 
         const setNameAndPosns = getDisplayIndices(allColumnIndices, entitiesOptions);
@@ -107,16 +124,17 @@ class Datagrid {
         });
         const columns = [].concat(indicesColumns, entitiesColumns);
 
-        const data = dataTransform(allColumnIndices, entitiesColumns, setNamePosnsAndOptions, scenariosData)
+        const data = dataTransform(allColumnIndices, entitiesColumns, setNamePosnsAndOptions, scenariosData, options.rowFilter)
 
         table.setColumns(columns);
 
         return table
             .setData(data)
-            .then(function () {
+            .then(() => {
                 table.redraw();
+                this.updatePaginator();
             })
-            .catch(function (err) {
+            .catch((err) => {
                 debugger;
             });
     }

@@ -62,7 +62,7 @@ export const generateCompositeKey = function (setValues, setNameAndPosns, arrayI
     });
 };
 
-export default (allColumnIndices, columnOptions, setNamePosnsAndOptions, scenariosData) => {
+export default (allColumnIndices, columnOptions, setNamePosnsAndOptions, scenariosData, rowFilter) => {
 
     var defaultScenario = scenariosData.defaultScenario;
     const indexScenarios = _.uniq(_.map(_.map(columnOptions, 'id'), id =>
@@ -88,5 +88,17 @@ export default (allColumnIndices, columnOptions, setNamePosnsAndOptions, scenari
 
     const createRow = _.partial(_.zipObject, setIds.concat(arrayIds));
 
-    return _.map(createDenseData(sets, arrays, setNamePosnsAndOptions, allColumnIndices, columnOptions, generateCompositeKey), createRow);
+    let data = createDenseData(sets, arrays, setNamePosnsAndOptions, allColumnIndices, columnOptions, generateCompositeKey);
+
+    // row filtering
+    if (_.isFunction(rowFilter)) {
+        data = _.filter(data, (rowData) => {
+            return rowFilter(
+                rowData,
+                getPartialExposedKey(setNamePosnsAndOptions, rowData)
+            );
+        });
+    }
+
+    return _.map(data, createRow);
 };
