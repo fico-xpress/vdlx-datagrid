@@ -55,6 +55,28 @@
                 </vdl-column>
             </vdl-row>
 
+            <vdl-row>
+                <vdl-column heading="Form with conditional column (vdl-visible)" size="6">
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column entity="FactorySupply">Factory Supply</vdlx-datagrid-column>
+                        <vdlx-datagrid-column vdl-visible="=scenario.entities.MyBool.value" entity="FactoryDemand">Factory
+                            Demand
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+                <vdl-column heading="VDL source:" size="6">
+                    <code-panel>
+&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot;&gt;Factory Supply&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column vdl-visible=&quot;=scenario.entities.MyBool.value&quot; entity=&quot;FactoryDemand&quot;&gt;Factory
+        Demand
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+
+                </vdl-column>
+            </vdl-row>
+
         </vdl-section>
 
     </vdl-page>
