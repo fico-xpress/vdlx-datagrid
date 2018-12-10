@@ -26,15 +26,16 @@ class Datagrid {
 
     buildTable () {
         const columnOptions$ = this.columnOptions$;
-
+        const options$ = this.options$;
         const scenariosData$ = withScenarioData(columnOptions$);
 
         ko.pureComputed(() => {
+            const options = ko.unwrap(options$());
             const columnOptions = columnOptions$();
             const scenariosData = scenariosData$();
 
-            if (columnOptions && scenariosData) {
-                this.setColumnsAndData(columnOptions, scenariosData);
+            if (options && columnOptions && scenariosData) {
+                this.setColumnsAndData(options, columnOptions, scenariosData);
             }
             return undefined;
         }).subscribe(_.noop);
@@ -73,7 +74,7 @@ class Datagrid {
         }
     }
 
-    setColumnsAndData(columnOptions, scenariosData) {
+    setColumnsAndData(options, columnOptions, scenariosData) {
         const table = this.table;
         const schema = this.schema;
         const indicesOptions = columnOptions.indicesOptions
@@ -121,7 +122,7 @@ class Datagrid {
         });
         const columns = [].concat(indicesColumns, entitiesColumns);
 
-        const data = dataTransform(allColumnIndices, entitiesColumns, setNamePosnsAndOptions, scenariosData)
+        const data = dataTransform(allColumnIndices, entitiesColumns, setNamePosnsAndOptions, scenariosData, options.rowFilter)
 
         table.setColumns(columns);
 
