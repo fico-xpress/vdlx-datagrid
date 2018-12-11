@@ -37,7 +37,7 @@
 
         <vdl-section heading="Basic usage">
             <vdl-row>
-                <vdl-column heading="Simple datagrid" size="6">
+                <vdl-column heading="Simple datagrid" size="6" class="example-passed">
                     <vdlx-datagrid>
                         <vdlx-datagrid-column set="SupportLevels">Support L.</vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
@@ -57,7 +57,7 @@
 
             </vdl-row>
             <vdl-row>
-                <vdl-column heading="Simple datagrid with repeated index sets" size="6">
+                <vdl-column heading="Simple datagrid with repeated index sets" size="6"  class="example-passed">
                     <vdlx-datagrid>
                         <vdlx-datagrid-column set="Factories" heading="Origin"></vdlx-datagrid-column>
                         <vdlx-datagrid-column set="Factories" heading="Destination"></vdlx-datagrid-column>
@@ -89,7 +89,7 @@
 
         <vdl-section heading="Applying styling">
             <vdl-row>
-                <vdl-column heading="Autotable with a CSS class" size="6">
+                <vdl-column heading="Autotable with a CSS class" size="6" class="example-failed">
                     <vdlx-datagrid class="htable">
                         <vdlx-datagrid-column set="SupportLevels">Support L.</vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
@@ -121,7 +121,7 @@
 
         <vdl-section heading="Hiding columns">
             <vdl-row>
-                <vdl-column size="6">
+                <vdl-column size="6" heading="Hidden Index Column" class="example-passed">
                     <p>
                         You can use the <code>vdl-visible</code> attribute on <code>&lt;vdlx-datagrid-column&gt;</code> tags to hide them from display.
                         Any table callbacks that include row data will still include the hidden columns in the row data.
@@ -148,7 +148,7 @@
 
 
         <vdl-section heading="Number formatting">
-            <vdl-column size="6" heading="Result:">
+            <vdl-column size="6" heading="Result:" class="example-failed">
                 <vdlx-datagrid>
                     <vdlx-datagrid-column set="SupportLevels">Support L.</vdlx-datagrid-column>
                     <vdlx-datagrid-column entity="SupportCosts" format="$#,###.00"></vdlx-datagrid-column>
@@ -195,7 +195,7 @@
                 }
             </script>
 
-            <vdl-column size="6">
+            <vdl-column size="6" heading="Custom renderer" class="example-failed">
                 <vdlx-datagrid>
                     <vdlx-datagrid-column render="=italic" entity="SupportCosts" heading="SUPPORT COSTS"></vdlx-datagrid-column>
                     <vdlx-datagrid-column render="=colorize" entity="ServiceLevelAgreements">Agreements</vdlx-datagrid-column>
@@ -246,7 +246,7 @@
         </vdl-section>
 
         <vdl-section heading="Pagination">
-            <vdl-column heading="" size="6">
+            <vdl-column size="6" heading="paged grid" class="example-passed">
                 <vdlx-datagrid page-size="5" page-mode="paged" >
                     <vdlx-datagrid-column entity="FactorySupply" heading="SUPPORT COSTS"></vdlx-datagrid-column>
                 </vdlx-datagrid>
@@ -262,7 +262,7 @@
         </vdl-section>
 
         <vdl-section heading="Filtering">
-            <vdl-column heading="" size="6">
+            <vdl-column heading="Column filters" size="6" class="example-passed">
                 <vdlx-datagrid show-filter="true" column-filter="true">
                     <vdlx-datagrid-column entity="SupportCosts" heading="SUPPORT COSTS"></vdlx-datagrid-column>
                     <vdlx-datagrid-column entity="ServiceLevelAgreements">Agreements Custom Title</vdlx-datagrid-column>
