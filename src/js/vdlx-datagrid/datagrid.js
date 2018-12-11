@@ -56,7 +56,7 @@ class Datagrid {
             placeholder: 'Waiting for data',
             groupStartOpen: false,
             ajaxLoader: true,
-            columns: [],
+            columns: []
         };
 
         return new Tabulator(`#${options.tableId}`, tabulatorOptions);
@@ -138,7 +138,7 @@ class Datagrid {
             return col;
         });
 
-        const data = dataTransform(allColumnIndices, entitiesColumns, setNamePosnsAndOptions, scenariosData, gridOptions.rowFilter)
+        const data = dataTransform(allColumnIndices, columns, entitiesColumns, setNamePosnsAndOptions, scenariosData, gridOptions.rowFilter)
 
         table.setColumns(columns);
 
