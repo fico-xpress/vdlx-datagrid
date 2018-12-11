@@ -36,7 +36,7 @@
         <vdl-section>
             <vdl-row>
                 <vdl-column size="6">
-                    <vdlx-datagrid id="demo3" page-mode="paged" >
+                    <vdlx-datagrid id="demo3" page-mode="scrolling">
                         <vdlx-datagrid-column entity="StockSizes"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
