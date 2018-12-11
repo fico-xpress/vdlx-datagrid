@@ -1,7 +1,8 @@
 import Datagrid from './datagrid';
 
 const COLUMN_UPDATE_DELAY = 100;
-const DEFAULT_GRID_PAGE_SIZE = 10;
+const DEFAULT_GRID_PAGE_SIZE = 15;
+const DEFAULT_GRID_HEIGHT = (DEFAULT_GRID_PAGE_SIZE+2) * 29;
 
 function parseIntOrKeep (val) {
     var result = _.parseInt(val);
@@ -22,10 +23,11 @@ const getTableOptions = (params) => () => {
         paging: params.pageMode,
         pageLength: params.pageSize,
         searching: params.showFilter,
-        columnFilter: params.columnFilter
+        columnFilter: params.columnFilter,
+        gridHeight: params.gridHeight || DEFAULT_GRID_HEIGHT
     });
 
-    var tableOptions = {
+    var gridOptions = {
         tableId: params.tableId,
         addRemoveRow: params.addRemoveRow,
         selectionAndNavigation: params.selectionNavigation,
@@ -33,50 +35,50 @@ const getTableOptions = (params) => () => {
         onError: _.bindKey(self, '_wrapAlert'),
         alwaysShowSelection: params.alwaysShowSelection,
         gridHeight: params.gridHeight,
-        gridData: params.gridData
+        gridData: params.gridData,
+        paginationSize: params.pageSize || DEFAULT_GRID_PAGE_SIZE
     };
 
     var pageMode = params['pageMode'];
 
     if (pageMode === 'paged') {
-        tableOptions.pagination = 'local';
-        tableOptions.paginationSize = params.pageSize || DEFAULT_GRID_PAGE_SIZE;
-        tableOptions.paginationElement = $('.hidden-footer-toolbar').get(0); // hide the built-in paginator
+        gridOptions.pagination = 'local';
+        gridOptions.paginationElement = $('.hidden-footer-toolbar').get(0); // hide the built-in paginator
     } else if (!pageMode || pageMode === 'none') {
-        tableOptions.height = false;
+        gridOptions.height = false;
     }
 
     if (_.isFunction(params.rowFilter)) {
-        tableOptions.rowFilter = params.rowFilter;
+        gridOptions.rowFilter = params.rowFilter;
     }
 
-    tableOptions = stripEmpties(tableOptions);
+    gridOptions = stripEmpties(gridOptions);
 
     if (!_.isUndefined(params.modifier)) {
         if (_.isFunction(params.modifier)) {
             // Pass cloned options so they cannot modify the original table options object
-            var modifiedTableOptions = params.modifier(_.cloneDeep(tableOptions));
+            var modifiedTableOptions = params.modifier(_.cloneDeep(gridOptions));
             if (_.isPlainObject(modifiedTableOptions)) {
-                tableOptions = modifiedTableOptions;
+                gridOptions = modifiedTableOptions;
             }
         } else {
             // console.error('vdl-table (' + self.tableId + '): "modifier" attribute must be a function.');
         }
     }
 
-    if (tableOptions.addRemoveRow) {
-        var isEditable = tableOptions.columnOptions.some(function (column) {
+    if (gridOptions.addRemoveRow) {
+        var isEditable = gridOptions.columnOptions.some(function (column) {
             return !!column.editable;
         });
 
         if (!isEditable) {
-            tableOptions.addRemoveRow = false;
+            gridOptions.addRemoveRow = false;
             // not a hard error as this is used as a feature when making a table read only based on permissions
             // console.log('vdl-table (' + self.tableId + "): add/remove rows disabled. Table needs to have at least one editable column to use this feature.");
         }
     }
 
-    return tableOptions;
+    return gridOptions;
 };
 
 /**
