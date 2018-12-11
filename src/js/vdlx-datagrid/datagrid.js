@@ -193,8 +193,8 @@ class Datagrid {
                         );
                         return cell => ({
                             values: _.map(getOptions(cell.getValue(), getRowKey(cell.getData())), option => ({
-                                label: option.key,
-                                value: option.value
+                                value: option.key,
+                                label: option.value
                             }))
                         });
                     }
