@@ -185,19 +185,30 @@ class Datagrid {
 
             const getEditorParams = () => {
                 if (entityOptions.editorType === EDITOR_TYPES.select) {
-                    if (entityOptions.editorOptions) {
-                        const getOptions = _.flow(
+                    let getOptions;
+                    if (entityOptions.editorOptionsSet) {
+                        getOptions = _.flow(
+                            () => SelectOptions.generateSelectOptions(
+                                schema,
+                                [columnScenario],
+                                entityOptions.editorOptionsSet,
+                                columnScenario.getSet(entityOptions.editorOptionsSet)),
+                            entityOptions.selectNull ? addSelectNull : _.identity
+                        );
+                    } else if (entityOptions.editorOptions) {
+                        getOptions = _.flow(
                             entityOptions.editorOptions,
                             _.partial(SelectOptions.generateSelectOptionsFromValues, _, DataUtils.entityTypeIsNumber(entity)),
                             entityOptions.selectNull ? addSelectNull : _.identity
                         );
-                        return cell => ({
-                            values: _.map(getOptions(cell.getValue(), getRowKey(cell.getData())), option => ({
-                                value: option.key,
-                                label: option.value
-                            }))
-                        });
                     }
+
+                    return cell => ({
+                        values: _.map(getOptions(cell.getValue(), getRowKey(cell.getData())), option => ({
+                            value: option.key,
+                            label: option.value
+                        }))
+                    });
                 }
                 return undefined;
             }
