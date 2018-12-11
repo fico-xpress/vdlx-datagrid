@@ -7,6 +7,7 @@ import dataTransform, {
 import withScenarioData from './data-loader';
 import Paginator from "./paginator";
 import { getRowData } from './utils';
+import { EDITOR_TYPES } from '../constants';
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
 
@@ -134,19 +135,47 @@ class Datagrid {
                 title: _.escape(String(entityOptions.title || entity.getAbbreviation() || entityOptions.name)),
                 field: entityOptions.id,
                 cssClass: 'expanding-cell-height',
+                cellClick: (e, cell) => {
+                    if (entityOptions.editorType === EDITOR_TYPES.checkbox) {
+                        const checkedValue = _.get(entityOptions, 'checkedValue', true);
+                        const uncheckedValue = _.get(entityOptions, 'uncheckedValue', false);
+                        const newValue = String(cell.getValue()) === String(checkedValue) ? uncheckedValue : checkedValue;
+                        const keys = getRowKey(cell.getData());
+                        const value = newValue;
+
+                        modify({ key: keys, value: value })
+                            .catch(err => {
+                                debugger;
+                            });
+                    }
+                },
                 formatter: (cell) => {
+                    if (entityOptions.editorType === EDITOR_TYPES.checkbox) {
+                        const checked = String(cell.getValue()) === String(_.get(entityOptions, 'checkedValue', true)) ? 'checked' : '';
+                        const disabled = entityOptions.editable ? '' : 'disabled';
+                        return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
+                    }
                     const keys = getRowKey(cell.getData());
                     return window.insight.Formatter.getFormattedLabel(entity, columnScenario, cell.getValue(), keys);
                 },
-                editor: 'input',
+                editor: entityOptions.editorType,
                 cellEdited: (cell) => {
                     const keys = getRowKey(cell.getData());
+                    let value = cell.getValue();
 
-                    modify({ key: keys, value: Number(cell.getValue()) })
+                    modify({ key: keys, value: value })
                       .catch(err => {
                         debugger;
                       });
-                }
+                },
+                // editorParams: ((editorType) => {
+                //     if (editorType === EDITOR_TYPES.checkbox) {
+                //         return {}
+                //     } else if (editorType === EDITOR_TYPES.select) {
+
+                //     }
+                //     return {};
+                // })(entityOptions.editorType)
             });
         });
 

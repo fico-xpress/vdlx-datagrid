@@ -1,3 +1,5 @@
+import { EDITOR_TYPES } from "../constants";
+
 /*
     vdlx-datagrid-column
 
@@ -194,7 +196,6 @@ VDL('vdlx-datagrid-column', {
                 selectNull: params.editorOptionsIncludeEmpty,
                 checkedValue: params.editorCheckedValue,
                 uncheckedValue: params.editorUncheckedValue,
-                editorType: params.editorType,
                 id: columnId 
             };
 
@@ -225,6 +226,29 @@ VDL('vdlx-datagrid-column', {
 
             if (!!params.entity) {
                 props.entity = params.entity;
+                if (!params.editorType) {
+                    const type = insight.getView().getProject().getModelSchema().getEntity(params.entity).getType();
+
+                    switch (type) {
+                        case enums.DataType.BOOLEAN:
+                            props.editorType = EDITOR_TYPES.checkbox
+                            break;
+                        default:
+                            props.editorType = EDITOR_TYPES.text;
+                            break;
+                    }
+
+                    // Then overridden by the presence of input options
+                    if ((typeof props.checkedValue !== 'undefined') && (typeof props.uncheckedValue !== 'undefined')) {
+                        props.editorType = EDITOR_TYPES.checkbox;
+                    }
+
+                    if (props.editorSelectOptions) {
+                        props.editorType = EDITOR_TYPES.select;
+                    }
+                } else {
+                    props.editorType = EDITOR_TYPES[params.editorType];
+                }
             } else if (!!params.set) {
                 props.set = params.set;
             }
