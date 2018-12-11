@@ -1,5 +1,6 @@
 const DataUtils = insightModules.load('utils/data-utils');
 const createDenseData = insightModules.load('components/table/create-dense-data');
+const createSparseData = insightModules.load('components/table/create-sparse-data');
 
 export const getAllColumnIndices = _.curry((schema, columnOptions) => {
     return _.map(columnOptions, function (option) {
@@ -62,7 +63,19 @@ export const generateCompositeKey = function (setValues, setNameAndPosns, arrayI
     });
 };
 
-export default (allColumnIndices, columnOptions, setNamePosnsAndOptions, scenariosData, rowFilter) => {
+const isSparse = (sets, arrays) => {
+    const totalPossibleKeys = _.reduce(sets, function (memo, set) {
+        return memo * set.length;
+    }, 1);
+
+    const totalCountOfArrayValues = _.reduce(arrays, function (memo, insightArray) {
+        return memo + insightArray.size();
+    }, 0);
+
+    return (totalPossibleKeys * arrays.length > ((totalCountOfArrayValues * Math.log(totalCountOfArrayValues)) || 0));
+};
+
+export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions, scenariosData, rowFilter) => {
 
     var defaultScenario = scenariosData.defaultScenario;
     const indexScenarios = _.uniq(_.map(_.map(columnOptions, 'id'), id =>
@@ -92,7 +105,13 @@ export default (allColumnIndices, columnOptions, setNamePosnsAndOptions, scenari
 
     const createRow = _.partial(_.zipObject, setIds.concat(arrayIds));
 
-    let data = createDenseData(sets, arrays, setNamePosnsAndOptions, allColumnIndices, columnOptions, generateCompositeKey);
+    let data;
+    if (isSparse(sets, arrays)) {
+        // assume O(nlogn)
+        data = createSparseData(arrays, setNamePosnsAndOptions, allColumnIndices, columnOptions, columns);
+    } else {
+        data = createDenseData(sets, arrays, setNamePosnsAndOptions, allColumnIndices, columnOptions, generateCompositeKey);
+    }
 
     // row filtering
     if (_.isFunction(rowFilter)) {
