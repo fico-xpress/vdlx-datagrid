@@ -56,7 +56,8 @@ class Datagrid {
             placeholder: 'Waiting for data',
             groupStartOpen: false,
             ajaxLoader: true,
-            columns: []
+            columns: [],
+            height: '100%'
         };
 
         return new Tabulator(`#${options.tableId}`, tabulatorOptions);
