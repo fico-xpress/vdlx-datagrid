@@ -243,7 +243,7 @@ VDL('vdlx-datagrid-column', {
                         props.editorType = EDITOR_TYPES.checkbox;
                     }
 
-                    if (props.editorSelectOptions) {
+                    if (props.editorOptions || props.editorOptionsSet) {
                         props.editorType = EDITOR_TYPES.select;
                     }
                 } else {

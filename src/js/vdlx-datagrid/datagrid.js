@@ -10,6 +10,15 @@ import { getRowData } from './utils';
 import { EDITOR_TYPES } from '../constants';
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
+const DataUtils = insightModules.load('utils/data-utils');
+
+const addSelectNull = (items) => {
+    if (Array.isArray(items)) {
+        // add empty option to the start of the list
+        items.unshift({key: '', value: ''});
+    }
+    return items;
+};
 
 class Datagrid {
     constructor(root, gridOptions$, columnOptions$) {
@@ -174,6 +183,25 @@ class Datagrid {
                 return undefined;
             };
 
+            const getEditorParams = () => {
+                if (entityOptions.editorType === EDITOR_TYPES.select) {
+                    if (entityOptions.editorOptions) {
+                        const getOptions = _.flow(
+                            entityOptions.editorOptions,
+                            _.partial(SelectOptions.generateSelectOptionsFromValues, _, DataUtils.entityTypeIsNumber(entity)),
+                            entityOptions.selectNull ? addSelectNull : _.identity
+                        );
+                        return cell => ({
+                            values: _.map(getOptions(cell.getValue(), getRowKey(cell.getData())), option => ({
+                                label: option.key,
+                                value: option.value
+                            }))
+                        });
+                    }
+                }
+                return undefined;
+            }
+
             return _.assign({}, entityOptions, {
                 title: _.escape(String(entityOptions.title || entity.getAbbreviation() || entityOptions.name)),
                 field: entityOptions.id,
@@ -181,6 +209,7 @@ class Datagrid {
                 cellClick: getCellClickHandler(),
                 formatter: getFormatter(),
                 editor: entityOptions.editorType,
+                editorParams: getEditorParams(),
                 cellEdited: (cell) => {
                     const value = cell.getValue();
                     saveValue(cell.getData(), value)
@@ -233,7 +262,7 @@ class Datagrid {
         });
 
         const data = dataTransform(allColumnIndices, columns, entitiesColumns, setNamePosnsAndOptions, scenariosData, gridOptions.rowFilter);
-        if(data.length > _.get(gridOptions, 'paginationSize')) {
+        if(data.length > gridOptions.paginationSize) {
             if(_.get(gridOptions, 'overrides.paging', 'scrolling') === 'scrolling') {
                 table.setHeight(_.get(gridOptions, 'overrides.gridHeight', '600px'));
             }
