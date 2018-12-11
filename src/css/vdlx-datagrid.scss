@@ -1,5 +1,5 @@
 //colors
-$black: #000000;
+$black: rgb(33,33,33);
 $color-table-header: #d2e9f4;
 $color-medium-grey: #cccccc;
 $color-light-grey: #f2f2f2;
@@ -133,9 +133,12 @@ vdlx-datagrid {
             text-align: center;
             line-height: 17px;
           }
+          &.index {
+            font-weight: bold;
+          }
           &.index-numeric {
             text-align: right;
-            font-weight: 700;
+            font-weight: bold;
           }
           &.editable-numeric {
             text-align: right;

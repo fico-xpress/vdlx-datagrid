@@ -15,3 +15,25 @@ to do list styles
 .todo.not-doing {
     background-color: gray;
 }
+
+.example-failed .column-heading h4 {
+    color: red;
+    font-weight: bolder;
+}
+.example-failed .column-heading h4::after {
+    color: red;
+    content: ' X';
+    font-size: large;
+    font-weight: bolder;
+}
+
+.example-passed .column-heading h4 {
+    color: limegreen;
+    font-weight: bolder;
+}
+.example-passed .column-heading h4::after {
+    color: limegreen;
+    content: ' √';
+    font-size: large;
+    font-weight: bolder;
+}

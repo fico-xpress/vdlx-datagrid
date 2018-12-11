@@ -108,7 +108,10 @@ class Datagrid {
                 title: _.escape(String(options.title || entity.getAbbreviation() || name)),
                 field: options.id,
                 cssClass: 'expanding-cell-height',
-                formatter: (cell) => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue())
+                formatter: (cell) => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue()),
+                dataType: entity.getType(),
+                elementType: entity.getElementType(),
+                labelsEntity: entity.getLabelsEntity()
             };
         });
 
@@ -176,6 +179,8 @@ class Datagrid {
                 //     }
                 //     return {};
                 // })(entityOptions.editorType)
+                dataType: entity.getType(),
+                elementType: entity.getElementType()
             });
         });
 
@@ -185,6 +190,36 @@ class Datagrid {
             if (!!overrides.columnFilter) {
                 col.headerFilter = true;
             }
+            // debugger;
+            let hasLabels = !!col.labelsEntity;
+
+            var cssClasses = [];
+            if (col.dataType === 'SET') {
+                cssClasses.push('index');
+            }
+            if(hasLabels) {
+
+            } else {
+                switch(col.elementType) {
+                    case 'NUMERIC':
+                        cssClasses.push('numeric');
+                        break;
+                    case 'INTEGER':
+                        cssClasses.push('numeric');
+                        break;
+                    case 'REAL':
+                        cssClasses.push('numeric');
+                        break;
+                    case 'BOOLEAN':
+                        cssClasses.push('numeric');
+                        break;
+                    default:
+
+                        break;
+                }
+            }
+            col.cssClass = cssClasses.join('-');
+
             return col;
         });
 
