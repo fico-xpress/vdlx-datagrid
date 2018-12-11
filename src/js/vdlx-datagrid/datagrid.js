@@ -124,7 +124,7 @@ class Datagrid {
 
             const columnScenario = _.get(scenariosData.scenarios, entityOptions.id, scenariosData.defaultScenario);
 
-            const modify = (change) => columnScenario.modify().setArrayElement(entityOptions.name, change).commit();
+            const setArrayElement = (change) => columnScenario.modify().setArrayElement(entityOptions.name, change).commit();
 
             const getRowKey = _.compose(
                 (rowData) => {
@@ -134,51 +134,60 @@ class Datagrid {
                 getRowDataForColumns
             );
 
+            const saveValue = (rowData, value) => setArrayElement({ key: getRowKey(rowData), value: value });
+
+            const checkboxFormatter = (cell) => {
+                const checked = String(cell.getValue()) === String(_.get(entityOptions, 'checkedValue', true)) ? 'checked' : '';
+                const disabled = entityOptions.editable ? '' : 'disabled';
+                return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
+            };
+
+            const defaultFormatter = (cell) => {
+                const keys = getRowKey(cell.getData());
+                return window.insight.Formatter.getFormattedLabel(entity, columnScenario, cell.getValue(), keys);
+            }
+
+            const getFormatter = () => {
+                if (entityOptions.editorType === EDITOR_TYPES.checkbox) {
+                    return checkboxFormatter;
+                } else {
+                    return defaultFormatter;
+                }
+            };
+
+            const checkboxCellClickHandler = (e, cell) => {
+                const checkedValue = _.get(entityOptions, 'checkedValue', true);
+                const uncheckedValue = _.get(entityOptions, 'uncheckedValue', false);
+                const newValue = String(cell.getValue()) === String(checkedValue) ? uncheckedValue : checkedValue;
+                const value = newValue;
+
+                saveValue(cell.getData(), value)
+                    .catch(err => {
+                        debugger;
+                    });
+            };
+
+            const getCellClickHandler = () => {
+                if (entityOptions.editorType === EDITOR_TYPES.checkbox) {
+                    return checkboxCellClickHandler;
+                }
+                return undefined;
+            };
+
             return _.assign({}, entityOptions, {
                 title: _.escape(String(entityOptions.title || entity.getAbbreviation() || entityOptions.name)),
                 field: entityOptions.id,
                 cssClass: 'expanding-cell-height',
-                cellClick: (e, cell) => {
-                    if (entityOptions.editorType === EDITOR_TYPES.checkbox) {
-                        const checkedValue = _.get(entityOptions, 'checkedValue', true);
-                        const uncheckedValue = _.get(entityOptions, 'uncheckedValue', false);
-                        const newValue = String(cell.getValue()) === String(checkedValue) ? uncheckedValue : checkedValue;
-                        const keys = getRowKey(cell.getData());
-                        const value = newValue;
-
-                        modify({ key: keys, value: value })
-                            .catch(err => {
-                                debugger;
-                            });
-                    }
-                },
-                formatter: (cell) => {
-                    if (entityOptions.editorType === EDITOR_TYPES.checkbox) {
-                        const checked = String(cell.getValue()) === String(_.get(entityOptions, 'checkedValue', true)) ? 'checked' : '';
-                        const disabled = entityOptions.editable ? '' : 'disabled';
-                        return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
-                    }
-                    const keys = getRowKey(cell.getData());
-                    return window.insight.Formatter.getFormattedLabel(entity, columnScenario, cell.getValue(), keys);
-                },
+                cellClick: getCellClickHandler(),
+                formatter: getFormatter(),
                 editor: entityOptions.editorType,
                 cellEdited: (cell) => {
-                    const keys = getRowKey(cell.getData());
-                    let value = cell.getValue();
-
-                    modify({ key: keys, value: value })
-                      .catch(err => {
-                        debugger;
-                      });
+                    const value = cell.getValue();
+                    saveValue(cell.getData(), value)
+                        .catch(err => {
+                            debugger;
+                        });
                 },
-                // editorParams: ((editorType) => {
-                //     if (editorType === EDITOR_TYPES.checkbox) {
-                //         return {}
-                //     } else if (editorType === EDITOR_TYPES.select) {
-
-                //     }
-                //     return {};
-                // })(entityOptions.editorType)
                 dataType: entity.getType(),
                 elementType: entity.getElementType()
             });
