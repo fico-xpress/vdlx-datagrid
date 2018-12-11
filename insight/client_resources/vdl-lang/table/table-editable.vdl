@@ -32,9 +32,8 @@
                 </vdl-row>
                 <vdl-row>
                     <vdlx-datagrid >
-                        <vdlx-datagrid-column entity="SupportCosts" editable="true" heading="SUPPORT COSTS"
-                                          scenario="=0"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column entity="ServiceLevelAgreements" editable="=s.entities.MyBool.value" scenario="=i">
+                        <vdlx-datagrid-column entity="SupportCosts" editable="true" heading="SUPPORT COSTS"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ServiceLevelAgreements" editable="true" >
                             Agreements
                         </vdlx-datagrid-column>
                     </vdlx-datagrid>

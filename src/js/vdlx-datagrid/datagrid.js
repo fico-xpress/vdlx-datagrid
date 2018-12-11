@@ -6,6 +6,7 @@ import dataTransform, {
 } from './data-transform';
 import withScenarioData from './data-loader';
 import Paginator from "./paginator";
+import { getRowData } from './utils';
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
 
@@ -15,9 +16,8 @@ class Datagrid {
         this.gridOptions$ = gridOptions$;
         this.columnOptions$ = columnOptions$;
         this.componentRoot = root;
-        this.table = undefined;
-        this.schema = insight
-            .getView()
+        this.view = insight.getView();
+        this.schema = this.view
             .getProject()
             .getModelSchema();
 
@@ -107,25 +107,45 @@ class Datagrid {
                 title: _.escape(String(options.title || entity.getAbbreviation() || name)),
                 field: options.id,
                 cssClass: 'expanding-cell-height',
-                mutatorData: (value, data, type, params) => SelectOptions.getLabel(schema, allScenarios, entity, value)
+                formatter: (cell) => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue())
             };
         });
 
-        const columnsIds = _.map(setNamePosnsAndOptions, 'options.id').concat(_.map(entitiesOptions, 'id'));
+        const columnsIds = [].concat(_.map(setNamePosnsAndOptions, 'options.id'), _.map(entitiesOptions, 'id'));
+
+        const getRowDataForColumns = getRowData(columnsIds);
 
         const entitiesColumns = _.map(entitiesOptions, (entityOptions, columnNumber) => {
             const entity = schema.getEntity(entityOptions.name);
 
-            return _.assign(entityOptions, {
+            const columnScenario = _.get(scenariosData.scenarios, entityOptions.id, scenariosData.defaultScenario);
+
+            const modify = (change) => columnScenario.modify().setArrayElement(entityOptions.name, change).commit();
+
+            const getRowKey = _.compose(
+                (rowData) => {
+                    const tableKeys = getPartialExposedKey(setNameAndPosns, rowData);
+                    return generateCompositeKey(tableKeys, setNameAndPosns, allColumnIndices[columnNumber], entityOptions);
+                }, 
+                getRowDataForColumns
+            );
+
+            return _.assign({}, entityOptions, {
                 title: _.escape(String(entityOptions.title || entity.getAbbreviation() || entityOptions.name)),
                 field: entityOptions.id,
                 cssClass: 'expanding-cell-height',
-                mutatorData: (value, data) => {
-                    const rowData = _.map(columnsIds, _.propertyOf(data));
-                    const tableKeys = getPartialExposedKey(setNameAndPosns, rowData);
-                    const keys = generateCompositeKey(tableKeys, setNameAndPosns, allColumnIndices[columnNumber], entityOptions);
-                    const columnScenario = _.get(scenariosData.scenarios, entityOptions.id, scenariosData.defaultScenario);
-                    return window.insight.Formatter.getFormattedLabel(entity, columnScenario, value, keys);
+                formatter: (cell) => {
+                    const keys = getRowKey(cell.getData());
+                    return window.insight.Formatter.getFormattedLabel(entity, columnScenario, cell.getValue(), keys);
+                },
+                editor: 'input',
+                cellEdited: (cell) => {
+                    const keys = getRowKey(cell.getData());
+
+                    modify({ key: keys, value: Number(cell.getValue()) })
+                      .catch(err => {
+                        debugger;
+                      });
                 }
             });
         });
