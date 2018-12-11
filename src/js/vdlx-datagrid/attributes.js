@@ -2,13 +2,13 @@ export default [
     {
         name: 'id',
         description:
-        'Specify an element id for the table. Useful if you later want to target the table using a selector. ' +
+        'Specify an element id for the grid. Useful if you later want to target the grid using a selector. ' +
         'If not given then an id will be generated.'
     },
     {
         name: 'scenario',
         description:
-        'The default scenario to use for fetching data in the table. This can be overridden per column but the default ' +
+        'The default scenario to use for fetching data in the grid. This can be overridden per column but the default ' +
         'will be used when a column does not specify a particular scenario and the index sets will be fetched from the default scenario.',
         acceptsExpression: true
     },
@@ -19,17 +19,17 @@ export default [
     },
     {
         name: 'page-mode',
-        description: 'By default the table will show all rows. Set this attribute to "paged" to enable table pagination.'
+        description: 'By default the grid will show all rows in scrolling mode. Set this attribute to "paged" to enable grid pagination.'
     },
     {
         name: 'height',
-        description: 'Table height',
-        acceptsExpression: true
+        acceptsExpression: true,
+        description: 'Grid height, When page-mode is set to "scrolling" you can set the height of the grid to something other than the default 600'
     },
     {
         name: 'show-filter',
         description:
-            'Set this to "true" to enable the table filter. This will show a single input above the table to filter across all table cells.'
+            'Set this to "true" to enable the grid filter. This will show a single input above the grid to filter across all grid cells.'
     },
     {
         name: 'column-filter',
@@ -39,30 +39,30 @@ export default [
     {
         name: 'add-remove-row',
         description:
-        'Setting this will show the add-remove row buttons at the bottom of the table. Set to "true" ' +
+        'Setting this will show the add-remove row buttons at the bottom of the grid. Set to "true" ' +
         'to prompt for index selection on row add. Set to "addrow-autoinc" will switch the behaviour to allow new ' +
         'index values to be created, incrementing from the highest value in the set(s).'
     },
     {
         name: 'selection-navigation',
         description:
-        'Enable/disable table navigation, selection and clipboard features. Set to "false" to disable ' +
+        'Enable/disable grid navigation, selection and clipboard features. Set to "false" to disable ' +
         'these features. Defaults to true.'
     },
     {
         name: 'modifier',
         description:
-        'Table modifier function. Will be called after the table configuration ' +
-        'has been built. Provides a way to change the configuration before the table is rendered. Must ' +
-        'be an expression that resolves to a function. Takes the table configuration object and ' +
-        'should return the modified configuration. If an object is not returned then the table will be unaffected.',
+        'Grid modifier function. Will be called after the grid configuration ' +
+        'has been built. Provides a way to change the configuration before the grid is rendered. Must ' +
+        'be an expression that resolves to a function. Takes the grid configuration object and ' +
+        'should return the modified configuration. If an object is not returned then the grid will be unaffected.',
         acceptsExpression: true
     },
     {
         name: 'width',
         description:
-        'Set the table to a fixed width, in pixels. Accepts an integer value. ' +
-        'If set to the string "custom" then the table width is calculated by adding up all the widths of the columns in the table. ' +
+        'Set the grid to a fixed width, in pixels. Accepts an integer value. ' +
+        'If set to the string "custom" then the grid width is calculated by adding up all the widths of the columns in the grid. ' +
         "If a column doesn't have a width specified then it is given a default value of 100px.",
         acceptsExpression: false
     },
@@ -74,14 +74,14 @@ export default [
     {
         name: 'always-show-selection',
         description:
-            'Whether to display selection on inactive tables. Set to "true" to keep selection on a table when it becomes inactive. Defaults to false.',
+            'Whether to display selection on inactive grids. Set to "true" to keep selection on a grid when it becomes inactive. Defaults to false.',
         acceptsExpression: false
     },
     {
         name: 'row-filter',
         description:
-        'Expression to be used for filtering the rows of a <vdl-table>. This must be an expression and ' +
-        'should resolve to either a function or a boolean value. If a function it will be executed when table updates. ' +
+        'Expression to be used for filtering the rows of a <vdl-datagrid>. This must be an expression and ' +
+        'should resolve to either a function or a boolean value. If a function it will be executed when grid updates. ' +
         'The function will have the following signature (rowData, indices) and should return a boolean.',
         acceptsExpression: true,
         required: false,
@@ -101,8 +101,8 @@ export default [
     {
         name: 'save-state',
         description:
-        'Set this to "false" to disable table state saving. By default table state is stored in the ' +
-        "user's browser session so that user settings (e.g. page, sorting and search) are preserved if table data " +
+        'Set this to "false" to disable grid state saving. By default grid state is stored in the ' +
+        "user's browser session so that user settings (e.g. page, sorting and search) are preserved if grid data " +
         'is reloaded. Defaults to true.',
         acceptsExpression: false,
         required: false

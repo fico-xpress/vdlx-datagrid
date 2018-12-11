@@ -1,4 +1,7 @@
 <vdl version="4.1">
+
+    <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+
     <vdl-page>
         <vdl-section>
             <vdl-row>

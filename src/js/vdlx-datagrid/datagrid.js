@@ -56,8 +56,8 @@ class Datagrid {
             placeholder: 'Waiting for data',
             groupStartOpen: false,
             ajaxLoader: true,
+            height: '100%',
             columns: [],
-            height: '100%'
         };
 
         return new Tabulator(`#${options.tableId}`, tabulatorOptions);
@@ -126,7 +126,7 @@ class Datagrid {
                 (rowData) => {
                     const tableKeys = getPartialExposedKey(setNameAndPosns, rowData);
                     return generateCompositeKey(tableKeys, setNameAndPosns, allColumnIndices[columnNumber], entityOptions);
-                }, 
+                },
                 getRowDataForColumns
             );
 
@@ -159,8 +159,12 @@ class Datagrid {
             return col;
         });
 
-        const data = dataTransform(allColumnIndices, columns, entitiesColumns, setNamePosnsAndOptions, scenariosData, gridOptions.rowFilter)
-
+        const data = dataTransform(allColumnIndices, columns, entitiesColumns, setNamePosnsAndOptions, scenariosData, gridOptions.rowFilter);
+        if(data.length > _.get(this.gridOptions$(), 'paginationSize')) {
+            if(_.get(this.gridOptions$(), 'overrides.paging', 'scrolling') === 'scrolling') {
+                table.setHeight(_.get(this.gridOptions$(), 'overrides.gridHeight', '600px'));
+            }
+        }
         table.setColumns(columns);
 
         return table

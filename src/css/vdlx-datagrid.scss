@@ -172,9 +172,6 @@ vdlx-datagrid {
   }
 
   &.scrolling {
-    .tabulator-tableHolder {
-      max-height: 600px;
-    }
     .footer-toolbar {
       display: none;
     }
