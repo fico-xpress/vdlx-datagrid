@@ -160,9 +160,9 @@ class Datagrid {
         });
 
         const data = dataTransform(allColumnIndices, columns, entitiesColumns, setNamePosnsAndOptions, scenariosData, gridOptions.rowFilter);
-        if(data.length > _.get(this.gridOptions$(), 'paginationSize')) {
-            if(_.get(this.gridOptions$(), 'overrides.paging', 'scrolling') === 'scrolling') {
-                table.setHeight(_.get(this.gridOptions$(), 'overrides.gridHeight', '600px'));
+        if(data.length > _.get(gridOptions, 'paginationSize')) {
+            if(_.get(gridOptions, 'overrides.paging', 'scrolling') === 'scrolling') {
+                table.setHeight(_.get(gridOptions, 'overrides.gridHeight', '600px'));
             }
         }
         table.setColumns(columns);
