@@ -77,7 +77,7 @@ class Datagrid {
             groupStartOpen: false,
             ajaxLoader: true,
             height: '100%',
-            columns: [],
+            columns: []
         };
 
         return new Tabulator(`#${options.tableId}`, tabulatorOptions);
@@ -129,10 +129,10 @@ class Datagrid {
      * @param {boolean} enabled
      * @memberof Datagrid
      */
-    updateAddRemoveControl(enabled, indicesColumns, allSetValues) {
+    updateAddRemoveControl(enabled, indicesColumns, allSetValues, data) {
         if (this.addRemoveRowControl) {
             this.addRemoveRowControl.setEnabled(enabled);
-            this.addRemoveRowControl.updateSetValues(indicesColumns, allSetValues);
+            this.addRemoveRowControl.update(indicesColumns, allSetValues, data);
         }
     }
 
@@ -320,7 +320,7 @@ class Datagrid {
 
         const editable = _.some(_.reject(entitiesOptions, options => !_.get(options, 'visible', true)), 'editable');
         const addRemoveRow = editable && gridOptions.addRemoveRow;
-        this.updateAddRemoveControl(addRemoveRow, indicesColumns, allSetValues);
+        this.updateAddRemoveControl(addRemoveRow, indicesColumns, allSetValues, data);
 
         if(data.length > gridOptions.paginationSize) {
             if(_.get(gridOptions, 'overrides.paging', 'scrolling') === 'scrolling') {

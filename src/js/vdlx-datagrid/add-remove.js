@@ -25,6 +25,7 @@ export default class AddRemove {
         this.$addRemoveControl = $(ADD_REMOVE_TEMPLATE);
         this.indicesColumns = [];
         this.allSetValues = [];
+        this.data = [];
     }
 
     /**
@@ -50,7 +51,6 @@ export default class AddRemove {
     openAddRowDialog() {
         const formFields = _.map(_.zip(this.indicesColumns, this.allSetValues), ([indicesColumn, setValues]) => {
             const id = _.uniqueId('add-remove-row-');
-            debugger;
             const selectOptions = _.map(setValues, setValue => `<option value="${setValue.value}">${setValue.key}</option>`).join('');
 
             return `
@@ -59,7 +59,7 @@ export default class AddRemove {
                 ${indicesColumn.title}
               </label>
               <div class="col-sm-5">
-                <select class="form-control" name="${indicesColumn.title}" id="${id}">
+                <select class="form-control" name="${indicesColumn.field}" id="${id}">
                   <option value="">Choose value</option>
                   ${selectOptions}
                 </select>
@@ -74,23 +74,59 @@ export default class AddRemove {
         </form>
         `;
 
-        const message = $(`
+        const $message = $(`
         <div>
             ${form}
+            <div class="alerts"></div>
         </div>
         `);
+
+        /**
+         * @param {JQuery<HTMLElement>} $form 
+         * @returns {string?}
+         */
+        const validateForm = ($form) => {
+            const formData = $form.serializeArray();
+
+            const emptyValue = _.find(formData, {value: ''});
+
+            if (emptyValue) {
+                return 'Please set all indices to create a new row';
+            }
+
+            const alreadyExists = _.find(
+                this.data,
+                _.reduce(formData, (acc, value) => _.assign(acc, _.set({}, value.name, value.value)), {})
+            );
+
+            if (alreadyExists) {
+                return 'A row with these indices already exists';
+            }
+            return undefined;
+        };
+
+        const submit = evt => {
+            const err = validateForm($message.find('form'));
+
+            if (err) {
+                $message.find('.alerts').html(`<div class="alert alert-danger">${err}</div>`);
+                return false;
+            }
+        };
 
         bootbox.dialog({
             animate: false,
             title: 'Add Row',
             onEscape: true,
             closeButton: true,
-            message: message,
+            message: $message,
             buttons: {
                 confirm: {
                     label: 'OK',
                     className: 'btn btn-primary btn-add',
-                    callback: () => {}
+                    callback: (evt) => {
+                        return submit(evt);
+                    }
                 },
                 cancel: {
                     label: 'CANCEL',
@@ -98,7 +134,7 @@ export default class AddRemove {
                 }
             },
             callback: (result) => {
-
+                debugger;
             }
         });
     }
@@ -106,8 +142,9 @@ export default class AddRemove {
     removeRow() {
     }
 
-    updateSetValues (indicesColumns, allSetValues) {
+    update (indicesColumns, allSetValues, data) {
         this.indicesColumns = indicesColumns;
         this.allSetValues = allSetValues;
+        this.data = data;
     }
 };
