@@ -80,10 +80,17 @@ class Datagrid {
             columns: [],
             // can select only 1 row
             selectable: 1,
-            cellEditing: (cell) => cell.getRow().select()
+            cellEditing: (cell) => cell.getRow().select(),
+            rowSelected: (row) => this.setSelectedRow(row)
         };
 
         return new Tabulator(`#${options.tableId}`, tabulatorOptions);
+    }
+
+    setSelectedRow (row) {
+        if (this.addRemoveRowControl) {
+            this.addRemoveRowControl.setSelectedRow(row);
+        }
     }
 
     /**
@@ -115,7 +122,7 @@ class Datagrid {
             return undefined;
         }
 
-        const addRemoveControl = new AddRemove();
+        const addRemoveControl = new AddRemove(table);
         addRemoveControl.appendTo(footerToolbar);
 
         return addRemoveControl;
@@ -132,10 +139,10 @@ class Datagrid {
      * @param {boolean} enabled
      * @memberof Datagrid
      */
-    updateAddRemoveControl(enabled, indicesColumns, allSetValues, data) {
+    updateAddRemoveControl(enabled, indicesColumns, entitiesColumns, allSetValues, data) {
         if (this.addRemoveRowControl) {
             this.addRemoveRowControl.setEnabled(enabled);
-            this.addRemoveRowControl.update(indicesColumns, allSetValues, data);
+            this.addRemoveRowControl.update(indicesColumns, entitiesColumns, allSetValues, data);
         }
     }
 
@@ -272,7 +279,9 @@ class Datagrid {
                         });
                 },
                 dataType: entity.getType(),
-                elementType: entity.getElementType()
+                elementType: entity.getElementType(),
+                scenario: columnScenario,
+                getRowKey: getRowKey
             });
         });
 
@@ -318,7 +327,7 @@ class Datagrid {
 
         const editable = _.some(_.reject(entitiesOptions, options => !_.get(options, 'visible', true)), 'editable');
         const addRemoveRow = editable && gridOptions.addRemoveRow;
-        this.updateAddRemoveControl(addRemoveRow, indicesColumns, allSetValues, data);
+        this.updateAddRemoveControl(addRemoveRow, indicesColumns, entitiesColumns, allSetValues, data);
 
         if(data.length > gridOptions.paginationSize) {
             if(_.get(gridOptions, 'overrides.paging', 'scrolling') === 'scrolling') {

@@ -1,3 +1,5 @@
+const dialogs = insightModules.load('dialogs');
+
 const ADD_REMOVE_TEMPLATE = `
 <div class="add-remove-control">
     <div class="pull-left">
@@ -10,8 +12,9 @@ const ADD_REMOVE_TEMPLATE = `
             />
             <button
                 type="button"
-                class="btn btn-link btn-table-action btn-table-remove-row"
+                class="btn btn-link btn-table-action btn-table-remove-row disabled"
                 title="Delete Selected Row"
+                disabled
                 tabindex="-1"
             />
         </div>
@@ -19,13 +22,15 @@ const ADD_REMOVE_TEMPLATE = `
 </div>
 `;
 
-
 export default class AddRemove {
-    constructor() {
+    constructor(table) {
         this.$addRemoveControl = $(ADD_REMOVE_TEMPLATE);
         this.indicesColumns = [];
+        this.entitiesColumns = [];
         this.allSetValues = [];
         this.data = [];
+        this.selectedRow = undefined;
+        this.table = table;
     }
 
     /**
@@ -82,13 +87,11 @@ export default class AddRemove {
         `);
 
         /**
-         * @param {JQuery<HTMLElement>} $form 
+         * @param {Object} formData 
          * @returns {string?}
          */
-        const validateForm = ($form) => {
-            const formData = $form.serializeArray();
-
-            const emptyValue = _.find(formData, {value: ''});
+        const validateForm = (formData) => {
+            const emptyValue = _.some(formData, _.negate(_.identity));
 
             if (emptyValue) {
                 return 'Please set all indices to create a new row';
@@ -96,7 +99,7 @@ export default class AddRemove {
 
             const alreadyExists = _.find(
                 this.data,
-                _.reduce(formData, (acc, value) => _.assign(acc, _.set({}, value.name, value.value)), {})
+                formData
             );
 
             if (alreadyExists) {
@@ -106,12 +109,18 @@ export default class AddRemove {
         };
 
         const submit = evt => {
-            const err = validateForm($message.find('form'));
+            const formData = _.reduce(
+                $message.find('form').serializeArray(),
+                (acc, value) => _.assign(acc, _.set({}, value.name, value.value)),
+                {}
+            );
+            const err = validateForm(formData);
 
             if (err) {
                 $message.find('.alerts').html(`<div class="alert alert-danger">${err}</div>`);
                 return false;
             }
+            return formData;
         };
 
         bootbox.dialog({
@@ -121,29 +130,86 @@ export default class AddRemove {
             closeButton: true,
             message: $message,
             buttons: {
-                confirm: {
+                ok: {
                     label: 'OK',
                     className: 'btn btn-primary btn-add',
-                    callback: submit
+                    callback: evt => {
+                        const newRow = submit(evt)
+                        if (!newRow) {
+                            return false;
+                        }
+
+                        this.table.addRow(newRow)
+                            .then(row => {
+                                this.table.setSort(this.table.getSorters());
+                                this.data = this.table.getData();
+                                return this.table.scrollToRow(row)
+                                    .then(_.constant(row));
+                            })
+                            .then(row => {
+                                const $row = $(row.getElement());
+                                $row.addClass('highlight').css('opacity', 0.2);
+                                $row.animate({opacity: 1.0});
+                                $row.animate({opacity: 0.2});
+                                $row.animate({opacity: 1.0}, 2000, 'swing', function () {
+                                    $row.removeClass('highlight');
+                                });
+                            });
+                    }
                 },
                 cancel: {
                     label: 'CANCEL',
                     className: 'btn',
                 }
-            },
-            callback: (result) => {
-                debugger;
             }
         });
     }
 
-    removeRow() {
+    removeRow () {
+        const data = this.selectedRow.getData();
 
+        const modifiers = _.mapValues(
+            _.reduce(this.entitiesColumns, (acc, column) => _.set(acc, column.scenario.getId(), column.scenario), {}),
+            scenario => scenario.modify()
+        );
+
+        _.each(this.entitiesColumns, (column) => {
+            const rowKey = column.getRowKey(data);
+            modifiers[column.scenario.getId()].removeFromArray(column.name, rowKey);
+        });
+
+        const promises = _.map(modifiers, modifier => modifier.commit());
+        return Promise.all(promises)
+            .then(() => this.selectedRow.delete())
+            .then(() => {
+                this.data = this.table.getData();
+                this.setSelectedRow(undefined);
+            })
+            .catch(() => {
+                dialogs.alert('Could not delete row. There was an issue updating the server.', 'Row deletion failed');
+                throw Error('Row deletion failed');
+            });
     }
 
-    update (indicesColumns, allSetValues, data) {
+    update (indicesColumns, entitiesColumns, allSetValues, data) {
         this.indicesColumns = indicesColumns;
+        this.entitiesColumns = entitiesColumns;
         this.allSetValues = allSetValues;
         this.data = data;
+    }
+
+    setSelectedRow (row) {
+        this.selectedRow = row;
+        if (this.selectedRow) {
+            this.$addRemoveControl
+                .find('.btn-table-remove-row')
+                .removeAttr('disabled')
+                .removeClass('disabled');
+        } else {
+            this.$addRemoveControl
+                .find('.btn-table-remove-row')
+                .attr('disabled', '')
+                .addClass('disabled');
+        }
     }
 };

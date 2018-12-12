@@ -5,6 +5,7 @@ $color-dark-grey: #888888;
 $color-medium-grey: #cccccc;
 $color-light-grey: #f2f2f2;
 $color-selected: #fff8c1;
+$highlight-color: #ffc20e;
 
 vdlx-datagrid {
   display: block;
@@ -166,15 +167,22 @@ vdlx-datagrid {
         border-color: $color-medium-grey;
       }
     }
-    &.table-condensed .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
-      padding: 5px 9px;
-      &.tabulator-editing {
-        padding: 0;
-        background-color: $color-selected;
+    &.table-condensed .tabulator-tableHolder .tabulator-table .tabulator-row {
+      &.highlight {
+        background-color: $highlight-color !important;
       }
-      &.editable-numeric.tabulator-editing input {
-        text-align: right;
-        padding: 5px 9px !important;
+
+      .tabulator-cell {
+        padding: 5px 9px;
+        &.tabulator-editing {
+          padding: 0;
+          background-color: $color-selected;
+        }
+        &.editable-numeric.tabulator-editing input {
+          text-align: right;
+          padding: 5px 9px !important;
+        }
+
       }
     }
   }
