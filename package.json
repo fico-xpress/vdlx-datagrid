@@ -17,6 +17,8 @@
   "devDependencies": {
     "@babel/core": "*",
     "@babel/preset-env": "*",
+    "@types/bootbox": "^4.4.36",
+    "@types/jquery": "^3.3.24",
     "@types/knockout": "^3.4.60",
     "@types/lodash": "^3.10.1",
     "babel-core": "7.0.0-bridge.0",
