@@ -73,7 +73,7 @@ class Datagrid {
             paginationSize: options.paginationSize,
             paginationElement: options.paginationElement,
             layout: 'fitColumns',
-            placeholder: 'Waiting for data',
+            placeholder: 'No data available',
             groupStartOpen: false,
             ajaxLoader: true,
             height: '100%',
@@ -157,7 +157,7 @@ class Datagrid {
         const indicesColumns = _.map(setNamePosnsAndOptions, setNameAndPosn => {
             const {name, options} = setNameAndPosn;
             const entity = schema.getEntity(name);
-
+            // debugger;
             return {
                 title: _.escape(String(options.title || entity.getAbbreviation() || name)),
                 field: options.id,
