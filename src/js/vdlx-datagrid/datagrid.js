@@ -129,9 +129,10 @@ class Datagrid {
      * @param {boolean} enabled
      * @memberof Datagrid
      */
-    updateAddRemoveControl(enabled) {
+    updateAddRemoveControl(enabled, indicesColumns, allSetValues) {
         if (this.addRemoveRowControl) {
             this.addRemoveRowControl.setEnabled(enabled);
+            this.addRemoveRowControl.updateSetValues(indicesColumns, allSetValues);
         }
     }
 
@@ -171,11 +172,6 @@ class Datagrid {
         const columnsIds = [].concat(_.map(setNamePosnsAndOptions, 'options.id'), _.map(entitiesOptions, 'id'));
 
         const getRowDataForColumns = getRowData(columnsIds);
-
-        const editable = _.some(_.reject(entitiesOptions, options => !_.get(options, 'visible', true)), 'editable');
-
-        const addRemoveRow = editable && gridOptions.addRemoveRow;
-        this.updateAddRemoveControl(addRemoveRow);
 
         const entitiesColumns = _.map(entitiesOptions, (entityOptions, columnNumber) => {
             const entity = schema.getEntity(entityOptions.name);
@@ -320,7 +316,12 @@ class Datagrid {
             return col;
         });
 
-        const data = dataTransform(allColumnIndices, columns, entitiesColumns, setNamePosnsAndOptions, scenariosData, gridOptions.rowFilter);
+        const { data, allSetValues } = dataTransform(allColumnIndices, columns, entitiesColumns, setNamePosnsAndOptions, scenariosData, gridOptions.rowFilter);
+
+        const editable = _.some(_.reject(entitiesOptions, options => !_.get(options, 'visible', true)), 'editable');
+        const addRemoveRow = editable && gridOptions.addRemoveRow;
+        this.updateAddRemoveControl(addRemoveRow, indicesColumns, allSetValues);
+
         if(data.length > gridOptions.paginationSize) {
             if(_.get(gridOptions, 'overrides.paging', 'scrolling') === 'scrolling') {
                 table.setHeight(_.get(gridOptions, 'overrides.gridHeight', '600px'));

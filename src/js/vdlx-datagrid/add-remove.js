@@ -23,6 +23,8 @@ const ADD_REMOVE_TEMPLATE = `
 export default class AddRemove {
     constructor() {
         this.$addRemoveControl = $(ADD_REMOVE_TEMPLATE);
+        this.indicesColumns = [];
+        this.allSetValues = [];
     }
 
     /**
@@ -46,13 +48,37 @@ export default class AddRemove {
     }
 
     openAddRowDialog() {
+        const formFields = _.map(_.zip(this.indicesColumns, this.allSetValues), ([indicesColumn, setValues]) => {
+            const id = _.uniqueId('add-remove-row-');
+            debugger;
+            const selectOptions = _.map(setValues, setValue => `<option value="${setValue.value}">${setValue.key}</option>`).join('');
+
+            return `
+            <div class="form-group">
+              <label class="col-sm-4 control-label" for="${id}">
+                ${indicesColumn.title}
+              </label>
+              <div class="col-sm-5">
+                <select class="form-control" name="${indicesColumn.title}" id="${id}">
+                  <option value="">Choose value</option>
+                  ${selectOptions}
+                </select>
+              </div>
+            </div>
+            `;
+        }).join('');
+
+        const form = `
+        <form class="form-horizontal modal-form " id="autotable-3-addForm" title="">
+            ${formFields}
+        </form>
+        `;
+
         const message = $(`
         <div>
-            <select>
-                <option>1</option>
-                <option>2</option>
-            </select>
-        </div>`);
+            ${form}
+        </div>
+        `);
 
         bootbox.dialog({
             animate: false,
@@ -69,21 +95,19 @@ export default class AddRemove {
                 cancel: {
                     label: 'CANCEL',
                     className: 'btn',
-                    callback: () => {}
                 }
             },
             callback: (result) => {
 
             }
         });
-
     }
 
     removeRow() {
-
     }
 
-    updateAddRemoveComponent() {
-
-    } 
+    updateSetValues (indicesColumns, allSetValues) {
+        this.indicesColumns = indicesColumns;
+        this.allSetValues = allSetValues;
+    }
 };

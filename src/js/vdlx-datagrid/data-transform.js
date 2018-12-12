@@ -1,6 +1,7 @@
 const DataUtils = insightModules.load('utils/data-utils');
 const createDenseData = insightModules.load('components/table/create-dense-data');
 const createSparseData = insightModules.load('components/table/create-sparse-data');
+const SelectOptions = insightModules.load('components/autotable-select-options');
 
 export const getAllColumnIndices = _.curry((schema, columnOptions) => {
     return _.map(columnOptions, function (option) {
@@ -75,6 +76,7 @@ const isSparse = (sets, arrays) => {
     return (totalPossibleKeys * arrays.length > ((totalCountOfArrayValues * Math.log(totalCountOfArrayValues)) || 0));
 };
 
+
 export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions, scenariosData, rowFilter) => {
 
     var defaultScenario = scenariosData.defaultScenario;
@@ -103,6 +105,12 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
             .value();
     });
 
+    const schema = insight.getView().getProject().getModelSchema();
+
+    const allSetValues = _.map(setNamePosnsAndOptions, (setNamePosnAndOption, i) => {
+        return SelectOptions.generateSelectOptions(schema, indexScenarios, setNamePosnAndOption.name, sets[i]);
+    });
+
     const createRow = _.partial(_.zipObject, setIds.concat(arrayIds));
 
     let data;
@@ -123,5 +131,6 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
         });
     }
 
-    return _.map(data, createRow);
+
+    return {data: _.map(data, createRow), allSetValues: allSetValues};
 };
