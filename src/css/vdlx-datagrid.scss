@@ -1,6 +1,7 @@
 //colors
-$black: rgb(33,33,33);
+$black: rgb(33, 33, 33);
 $color-table-header: #d2e9f4;
+$color-dark-grey: #888888;
 $color-medium-grey: #cccccc;
 $color-light-grey: #f2f2f2;
 $color-selected: #fff8c1;
@@ -22,7 +23,16 @@ vdlx-datagrid {
       }
       .tabulator-error {
       }
-      .tabulator-placeholder {
+      .tabulator-placeholder,
+      .tabulator-placeholder[tabulator-render-mode=virtual] {
+        position: relative;
+        padding-bottom: 9px;
+        span {
+          margin: 0 auto 0 0;
+          color: $black;
+          font-weight: normal;
+          font-size: 14px;
+        }
       }
       .tabulator-moving {
       }
