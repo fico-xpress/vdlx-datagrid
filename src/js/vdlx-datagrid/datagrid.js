@@ -128,6 +128,10 @@ class Datagrid {
 
         const getRowDataForColumns = getRowData(columnsIds);
 
+        const editable = _.some(_.reject(entitiesOptions, options => !options.visible), 'editable');
+
+        const addRemoveRow = editable && gridOptions.addRemoveRow;
+
         const entitiesColumns = _.map(entitiesOptions, (entityOptions, columnNumber) => {
             const entity = schema.getEntity(entityOptions.name);
 
@@ -232,7 +236,6 @@ class Datagrid {
                 elementType: entity.getElementType()
             });
         });
-
 
         const overrides = gridOptions.overrides;
         const columns = _.map([].concat(indicesColumns, entitiesColumns), col => {

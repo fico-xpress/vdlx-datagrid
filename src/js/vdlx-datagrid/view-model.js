@@ -66,18 +66,6 @@ const getTableOptions = (params) => () => {
         }
     }
 
-    if (gridOptions.addRemoveRow) {
-        var isEditable = gridOptions.columnOptions.some(function (column) {
-            return !!column.editable;
-        });
-
-        if (!isEditable) {
-            gridOptions.addRemoveRow = false;
-            // not a hard error as this is used as a feature when making a table read only based on permissions
-            // console.log('vdl-table (' + self.tableId + "): add/remove rows disabled. Table needs to have at least one editable column to use this feature.");
-        }
-    }
-
     return gridOptions;
 };
 
