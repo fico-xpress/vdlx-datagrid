@@ -182,6 +182,10 @@ vdlx-datagrid {
     width: 100%;
     background-color: lightblue;
     margin-bottom: 20px;
+
+    .add-remove-fico {
+      margin: 25px 5px 0 0;
+    }
   }
 
   &.scrolling {

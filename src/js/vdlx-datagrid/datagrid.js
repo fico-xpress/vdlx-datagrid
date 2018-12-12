@@ -8,6 +8,7 @@ import withScenarioData from './data-loader';
 import Paginator from "./paginator";
 import { getRowData } from './utils';
 import { EDITOR_TYPES } from '../constants';
+import AddRemove from './add-remove';
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');
@@ -21,6 +22,12 @@ const addSelectNull = (items) => {
 };
 
 class Datagrid {
+    /**
+     * 
+     * @param {Element} root 
+     * @param {*} gridOptions$ 
+     * @param {*} columnOptions$ 
+     */
     constructor(root, gridOptions$, columnOptions$) {
 
         this.gridOptions$ = gridOptions$;
@@ -35,7 +42,10 @@ class Datagrid {
 
         this.table = this.createTable(options);
 
-        this.paginatorControl = this.createPaginatorControl(this.componentRoot, this.table, options);
+        const footerToolbar = root.querySelector('.footer-toolbar');
+
+        this.addRemoveRowControl = this.createAddRemoveRowControl(footerToolbar, this.table, options);
+        this.paginatorControl = this.createPaginatorControl(footerToolbar, this.table, options);
 
         this.buildTable();
     }
@@ -73,21 +83,55 @@ class Datagrid {
         return new Tabulator(`#${options.tableId}`, tabulatorOptions);
     }
 
-    createPaginatorControl(componentRoot, table, options) {
+    /**
+     * @param {Element} footerToolbar
+     * @param {*} table
+     * @param {*} options
+     * @returns
+     * @memberof Datagrid
+     */
+    createPaginatorControl(footerToolbar, table, options) {
         if (!options.pagination) {
             return undefined;
         }
 
-        const $componentRoot = $(componentRoot);
-        const $footerToolBar = $componentRoot.find('.footer-toolbar');
         const paginatorControl = new Paginator(table);
-        paginatorControl.appendTo($footerToolBar);
+        paginatorControl.appendTo(footerToolbar);
         return paginatorControl;
+    }
+
+    /**
+     * @param {Element} footerToolbar
+     * @param {*} table
+     * @param {*} options
+     * @returns
+     * @memberof Datagrid
+     */
+    createAddRemoveRowControl(footerToolbar, table, options) {
+        if (!options.addRemoveRow) {
+            return undefined;
+        }
+
+        const addRemoveControl = new AddRemove();
+        addRemoveControl.appendTo(footerToolbar);
+
+        return addRemoveControl;
     }
 
     updatePaginator() {
         if (this.paginatorControl) {
             this.paginatorControl.updatePageIndicators();
+        }
+    }
+
+    /**
+     *
+     * @param {boolean} enabled
+     * @memberof Datagrid
+     */
+    updateAddRemoveControl(enabled) {
+        if (this.addRemoveRowControl) {
+            this.addRemoveRowControl.setEnabled(enabled);
         }
     }
 
@@ -128,9 +172,10 @@ class Datagrid {
 
         const getRowDataForColumns = getRowData(columnsIds);
 
-        const editable = _.some(_.reject(entitiesOptions, options => !options.visible), 'editable');
+        const editable = _.some(_.reject(entitiesOptions, options => !_.get(options, 'visible', true)), 'editable');
 
         const addRemoveRow = editable && gridOptions.addRemoveRow;
+        this.updateAddRemoveControl(addRemoveRow);
 
         const entitiesColumns = _.map(entitiesOptions, (entityOptions, columnNumber) => {
             const entity = schema.getEntity(entityOptions.name);

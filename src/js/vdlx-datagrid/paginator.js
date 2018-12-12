@@ -1,8 +1,5 @@
-export default class Paginator {
-
-    constructor(table) {
-        this.table = table;
-        this.$paginationControl = $(`<div class="datagrid-pagination-control">
+const PAGINATOR_TEMPLATE = `
+<div class="pagination-control">
     <div class="pull-right">
         <div class="paging_fico">
             <button class="reveal-btn btn"><span class="paginate-control-text">page 1 of 1 </span><i class="fico-arrow-down5"></i>
@@ -14,7 +11,8 @@ export default class Paginator {
             <div class="jumpto-pagination hide">
                 <div>
                     <div class="jumpto-pagination-label">Jump to page:</div>
-                    <input type="number" class="jumpto-pagination-input" value="1"></div>
+                    <input type="number" class="jumpto-pagination-input" value="1">
+                </div>
                 <div class="results-per-page">
                     <div class="jumpto-pagination-label">Items per page:</div>
                     <select class="results-per-page-selector">
@@ -23,32 +21,38 @@ export default class Paginator {
                         <option value="25">25</option>
                         <option value="50">50</option>
                         <option value="100">100</option>
-                    </select></div>
+                    </select>
                 </div>
             </div>
         </div>
-    </div>`);
+    </div>
+</div>
+`;
+
+export default class Paginator {
+    constructor(table) {
+        this.table = table;
+        this.$paginationControl = $(PAGINATOR_TEMPLATE);
     }
 
     /*
-    Tabulator Pagination methods for reference
-
-    table.setPage(5);
-    table.nextPage();
-    table.previousPage();
-    table.setPageSize(50);
-    var pageSize = table.getPageSize();
-    table.getPage();
-    table.getPageMax();
-
-     */
-
+      Tabulator Pagination methods for reference
+  
+      table.setPage(5);
+      table.nextPage();
+      table.previousPage();
+      table.setPageSize(50);
+      var pageSize = table.getPageSize();
+      table.getPage();
+      table.getPageMax();
+  
+       */
 
     /**
      * get the currentPage as integer
      * @returns {number}
      */
-    get currentPage() {
+    get currentPage () {
         return this.table.getPage();
     }
 
@@ -57,7 +61,7 @@ export default class Paginator {
      * @param {number} num
      * @returns {*|boolean}
      */
-    set currentPage(num) {
+    set currentPage (num) {
         return this.table.setPage(num);
     }
 
@@ -65,22 +69,22 @@ export default class Paginator {
      * get the number of the last page.
      * @returns {number} last page
      */
-    get maxPage() {
+    get maxPage () {
         return this.table.getPageMax();
     }
 
     /**
      * Refresh all the Paginator controls to display the correct pages, the enabled start of the previous and next buttons, ect..
      */
-    updatePageIndicators() {
+    updatePageIndicators () {
         let pageNum = this.currentPage;
         this.$pageInput.val(pageNum);
-        if(pageNum === 1) {
+        if (pageNum === 1) {
             this.$prevBtn.addClass('disabled');
         } else {
             this.$prevBtn.removeClass('disabled');
         }
-        if(pageNum === this.maxPage) {
+        if (pageNum === this.maxPage) {
             this.$nextBtn.addClass('disabled');
         } else {
             this.$nextBtn.removeClass('disabled');
@@ -91,8 +95,8 @@ export default class Paginator {
     /**
      * Navigate the grid to the previous page.
      */
-    previousPage() {
-        if(this.currentPage > 1) {
+    previousPage () {
+        if (this.currentPage > 1) {
             this.table.previousPage();
             this.updatePageIndicators();
         }
@@ -101,8 +105,8 @@ export default class Paginator {
     /**
      * Navigate the grid to the next page.
      */
-    nextPage() {
-        if(this.currentPage < this.maxPage) {
+    nextPage () {
+        if (this.currentPage < this.maxPage) {
             this.table.nextPage();
             this.updatePageIndicators();
         }
@@ -113,7 +117,7 @@ export default class Paginator {
      * @param {integer} pageNum
      * @returns {number}
      */
-    goToPage(pageNum) {
+    goToPage (pageNum) {
         let currentPage = Math.max(1, Math.min(this.maxPage, pageNum));
         this.currentPage = currentPage;
 
@@ -122,10 +126,10 @@ export default class Paginator {
 
     /**
      * Given a jQuery node, appends this Paginator to it and sets up event handling.
-     * @param (jQuery) $container
+     * @param {Element} container
      */
-    appendTo($container) {
-        $container.append(this.$paginationControl);
+    appendTo (container) {
+        this.$paginationControl.appendTo(container);
 
         this.$revealBtn = this.$paginationControl.find('.paging_fico .reveal-btn');
         this.$dropdown = this.$paginationControl.find('.paging_fico .jumpto-pagination');
@@ -150,9 +154,9 @@ export default class Paginator {
 
         this.$pageInput.on('input', evt => {
             let val = _.parseInt(evt.target.value);
-            if(_.isNumber(val)) {
+            if (_.isNumber(val)) {
                 let actual = this.goToPage(val);
-                if(actual !== val) {
+                if (actual !== val) {
                     this.updatePageIndicators();
                 }
             }
