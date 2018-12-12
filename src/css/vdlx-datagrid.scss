@@ -106,6 +106,7 @@ vdlx-datagrid {
       .tabulator-unselectable {
       }
       .tabulator-selected {
+        background-color: $color-selected !important;
       }
       .tabulator-validation-fail {
       }

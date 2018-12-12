@@ -124,9 +124,7 @@ export default class AddRemove {
                 confirm: {
                     label: 'OK',
                     className: 'btn btn-primary btn-add',
-                    callback: (evt) => {
-                        return submit(evt);
-                    }
+                    callback: submit
                 },
                 cancel: {
                     label: 'CANCEL',
@@ -140,6 +138,7 @@ export default class AddRemove {
     }
 
     removeRow() {
+
     }
 
     update (indicesColumns, allSetValues, data) {

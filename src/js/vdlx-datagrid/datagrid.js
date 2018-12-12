@@ -77,7 +77,10 @@ class Datagrid {
             groupStartOpen: false,
             ajaxLoader: true,
             height: '100%',
-            columns: []
+            columns: [],
+            // can select only 1 row
+            selectable: 1,
+            cellEditing: (cell) => cell.getRow().select()
         };
 
         return new Tabulator(`#${options.tableId}`, tabulatorOptions);
@@ -213,12 +216,7 @@ class Datagrid {
                 const checkedValue = _.get(entityOptions, 'checkedValue', true);
                 const uncheckedValue = _.get(entityOptions, 'uncheckedValue', false);
                 const newValue = String(cell.getValue()) === String(checkedValue) ? uncheckedValue : checkedValue;
-                const value = newValue;
-
-                saveValue(cell.getData(), value)
-                    .catch(err => {
-                        debugger;
-                    });
+                cell.setValue(newValue);
             };
 
             const getCellClickHandler = () => {
