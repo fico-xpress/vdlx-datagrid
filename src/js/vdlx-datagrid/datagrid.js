@@ -13,6 +13,8 @@ import AddRemove from './add-remove';
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');
 
+const dialogs = insightModules.load('dialogs')
+
 const addSelectNull = (items) => {
     if (Array.isArray(items)) {
         // add empty option to the start of the list
@@ -20,6 +22,8 @@ const addSelectNull = (items) => {
     }
     return items;
 };
+
+const VALIDATION_ERROR_TITLE = 'Validation Error';
 
 class Datagrid {
     /**
@@ -263,6 +267,20 @@ class Datagrid {
                 return undefined;
             }
 
+            const validate = (cell, newValue) => {
+                const data = cell.getData();
+                const keys = getRowKey(data);
+
+                // Perform entity validation first
+                let result = insight.validation.EntityValidator.checkValue(entity, newValue, undefined, keys);
+
+                if (result.isValid && (typeof entityOptions.editorValidate === 'function')) {
+                    result = entityOptions.editorValidate.call(this, newValue, getRowDataForColumns(data), keys);
+                }
+
+                return result;
+            }
+
             return _.assign({}, entityOptions, {
                 title: _.escape(String(entityOptions.title || entity.getAbbreviation() || entityOptions.name)),
                 field: entityOptions.id,
@@ -271,24 +289,37 @@ class Datagrid {
                 formatter: getFormatter(),
                 editor: entityOptions.editorType,
                 editorParams: getEditorParams(),
+                // cellEditing: (cell) => {
+                //     debugger;
+                // },
                 cellEdited: (cell) => {
                     const oldValue = _.isUndefined(cell.getOldValue()) ? '': cell.getOldValue();
                     const value = cell.getValue();
-                    if (value !== oldValue) {
-                        saveValue(cell.getData(), value)
-                            .catch(err => {
-                                debugger;
-                            });
+
+                    const validationResult = validate(cell, value);
+
+                    if (!validationResult.isValid && !validationResult.allowSave) {
+                        cell.restoreOldValue();
+                        dialogs.alert(validationResult.errorMessage, VALIDATION_ERROR_TITLE, () => {
+                            _.defer(() => cell.edit(true));
+                        });
+                    } else {
+                        if (value !== oldValue) {
+                            saveValue(cell.getData(), value)
+                                .catch(err => {
+                                    debugger;
+                                });
+                        }
                     }
                 },
                 dataType: entity.getType(),
                 elementType: entity.getElementType(),
                 scenario: columnScenario,
                 getRowKey: getRowKey,
-                validator: (cell, value) => {
-                    entityOptions;
-                    debugger;
-                }
+                // validator: (cell, newValue) => {
+                    // const result = validate(cell, newValue);
+                    // return result.isValid || result.allowSave;
+                // }
             });
         });
 

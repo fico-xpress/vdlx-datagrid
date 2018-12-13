@@ -187,10 +187,6 @@ export default function createViewModel(params, componentInfo) {
         debugger;
     };
 
-    vm.validate = function () {
-        debugger;
-    };
-
     vm.dispose = function () { };
 
     buildTable();
