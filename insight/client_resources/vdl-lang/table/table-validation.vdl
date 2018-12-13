@@ -1,5 +1,6 @@
 <vdl version="4.1">
     <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+    <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
     <ol class="todo">
         <li class="done">Intro text/Explanation</li>
@@ -33,7 +34,7 @@
 
         <vdl-section heading="Table inline validation">
             <vdl-row class="lead">
-                This page demonstrates vdl-table inline validation with vdl-validate.
+                This page demonstrates vdlx-datagrid inline validation with vdlx-datagrid-validate.
             </vdl-row>
 
             <vdl-row>
@@ -52,28 +53,28 @@
             <vdl-row>
                 <vdl-column heading="inline validation expression referencing an entity" size="5">
                     <p>FactoryDemand should be greater than or equal to demand.</p>
-                    <vdl-table page-mode="paged" page-size="10">
-                        <vdl-table-column set="Factories"></vdl-table-column>
-                        <vdl-table-column entity="FactoryDemand" editable="true">
-                            <vdl-validate pass="=value >= scenario.entities.demand.value"
+                    <vdlx-datagrid page-mode="paged" page-size="10">
+                        <vdlx-datagrid-column set="Factories"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactoryDemand" editable="true">
+                            <vdlx-datagrid-validate pass="=value >= scenario.entities.demand.value"
                                           vdl-if="=scenario.entities.MyBool.value">
                                 FactoryDemand should be greater than or equal to demand
-                            </vdl-validate>
-                        </vdl-table-column>
-                    </vdl-table>
+                            </vdlx-datagrid-validate>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="7">
                     <h5>VDL source code:</h5>
                     <code-panel>
-&lt;vdl-table page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
-    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
-        &lt;vdl-validate pass=&quot;=value &gt;= scenario.entities.demand.value&quot;
+&lt;vdlx-datagrid page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
+        &lt;vdlx-datagrid-validate pass=&quot;=value &gt;= scenario.entities.demand.value&quot;
                       vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;
             FactoryDemand should be greater than or equal to demand
-        &lt;/vdl-validate&gt;
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+        &lt;/vdlx-datagrid-validate&gt;
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>
@@ -81,15 +82,15 @@
             <vdl-row>
                 <vdl-column heading="inline validation expression calling external functions" size="5">
                     <p>FactoryDemand should be greater than or equal to 100 and less than or equal to 1000</p>
-                    <vdl-table page-mode="paged" page-size="10">
-                        <vdl-table-column set="Factories"></vdl-table-column>
-                        <vdl-table-column entity="FactoryDemand" editable="true">
-                            <vdl-validate pass="=validateGreaterThanEqual100(entityName, value) && validateLessThanEqual1000(entityName, value)"
+                    <vdlx-datagrid page-mode="paged" page-size="10">
+                        <vdlx-datagrid-column set="Factories"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactoryDemand" editable="true">
+                            <vdlx-datagrid-validate pass="=validateGreaterThanEqual100(entityName, value) && validateLessThanEqual1000(entityName, value)"
                                           vdl-if="=scenario.entities.MyBool.value">
                                 FactoryDemand should be greater than or equal to 100 and less than or equal to 1000
-                            </vdl-validate>
-                        </vdl-table-column>
-                    </vdl-table>
+                            </vdlx-datagrid-validate>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="7">
                     <h5>VDL source code:</h5>
@@ -103,15 +104,15 @@
         return value &lt;= 1000;
     }
 &lt;/script&gt;
-&lt;vdl-table page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
-    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
-        &lt;vdl-validate pass=&quot;=validateGreaterThanEqual100(entityName, value) &amp;&amp; validateLessThanEqual1000(entityName, value)&quot;
+&lt;vdlx-datagrid page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
+        &lt;vdlx-datagrid-validate pass=&quot;=validateGreaterThanEqual100(entityName, value) &amp;&amp; validateLessThanEqual1000(entityName, value)&quot;
                       vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;
             FactoryDemand should be greater than or equal to 100 and less than or equal to 1000
-        &lt;/vdl-validate&gt;
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+        &lt;/vdlx-datagrid-validate&gt;
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>
@@ -119,30 +120,30 @@
             <vdl-row>
                 <vdl-column heading="inline validation function referencing an entity." size="5">
                     <p>FactoryDemand should be less than or equal to 1000 and greater than or equal to demand.</p>
-                    <vdl-table page-mode="paged" page-size="10">
-                        <vdl-table-column set="Factories"></vdl-table-column>
-                        <vdl-table-column entity="FactoryDemand" editable="true">
-                            <vdl-validate
+                    <vdlx-datagrid page-mode="paged" page-size="10">
+                        <vdlx-datagrid-column set="Factories"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactoryDemand" editable="true">
+                            <vdlx-datagrid-validate
                                     pass="=function(entityName, value, indices) { return value >= scenario.entities.demand.value && value <= 1000; }"
                                     vdl-if="=scenario.entities.MyBool.value">
                                 FactoryDemand should be less than or equal to 1000 and greater than or equal to demand
-                            </vdl-validate>
-                        </vdl-table-column>
-                    </vdl-table>
+                            </vdlx-datagrid-validate>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="7">
                     <h5>VDL source code:</h5>
                     <code-panel>
-&lt;vdl-table page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
-    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
-        &lt;vdl-validate
+&lt;vdlx-datagrid page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
+        &lt;vdlx-datagrid-validate
                 pass=&quot;=function(entityName, value, indices) { return value &gt;= scenario.entities.demand.value &amp;&amp; value &lt;= 1000; }&quot;
                 vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;
             FactoryDemand should be less than or equal to 1000 and greater than or equal to demand
-        &lt;/vdl-validate&gt;
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+        &lt;/vdlx-datagrid-validate&gt;
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>
@@ -150,16 +151,16 @@
             <vdl-row>
                 <vdl-column heading="external validation function reference" size="5">
                     <p>FactoryDemand should be greater than or equal to 100</p>
-                    <vdl-table page-mode="paged" page-size="10">
-                        <vdl-table-column set="Factories"></vdl-table-column>
-                        <vdl-table-column entity="FactorySupply"></vdl-table-column>
-                        <vdl-table-column entity="FactoryDemand" editable="true">
-                            <vdl-validate pass="=validateGreaterThanEqual100"
+                    <vdlx-datagrid page-mode="paged" page-size="10">
+                        <vdlx-datagrid-column set="Factories"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactorySupply"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactoryDemand" editable="true">
+                            <vdlx-datagrid-validate pass="=validateGreaterThanEqual100"
                                           vdl-if="=scenario.entities.MyBool.value">
                                 FactoryDemand should be greater than or equal to 100
-                            </vdl-validate>
-                        </vdl-table-column>
-                    </vdl-table>
+                            </vdlx-datagrid-validate>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="7">
                     <h5>VDL source code:</h5>
@@ -169,15 +170,15 @@
         return value &gt;= 100;
     }
 &lt;/script&gt;
-&lt;vdl-table page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
-    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
-        &lt;vdl-validate pass=&quot;=validateGreaterThanEqual100&quot;
+&lt;vdlx-datagrid page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
+        &lt;vdlx-datagrid-validate pass=&quot;=validateGreaterThanEqual100&quot;
                       vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;
             FactoryDemand should be greater than or equal to 100
-        &lt;/vdl-validate&gt;
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+        &lt;/vdlx-datagrid-validate&gt;
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>
@@ -185,16 +186,16 @@
             <vdl-row>
                 <vdl-column heading="external validation function reference in namespace" size="5">
                     <p>FactoryDemand should be less than or equal to FactorySupply</p>
-                    <vdl-table page-mode="paged" page-size="10">
-                        <vdl-table-column set="Factories"></vdl-table-column>
-                        <vdl-table-column entity="FactorySupply"></vdl-table-column>
-                        <vdl-table-column entity="FactoryDemand" editable="true">
-                            <vdl-validate pass="=MyNamespace.validateFactoryDemandLessThanEqualSupply"
+                    <vdlx-datagrid page-mode="paged" page-size="10">
+                        <vdlx-datagrid-column set="Factories"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactorySupply"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactoryDemand" editable="true">
+                            <vdlx-datagrid-validate pass="=MyNamespace.validateFactoryDemandLessThanEqualSupply"
                                           vdl-if="=scenario.entities.MyBool.value">
                                 FactoryDemand should be less than or equal to FactorySupply
-                            </vdl-validate>
-                        </vdl-table-column>
-                    </vdl-table>
+                            </vdlx-datagrid-validate>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="7">
                     <h5>VDL source code:</h5>
@@ -207,15 +208,15 @@
         },
     };
 &lt;/script&gt;
-&lt;vdl-table page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
-    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
-        &lt;vdl-validate pass=&quot;=MyNamespace.validateFactoryDemandLessThanEqualSupply&quot;
+&lt;vdlx-datagrid page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
+        &lt;vdlx-datagrid-validate pass=&quot;=MyNamespace.validateFactoryDemandLessThanEqualSupply&quot;
                       vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;
             FactoryDemand should be less than or equal to FactorySupply
-        &lt;/vdl-validate&gt;
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+        &lt;/vdlx-datagrid-validate&gt;
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>
@@ -223,28 +224,28 @@
             <vdl-row>
                 <vdl-column heading="Soft validation" size="5">
                     <p>FactoryDemand should be greater than or equal to 100. Allows saving when MyBool is true</p>
-                    <vdl-table page-mode="paged" page-size="10">
-                        <vdl-table-column set="Factories"></vdl-table-column>
-                        <vdl-table-column entity="FactoryDemand" editable="true">
-                            <vdl-validate pass="=value > 100" allow-save="=scenario.entities.demand.value > 10"
+                    <vdlx-datagrid page-mode="paged" page-size="10">
+                        <vdlx-datagrid-column set="Factories"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactoryDemand" editable="true">
+                            <vdlx-datagrid-validate pass="=value > 100" allow-save="=scenario.entities.demand.value > 10"
                                           vdl-if="=scenario.entities.MyBool.value">
                                 FactoryDemand should be greater than or equal to 100
-                            </vdl-validate>
-                        </vdl-table-column>
-                    </vdl-table>
+                            </vdlx-datagrid-validate>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="7">
                     <h5>VDL source code:</h5>
                     <code-panel>
-&lt;vdl-table page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
-    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
-    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
-        &lt;vdl-validate pass=&quot;=value &gt; 100&quot; allow-save=&quot;=scenario.entities.demand.value &gt; 10&quot;
+&lt;vdlx-datagrid page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
+        &lt;vdlx-datagrid-validate pass=&quot;=value &gt; 100&quot; allow-save=&quot;=scenario.entities.demand.value &gt; 10&quot;
                       vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;
             FactoryDemand should be greater than or equal to 100
-        &lt;/vdl-validate&gt;
-    &lt;/vdl-table-column&gt;
-&lt;/vdl-table&gt;
+        &lt;/vdlx-datagrid-validate&gt;
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>
