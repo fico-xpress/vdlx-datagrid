@@ -1,0 +1,253 @@
+<vdl version="4.1">
+    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+
+    <ol class="todo">
+        <li class="done">Intro text/Explanation</li>
+    </ol>
+
+    <link rel="stylesheet" href="css/lib/solarized-light.css"/>
+    <script src="js/lib/highlight.pack.js"></script>
+    <script>
+        // validation functions can be referred to either directly, or in a namespace
+        var MyNamespace = {
+            validateFactoryDemandLessThanEqualSupply: function (entityName, value, indices, rowData) {
+                // use new value instead of the rowData old value
+                return rowData[2] >= value;
+            },
+
+            validateGreaterThanEqual100: function (entityName, value, indices, rowData) {
+                return value >= 100;
+            },
+
+            validateLessThanEqual1000: function (entityName, value) {
+                return value <= 1000;
+            }
+        };
+        // this copies the namespaced functions into global scope, so they can be used
+        // outside namespace as well
+        var validateGreaterThanEqual100 = MyNamespace.validateGreaterThanEqual100;
+        var validateLessThanEqual1000 = MyNamespace.validateLessThanEqual1000;
+    </script>
+
+    <vdl-page>
+
+        <vdl-section heading="Table inline validation">
+            <vdl-row class="lead">
+                This page demonstrates vdl-table inline validation with vdl-validate.
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="Settings" id="field-2">
+                    <vdl-form>
+                        <p>Different values change behavior of some validators</p>
+                        <vdl-field entity="demand"></vdl-field>
+                        <p>Toggle inline validation on and off for table below</p>
+                        <vdl-field entity="MyBool" label="Validate?"></vdl-field>
+                    </vdl-form>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Inline custom validators">
+            <vdl-row>
+                <vdl-column heading="inline validation expression referencing an entity" size="5">
+                    <p>FactoryDemand should be greater than or equal to demand.</p>
+                    <vdl-table page-mode="paged" page-size="10">
+                        <vdl-table-column set="Factories"></vdl-table-column>
+                        <vdl-table-column entity="FactoryDemand" editable="true">
+                            <vdl-validate pass="=value >= scenario.entities.demand.value"
+                                          vdl-if="=scenario.entities.MyBool.value">
+                                FactoryDemand should be greater than or equal to demand
+                            </vdl-validate>
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="7">
+                    <h5>VDL source code:</h5>
+                    <code-panel>
+&lt;vdl-table page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
+        &lt;vdl-validate pass=&quot;=value &gt;= scenario.entities.demand.value&quot;
+                      vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;
+            FactoryDemand should be greater than or equal to demand
+        &lt;/vdl-validate&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="inline validation expression calling external functions" size="5">
+                    <p>FactoryDemand should be greater than or equal to 100 and less than or equal to 1000</p>
+                    <vdl-table page-mode="paged" page-size="10">
+                        <vdl-table-column set="Factories"></vdl-table-column>
+                        <vdl-table-column entity="FactoryDemand" editable="true">
+                            <vdl-validate pass="=validateGreaterThanEqual100(entityName, value) && validateLessThanEqual1000(entityName, value)"
+                                          vdl-if="=scenario.entities.MyBool.value">
+                                FactoryDemand should be greater than or equal to 100 and less than or equal to 1000
+                            </vdl-validate>
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="7">
+                    <h5>VDL source code:</h5>
+                    <code-panel>
+&lt;script&gt;
+    function validateGreaterThanEqual100(entityName, value) {
+        return value &gt;= 100;
+    }
+
+    function validateLessThanEqual1000(entityName, value) {
+        return value &lt;= 1000;
+    }
+&lt;/script&gt;
+&lt;vdl-table page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
+        &lt;vdl-validate pass=&quot;=validateGreaterThanEqual100(entityName, value) &amp;&amp; validateLessThanEqual1000(entityName, value)&quot;
+                      vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;
+            FactoryDemand should be greater than or equal to 100 and less than or equal to 1000
+        &lt;/vdl-validate&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="inline validation function referencing an entity." size="5">
+                    <p>FactoryDemand should be less than or equal to 1000 and greater than or equal to demand.</p>
+                    <vdl-table page-mode="paged" page-size="10">
+                        <vdl-table-column set="Factories"></vdl-table-column>
+                        <vdl-table-column entity="FactoryDemand" editable="true">
+                            <vdl-validate
+                                    pass="=function(entityName, value, indices) { return value >= scenario.entities.demand.value && value <= 1000; }"
+                                    vdl-if="=scenario.entities.MyBool.value">
+                                FactoryDemand should be less than or equal to 1000 and greater than or equal to demand
+                            </vdl-validate>
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="7">
+                    <h5>VDL source code:</h5>
+                    <code-panel>
+&lt;vdl-table page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
+        &lt;vdl-validate
+                pass=&quot;=function(entityName, value, indices) { return value &gt;= scenario.entities.demand.value &amp;&amp; value &lt;= 1000; }&quot;
+                vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;
+            FactoryDemand should be less than or equal to 1000 and greater than or equal to demand
+        &lt;/vdl-validate&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="external validation function reference" size="5">
+                    <p>FactoryDemand should be greater than or equal to 100</p>
+                    <vdl-table page-mode="paged" page-size="10">
+                        <vdl-table-column set="Factories"></vdl-table-column>
+                        <vdl-table-column entity="FactorySupply"></vdl-table-column>
+                        <vdl-table-column entity="FactoryDemand" editable="true">
+                            <vdl-validate pass="=validateGreaterThanEqual100"
+                                          vdl-if="=scenario.entities.MyBool.value">
+                                FactoryDemand should be greater than or equal to 100
+                            </vdl-validate>
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="7">
+                    <h5>VDL source code:</h5>
+                    <code-panel>
+&lt;script&gt;
+    function validateGreaterThanEqual100(entityName, value) {
+        return value &gt;= 100;
+    }
+&lt;/script&gt;
+&lt;vdl-table page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
+        &lt;vdl-validate pass=&quot;=validateGreaterThanEqual100&quot;
+                      vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;
+            FactoryDemand should be greater than or equal to 100
+        &lt;/vdl-validate&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="external validation function reference in namespace" size="5">
+                    <p>FactoryDemand should be less than or equal to FactorySupply</p>
+                    <vdl-table page-mode="paged" page-size="10">
+                        <vdl-table-column set="Factories"></vdl-table-column>
+                        <vdl-table-column entity="FactorySupply"></vdl-table-column>
+                        <vdl-table-column entity="FactoryDemand" editable="true">
+                            <vdl-validate pass="=MyNamespace.validateFactoryDemandLessThanEqualSupply"
+                                          vdl-if="=scenario.entities.MyBool.value">
+                                FactoryDemand should be less than or equal to FactorySupply
+                            </vdl-validate>
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="7">
+                    <h5>VDL source code:</h5>
+                    <code-panel>
+&lt;script&gt;
+    var MyNamespace = {
+        validateFactoryDemandLessThanEqualSupply: function (entityName, value, indices, rowData) {
+            // use new value instead of the rowData old value
+            return rowData[2] >= value;
+        },
+    };
+&lt;/script&gt;
+&lt;vdl-table page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
+        &lt;vdl-validate pass=&quot;=MyNamespace.validateFactoryDemandLessThanEqualSupply&quot;
+                      vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;
+            FactoryDemand should be less than or equal to FactorySupply
+        &lt;/vdl-validate&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="Soft validation" size="5">
+                    <p>FactoryDemand should be greater than or equal to 100. Allows saving when MyBool is true</p>
+                    <vdl-table page-mode="paged" page-size="10">
+                        <vdl-table-column set="Factories"></vdl-table-column>
+                        <vdl-table-column entity="FactoryDemand" editable="true">
+                            <vdl-validate pass="=value > 100" allow-save="=scenario.entities.demand.value > 10"
+                                          vdl-if="=scenario.entities.MyBool.value">
+                                FactoryDemand should be greater than or equal to 100
+                            </vdl-validate>
+                        </vdl-table-column>
+                    </vdl-table>
+                </vdl-column>
+                <vdl-column size="7">
+                    <h5>VDL source code:</h5>
+                    <code-panel>
+&lt;vdl-table page-mode=&quot;paged&quot; page-size=&quot;10&quot;&gt;
+    &lt;vdl-table-column set=&quot;Factories&quot;&gt;&lt;/vdl-table-column&gt;
+    &lt;vdl-table-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;&gt;
+        &lt;vdl-validate pass=&quot;=value &gt; 100&quot; allow-save=&quot;=scenario.entities.demand.value &gt; 10&quot;
+                      vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;
+            FactoryDemand should be greater than or equal to 100
+        &lt;/vdl-validate&gt;
+    &lt;/vdl-table-column&gt;
+&lt;/vdl-table&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+    </vdl-page>
+</vdl>

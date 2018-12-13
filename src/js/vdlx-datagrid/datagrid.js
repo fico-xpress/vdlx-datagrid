@@ -284,7 +284,11 @@ class Datagrid {
                 dataType: entity.getType(),
                 elementType: entity.getElementType(),
                 scenario: columnScenario,
-                getRowKey: getRowKey
+                getRowKey: getRowKey,
+                validator: (cell, value) => {
+                    entityOptions;
+                    debugger;
+                }
             });
         });
 

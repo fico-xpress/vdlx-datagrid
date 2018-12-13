@@ -18,6 +18,7 @@
             <vdl-view title="Row filtering" path="vdl-lang/table/table-row-filtering.vdl"/>
             <vdl-view title="Table modifiers" path="vdl-lang/table/table-modifiers.vdl"/>
             <vdl-view title="Error handling" path="vdl-lang/table/table-errors.vdl"/>
+            <vdl-view title="Validation" path="vdl-lang/table/table-validation.vdl"/>
         </view-group>
 
         <view-group title="Big Data">
