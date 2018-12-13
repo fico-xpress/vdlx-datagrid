@@ -23,7 +23,12 @@ const ADD_REMOVE_TEMPLATE = `
 `;
 
 export default class AddRemove {
-    constructor(table) {
+    /**
+     * 
+     * @param {*} table 
+     * @param {boolean} autoinc 
+     */
+    constructor(table, autoinc) {
         this.$addRemoveControl = $(ADD_REMOVE_TEMPLATE);
         this.indicesColumns = [];
         this.entitiesColumns = [];
@@ -31,6 +36,8 @@ export default class AddRemove {
         this.data = [];
         this.selectedRow = undefined;
         this.table = table;
+        this.autoinc = autoinc;
+        this.defaultScenario = undefined;
     }
 
     /**
@@ -40,7 +47,13 @@ export default class AddRemove {
      */
     appendTo(container) {
         this.$addRemoveControl.appendTo(container);
-        this.$addRemoveControl.on('click', '.btn-table-add-row', (evt) => this.openAddRowDialog());
+        this.$addRemoveControl.on('click', '.btn-table-add-row', (evt) => {
+            if (this.autoinc) {
+                this.autoAddRow();
+            } else {
+                this.openAddRowDialog();
+            }
+        });
         this.$addRemoveControl.on('click', '.btn-table-remove-row', (evt) => this.removeRow());
     }
 
@@ -52,6 +65,25 @@ export default class AddRemove {
     setEnabled(enabled) {
         enabled ? this.$addRemoveControl.show() : this.$addRemoveControl.hide();
     }
+
+    addNewRowToTable (newRow) {
+        return this.table.addRow(newRow)
+            .then(row => {
+                this.table.setSort(this.table.getSorters());
+                this.data = this.table.getData();
+                return this.table.scrollToRow(row)
+                    .then(_.constant(row));
+            })
+            .then(row => {
+                const $row = $(row.getElement());
+                $row.addClass('highlight').css('opacity', 0.2);
+                $row.animate({ opacity: 1.0 });
+                $row.animate({ opacity: 0.2 });
+                $row.animate({ opacity: 1.0 }, 2000, 'swing', function () {
+                    $row.removeClass('highlight');
+                });
+            });
+    } 
 
     openAddRowDialog() {
         const formFields = _.map(_.zip(this.indicesColumns, this.allSetValues), ([indicesColumn, setValues]) => {
@@ -139,22 +171,7 @@ export default class AddRemove {
                             return false;
                         }
 
-                        this.table.addRow(newRow)
-                            .then(row => {
-                                this.table.setSort(this.table.getSorters());
-                                this.data = this.table.getData();
-                                return this.table.scrollToRow(row)
-                                    .then(_.constant(row));
-                            })
-                            .then(row => {
-                                const $row = $(row.getElement());
-                                $row.addClass('highlight').css('opacity', 0.2);
-                                $row.animate({opacity: 1.0});
-                                $row.animate({opacity: 0.2});
-                                $row.animate({opacity: 1.0}, 2000, 'swing', function () {
-                                    $row.removeClass('highlight');
-                                });
-                            });
+                        return this.addNewRowToTable(newRow);
                     }
                 },
                 cancel: {
@@ -163,6 +180,23 @@ export default class AddRemove {
                 }
             }
         });
+    }
+
+    autoAddRow () {
+        const nextValue = _.isEmpty(this.allSetValues[0]) ? 1 : _.max(_.map(this.allSetValues[0], 'key')) + 1;
+        const { name, field } = this.indicesColumns[0];
+
+        return this.defaultScenario
+            .modify()
+            .addToSet(name, nextValue)
+            .commit()
+            .then(() => {
+                this.allSetValues[0] = this.allSetValues[0].concat({ key: nextValue, value: nextValue });
+                return this.addNewRowToTable(_.set({}, field, nextValue));
+            })
+            .catch(() =>
+                dialogs.alert('Could not add row. There was an issue updating the server.', 'Row add failed')
+            );
     }
 
     removeRow () {
@@ -191,11 +225,12 @@ export default class AddRemove {
             });
     }
 
-    update (indicesColumns, entitiesColumns, allSetValues, data) {
+    update (indicesColumns, entitiesColumns, defaultScenario, allSetValues, data) {
         this.indicesColumns = indicesColumns;
         this.entitiesColumns = entitiesColumns;
         this.allSetValues = allSetValues;
         this.data = data;
+        this.defaultScenario = defaultScenario;
     }
 
     setSelectedRow (row) {
