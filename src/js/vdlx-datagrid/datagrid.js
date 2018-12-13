@@ -272,11 +272,14 @@ class Datagrid {
                 editor: entityOptions.editorType,
                 editorParams: getEditorParams(),
                 cellEdited: (cell) => {
+                    const oldValue = _.isUndefined(cell.getOldValue()) ? '': cell.getOldValue();
                     const value = cell.getValue();
-                    saveValue(cell.getData(), value)
-                        .catch(err => {
-                            debugger;
-                        });
+                    if (value !== oldValue) {
+                        saveValue(cell.getData(), value)
+                            .catch(err => {
+                                debugger;
+                            });
+                    }
                 },
                 dataType: entity.getType(),
                 elementType: entity.getElementType(),
