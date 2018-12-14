@@ -186,16 +186,21 @@ export default class AddRemove {
         const nextValue = _.isEmpty(this.allSetValues[0]) ? 1 : _.max(_.map(this.allSetValues[0], 'key')) + 1;
         const { name, field } = this.indicesColumns[0];
 
-        return this.defaultScenario
+        const commitPromise = this.defaultScenario
             .modify()
             .addToSet(name, nextValue)
-            .commit()
+            .commit();
+
+        this.$addRemoveControl.find('button.btn-table-add-row').attr('disabled', '');
+        return Promise.all([commitPromise, this.addNewRowToTable(_.set({}, field, nextValue))])
             .then(() => {
                 this.allSetValues[0] = this.allSetValues[0].concat({ key: nextValue, value: nextValue });
-                return this.addNewRowToTable(_.set({}, field, nextValue));
             })
             .catch(() =>
                 dialogs.alert('Could not add row. There was an issue updating the server.', 'Row add failed')
+            )
+            .then(() => 
+                this.$addRemoveControl.find('button.btn-table-add-row').removeAttr('disabled')
             );
     }
 
@@ -213,13 +218,15 @@ export default class AddRemove {
         });
 
         const promises = _.map(modifiers, modifier => modifier.commit());
-        return Promise.all(promises)
-            .then(() => this.selectedRow.delete())
+
+        return Promise.all([promises].concat(this.selectedRow.delete(), Promise.reject('ss')))
             .then(() => {
                 this.data = this.table.getData();
                 this.setSelectedRow(undefined);
             })
             .catch(() => {
+                this.table.addRow(this.selectedRow.getData());
+                this.table.setSort(this.table.getSorters());
                 dialogs.alert('Could not delete row. There was an issue updating the server.', 'Row deletion failed');
                 throw Error('Row deletion failed');
             });
