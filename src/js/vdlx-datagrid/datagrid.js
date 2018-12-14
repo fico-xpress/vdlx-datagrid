@@ -133,6 +133,7 @@ class Datagrid {
         }
 
         const addRemoveControl = new AddRemove(table, options.addRemoveRow === 'addrow-autoinc');
+        addRemoveControl.setEnabled(false);
         addRemoveControl.appendTo(footerToolbar);
 
         return addRemoveControl;
@@ -350,7 +351,6 @@ class Datagrid {
             if (!!overrides.columnFilter) {
                 col.headerFilter = true;
             }
-            // debugger;
             let hasLabels = !!col.labelsEntity;
 
             var cssClasses = [];
