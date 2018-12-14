@@ -88,7 +88,10 @@ class Datagrid {
             selectable: 1,
             cellEditing: (cell) => cell.getRow().select(),
             rowSelected: (row) => this.setSelectedRow(row),
-            renderComplete: () => this.validate()
+            renderComplete: () => {
+                this.validate();
+                this.updatePaginator();
+            }
         };
 
         return new Tabulator(`#${options.tableId}`, tabulatorOptions);
@@ -399,7 +402,6 @@ class Datagrid {
             .setData(data)
             .then(() => {
                 table.redraw();
-                this.updatePaginator();
             })
             .catch((err) => {
                 debugger;
