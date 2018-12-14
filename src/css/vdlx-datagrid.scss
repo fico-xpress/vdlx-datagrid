@@ -41,6 +41,8 @@ $table-focus-color: #00B5E2;
 vdlx-datagrid {
   display: block;
   color: $black;
+  user-select: none;
+
   .tabulator {
     margin-bottom: 0;
 
