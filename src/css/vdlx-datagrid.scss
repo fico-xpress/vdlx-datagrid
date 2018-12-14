@@ -6,6 +6,37 @@ $color-medium-grey: #cccccc;
 $color-light-grey: #f2f2f2;
 $color-selected: #fff8c1;
 $highlight-color: #ffc20e;
+$table-error-color: #D0002D;
+$table-focus-color: #00B5E2;
+
+@mixin table-cell-border-active($color) {
+  outline-offset: -1px;
+  overflow: hidden;
+
+  // @include ie-workaround() {
+  //   @include focus-border-workaround($color);
+  // }
+
+  // @supports not (outline-offset: -1px) {
+  //   @include focus-border-workaround($color);
+  // }
+
+  outline: 1px solid $color;
+  box-shadow: 0 0 4px 0 $color;
+}
+
+@mixin table-cell-border-hover($color) {
+  outline-offset: -1px;
+  outline: 1px dashed $color;
+  box-shadow: 0 0px 4px 0px $color;
+  // Chrome hack
+  // @include chrome-workaround() {
+  //   box-shadow: 0 0 4px -1px $color;
+  // }
+  overflow: hidden;
+  position: relative;
+  background-clip: padding-box;
+}
 
 vdlx-datagrid {
   display: block;
@@ -177,12 +208,41 @@ vdlx-datagrid {
         &.tabulator-editing {
           padding: 0;
           background-color: $color-selected;
+          &, &:hover {
+            @include table-cell-border-active($table-focus-color);
+          }
+          &.invalid, &.invalid:hover {
+            @include table-cell-border-active($table-error-color);
+          }
         }
         &.editable-numeric.tabulator-editing input {
           text-align: right;
           padding: 5px 9px !important;
         }
+        &:hover {
+          @include table-cell-border-hover($table-focus-color);
+        }
+        &.invalid {
+          color: $table-error-color !important;
+          &:hover {
+            @include table-cell-border-hover($table-error-color);
+          }
+          input {
+            color: $table-error-color !important;
+          }
 
+          &:not(.tabulator-editing):before {
+            width: 4px;
+            height: 100%;
+            background-color: $table-error-color;
+            content: ' ';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            right: auto;
+          }
+        }
       }
     }
   }

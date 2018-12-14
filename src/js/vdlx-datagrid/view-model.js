@@ -184,7 +184,7 @@ export default function createViewModel(params, componentInfo) {
     };
 
     vm.tableValidate = function () {
-        debugger;
+        datagrid.validate();
     };
 
     vm.dispose = function () { };

@@ -33,6 +33,8 @@ class Datagrid {
      * @param {*} columnOptions$ 
      */
     constructor(root, gridOptions$, columnOptions$) {
+        this.entitiesColumns = undefined;
+        this.indicesColumns = undefined;
 
         this.gridOptions$ = gridOptions$;
         this.columnOptions$ = columnOptions$;
@@ -85,7 +87,8 @@ class Datagrid {
             // can select only 1 row
             selectable: 1,
             cellEditing: (cell) => cell.getRow().select(),
-            rowSelected: (row) => this.setSelectedRow(row)
+            rowSelected: (row) => this.setSelectedRow(row),
+            renderComplete: () => this.validate()
         };
 
         return new Tabulator(`#${options.tableId}`, tabulatorOptions);
@@ -281,6 +284,19 @@ class Datagrid {
                 return result;
             }
 
+            const validateAndStyle = (cell, newValue) => {
+                const validationResult = validate(cell, newValue);
+
+                const element = cell.getElement()
+                if (!validationResult.isValid) {
+                    element.classList.add('invalid');
+                } else {
+                    element.classList.remove('invalid');
+                }
+
+                return validationResult;
+            };
+
             return _.assign({}, entityOptions, {
                 title: _.escape(String(entityOptions.title || entity.getAbbreviation() || entityOptions.name)),
                 field: entityOptions.id,
@@ -289,17 +305,23 @@ class Datagrid {
                 formatter: getFormatter(),
                 editor: entityOptions.editorType,
                 editorParams: getEditorParams(),
-                // cellEditing: (cell) => {
-                //     debugger;
-                // },
+                cellEditing: cell => {
+                    const element = cell.getElement();
+                    $(element).on('keyup', (evt) => {
+                        validateAndStyle(cell, evt.target.value);
+                    });
+                },
                 cellEdited: (cell) => {
+                    $(cell.getElement()).off('keyup');
+
                     const oldValue = _.isUndefined(cell.getOldValue()) ? '': cell.getOldValue();
                     const value = cell.getValue();
 
-                    const validationResult = validate(cell, value);
+                    const validationResult = validateAndStyle(cell, value);
 
                     if (!validationResult.isValid && !validationResult.allowSave) {
                         cell.restoreOldValue();
+                        validateAndStyle(cell, cell.getValue());
                         dialogs.alert(validationResult.errorMessage, VALIDATION_ERROR_TITLE, () => {
                             _.defer(() => cell.edit(true));
                         });
@@ -316,10 +338,7 @@ class Datagrid {
                 elementType: entity.getElementType(),
                 scenario: columnScenario,
                 getRowKey: getRowKey,
-                // validator: (cell, newValue) => {
-                    // const result = validate(cell, newValue);
-                    // return result.isValid || result.allowSave;
-                // }
+                validate: validateAndStyle
             });
         });
 
@@ -366,6 +385,8 @@ class Datagrid {
         const editable = _.some(_.reject(entitiesOptions, options => !_.get(options, 'visible', true)), 'editable');
         const addRemoveRow = editable && gridOptions.addRemoveRow;
         this.updateAddRemoveControl(addRemoveRow, indicesColumns, entitiesColumns, scenariosData.defaultScenario, allSetValues, data);
+        this.entitiesColumns = entitiesColumns;
+        this.indicesColumns = indicesColumns;
 
         if(data.length > gridOptions.paginationSize) {
             if(_.get(gridOptions, 'overrides.paging', 'scrolling') === 'scrolling') {
@@ -383,6 +404,17 @@ class Datagrid {
             .catch((err) => {
                 debugger;
             });
+    }
+
+    validate() {
+        const editableColumns = _.filter(this.entitiesColumns, 'editable');
+        _.each(editableColumns, column => {
+            const cells = this.table.columnManager.columnsByField[column.field].cells;
+            _.each(cells, cell => {
+                column.validate(cell.getComponent(), cell.getValue());
+            })
+        });
+
     }
 }
 
