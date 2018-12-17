@@ -72,14 +72,10 @@ export default function transform(element, attributes, api) {
     // }
 
     var tableIdAttr = attributes['id'];
-    let tableId;
     if (tableIdAttr) {
         $element.attr('id', null);
-        tableId = tableIdAttr.rawValue;
-    } else {
-        tableId = _.uniqueId('vdlx-datagrid-');
+        paramsBuilder.addParam('tableId', tableIdAttr.rawValue);
     }
-    paramsBuilder.addParam('tableId', tableId);
 
     var width = attributes['width'];
     if (width) {
@@ -136,23 +132,4 @@ export default function transform(element, attributes, api) {
         }
     }
 
-    /*
-    Create the DIV placeholder to attach Tabulator component to. 
-     */
-    const $tableDiv = $('<div/>');
-    $tableDiv.attr('id', tableId);
-    $tableDiv.addClass('vdlx-datagrid table-striped table-bordered table-condensed');
-    $element.append($tableDiv);
-
-    /*
-    Create to DIV to hide the built-in pagination
-     */
-    const $hiddenFooter = $('<div class="hidden-footer-toolbar" style="display: none"/>');
-    $element.append($hiddenFooter);
-
-    /*
-    Create the Footer toolbar with FICO pagination control.
-     */
-    const $footerToolBar = $('<div class="footer-toolbar"/>');
-    $element.append($footerToolBar);
 }

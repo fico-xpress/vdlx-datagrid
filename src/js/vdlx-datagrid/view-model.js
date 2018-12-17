@@ -94,20 +94,43 @@ export default function createViewModel(params, componentInfo) {
     const element = componentInfo.element;
     const defaultScenario = params.scenarioId || 0;
 
+    const tableId = _.get(params, 'tableId', _.uniqueId('vdlx-datagrid-'));
+    params.tableId = tableId;
+
+    const $element = $(element);
+    /*
+    Create the DIV placeholder to attach Tabulator component to. 
+     */
+    const $tableDiv = $('<div/>');
+    $tableDiv.attr('id', tableId);
+    $tableDiv.addClass('vdlx-datagrid table-striped table-bordered table-condensed');
+    $element.append($tableDiv);
+
+    /*
+    Create to DIV to hide the built-in pagination
+     */
+    const $hiddenFooter = $('<div class="hidden-footer-toolbar" style="display: none"/>');
+    $element.append($hiddenFooter);
+
+    /*
+    Create the Footer toolbar with FICO pagination control.
+     */
+    const $footerToolBar = $('<div class="footer-toolbar"/>');
+    $element.append($footerToolBar);
     /**
      * Wrap the options for the
      */
     const tableOptions$ = ko.pureComputed(getTableOptions(params));
     const columnConfig$ = ko.observable({}); 
 
-    var datagrid = new Datagrid(componentInfo.element, tableOptions$, columnConfig$);
+    var datagrid = new Datagrid(element, tableOptions$, columnConfig$);
 
     function buildTable () {
 
         /*
         Collect the column information from the child VDL extensions (vdlx-datagrid-column)
          */
-        const columnConfigs = $(element)
+        const columnConfigs = $element
             .find('vdlx-datagrid-column')
             .map(function (idx, element) {
                 return _.clone(element['autotableConfig']);
