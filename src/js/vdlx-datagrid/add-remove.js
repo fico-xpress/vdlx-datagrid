@@ -221,6 +221,7 @@ export default class AddRemove {
 
         return Promise.all([promises].concat(this.selectedRow.delete()))
             .then(() => {
+                this.table.redraw(true);
                 this.data = this.table.getData();
                 this.setSelectedRow(undefined);
             })
