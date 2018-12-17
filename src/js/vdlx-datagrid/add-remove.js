@@ -219,7 +219,7 @@ export default class AddRemove {
 
         const promises = _.map(modifiers, modifier => modifier.commit());
 
-        return Promise.all([promises].concat(this.selectedRow.delete(), Promise.reject('ss')))
+        return Promise.all([promises].concat(this.selectedRow.delete()))
             .then(() => {
                 this.data = this.table.getData();
                 this.setSelectedRow(undefined);
