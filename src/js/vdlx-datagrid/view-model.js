@@ -87,6 +87,10 @@ export default function createViewModel(params, componentInfo) {
         vm.tableWidth = params.width.replace('px', '');
     }
 
+    if(!!params.class) {
+        $(componentInfo.element).find('.vdlx-datagrid').addClass(params.class);
+    }
+
     const element = componentInfo.element;
     const defaultScenario = params.scenarioId || 0;
 

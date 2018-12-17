@@ -32,7 +32,7 @@
     <vdl-page>
 
         <vdl-section heading="Datagrids">
-            <p class="lead">This page shows basic usage of datagrid and its&apos; attributes</p>
+            <p class="lead">This page shows basic usage of datagrid and its attributes</p>
         </vdl-section>
 
         <vdl-section heading="Basic usage">
@@ -80,16 +80,21 @@
 
         <style>
             .htable {
-                border: 3px solid darkorange;
+                border: 3px solid darkorange !important;
             }
-            .htable td {
-                border: 1px solid plum;
+            .htable .tabulator-cell {
+                border: 1px solid plum !important;
             }
         </style>
 
         <vdl-section heading="Applying styling">
             <vdl-row>
-                <vdl-column heading="Autotable with a CSS class" size="6" class="example-failed">
+                <vdl-column size="9">
+                    <p>&lt/vdlx-datagrid&gt; wraps a third party library called tabulator to provide the datagrid rendering. Therefore, the DOM structure is slightly different to vdl-table.</p>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column heading="Autotable with a CSS class" size="6" class="example-passed">
                     <vdlx-datagrid class="htable">
                         <vdlx-datagrid-column set="SupportLevels">Support L.</vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
@@ -101,10 +106,10 @@
                     <code-panel>
 &lt;style&gt;
 .htable {
-    border: 3px solid darkorange;
+    border: 3px solid darkorange !important;
     }
-    .htable td {
-    border: 1px solid plum;
+    .htable .tabulator-cell {
+    border: 1px solid plum !important;
     }
 &lt;/style&gt;
 

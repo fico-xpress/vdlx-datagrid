@@ -1,4 +1,10 @@
-export default function (element, attributes, api) {
+/**
+ * The transform function takes care of setting up/initialising a VDL extension.
+ * @param element - The VDL DOM node.
+ * @param attributes - A map of attributes by key.
+ * @param api - Helper methods for VDL extension creation.
+ */
+export default function transform(element, attributes, api) {
     var paramsBuilder = api.getComponentParamsBuilder(element);
     var $element = $(element);
 
@@ -135,7 +141,7 @@ export default function (element, attributes, api) {
      */
     const $tableDiv = $('<div/>');
     $tableDiv.attr('id', tableId);
-    $tableDiv.addClass('table-striped table-bordered table-condensed');
+    $tableDiv.addClass('vdlx-datagrid table-striped table-bordered table-condensed');
     $element.append($tableDiv);
 
     /*

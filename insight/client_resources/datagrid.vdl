@@ -3,51 +3,40 @@
 
         <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
-        <script>
-
-            const num_rows = 35;
-
-            var gridData = _.map(_.range(num_rows), n => {
-                return {SupportLevels: n + 1, ServiceLevelAgreements: (num_rows * 2) - (n * 2), SupportCosts: _.random(num_rows)};
-            });
-
-        </script>
-        <!-- <vdl-section heading="Datagrid example">
+        <vdl-section heading="Do this">
+            <p vdl-text="=scenario.entities.entityBoolA.value">Hello</p>
+            <vdl-form>
+                <vdl-field entity="entityBoolA"></vdl-field>
+<!--
+                <vdl-field entity="scenario.entities.FactoryCustomerAgreements"></vdl-field>
+-->
+            </vdl-form>
+        </vdl-section>
+        <vdl-section heading="J -- D ">
             <vdl-row>
                 <vdl-column size="6">
-                    <vdlx-datagrid id="demo1" page-mode="paged" grid-data="=gridData">
-                        <vdlx-datagrid-column set="SupportLevels"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column entity="ServiceLevelAgreements"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column entity="ServiceLevelAgreements" scenario="1"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
+                    <vdlx-datagrid id="demo3" page-mode="scrolling" page-size="2">
+                        <vdlx-datagrid-column set="Factories">Factories-1</vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="MonthsOfYear">Month of Year</vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="Customers">CUSTOMERS</vdlx-datagrid-column >
+                        <vdlx-datagrid-column entity="StockSizes">
+                            <vdlx-datagrid-index-filter set="Factories" value="New York" data-vdl-if="=scenario.entities.entityBoolA.value"></vdlx-datagrid-index-filter>
+                        </vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
-                    <vdl-table id="demo2" height="600" page-mode="paged" page-size="2">
-                        <vdl-table-column set="SupportLevels"></vdl-table-column>
-                        <vdl-table-column entity="ServiceLevelAgreements" editable="true" ></vdl-table-column>
-                        <vdl-table-column entity="ServiceLevelAgreements"  editable="true" scenario="1"></vdl-table-column>
-                        <vdl-table-column entity="SupportCosts"></vdl-table-column>
-                    </vdl-table>
-                </vdl-column>
-            </vdl-row>
-        </vdl-section> -->
-
-        <vdl-section>
-            <vdl-row>
-                <vdl-column size="6">
-                    <vdlx-datagrid id="demo3" page-mode="scrolling">
-                        <vdlx-datagrid-column entity="StockSizes"></vdlx-datagrid-column>
-                    </vdlx-datagrid>
-                </vdl-column>
-                <vdl-column size="6">
-                    <vdl-table>
-                        <vdl-table-column entity="StockSizes"></vdl-table-column>
+                    <vdl-table page-mode="paged" page-size="0" add-remove-row="=scenario.entities.entityBoolA.value" column-filter="">
+                        <vdl-column set="Factories">Factories-1</vdl-column>
+                        <vdl-column set="MonthsOfYear">Month of Year</vdl-column>
+                        <vdl-column set="Customers">CUSTOMERS</vdl-column>
+                        <vdl-table-column vdl-visible="=true" entity="FactoryCustomerAgreements" editable="true">
+                            <vdl-index-filter set="Factories" value="New York" vdl-if="=scenario.entities.entityBoolA.value"></vdl-index-filter>
+                        </vdl-table-column>
+                        <!--<vdl-table-column vdl-visible="=true" entity="FactorySupply" editable="true">2222?</vdl-table-column>-->
                     </vdl-table>
                 </vdl-column>
             </vdl-row>
         </vdl-section>
-
     </vdl-page>
 </vdl>
 

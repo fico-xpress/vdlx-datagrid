@@ -64,7 +64,7 @@
             </vdl-column>
         </vdl-section>
 
-        <vdl-section heading="Boolean inputs">
+		 <vdl-section heading="Boolean inputs">
             <vdl-row class="example">
                 <vdl-row>
                     <vdl-column size="6">
