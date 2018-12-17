@@ -16,11 +16,6 @@ const PAGINATOR_TEMPLATE = `
                 <div class="results-per-page">
                     <div class="jumpto-pagination-label">Items per page:</div>
                     <select class="results-per-page-selector">
-                        <option value="5">5</option>
-                        <option value="10" selected>10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
                     </select>
                 </div>
             </div>
@@ -30,9 +25,13 @@ const PAGINATOR_TEMPLATE = `
 `;
 
 export default class Paginator {
-    constructor(table) {
+    constructor(table, tablePageSize) {
         this.table = table;
         this.$paginationControl = $(PAGINATOR_TEMPLATE);
+
+        const pageSizeOptions = _.uniq(_.filter(_.sortBy([5, 10, 25, 50, 100, tablePageSize])));
+        const pageSizeOptionsHtml = _.map(pageSizeOptions, pageSize => `<option value="${pageSize}" ${tablePageSize === pageSize ? 'selected' : ''}>${pageSize}</option>`).join('');
+        this.$paginationControl.find('.results-per-page-selector').append(pageSizeOptionsHtml);
     }
 
     /*

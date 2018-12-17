@@ -115,7 +115,7 @@ class Datagrid {
             return undefined;
         }
 
-        const paginatorControl = new Paginator(table);
+        const paginatorControl = new Paginator(table, options.paginationSize);
         paginatorControl.appendTo(footerToolbar);
         return paginatorControl;
     }
