@@ -113,6 +113,13 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
 
     const createRow = _.partial(_.zipObject, setIds.concat(arrayIds));
 
+    if (_.isEmpty(arrays)) {
+        return {
+            data: [],
+            allSetValues: allSetValues
+        };
+    }
+
     let data;
     if (isSparse(sets, arrays)) {
         // assume O(nlogn)

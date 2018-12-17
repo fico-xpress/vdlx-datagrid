@@ -190,15 +190,7 @@ export default function createViewModel(params, componentInfo) {
         }).uniq().sortBy().value();
 
         if (_.isEmpty(scenarioList) || _.isEmpty(entities)) {
-            // console.debug('vdl-table (' + self.tableId + '): Scenario list or table column configuration is empty, ignoring update');
-
-            // if (resolve) {
-            //     resolve(tableOptions);
-            // }
-
-            // empty table element, to get rid of old configuration
-            // $table && $table.empty();
-            return;
+            console.debug('vdl-table (' + params.tableId + '): Scenario list or table column configuration is empty, ignoring update');
         }
 
         columnConfig$({columnOptions: entities, indicesOptions: indices, scenarioList: scenarioList});
