@@ -33,6 +33,9 @@ class Datagrid {
      * @param {*} columnOptions$ 
      */
     constructor(root, gridOptions$, columnOptions$) {
+        /** @type {Array<KnockoutSubscription>} */
+        this.subscriptions = [];
+
         this.entitiesColumns = undefined;
         this.indicesColumns = undefined;
 
@@ -61,16 +64,20 @@ class Datagrid {
         const gridOptions$ = this.gridOptions$;
         const scenariosData$ = withScenarioData(columnOptions$);
 
-        ko.pureComputed(() => {
-            const gridOptions = ko.unwrap(gridOptions$());
-            const columnOptions = columnOptions$();
-            const scenariosData = scenariosData$();
+        this.subscriptions = this.subscriptions.concat(
+            ko
+            .pureComputed(() => {
+              const gridOptions = ko.unwrap(gridOptions$());
+              const columnOptions = columnOptions$();
+              const scenariosData = scenariosData$();
 
-            if (gridOptions && columnOptions && scenariosData) {
+              if (gridOptions && columnOptions && scenariosData) {
                 this.setColumnsAndData(gridOptions, columnOptions, scenariosData);
-            }
-            return undefined;
-        }).subscribe(_.noop);
+              }
+              return undefined;
+            })
+            .subscribe(_.noop)
+        );
     }
 
     createTable(options) {
@@ -91,10 +98,28 @@ class Datagrid {
             renderComplete: () => {
                 this.validate();
                 this.updatePaginator();
+                this.recalculateHeight(options);
             }
         };
 
         return new Tabulator(`#${options.tableId}`, tabulatorOptions);
+    }
+
+    recalculateHeight(options) {
+        if (_.get(options, 'overrides.paging', 'scrolling') === 'scrolling') {
+            let height;
+            if (this.table.getDataCount() > options.paginationSize) {
+                height = options.gridHeight;
+                if (!height) {
+                    const row = this.table.getRowFromPosition(0, true);
+                    height = $(row.getElement()).outerHeight(true) * options.paginationSize;
+                }
+            } else {
+                height = '100%';
+            }
+
+            this.table.setHeight(height);
+        }
     }
 
     setSelectedRow (row) {
@@ -391,11 +416,6 @@ class Datagrid {
         this.entitiesColumns = entitiesColumns;
         this.indicesColumns = indicesColumns;
 
-        if(data.length > gridOptions.paginationSize) {
-            if(_.get(gridOptions, 'overrides.paging', 'scrolling') === 'scrolling') {
-                table.setHeight(_.get(gridOptions, 'overrides.gridHeight', '600px'));
-            }
-        }
         table.setColumns(columns);
 
         return table
@@ -417,6 +437,11 @@ class Datagrid {
             })
         });
 
+    }
+
+    dispose() {
+        this.table.destroy();
+        _.each(this.subscriptions, subscription => subscription.dispose());
     }
 }
 
