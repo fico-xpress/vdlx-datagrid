@@ -57,6 +57,7 @@ class Datagrid {
         this.paginatorControl = this.createPaginatorControl(footerToolbar, this.table, options);
 
         this.buildTable();
+        this.update();
     }
 
     buildTable() {
@@ -80,6 +81,12 @@ class Datagrid {
         );
     }
 
+    update() {
+        this.validate();
+        this.updatePaginator();
+        this.recalculateHeight(ko.unwrap(this.gridOptions$));
+    }
+
     createTable(options) {
         const tabulatorOptions = {
             pagination: options.pagination,
@@ -96,11 +103,7 @@ class Datagrid {
             selectable: 1,
             cellEditing: (cell) => cell.getRow().select(),
             rowSelected: (row) => this.setSelectedRow(row),
-            renderComplete: () => {
-                this.validate();
-                this.updatePaginator();
-                this.recalculateHeight(options);
-            }
+            renderComplete: () => this.update()
         };
 
         return new Tabulator(`#${options.tableId}`, tabulatorOptions);
