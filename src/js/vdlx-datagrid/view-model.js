@@ -206,7 +206,9 @@ export default function createViewModel(params, componentInfo) {
         datagrid.validate();
     };
 
-    vm.dispose = function () { };
+    vm.dispose = function () {
+        datagrid.dispose();
+    };
 
     buildTable();
 

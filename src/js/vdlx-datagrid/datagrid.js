@@ -33,6 +33,9 @@ class Datagrid {
      * @param {*} columnOptions$ 
      */
     constructor(root, gridOptions$, columnOptions$) {
+        /** @type {Array<KnockoutSubscription>} */
+        this.subscriptions = [];
+
         this.entitiesColumns = undefined;
         this.indicesColumns = undefined;
 
@@ -61,16 +64,20 @@ class Datagrid {
         const gridOptions$ = this.gridOptions$;
         const scenariosData$ = withScenarioData(columnOptions$);
 
-        ko.pureComputed(() => {
-            const gridOptions = ko.unwrap(gridOptions$());
-            const columnOptions = columnOptions$();
-            const scenariosData = scenariosData$();
+        this.subscriptions = this.subscriptions.concat(
+            ko
+            .pureComputed(() => {
+              const gridOptions = ko.unwrap(gridOptions$());
+              const columnOptions = columnOptions$();
+              const scenariosData = scenariosData$();
 
-            if (gridOptions && columnOptions && scenariosData) {
+              if (gridOptions && columnOptions && scenariosData) {
                 this.setColumnsAndData(gridOptions, columnOptions, scenariosData);
-            }
-            return undefined;
-        }).subscribe(_.noop);
+              }
+              return undefined;
+            })
+            .subscribe(_.noop)
+        );
     }
 
     createTable(options) {
@@ -417,6 +424,11 @@ class Datagrid {
             })
         });
 
+    }
+
+    dispose() {
+        this.table.destroy();
+        _.each(this.subscriptions, subscription => subscription.dispose());
     }
 }
 
