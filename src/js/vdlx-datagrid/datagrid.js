@@ -91,6 +91,7 @@ class Datagrid {
             ajaxLoader: true,
             height: '100%',
             columns: [],
+            resizableColumns: false,
             // can select only 1 row
             selectable: 1,
             cellEditing: (cell) => cell.getRow().select(),
