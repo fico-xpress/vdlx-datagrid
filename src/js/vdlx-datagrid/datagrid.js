@@ -98,6 +98,13 @@ class Datagrid {
             renderComplete: () => {
                 this.validate();
                 this.updatePaginator();
+                if (_.get(options, 'overrides.paging', 'scrolling') === 'scrolling') {
+                    if (this.table.getDataCount() > _.get(options, 'paginationSize', 20)) {
+                        this.table.setHeight(_.get(options, 'overrides.gridHeight', '600px'));
+                    } else {
+                        this.table.setHeight('100%');
+                    }
+                }
             }
         };
 
@@ -398,11 +405,6 @@ class Datagrid {
         this.entitiesColumns = entitiesColumns;
         this.indicesColumns = indicesColumns;
 
-        if(data.length > gridOptions.paginationSize) {
-            if(_.get(gridOptions, 'overrides.paging', 'scrolling') === 'scrolling') {
-                table.setHeight(_.get(gridOptions, 'overrides.gridHeight', '600px'));
-            }
-        }
         table.setColumns(columns);
 
         return table
