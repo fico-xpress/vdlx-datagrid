@@ -1,7 +1,7 @@
 import Datagrid from './datagrid';
 import { withDeepEquals } from './ko-utils';
 
-const DEFAULT_GRID_PAGE_SIZE = 15;
+const DEFAULT_GRID_PAGE_SIZE = 50;
 
 function parseIntOrKeep (val) {
     var result = _.parseInt(val);
