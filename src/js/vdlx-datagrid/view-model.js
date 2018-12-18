@@ -24,7 +24,6 @@ const getTableOptions = (params) => () => {
         pageLength: params.pageSize,
         searching: params.showFilter,
         columnFilter: params.columnFilter,
-        gridHeight: params.gridHeight || DEFAULT_GRID_HEIGHT
     });
 
     var gridOptions = {
@@ -45,7 +44,7 @@ const getTableOptions = (params) => () => {
         gridOptions.pagination = 'local';
         gridOptions.paginationElement = $('.hidden-footer-toolbar').get(0); // hide the built-in paginator
     } else if (!pageMode || pageMode === 'none') {
-        gridOptions.height = false;
+        
     }
 
     if (_.isFunction(params.rowFilter)) {

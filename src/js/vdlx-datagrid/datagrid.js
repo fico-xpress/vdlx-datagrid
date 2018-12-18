@@ -98,17 +98,28 @@ class Datagrid {
             renderComplete: () => {
                 this.validate();
                 this.updatePaginator();
-                if (_.get(options, 'overrides.paging', 'scrolling') === 'scrolling') {
-                    if (this.table.getDataCount() > _.get(options, 'paginationSize', 20)) {
-                        this.table.setHeight(_.get(options, 'overrides.gridHeight', '600px'));
-                    } else {
-                        this.table.setHeight('100%');
-                    }
-                }
+                this.recalculateHeight(options);
             }
         };
 
         return new Tabulator(`#${options.tableId}`, tabulatorOptions);
+    }
+
+    recalculateHeight(options) {
+        if (_.get(options, 'overrides.paging', 'scrolling') === 'scrolling') {
+            let height;
+            if (this.table.getDataCount() > options.paginationSize) {
+                height = options.gridHeight;
+                if (!height) {
+                    const row = this.table.getRowFromPosition(0, true);
+                    height = $(row.getElement()).outerHeight(true) * options.paginationSize;
+                }
+            } else {
+                height = '100%';
+            }
+
+            this.table.setHeight(height);
+        }
     }
 
     setSelectedRow (row) {
