@@ -22,3 +22,14 @@ export function onSubscriptionDispose (f, subscription) {
 
     return subscription;
 }
+
+export const withEqualityComparer = _.curry(function (f, obs) {
+    obs.equalityComparer = f;
+    return obs;
+}, 2);
+
+/**
+ * Sets equalityComparer on the observable
+ */
+
+export const withDeepEquals = withEqualityComparer(_.isEqual);

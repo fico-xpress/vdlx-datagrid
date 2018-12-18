@@ -1,8 +1,7 @@
 import Datagrid from './datagrid';
+import { withDeepEquals } from './ko-utils';
 
-const COLUMN_UPDATE_DELAY = 100;
 const DEFAULT_GRID_PAGE_SIZE = 15;
-const DEFAULT_GRID_HEIGHT = (DEFAULT_GRID_PAGE_SIZE+2) * 29;
 
 function parseIntOrKeep (val) {
     var result = _.parseInt(val);
@@ -119,8 +118,8 @@ export default function createViewModel(params, componentInfo) {
     /**
      * Wrap the options for the
      */
-    const tableOptions$ = ko.pureComputed(getTableOptions(params));
-    const columnConfig$ = ko.observable({}); 
+    const tableOptions$ = withDeepEquals(ko.pureComputed(getTableOptions(params)));
+    const columnConfig$ = withDeepEquals(ko.observable({}));
 
     var datagrid = new Datagrid(element, tableOptions$, columnConfig$);
 
@@ -194,11 +193,9 @@ export default function createViewModel(params, componentInfo) {
 
         columnConfig$({columnOptions: entities, indicesOptions: indices, scenarioList: scenarioList});
     }
-
-    const throttledBuildTable = _.throttle(buildTable, COLUMN_UPDATE_DELAY, { leading: false });
-
-    vm.tableUpdate = function () {
-        throttledBuildTable();
+    
+    vm.tableUpdate = () => {
+        _.defer(() => buildTable());
     };
 
     vm.tableValidate = function () {
