@@ -76,6 +76,12 @@ export default class Paginator {
      * Refresh all the Paginator controls to display the correct pages, the enabled start of the previous and next buttons, ect..
      */
     updatePageIndicators () {
+        if (this.table.getDataCount() === 0) {
+            this.$paginationControl.hide();
+        } else {
+            this.$paginationControl.show();
+        }
+
         let pageNum = this.currentPage;
         this.$pageInput.val(pageNum);
         if (pageNum === 1) {
