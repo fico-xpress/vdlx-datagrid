@@ -418,6 +418,9 @@ class Datagrid {
         const { data, allSetValues } = dataTransform(allColumnIndices, columns, entitiesColumns, setNamePosnsAndOptions, scenariosData, gridOptions.rowFilter);
 
         const editable = _.some(_.reject(entitiesOptions, options => !_.get(options, 'visible', true)), 'editable');
+        if (!editable) {
+            console.log(`vdl-table (${gridOptions.tableId}): add/remove rows disabled. Table needs to have at least one editable column to use this feature.`);
+        }
         const addRemoveRow = editable && gridOptions.addRemoveRow;
         this.updateAddRemoveControl(addRemoveRow, indicesColumns, entitiesColumns, scenariosData.defaultScenario, allSetValues, data);
         this.entitiesColumns = entitiesColumns;
