@@ -180,10 +180,12 @@ vdlx-datagrid {
           }
           &.index {
             font-weight: bold;
+            font-family: 'Roboto-Bold', sans-serif;
           }
           &.index-numeric {
             text-align: right;
             font-weight: bold;
+            font-family: 'Roboto-Bold', sans-serif;
           }
           &.editable-numeric {
             text-align: right;
