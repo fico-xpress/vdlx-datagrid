@@ -207,8 +207,9 @@ class Datagrid {
         const indicesColumns = _.map(setNamePosnsAndOptions, setNameAndPosn => {
             const {name, options} = setNameAndPosn;
             const entity = schema.getEntity(name);
+            const title = _.isUndefined(options.title) ? entity.getAbbreviation() || name : options.title;
             return {
-                title: _.escape(String(options.title || entity.getAbbreviation() || name)),
+                title: _.escape(String(title)),
                 field: options.id,
                 cssClass: 'expanding-cell-height',
                 formatter: (cell) => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue()),
@@ -330,8 +331,10 @@ class Datagrid {
                 return validationResult;
             };
 
+            const title = _.isUndefined(entityOptions.title) ? entity.getAbbreviation() || name : entityOptions.title;
+
             return _.assign({}, entityOptions, {
-                title: _.escape(String(entityOptions.title || entity.getAbbreviation() || entityOptions.name)),
+                title: _.escape(String(title)),
                 field: entityOptions.id,
                 cssClass: 'expanding-cell-height',
                 cellClick: getCellClickHandler(),
