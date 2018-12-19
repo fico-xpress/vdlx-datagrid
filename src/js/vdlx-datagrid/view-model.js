@@ -85,10 +85,6 @@ export default function createViewModel(params, componentInfo) {
         vm.tableWidth = params.width.replace('px', '');
     }
 
-    if(!!params.class) {
-        $(componentInfo.element).find('.vdlx-datagrid').addClass(params.class);
-    }
-
     const element = componentInfo.element;
     const defaultScenario = params.scenarioId || 0;
 
@@ -103,6 +99,10 @@ export default function createViewModel(params, componentInfo) {
     $tableDiv.attr('id', tableId);
     $tableDiv.addClass('vdlx-datagrid table-striped table-bordered table-condensed');
     $element.append($tableDiv);
+
+    if(!!params.class) {
+        $(element).find('.vdlx-datagrid').addClass(params.class);
+    }
 
     /*
     Create to DIV to hide the built-in pagination
@@ -124,6 +124,7 @@ export default function createViewModel(params, componentInfo) {
     var datagrid = new Datagrid(element, tableOptions$, columnConfig$);
 
     function buildTable () {
+
 
         /*
         Collect the column information from the child VDL extensions (vdlx-datagrid-column)
