@@ -374,6 +374,8 @@ class Datagrid {
         const overrides = gridOptions.overrides;
         const columns = _.map([].concat(indicesColumns, entitiesColumns), col => {
             if (!!overrides.columnFilter) {
+                col.headerFilterPlaceholder = 'No filter';
+                // col.headerFilter = fullTitleFormatter;
                 col.headerFilter = true;
             }
             let hasLabels = !!col.labelsEntity;
