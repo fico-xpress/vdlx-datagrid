@@ -102,7 +102,7 @@ class Datagrid {
             // can select only 1 row
             selectable: 1,
             cellEditing: (cell) => cell.getRow().select(),
-            rowSelected: (row) => this.setSelectedRow(row),
+            rowSelectionChanged: (data, rows) => this.setSelectedRow(_.first(rows)),
             renderComplete: () => this.update()
         };
 
