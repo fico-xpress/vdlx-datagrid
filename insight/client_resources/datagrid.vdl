@@ -3,40 +3,21 @@
 
         <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
-        <vdl-section heading="Do this">
-            <p vdl-text="=scenario.entities.entityBoolA.value">Hello</p>
-            <vdl-form>
-                <vdl-field entity="entityBoolA"></vdl-field>
-<!--
-                <vdl-field entity="scenario.entities.FactoryCustomerAgreements"></vdl-field>
--->
-            </vdl-form>
-        </vdl-section>
-        <vdl-section heading="J -- D ">
+        <vdl-section heading="vdlx-datagrid vs vdl-table">
             <vdl-row>
                 <vdl-column size="6">
-                    <vdlx-datagrid id="demo3" page-mode="scrolling" page-size="2">
-                        <vdlx-datagrid-column set="Factories">Factories-1</vdlx-datagrid-column>
-                        <vdlx-datagrid-column set="MonthsOfYear">Month of Year</vdlx-datagrid-column>
-                        <vdlx-datagrid-column set="Customers">CUSTOMERS</vdlx-datagrid-column >
-                        <vdlx-datagrid-column entity="StockSizes">
-                            <vdlx-datagrid-index-filter set="Factories" value="New York" data-vdl-if="=scenario.entities.entityBoolA.value"></vdlx-datagrid-index-filter>
-                        </vdlx-datagrid-column>
+                    <vdlx-datagrid show-filter="true" column-filter="true">
+                        <vdlx-datagrid-column entity="SupportCosts" heading="SUPPORT COSTS"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ServiceLevelAgreements" editable="true">Agreements Custom Title</vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6">
-                    <vdl-table page-mode="paged" page-size="0" add-remove-row="=scenario.entities.entityBoolA.value" column-filter="">
-                        <vdl-column set="Factories">Factories-1</vdl-column>
-                        <vdl-column set="MonthsOfYear">Month of Year</vdl-column>
-                        <vdl-column set="Customers">CUSTOMERS</vdl-column>
-                        <vdl-table-column vdl-visible="=true" entity="FactoryCustomerAgreements" editable="true">
-                            <vdl-index-filter set="Factories" value="New York" vdl-if="=scenario.entities.entityBoolA.value"></vdl-index-filter>
-                        </vdl-table-column>
-                        <!--<vdl-table-column vdl-visible="=true" entity="FactorySupply" editable="true">2222?</vdl-table-column>-->
+                    <vdl-table show-filter="false" column-filter="true">
+                        <vdl-table-column entity="SupportCosts" heading="SUPPORT COSTS"></vdl-table-column>
+                        <vdl-table-column entity="ServiceLevelAgreements" editable="true">Agreements Custom Title</vdl-table-column>
                     </vdl-table>
                 </vdl-column>
             </vdl-row>
         </vdl-section>
     </vdl-page>
 </vdl>
-
