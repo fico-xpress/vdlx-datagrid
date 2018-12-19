@@ -280,3 +280,7 @@ vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tab
     padding: 0;
   }
 }
+
+vdlx-datagrid .tabulator-row.tabulator-selectable:hover {
+  background-color: #DDDDDD !important;
+}
