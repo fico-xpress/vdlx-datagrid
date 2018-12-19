@@ -57,6 +57,7 @@ class Datagrid {
         this.paginatorControl = this.createPaginatorControl(footerToolbar, this.table, options);
 
         this.buildTable();
+        this.update();
     }
 
     buildTable() {
@@ -80,6 +81,12 @@ class Datagrid {
         );
     }
 
+    update() {
+        this.validate();
+        this.updatePaginator();
+        this.recalculateHeight(ko.unwrap(this.gridOptions$));
+    }
+
     createTable(options) {
         const tabulatorOptions = {
             pagination: options.pagination,
@@ -91,15 +98,12 @@ class Datagrid {
             ajaxLoader: true,
             height: '100%',
             columns: [],
+            resizableColumns: false,
             // can select only 1 row
             selectable: 1,
             cellEditing: (cell) => cell.getRow().select(),
-            rowSelected: (row) => this.setSelectedRow(row),
-            renderComplete: () => {
-                this.validate();
-                this.updatePaginator();
-                this.recalculateHeight(options);
-            }
+            rowSelectionChanged: (data, rows) => this.setSelectedRow(_.first(rows)),
+            renderComplete: () => this.update()
         };
 
         return new Tabulator(`#${options.tableId}`, tabulatorOptions);
@@ -203,8 +207,9 @@ class Datagrid {
         const indicesColumns = _.map(setNamePosnsAndOptions, setNameAndPosn => {
             const {name, options} = setNameAndPosn;
             const entity = schema.getEntity(name);
+            const title = _.isUndefined(options.title) ? entity.getAbbreviation() || name : options.title;
             return {
-                title: _.escape(String(options.title || entity.getAbbreviation() || name)),
+                title: _.escape(String(title)),
                 field: options.id,
                 cssClass: 'expanding-cell-height',
                 formatter: (cell) => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue()),
@@ -326,8 +331,10 @@ class Datagrid {
                 return validationResult;
             };
 
+            const title = _.isUndefined(entityOptions.title) ? entity.getAbbreviation() || name : entityOptions.title;
+
             return _.assign({}, entityOptions, {
-                title: _.escape(String(entityOptions.title || entity.getAbbreviation() || entityOptions.name)),
+                title: _.escape(String(title)),
                 field: entityOptions.id,
                 cssClass: 'expanding-cell-height',
                 cellClick: getCellClickHandler(),
@@ -413,6 +420,9 @@ class Datagrid {
         const { data, allSetValues } = dataTransform(allColumnIndices, columns, entitiesColumns, setNamePosnsAndOptions, scenariosData, gridOptions.rowFilter);
 
         const editable = _.some(_.reject(entitiesOptions, options => !_.get(options, 'visible', true)), 'editable');
+        if (!editable && gridOptions.addRemoveRow) {
+            console.log(`vdl-table (${gridOptions.tableId}): add/remove rows disabled. Table needs to have at least one editable column to use this feature.`);
+        }
         const addRemoveRow = editable && gridOptions.addRemoveRow;
         this.updateAddRemoveControl(addRemoveRow, indicesColumns, entitiesColumns, scenariosData.defaultScenario, allSetValues, data);
         this.entitiesColumns = entitiesColumns;
