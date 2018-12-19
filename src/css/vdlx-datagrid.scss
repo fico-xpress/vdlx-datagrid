@@ -195,6 +195,9 @@ vdlx-datagrid {
           }
           &.numeric {
             text-align: right;
+            input {
+              text-align: right;
+            }
           }
         }
       }
