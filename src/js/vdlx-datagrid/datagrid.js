@@ -88,6 +88,16 @@ class Datagrid {
     }
 
     createTable(options) {
+        const select = (row) => {
+            console.log('aaaacA;');
+            _.each(_.filter(this.table.getSelectedRows(), selectedRow => 
+                selectedRow.getPosition() !== row.getPosition()
+            ), selectedRow => selectedRow.deselect());
+
+            if (!row.isSelected()) {
+                row.select();
+            }
+        }
         const tabulatorOptions = {
             pagination: options.pagination,
             paginationSize: options.paginationSize,
@@ -100,8 +110,13 @@ class Datagrid {
             columns: [],
             resizableColumns: false,
             // can select only 1 row
-            selectable: 1,
-            cellEditing: (cell) => cell.getRow().select(),
+            // selectable: 1,
+            cellEditing: (cell) => {
+                select(cell.getRow());
+            },
+            rowClick: (e, row) => {
+                select(row);
+            },
             rowSelectionChanged: (data, rows) => this.setSelectedRow(_.first(rows)),
             renderComplete: () => this.update()
         };
