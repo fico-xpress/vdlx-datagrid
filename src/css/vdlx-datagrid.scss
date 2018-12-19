@@ -89,6 +89,7 @@ vdlx-datagrid {
             }
             .tabulator-col-title {
               white-space: pre-wrap;
+              padding: 5px 19px 5px 5px;
             }
           }
         }
@@ -110,6 +111,8 @@ vdlx-datagrid {
       .tabulator-title-editor {
       }
       .tabulator-header-filter {
+        background-color: white;
+        padding: 5px;
       }
       .tabulator-sortable {
       }
@@ -269,4 +272,11 @@ vdlx-datagrid {
 
 .tabulator.table-bordered .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
   border-color: $color-medium-grey;
+}
+
+vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col {
+  height: 100% !important;
+  .tabulator-col-content {
+    padding: 0;
+  }
 }
