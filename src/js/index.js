@@ -1,4 +1,6 @@
 
+import 'tabulator-tables/dist/css/bootstrap/tabulator_bootstrap.css';
+
 import '../css/vdlx-datagrid.scss';
 import './vdlx-datagrid';
 import './vdlx-datagrid-column';

@@ -1,3 +1,5 @@
+import Tabulator from 'tabulator-tables/dist/js/tabulator';
+
 import dataTransform, {
     getAllColumnIndices,
     getDisplayIndices,
@@ -122,7 +124,14 @@ class Datagrid {
             renderComplete: () => this.update()
         };
 
-        return new Tabulator(`#${options.tableId}`, tabulatorOptions);
+        const table = new Tabulator(`#${options.tableId}`, tabulatorOptions);
+
+        // if (table.modExists('mutator')) {
+        //     debugger;
+        //     table.modules.mutator.disable();
+        // }
+
+        return table;
     }
 
     recalculateHeight(options) {
@@ -223,7 +232,7 @@ class Datagrid {
         const indicesColumns = _.map(setNamePosnsAndOptions, setNameAndPosn => {
             const {name, options} = setNameAndPosn;
             const entity = schema.getEntity(name);
-            const title = _.isUndefined(options.title) ? entity.getAbbreviation() || name : options.title;
+            const title = _.get(options, 'title', entity.getAbbreviation() || name);
             return _.assign({}, setNameAndPosn.options, {
                 title: _.escape(String(title)),
                 field: options.id,
@@ -347,7 +356,7 @@ class Datagrid {
                 return validationResult;
             };
 
-            const title = _.isUndefined(entityOptions.title) ? entity.getAbbreviation() || name : entityOptions.title;
+            const title = _.get(entityOptions, 'title', entity.getAbbreviation() || name);
 
             return _.assign({}, entityOptions, {
                 title: _.escape(String(title)),

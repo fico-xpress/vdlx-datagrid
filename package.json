@@ -32,10 +32,12 @@
     "postcss-modules": "^1.4.1",
     "sass": "^1.15.2",
     "testcafe": "^0.23.2",
-    "typescript": "^3.2.1"
+    "typescript": "^3.2.1",
+    "knockout": "^3.4.2"
   },
   "dependencies": {
-    "knockout": "^3.4.2"
+    "tabulator": "^0.2.38",
+    "tabulator-tables": "^4.1.4"
   },
   "jest": {
     "setupFiles": [
