@@ -89,7 +89,6 @@ class Datagrid {
 
     createTable(options) {
         const select = (row) => {
-            console.log('aaaacA;'); // TODO what is this code for?
             _.each(_.filter(this.table.getSelectedRows(), selectedRow => 
                 selectedRow.getPosition() !== row.getPosition()
             ), selectedRow => selectedRow.deselect());
