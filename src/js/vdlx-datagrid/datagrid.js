@@ -14,6 +14,7 @@ const SelectOptions = insightModules.load('components/autotable-select-options')
 const DataUtils = insightModules.load('utils/data-utils');
 
 const dialogs = insightModules.load('dialogs')
+const perf = insightModules.load('performance-measurement');
 
 const addSelectNull = (items) => {
     if (Array.isArray(items)) {
@@ -68,14 +69,14 @@ class Datagrid {
         this.subscriptions = this.subscriptions.concat(
             ko
             .pureComputed(() => {
-              const gridOptions = ko.unwrap(gridOptions$());
-              const columnOptions = columnOptions$();
-              const scenariosData = scenariosData$();
+                const gridOptions = ko.unwrap(gridOptions$());
+                const columnOptions = columnOptions$();
+                const scenariosData = scenariosData$();
 
-              if (gridOptions && columnOptions && scenariosData) {
-                this.setColumnsAndData(gridOptions, columnOptions, scenariosData);
-              }
-              return undefined;
+                if (gridOptions && columnOptions && scenariosData) {
+                    perf('SET: ', () => this.setColumnsAndData(gridOptions, columnOptions, scenariosData));
+                }
+                return undefined;
             })
             .subscribe(_.noop)
         );
@@ -222,7 +223,7 @@ class Datagrid {
             const {name, options} = setNameAndPosn;
             const entity = schema.getEntity(name);
             const title = _.isUndefined(options.title) ? entity.getAbbreviation() || name : options.title;
-            return {
+            return _.assign({}, setNameAndPosn.options, {
                 title: _.escape(String(title)),
                 field: options.id,
                 cssClass: 'expanding-cell-height',
@@ -231,7 +232,7 @@ class Datagrid {
                 elementType: entity.getElementType(),
                 labelsEntity: entity.getLabelsEntity(),
                 name: name
-            };
+            });
         });
 
         const columnsIds = [].concat(_.map(setNamePosnsAndOptions, 'options.id'), _.map(entitiesOptions, 'id'));
