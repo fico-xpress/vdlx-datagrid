@@ -36,7 +36,6 @@
     "knockout": "^3.4.2"
   },
   "dependencies": {
-    "tabulator": "^0.2.38",
     "tabulator-tables": "^4.1.4"
   },
   "jest": {
