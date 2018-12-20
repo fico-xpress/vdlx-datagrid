@@ -126,11 +126,6 @@ class Datagrid {
 
         const table = new Tabulator(`#${options.tableId}`, tabulatorOptions);
 
-        // if (table.modExists('mutator')) {
-        //     debugger;
-        //     table.modules.mutator.disable();
-        // }
-
         return table;
     }
 
@@ -466,11 +461,9 @@ class Datagrid {
 
         return perf('PERF Tabulator.setData():', () => table
             .setData(data)
-            .then(() => {
-              return table.redraw();
-            })
+            .then(() => table.redraw())
             .catch(err => {
-              debugger;
+                debugger;
             }));
     }
 

@@ -1,5 +1,7 @@
+import perf from '../performance-measurement';
+import createDenseData from './create-dense-data';
+
 const DataUtils = insightModules.load('utils/data-utils');
-const createDenseData = insightModules.load('components/table/create-dense-data');
 const createSparseData = insightModules.load('components/table/create-sparse-data');
 const SelectOptions = insightModules.load('components/autotable-select-options');
 
@@ -8,6 +10,9 @@ export const getAllColumnIndices = _.curry((schema, columnOptions) => {
         return schema.getEntity(option.name).getIndexSets();
     });
 }, 2);
+
+_.memoize.Cache = WeakMap;
+const getIndexPosns = _.memoize(DataUtils.getIndexPosns);
 
 /**
  * @typedef {{name: string, position: number}} SetNameAndPosition 
@@ -20,7 +25,7 @@ export const getDisplayIndices = (columnIndices, columnOptions) => {
 
     for (var i = 0; i < numColumns; i++) {
         const indices = columnIndices[i], options = columnOptions[i];
-        const setPosns = DataUtils.getIndexPosns(indices);
+        const setPosns = getIndexPosns(indices);
         indices.forEach(function (setName, i) {
             const setPosn = setPosns[i];
             if (DataUtils.getFilterValue(options.filters, setName, setPosn) == null) {
@@ -48,7 +53,7 @@ export const getPartialExposedKey = (setNameAndPosns, rowData) =>
     rowData.slice(0, setNameAndPosns.length);
 
 export const generateCompositeKey = function (setValues, setNameAndPosns, arrayIndices, arrayOptions) {
-    const setPosns = DataUtils.getIndexPosns(arrayIndices);
+    const setPosns = getIndexPosns(arrayIndices);
     return arrayIndices.map(function (setName, i) {
         const setPosn = setPosns[i];
         const setIndex = _.findIndex(setNameAndPosns, { name: setName, position: setPosn });
@@ -64,6 +69,33 @@ export const generateCompositeKey = function (setValues, setNameAndPosns, arrayI
     });
 };
 
+export const createGenerateCompositeKey = (setNameAndPosns) => {
+    const setNameAndPosnsIndices = _.reduce(setNameAndPosns, (acc, setNameAndPosn, i) => _.set(acc, [setNameAndPosn.name, setNameAndPosn.position], i), {});
+
+    return (setValues, __, arrayIndices, arrayOptions) => {
+        const setPosns = getIndexPosns(arrayIndices);
+        const result = [];
+        for(let i = 0; i < arrayIndices.length; i++) {
+            const setName = arrayIndices[i];
+            const setPosn = setPosns[i];
+            const setIndex = _.get(setNameAndPosnsIndices, [ setName, setPosn ]);
+            if (setIndex !== undefined) {
+                result.push(setValues[setIndex]);
+            } else {
+                const filterValue = DataUtils.getFilterValue(arrayOptions.filters, setName, setPosn);
+                if (filterValue != null) {
+                    result.push(filterValue);
+                } else {
+                    throw Error('Cannot generate table with incomplete index configuration. Missing indices: ' +
+                        setName + ' for entity: ' + arrayOptions.name);
+                }
+            }
+        }
+
+        return result;
+    };
+}
+
 const isSparse = (sets, arrays) => {
     const totalPossibleKeys = _.reduce(sets, function (memo, set) {
         return memo * set.length;
@@ -75,7 +107,6 @@ const isSparse = (sets, arrays) => {
 
     return (totalPossibleKeys * arrays.length > ((totalCountOfArrayValues * Math.log(totalCountOfArrayValues)) || 0));
 };
-
 
 export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions, scenariosData, rowFilter) => {
 
@@ -125,7 +156,16 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
         // assume O(nlogn)
         data = createSparseData(arrays, setNamePosnsAndOptions, allColumnIndices, columnOptions, columns);
     } else {
-        data = createDenseData(sets, arrays, setNamePosnsAndOptions, allColumnIndices, columnOptions, generateCompositeKey);
+        data = perf('PERF: dense data', () =>
+            createDenseData(
+                sets,
+                arrays,
+                setNamePosnsAndOptions,
+                allColumnIndices,
+                columnOptions,
+                createGenerateCompositeKey(setNamePosnsAndOptions)
+            )
+        );
     }
 
     // row filtering
@@ -137,7 +177,6 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
             );
         });
     }
-
 
     return {data: _.map(data, createRow), allSetValues: allSetValues};
 };
