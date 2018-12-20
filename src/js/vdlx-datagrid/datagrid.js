@@ -75,7 +75,7 @@ class Datagrid {
                 const scenariosData = scenariosData$();
 
                 if (gridOptions && columnOptions && scenariosData) {
-                    perf('SET: ', () => this.setColumnsAndData(gridOptions, columnOptions, scenariosData));
+                    perf('PERF TOTAL:', () => this.setColumnsAndData(gridOptions, columnOptions, scenariosData));
                 }
                 return undefined;
             })
@@ -433,7 +433,16 @@ class Datagrid {
             return col;
         });
 
-        const { data, allSetValues } = dataTransform(allColumnIndices, columns, entitiesColumns, setNamePosnsAndOptions, scenariosData, gridOptions.rowFilter);
+        const { data, allSetValues } = perf('PERF Data generation:', () =>
+          dataTransform(
+            allColumnIndices,
+            columns,
+            entitiesColumns,
+            setNamePosnsAndOptions,
+            scenariosData,
+            gridOptions.rowFilter
+          )
+        );
 
         const editable = _.some(_.reject(entitiesOptions, options => !_.get(options, 'visible', true)), 'editable');
         if (!editable && gridOptions.addRemoveRow) {
@@ -446,14 +455,14 @@ class Datagrid {
 
         table.setColumns(columns);
 
-        return table
+        return perf('PERF Tabulator.setData():', () => table
             .setData(data)
             .then(() => {
-                return table.redraw();
+              return table.redraw();
             })
-            .catch((err) => {
-                debugger;
-            });
+            .catch(err => {
+              debugger;
+            }));
     }
 
     validate() {
