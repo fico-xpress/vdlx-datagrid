@@ -14,7 +14,8 @@ const SelectOptions = insightModules.load('components/autotable-select-options')
 const DataUtils = insightModules.load('utils/data-utils');
 
 const dialogs = insightModules.load('dialogs')
-const perf = insightModules.load('performance-measurement');
+
+import perf from '../performance-measurement';
 
 const addSelectNull = (items) => {
     if (Array.isArray(items)) {
@@ -448,7 +449,7 @@ class Datagrid {
         return table
             .setData(data)
             .then(() => {
-                table.redraw();
+                return table.redraw();
             })
             .catch((err) => {
                 debugger;
