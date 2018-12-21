@@ -11,8 +11,7 @@ export const getAllColumnIndices = _.curry((schema, columnOptions) => {
     });
 }, 2);
 
-_.memoize.Cache = WeakMap;
-const getIndexPosns = _.memoize(DataUtils.getIndexPosns);
+const getIndexPosns = DataUtils.getIndexPosns;
 
 /**
  * @typedef {{name: string, position: number}} SetNameAndPosition 
