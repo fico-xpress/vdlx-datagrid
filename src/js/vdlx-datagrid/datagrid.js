@@ -353,6 +353,18 @@ class Datagrid {
 
             const title = _.get(entityOptions, 'title', entity.getAbbreviation() || name);
 
+            const getCellEditingHandler = () => {
+                if (entityOptions.editorType !== 'select') {
+                    return cell => {
+                        const element = cell.getElement();
+                        $(element).on('keyup', (evt) => {
+                            validateAndStyle(cell, evt.target.value);
+                        });
+                    };
+                }
+                return undefined;
+            }
+
             return _.assign({}, entityOptions, {
                 title: _.escape(String(title)),
                 field: entityOptions.id,
@@ -361,13 +373,8 @@ class Datagrid {
                 formatter: getFormatter(),
                 editor: entityOptions.editorType,
                 editorParams: getEditorParams(),
-                cellEditing: cell => {
-                    const element = cell.getElement();
-                    $(element).on('keyup', (evt) => {
-                        validateAndStyle(cell, evt.target.value);
-                    });
-                },
-                cellEdited: (cell) => {
+                cellEditing: getCellEditingHandler(),
+                cellEdited: cell => {
                     $(cell.getElement()).off('keyup');
 
                     const oldValue = _.isUndefined(cell.getOldValue()) ? '': cell.getOldValue();
