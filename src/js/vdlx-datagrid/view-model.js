@@ -34,7 +34,8 @@ const getTableOptions = (params) => () => {
         alwaysShowSelection: params.alwaysShowSelection,
         gridHeight: params.gridHeight,
         gridData: params.gridData,
-        paginationSize: params.pageSize || DEFAULT_GRID_PAGE_SIZE
+        paginationSize: params.pageSize || DEFAULT_GRID_PAGE_SIZE,
+        saveState: _.get(params, 'saveState', true)
     };
 
     var pageMode = params['pageMode'];

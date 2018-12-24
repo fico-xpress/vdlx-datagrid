@@ -19,6 +19,7 @@ const DataUtils = insightModules.load('utils/data-utils');
 const dialogs = insightModules.load('dialogs')
 
 import perf from '../performance-measurement';
+import { createStateManager } from './state-peristence';
 
 const addSelectNull = (items) => {
     if (Array.isArray(items)) {
@@ -60,6 +61,7 @@ class Datagrid {
 
         this.addRemoveRowControl = this.createAddRemoveRowControl(footerToolbar, this.table, options);
         this.paginatorControl = this.createPaginatorControl(footerToolbar, this.table, options);
+        this.stateManager = null;
 
         this.buildTable();
         this.update();
@@ -92,6 +94,35 @@ class Datagrid {
         this.recalculateHeight(ko.unwrap(this.gridOptions$));
     }
 
+    saveState() {
+        if (this.stateManager) {
+            const state = {
+                filters: this.table.getHeaderFilters(),
+                sorters: _.map(this.table.getSorters(), sorter => ({ dir: sorter.dir, column: sorter.field }))
+            };
+
+            this.stateManager.saveState(state);
+        }
+    }
+    loadState() {
+        if (this.stateManager) {
+            const state = this.stateManager.loadState();
+            if (state) {
+                !_.isEmpty(state.sorters) && this.table.setSort(state.sorters);
+                _.each(state.filters, filter => {
+                    const existingFilterElements = this.table
+                        .getColumn(filter.field)
+                        .getElement()
+                        .getElementsByClassName('tabulator-header-filter');
+
+                    _.each(existingFilterElements, elm => elm.parentNode.removeChild(elm));
+
+                    this.table.setHeaderFilterValue(filter.field, filter.value)
+                });
+            }
+        }
+    }
+
     createTable(options) {
         const select = (row) => {
             _.each(_.filter(this.table.getSelectedRows(), selectedRow =>
@@ -102,6 +133,8 @@ class Datagrid {
                 row.select();
             }
         }
+        const saveState = () => this.saveState();
+
         const tabulatorOptions = {
             pagination: options.pagination,
             paginationSize: options.paginationSize,
@@ -111,8 +144,9 @@ class Datagrid {
             groupStartOpen: false,
             ajaxLoader: true,
             height: '100%',
-            columns: [],
             resizableColumns: false,
+            dataFiltered: saveState,
+            dataSorting: saveState,
             // can select only 1 row
             // selectable: 1,
             cellEditing: (cell) => {
@@ -168,6 +202,17 @@ class Datagrid {
         const paginatorControl = new Paginator(table, options.paginationSize);
         paginatorControl.appendTo(footerToolbar);
         return paginatorControl;
+    }
+
+    createStateManager(gridOptions, setNameAndPosns, scenarios) {
+        if (gridOptions.saveState) {
+            const saveStateSuffix = setNameAndPosns
+                .concat(_.map(scenarios, scenario => scenario.getId()))
+                .join('#');
+
+            return createStateManager(gridOptions.id, saveStateSuffix);
+        }
+        return undefined;
     }
 
     /**
@@ -468,6 +513,9 @@ class Datagrid {
 
         table.setColumns(columns);
 
+        this.stateManager = this.createStateManager(gridOptions, setNameAndPosns, _.map(entitiesColumns, 'scenario'));
+        this.loadState();
+
         return perf('PERF Tabulator.setData():', () => table
             .setData(data)
             .then(() => table.redraw())
@@ -484,7 +532,6 @@ class Datagrid {
                 column.validate(cell.getComponent(), cell.getValue());
             })
         });
-
     }
 
     dispose() {
