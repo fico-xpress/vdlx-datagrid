@@ -109,16 +109,33 @@ class Datagrid {
             const state = this.stateManager.loadState();
             if (state) {
                 !_.isEmpty(state.sorters) && this.table.setSort(state.sorters);
-                _.each(state.filters, filter => {
-                    const existingFilterElements = this.table
-                        .getColumn(filter.field)
-                        .getElement()
-                        .getElementsByClassName('tabulator-header-filter');
+                if (!_.isEmpty(state.filters)) {
+                    _.each(this.table.getColumns(), column =>
+                      _.each(
+                        column.getElement().getElementsByClassName('tabulator-header-filter'),
+                        elm => elm.parentNode.removeChild(elm)
+                      )
+                    );
 
-                    _.each(existingFilterElements, elm => elm.parentNode.removeChild(elm));
+                    this.table.clearHeaderFilter();
+                    _.each(state.filters, filter => {
+                        const column = this.table.getColumn(filter.field);
+                        if (!column) {
+                            return;
+                        }
 
-                    this.table.setHeaderFilterValue(filter.field, filter.value)
-                });
+                        const existingFilterElements = column
+                            .getElement()
+                            .getElementsByClassName('tabulator-header-filter');
+
+                        _.each(
+                            existingFilterElements,
+                            elm => elm.parentNode.removeChild(elm)
+                        )
+
+                        this.table.setHeaderFilterValue(filter.field, filter.value)
+                    });
+                }
             }
         }
     }
@@ -206,11 +223,11 @@ class Datagrid {
 
     createStateManager(gridOptions, setNameAndPosns, scenarios) {
         if (gridOptions.saveState) {
-            const saveStateSuffix = setNameAndPosns
-                .concat(_.map(scenarios, scenario => scenario.getId()))
+            const saveStateSuffix = _.map(setNameAndPosns, 'name')
+                // .concat(_.map(scenarios, scenario => scenario.getId()))
                 .join('#');
 
-            return createStateManager(gridOptions.id, saveStateSuffix);
+            return createStateManager(gridOptions.tableId, saveStateSuffix);
         }
         return undefined;
     }

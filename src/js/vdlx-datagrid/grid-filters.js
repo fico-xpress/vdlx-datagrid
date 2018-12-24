@@ -125,29 +125,26 @@ let _partialMatchCell = (searchData, data, column) => {
 let integerFilter = (column, valueTxt, cellValue, rowData, params) => {
     var exactColumnSearch = valueTxt.substring(0, 1) === '=';
     if(exactColumnSearch) {
-        return _exactMatchCell(valueTxt.substring(1), cellValue.toString(), column);
+        return _exactMatchCell(valueTxt.substring(1), String(cellValue), column);
     }
-    return _partialMatchCell(valueTxt, cellValue.toString(), column);
+    return _partialMatchCell(valueTxt, String(cellValue), column);
 };
 
 let realFilter = (column, valueTxt, cellValue, rowData, params) => {
     var exactColumnSearch = valueTxt.substring(0, 1) === '=';
     if(exactColumnSearch) {
-        return _exactMatchCell(valueTxt.substring(1), cellValue.toString(), column);
+        return _exactMatchCell(valueTxt.substring(1), String(cellValue), column);
     }
-    return _partialMatchCell(valueTxt, cellValue.toString(), column);
+    return _partialMatchCell(valueTxt, String(cellValue), column);
 };
 
 export let chooseColumnFilter = (column) => {
     switch (column.elementType) {
         case "INTEGER":
             return _.partial(integerFilter, column);
-            break;
         case "REAL":
             return _.partial(realFilter, column);
-            break;
         default:
-            debugger; // Matches for other datatypes?
             break;
     }
 };
