@@ -8,9 +8,10 @@ import dataTransform, {
 } from './data-transform';
 import withScenarioData from './data-loader';
 import Paginator from "./paginator";
-import { getRowData } from './utils';
-import { EDITOR_TYPES } from '../constants';
+import {getRowData} from './utils';
+import {EDITOR_TYPES} from '../constants';
 import AddRemove from './add-remove';
+import {chooseColumnFilter} from './grid-filters';
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');
@@ -31,10 +32,10 @@ const VALIDATION_ERROR_TITLE = 'Validation Error';
 
 class Datagrid {
     /**
-     * 
-     * @param {Element} root 
-     * @param {*} gridOptions$ 
-     * @param {*} columnOptions$ 
+     *
+     * @param {Element} root
+     * @param {*} gridOptions$
+     * @param {*} columnOptions$
      */
     constructor(root, gridOptions$, columnOptions$) {
         /** @type {Array<KnockoutSubscription>} */
@@ -71,17 +72,17 @@ class Datagrid {
 
         this.subscriptions = this.subscriptions.concat(
             ko
-            .pureComputed(() => {
-                const gridOptions = ko.unwrap(gridOptions$());
-                const columnOptions = columnOptions$();
-                const scenariosData = scenariosData$();
+                .pureComputed(() => {
+                    const gridOptions = ko.unwrap(gridOptions$());
+                    const columnOptions = columnOptions$();
+                    const scenariosData = scenariosData$();
 
-                if (gridOptions && columnOptions && scenariosData) {
-                    perf('PERF TOTAL:', () => this.setColumnsAndData(gridOptions, columnOptions, scenariosData));
-                }
-                return undefined;
-            })
-            .subscribe(_.noop)
+                    if (gridOptions && columnOptions && scenariosData) {
+                        perf('PERF TOTAL:', () => this.setColumnsAndData(gridOptions, columnOptions, scenariosData));
+                    }
+                    return undefined;
+                })
+                .subscribe(_.noop)
         );
     }
 
@@ -93,7 +94,7 @@ class Datagrid {
 
     createTable(options) {
         const select = (row) => {
-            _.each(_.filter(this.table.getSelectedRows(), selectedRow => 
+            _.each(_.filter(this.table.getSelectedRows(), selectedRow =>
                 selectedRow.getPosition() !== row.getPosition()
             ), selectedRow => selectedRow.deselect());
 
@@ -146,7 +147,7 @@ class Datagrid {
         }
     }
 
-    setSelectedRow (row) {
+    setSelectedRow(row) {
         if (this.addRemoveRowControl) {
             this.addRemoveRowControl.setSelectedRow(row);
         }
@@ -259,7 +260,7 @@ class Datagrid {
                 getRowDataForColumns
             );
 
-            const saveValue = (rowData, value) => setArrayElement({ key: getRowKey(rowData), value: value });
+            const saveValue = (rowData, value) => setArrayElement({key: getRowKey(rowData), value: value});
 
             const checkboxFormatter = (cell) => {
                 const checked = String(cell.getValue()) === String(_.get(entityOptions, 'checkedValue', true)) ? 'checked' : '';
@@ -370,7 +371,7 @@ class Datagrid {
                 cellEdited: (cell) => {
                     $(cell.getElement()).off('keyup');
 
-                    const oldValue = _.isUndefined(cell.getOldValue()) ? '': cell.getOldValue();
+                    const oldValue = _.isUndefined(cell.getOldValue()) ? '' : cell.getOldValue();
                     const value = cell.getValue();
 
                     const validationResult = validateAndStyle(cell, value);
@@ -404,6 +405,7 @@ class Datagrid {
                 col.headerFilterPlaceholder = 'No filter';
                 // col.headerFilter = fullTitleFormatter;
                 col.headerFilter = true;
+                col.headerFilterFunc = chooseColumnFilter(col);
             }
             let hasLabels = !!col.labelsEntity;
 
@@ -411,10 +413,10 @@ class Datagrid {
             if (col.dataType === 'SET') {
                 cssClasses.push('index');
             }
-            if(hasLabels) {
+            if (hasLabels) {
 
             } else {
-                switch(col.elementType) {
+                switch (col.elementType) {
                     case 'NUMERIC':
                         cssClasses.push('numeric');
                         break;
@@ -437,15 +439,15 @@ class Datagrid {
             return col;
         });
 
-        const { data, allSetValues } = perf('PERF Data generation:', () =>
-          dataTransform(
-            allColumnIndices,
-            columns,
-            entitiesColumns,
-            setNamePosnsAndOptions,
-            scenariosData,
-            gridOptions.rowFilter
-          )
+        const {data, allSetValues} = perf('PERF Data generation:', () =>
+            dataTransform(
+                allColumnIndices,
+                columns,
+                entitiesColumns,
+                setNamePosnsAndOptions,
+                scenariosData,
+                gridOptions.rowFilter
+            )
         );
 
         const editable = _.some(_.reject(entitiesOptions, options => !_.get(options, 'visible', true)), 'editable');
