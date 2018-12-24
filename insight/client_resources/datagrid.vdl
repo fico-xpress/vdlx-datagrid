@@ -7,7 +7,7 @@
             <vdl-row>
                 <vdl-column size="6">
                     <vdlx-datagrid show-filter="true" column-filter="true">
-                        <vdlx-datagrid-column entity="SupportCosts" heading="SUPPORT COSTS"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="SupportCosts" heading="SUPPORT COSTS" editable="true"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ServiceLevelAgreements" editable="true">Agreements Custom Title</vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>

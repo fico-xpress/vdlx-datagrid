@@ -38,7 +38,7 @@
         <vdl-section heading="Basic usage">
             <vdl-row>
                 <vdl-column heading="Simple datagrid" size="6" class="example-passed">
-                    <vdlx-datagrid>
+                    <vdlx-datagrid id="basic-example-1">
                         <vdlx-datagrid-column set="SupportLevels">Support L.</vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ServiceLevelAgreements"></vdlx-datagrid-column>
@@ -47,7 +47,7 @@
 
                 <vdl-column size="6" heading="VDL source:">
                     <code-panel>
-&lt;vdlx-datagrid&gt;
+&lt;vdlx-datagrid id=&quot;basic-example-1&quot;&gt;
     &lt;vdlx-datagrid-column set=&quot;SupportLevels&quot;&gt;Support L.&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdlx-datagrid-column&gt;
@@ -58,7 +58,7 @@
             </vdl-row>
             <vdl-row>
                 <vdl-column heading="Simple datagrid with repeated index sets" size="6"  class="example-passed">
-                    <vdlx-datagrid>
+                    <vdlx-datagrid id="basic-example-2">
                         <vdlx-datagrid-column set="Factories" heading="Origin"></vdlx-datagrid-column>
                         <vdlx-datagrid-column set="Factories" heading="Destination"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ShippingCosts"></vdlx-datagrid-column>
@@ -67,7 +67,7 @@
 
                 <vdl-column size="6" heading="VDL source:">
                     <code-panel>
-&lt;vdlx-datagrid&gt;
+&lt;vdlx-datagrid id=&quot;basic-example-2&quot;&gt;
     &lt;vdlx-datagrid-column set=&quot;Factories&quot; heading=&quot;Origin&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column set=&quot;Factories&quot; heading=&quot;Destination&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column entity=&quot;ShippingCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
@@ -94,8 +94,8 @@
                 </vdl-column>
             </vdl-row>
             <vdl-row>
-                <vdl-column heading="Autotable with a CSS class" size="6" class="example-passed">
-                    <vdlx-datagrid class="htable">
+                <vdl-column heading="Datagrid with a CSS class" size="6" class="example-passed">
+                    <vdlx-datagrid class="htable" id="basic-example-3">
                         <vdlx-datagrid-column set="SupportLevels">Support L.</vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ServiceLevelAgreements"></vdlx-datagrid-column>
@@ -113,7 +113,7 @@
     }
 &lt;/style&gt;
 
-&lt;vdlx-datagrid class=&quot;htable&quot;&gt;
+&lt;vdlx-datagrid class=&quot;htable&quot; id=&quot;basic-example-2&quot;&gt;
     &lt;vdlx-datagrid-column set=&quot;SupportLevels&quot;&gt;Support L.&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdlx-datagrid-column&gt;
@@ -132,7 +132,7 @@
                         Any table callbacks that include row data will still include the hidden columns in the row data.
                     </p>
                     <p>In this example the index column is being hidden.</p>
-                    <vdlx-datagrid>
+                    <vdlx-datagrid id="basic-example-4">
                         <vdlx-datagrid-column set="SupportLevels" vdl-visible="=false"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ServiceLevelAgreements"></vdlx-datagrid-column>
@@ -141,7 +141,7 @@
                 <vdl-column size="6" heading="VDL Source">
                     <h5>VDL source code:</h5>
                     <code-panel>
-&lt;vdlx-datagrid&gt;
+&lt;vdlx-datagrid id=&quot;basic-example-4&quot;&gt;
     &lt;vdlx-datagrid-column set=&quot;SupportLevels&quot; vdl-visible=&quot;=false&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdlx-datagrid-column&gt;

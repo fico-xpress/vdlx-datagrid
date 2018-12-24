@@ -7,7 +7,7 @@
             <vdl-row>
                 <vdl-column size="12" heading="Table 1">
 
-                    <vdlx-datagrid>
+                    <vdlx-datagrid id="big-data-1">
                         <vdlx-datagrid-column set="t1IndexA"></vdlx-datagrid-column>
                         <vdlx-datagrid-column set="t1IndexB"></vdlx-datagrid-column>
                         <vdlx-datagrid-column set="t1IndexC"></vdlx-datagrid-column>

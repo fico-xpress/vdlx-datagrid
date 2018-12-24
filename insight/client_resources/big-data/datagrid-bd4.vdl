@@ -9,7 +9,7 @@
                     <!--
                     t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF,t4Col1,t4Col2,t4Col3,t4Col4
                     -->
-                    <vdlx-datagrid>
+                    <vdlx-datagrid id="big-data-4">
                         <vdlx-datagrid-column set="t4IndexA"></vdlx-datagrid-column>
                         <vdlx-datagrid-column set="t4IndexB"></vdlx-datagrid-column>
                         <vdlx-datagrid-column set="t4IndexC"></vdlx-datagrid-column>
