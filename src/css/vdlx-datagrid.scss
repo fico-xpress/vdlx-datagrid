@@ -230,6 +230,7 @@ vdlx-datagrid {
           padding: 5px 9px !important;
         }
         &:hover {
+          @include table-cell-border-hover($table-focus-color);
         }
         &.invalid {
           color: $table-error-color !important;
@@ -285,6 +286,11 @@ vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tab
   }
 }
 
-vdlx-datagrid .tabulator-row.tabulator-selectable:hover {
-  background-color: #DDDDDD !important;
+.tabulator-edit-select-list {
+  .tabulator-edit-select-list-item {
+    &.active:not(:hover) {
+      background-color: white;
+      color: $black;
+    }
+  }
 }
