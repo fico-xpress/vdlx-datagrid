@@ -110,12 +110,13 @@ class Datagrid {
             if (state) {
                 !_.isEmpty(state.sorters) && this.table.setSort(state.sorters);
                 if (!_.isEmpty(state.filters)) {
-                    _.each(this.table.getColumns(), column =>
-                      _.each(
+                    // TODO: temporary until tabulator merges a pull request
+                    // https://github.com/olifolkerd/tabulator/pull/1685
+                    const removeOldHeaderFilter = column => _.each(
                         column.getElement().getElementsByClassName('tabulator-header-filter'),
                         elm => elm.parentNode.removeChild(elm)
-                      )
                     );
+                    _.each(this.table.getColumns(), removeOldHeaderFilter);
 
                     this.table.clearHeaderFilter();
                     _.each(state.filters, filter => {
@@ -124,14 +125,7 @@ class Datagrid {
                             return;
                         }
 
-                        const existingFilterElements = column
-                            .getElement()
-                            .getElementsByClassName('tabulator-header-filter');
-
-                        _.each(
-                            existingFilterElements,
-                            elm => elm.parentNode.removeChild(elm)
-                        )
+                        removeOldHeaderFilter(column);
 
                         this.table.setHeaderFilterValue(filter.field, filter.value)
                     });
