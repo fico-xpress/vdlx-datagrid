@@ -7,7 +7,7 @@ import dataTransform, {
     generateCompositeKey
 } from './data-transform';
 import withScenarioData from './data-loader';
-import Paginator from "./paginator";
+import Paginator from './paginator';
 import {getRowData} from './utils';
 import {EDITOR_TYPES} from '../constants';
 import AddRemove from './add-remove';
@@ -27,6 +27,16 @@ const addSelectNull = (items) => {
         items.unshift({key: '', value: ''});
     }
     return items;
+};
+
+
+const resolveDisplayEntity = (schema, entity) => {
+    var labelsEntityName = entity.getLabelsEntity();
+    if (!labelsEntityName) {
+        return entity;
+    }
+
+    return schema.getEntity(labelsEntityName);
 };
 
 const VALIDATION_ERROR_TITLE = 'Validation Error';
@@ -284,11 +294,21 @@ class Datagrid {
         const indicesColumns = _.map(setNamePosnsAndOptions, setNameAndPosn => {
             const {name, options} = setNameAndPosn;
             const entity = schema.getEntity(name);
+            const displayEntity = resolveDisplayEntity(schema, entity);
+            const isNumberEntity = DataUtils.entityTypeIsNumber(displayEntity);
+
             const title = _.get(options, 'title', entity.getAbbreviation() || name);
+            const getClass = () => {
+                let classes = ['index'];
+                if (isNumberEntity) {
+                    classes = classes.concat('numeric');
+                }
+                return classes.join('-');
+            }
             return _.assign({}, setNameAndPosn.options, {
                 title: _.escape(String(title)),
                 field: options.id,
-                cssClass: 'expanding-cell-height',
+                cssClass: getClass(),
                 formatter: (cell) => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue()),
                 dataType: entity.getType(),
                 elementType: entity.getElementType(),
@@ -303,6 +323,8 @@ class Datagrid {
 
         const entitiesColumns = _.map(entitiesOptions, (entityOptions, columnNumber) => {
             const entity = schema.getEntity(entityOptions.name);
+            const displayEntity = resolveDisplayEntity(schema, entity);
+            const isNumberEntity = DataUtils.entityTypeIsNumber(displayEntity);
 
             const columnScenario = _.get(scenariosData.scenarios, entityOptions.id, scenariosData.defaultScenario);
 
@@ -366,17 +388,26 @@ class Datagrid {
                     } else if (entityOptions.editorOptions) {
                         getOptions = _.flow(
                             entityOptions.editorOptions,
-                            _.partial(SelectOptions.generateSelectOptionsFromValues, _, DataUtils.entityTypeIsNumber(entity)),
+                            _.partial(SelectOptions.generateSelectOptionsFromValues, _, isNumberEntity),
                             entityOptions.selectNull ? addSelectNull : _.identity
                         );
                     }
 
-                    return cell => ({
-                        values: _.map(getOptions(cell.getValue(), getRowKey(cell.getData())), option => ({
-                            value: option.key,
-                            label: option.value
-                        }))
-                    });
+                    const getListItemFormatter = () => {
+                        if (isNumberEntity) {
+                            return (value, title) => `<div class="numeric">${title}</div>`;
+                        } 
+                        return undefined;
+                    }
+
+                    return cell =>
+                        ({
+                            listItemFormatter: getListItemFormatter(),
+                            values: _.map(getOptions(cell.getValue(), getRowKey(cell.getData())), option => ({
+                                value: option.key,
+                                label: option.value
+                            }))
+                        });
                 }
                 return undefined;
             }
@@ -422,10 +453,21 @@ class Datagrid {
                 return undefined;
             }
 
+            const getClasses = () => {
+                let classes = [];
+                if (isNumberEntity) {
+                    classes = classes.concat('numeric');
+                }
+                if (entityOptions.editorType === 'select') {
+                    classes = classes.concat('select-editor')
+                }
+                return classes.join('-');
+            }
+
             return _.assign({}, entityOptions, {
                 title: _.escape(String(title)),
                 field: entityOptions.id,
-                cssClass: 'expanding-cell-height',
+                cssClass: getClasses(),
                 cellClick: getCellClickHandler(),
                 formatter: getFormatter(),
                 editor: entityOptions.editorType,
@@ -470,34 +512,6 @@ class Datagrid {
                 col.headerFilter = true;
                 col.headerFilterFunc = chooseColumnFilter(col);
             }
-            let hasLabels = !!col.labelsEntity;
-
-            var cssClasses = [];
-            if (col.dataType === 'SET') {
-                cssClasses.push('index');
-            }
-            if (hasLabels) {
-
-            } else {
-                switch (col.elementType) {
-                    case 'NUMERIC':
-                        cssClasses.push('numeric');
-                        break;
-                    case 'INTEGER':
-                        cssClasses.push('numeric');
-                        break;
-                    case 'REAL':
-                        cssClasses.push('numeric');
-                        break;
-                    case 'BOOLEAN':
-                        cssClasses.push('numeric');
-                        break;
-                    default:
-
-                        break;
-                }
-            }
-            col.cssClass = cssClasses.join('-');
 
             return col;
         });

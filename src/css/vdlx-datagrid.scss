@@ -200,6 +200,13 @@ vdlx-datagrid {
               padding: 9px 5px;
             }
           }
+          &.tabulator-editing {
+            &.select-editor {
+              input {
+                opacity: 0;
+              }
+            }
+          }
         }
       }
     }
@@ -292,6 +299,9 @@ vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tab
     &.active:not(:hover) {
       background-color: white;
       color: $black;
+    }
+    .numeric {
+      text-align: right;
     }
   }
 }
