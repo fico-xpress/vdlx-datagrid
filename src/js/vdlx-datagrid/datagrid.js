@@ -29,7 +29,6 @@ const addSelectNull = (items) => {
     return items;
 };
 
-
 const resolveDisplayEntity = (schema, entity) => {
     var labelsEntityName = entity.getLabelsEntity();
     if (!labelsEntityName) {
@@ -102,6 +101,7 @@ class Datagrid {
         this.validate();
         this.updatePaginator();
         this.recalculateHeight(ko.unwrap(this.gridOptions$));
+        this.recalculateWidth();
     }
 
     saveState() {
@@ -193,6 +193,20 @@ class Datagrid {
             }
 
             this.table.setHeight(height);
+        }
+    }
+
+    recalculateWidth() {
+        const tableWidth = $(this.table.element).width();
+        const columnsWidth = this.table.columnManager.getWidth();
+
+        if (columnsWidth < tableWidth) {
+            const columns = this.table.getColumns();
+            const toAddPx = (tableWidth - columnsWidth) / columns.length;
+            
+            _.each(columns, column =>
+                column._column.setWidthActual(_.floor(column._column.getWidth() + toAddPx))
+            );
         }
     }
 
@@ -484,8 +498,11 @@ class Datagrid {
                     } else {
                         if (value !== oldValue) {
                             saveValue(cell.getData(), value)
+                                .then(() => this.table.redraw(true))
                                 .catch(err => {
-                                    debugger;
+                                    cell.restoreOldValue();
+                                    // TODO: message saying 
+                                    // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
                                 });
                         }
                     }
