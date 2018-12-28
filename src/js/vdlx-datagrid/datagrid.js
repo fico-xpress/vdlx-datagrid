@@ -201,11 +201,11 @@ class Datagrid {
         const columnsWidth = this.table.columnManager.getWidth();
 
         if (columnsWidth < tableWidth) {
-            const columns = this.table.getColumns();
+            const columns = _.reject(this.table.getColumns(), column => !!column.getDefinition().width);
             const toAddPx = (tableWidth - columnsWidth) / columns.length;
-            
+
             _.each(columns, column =>
-                column._column.setWidthActual(_.floor(column._column.getWidth() + toAddPx))
+                column._column.setWidthActual(column._column.getWidth() + toAddPx)
             );
         }
     }
@@ -236,7 +236,6 @@ class Datagrid {
     createStateManager(gridOptions, setNameAndPosns, scenarios) {
         if (gridOptions.saveState) {
             const saveStateSuffix = _.map(setNameAndPosns, 'name')
-                // .concat(_.map(scenarios, scenario => scenario.getId()))
                 .join('#');
 
             return createStateManager(gridOptions.tableId, saveStateSuffix);
