@@ -45,6 +45,7 @@ vdlx-datagrid {
 
   .tabulator {
     margin-bottom: 0;
+    overflow: visible;
 
     &.table-striped {
       .tabulator-table {
@@ -77,6 +78,7 @@ vdlx-datagrid {
       .tabulator-movingrow-receiving {
       }
       .tabulator-header {
+        overflow: visible;
         background-color: $color-table-header;
         border-bottom: 1px solid $color-medium-grey;
         .tabulator-headers {
@@ -176,6 +178,7 @@ vdlx-datagrid {
       .tabulator-page {
       }
       .tabulator-tableHolder {
+        overflow: visible;
         .tabulator-cell {
           .checkbox-editor {
             text-align: center;

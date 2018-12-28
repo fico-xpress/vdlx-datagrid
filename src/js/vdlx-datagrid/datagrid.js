@@ -160,7 +160,7 @@ class Datagrid {
             pagination: options.pagination,
             paginationSize: options.paginationSize,
             paginationElement: options.paginationElement,
-            layout: 'fitColumns',
+            layout: 'fitDataFill',
             placeholder: 'No data available',
             groupStartOpen: false,
             ajaxLoader: true,
@@ -168,16 +168,10 @@ class Datagrid {
             resizableColumns: false,
             dataFiltered: saveState,
             dataSorting: saveState,
-            // can select only 1 row
-            // selectable: 1,
-            cellEditing: (cell) => {
-                select(cell.getRow());
-            },
-            rowClick: (e, row) => {
-                select(row);
-            },
+            cellEditing: (cell) => select(cell.getRow()),
+            rowClick: (e, row) => select(row),
             rowSelectionChanged: (data, rows) => this.setSelectedRow(_.first(rows)),
-            renderComplete: () => this.update()
+            renderComplete: () => this.update(),
         };
 
         const table = new Tabulator(`#${options.tableId}`, tabulatorOptions);
