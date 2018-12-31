@@ -21,6 +21,9 @@ const dialogs = insightModules.load('dialogs')
 import perf from '../performance-measurement';
 import { createStateManager } from './state-peristence';
 
+const SELECTION_CHANGED_EVENT = 'selection-changed';
+const SELECTION_REMOVED_EVENT = 'selection-removed';
+
 const addSelectNull = (items) => {
     if (Array.isArray(items)) {
         // add empty option to the start of the list
@@ -30,7 +33,7 @@ const addSelectNull = (items) => {
 };
 
 const resolveDisplayEntity = (schema, entity) => {
-    var labelsEntityName = entity.getLabelsEntity();
+    const labelsEntityName = entity.getLabelsEntity();
     if (!labelsEntityName) {
         return entity;
     }
@@ -213,6 +216,30 @@ class Datagrid {
     setSelectedRow(row) {
         if (this.addRemoveRowControl) {
             this.addRemoveRowControl.setSelectedRow(row);
+        }
+
+        if (row) {
+            const rowPosition = row.getPosition();
+            const rowData = _.map(row.getCells(), cell => cell.getValue());
+
+            const getCell = (cell, cellIndex) => (
+                {
+                    rowData: rowData,
+                    value: cell.getValue(),
+                    element: cell.getElement(),
+                    displayPosition: { row: rowPosition, column: cellIndex },
+                }
+            );
+
+            const cells = _.map(row.getCells(), getCell);
+
+            $(this.table.element).trigger(SELECTION_CHANGED_EVENT, {
+                selection: cells,
+                activeCell: _.first(cells),
+                selectionType: 'ROW'
+            });
+        } else {
+            $(this.table.element).trigger(SELECTION_REMOVED_EVENT);
         }
     }
 
