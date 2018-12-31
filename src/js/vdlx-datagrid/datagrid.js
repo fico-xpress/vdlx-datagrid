@@ -32,6 +32,8 @@ const addSelectNull = (items) => {
     return items;
 };
 
+// Make table inactive when clicking out of the table
+
 const resolveDisplayEntity = (schema, entity) => {
     const labelsEntityName = entity.getLabelsEntity();
     if (!labelsEntityName) {
@@ -77,6 +79,14 @@ class Datagrid {
 
         this.buildTable();
         this.update();
+
+        $(document).on('mousedown', e => {
+            if (!$(e.target).parents('#' + this.table.element.id).length) {
+                if (!_.isEmpty(this.table.getSelectedRows())) {
+                    this.table.modules.selectRow.deselectRows();
+                } 
+            }
+        });
     }
 
     buildTable() {
@@ -178,6 +188,7 @@ class Datagrid {
         };
 
         const table = new Tabulator(`#${options.tableId}`, tabulatorOptions);
+
 
         return table;
     }
