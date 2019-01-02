@@ -20,6 +20,7 @@ const dialogs = insightModules.load('dialogs')
 
 import perf from '../performance-measurement';
 import { createStateManager } from './state-peristence';
+import { DatagridLock } from './datagrid-lock';
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
@@ -79,6 +80,9 @@ class Datagrid {
 
         this.buildTable();
         this.update();
+
+        this.tableLock = new DatagridLock(this.table.element);
+        // this.tableLock.lock();
 
         $(document).on('mousedown', e => {
             if (!$(e.target).parents('#' + this.table.element.id).length) {
@@ -225,6 +229,10 @@ class Datagrid {
     }
 
     setSelectedRow(row) {
+        if (!this.table) {
+            return;
+        }
+
         if (this.addRemoveRowControl) {
             this.addRemoveRowControl.setSelectedRow(row);
         }
@@ -319,6 +327,7 @@ class Datagrid {
     }
 
     setColumnsAndData(gridOptions, columnOptions, scenariosData) {
+        // this.tableLock.lock();
         const table = this.table;
         const schema = this.schema;
         const indicesOptions = columnOptions.indicesOptions;
@@ -592,6 +601,7 @@ class Datagrid {
         return perf('PERF Tabulator.setData():', () => table
             .setData(data)
             .then(() => table.redraw())
+            // .then(() => this.tableLock.unlock())
             .catch(err => {
                 debugger;
             }));
