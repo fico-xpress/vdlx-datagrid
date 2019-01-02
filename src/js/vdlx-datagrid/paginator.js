@@ -24,6 +24,16 @@ const PAGINATOR_TEMPLATE = `
 </div>
 `;
 
+
+/**
+ * @param {JQuery<HTMLElement>} element
+ * @returns {boolean}
+ */
+const isActiveSelectionOutsideAPaginationControl = (element) => {
+    return element.parents('.active-pager-btn').length === 0
+        && element.parents('.paging_fico').length === 0;
+}
+
 export default class Paginator {
     constructor(table, tablePageSize) {
         this.table = table;
@@ -129,6 +139,16 @@ export default class Paginator {
         return currentPage;
     }
 
+    toggle () {
+        this.$revealBtn.toggleClass('active-pager-btn');
+        this.$dropdown.toggleClass('hide');
+    }
+
+    close() {
+        this.$revealBtn.removeClass('active-pager-btn');
+        this.$dropdown.addClass('hide');
+    }
+
     /**
      * Given a jQuery node, appends this Paginator to it and sets up event handling.
      * @param {Element} container
@@ -145,8 +165,7 @@ export default class Paginator {
         this.$pageNumbersSpan = this.$paginationControl.find('.paginate-control-text');
 
         this.$revealBtn.on('mousedown', () => {
-            this.$revealBtn.toggleClass('active-pager-btn');
-            this.$dropdown.toggleClass('hide');
+            this.toggle();
         });
 
         this.$prevBtn.on('mouseup', () => {
@@ -171,6 +190,14 @@ export default class Paginator {
             let val = _.parseInt(evt.target.value);
             this.table.setPageSize(val);
             this.updatePageIndicators();
+        });
+
+        $('html').on('mouseup', (e) => {
+            var currentElement = $(e.target);
+
+            if (isActiveSelectionOutsideAPaginationControl(currentElement)) { // hide all pagination dialogs
+                this.close();
+            }
         });
     }
 }
