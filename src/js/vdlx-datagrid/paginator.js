@@ -29,10 +29,6 @@ const PAGINATOR_TEMPLATE = `
  * @param {JQuery<HTMLElement>} element
  * @returns {boolean}
  */
-const isActiveSelectionOutsideAPaginationControl = (element) => {
-    return element.parents('.active-pager-btn').length === 0
-        && element.parents('.paging_fico').length === 0;
-}
 
 export default class Paginator {
     constructor(table, tablePageSize) {
@@ -42,6 +38,16 @@ export default class Paginator {
         const pageSizeOptions = _.uniq(_.filter(_.sortBy([5, 10, 25, 50, 100, tablePageSize])));
         const pageSizeOptionsHtml = _.map(pageSizeOptions, pageSize => `<option value="${pageSize}" ${tablePageSize === pageSize ? 'selected' : ''}>${pageSize}</option>`).join('');
         this.$paginationControl.find('.results-per-page-selector').append(pageSizeOptionsHtml);
+    }
+
+    isActiveSelectionOutsideAPaginationControl (element) {
+        const targetDatagrid = element.closest(`vdlx-datagrid`)
+        if (_.isEmpty(targetDatagrid)) {
+            return true;
+        }
+        return $(this.table.element)
+            .closest('vdlx-datagrid')
+            .get(0) !== targetDatagrid.get(0);
     }
 
     /*
@@ -195,7 +201,7 @@ export default class Paginator {
         $('html').on('mouseup', (e) => {
             var currentElement = $(e.target);
 
-            if (isActiveSelectionOutsideAPaginationControl(currentElement)) { // hide all pagination dialogs
+            if (this.isActiveSelectionOutsideAPaginationControl(currentElement)) { // hide all pagination dialogs
                 this.close();
             }
         });
