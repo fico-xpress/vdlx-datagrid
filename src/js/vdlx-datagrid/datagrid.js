@@ -363,7 +363,7 @@ class Datagrid {
                 }
                 return classes.join('-');
             }
-            return _.assign({}, setNameAndPosn.options, {
+            let column = _.assign({}, setNameAndPosn.options, {
                 title: _.escape(String(title)),
                 field: options.id,
                 cssClass: getClass(),
@@ -371,8 +371,17 @@ class Datagrid {
                 dataType: entity.getType(),
                 elementType: entity.getElementType(),
                 labelsEntity: entity.getLabelsEntity(),
-                name: name
+                name: name,
             });
+
+            if (gridOptions.columnFilter) {
+                column = _.assign(column, {
+                    headerFilterPlaceholder: 'No filter',
+                    headerFilter: !!gridOptions.columnFilter,
+                    headerFilterFunc: chooseColumnFilter(column)
+                });
+            }
+            return column;
         });
 
         const columnsIds = [].concat(_.map(setNamePosnsAndOptions, 'options.id'), _.map(entitiesOptions, 'id'));
@@ -522,7 +531,7 @@ class Datagrid {
                 return classes.join('-');
             }
 
-            return _.assign({}, entityOptions, {
+            let column = _.assign({}, entityOptions, {
                 title: _.escape(String(title)),
                 field: entityOptions.id,
                 cssClass: getClasses(),
@@ -563,19 +572,39 @@ class Datagrid {
                 getRowKey: getRowKey,
                 validate: validateAndStyle
             });
-        });
 
-        const overrides = gridOptions.overrides;
-        const columns = _.map([].concat(indicesColumns, entitiesColumns), col => {
-            if (!!overrides.columnFilter) {
-                col.headerFilterPlaceholder = 'No filter';
-                // col.headerFilter = fullTitleFormatter;
-                col.headerFilter = true;
-                col.headerFilterFunc = chooseColumnFilter(col);
+            if (gridOptions.columnFilter) {
+                const getHeaderFilter = () => {
+                    if (column.editor === 'checkbox') {
+                        return 'select';
+                    }
+                    return true;
+                }
+                const getHeaderFilterParams = () => {
+                    if (column.editor === 'checkbox') {
+                        const checkedValue = _.get(entityOptions, 'checkedValue', true);
+                        const uncheckedValue = _.get(entityOptions, 'uncheckedValue', false);
+                        return {
+                            values: [
+                                { value: undefined, label: 'No Filter' },
+                                { value: checkedValue, label: 'Checked' },
+                                { value: uncheckedValue, label: 'Unchecked' }
+                            ]
+                        };
+                    }
+                };
+                column = _.assign(column, {
+                    headerFilterPlaceholder: 'No filter',
+                    headerFilter: getHeaderFilter(),
+                    headerFilterParams: getHeaderFilterParams(),
+                    headerFilterFunc: chooseColumnFilter(column)
+                });
             }
 
-            return col;
+            return column;
         });
+
+        const columns = [].concat(indicesColumns, entitiesColumns)
 
         const {data, allSetValues} = perf('PERF Data generation:', () =>
             dataTransform(

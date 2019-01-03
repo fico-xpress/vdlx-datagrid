@@ -140,11 +140,11 @@ let realFilter = (column, valueTxt, cellValue, rowData, params) => {
 
 export let chooseColumnFilter = (column) => {
     switch (column.elementType) {
-        case "INTEGER":
+        case 'INTEGER':
             return _.partial(integerFilter, column);
-        case "REAL":
+        case 'REAL':
             return _.partial(realFilter, column);
         default:
-            break;
+            return undefined
     }
 };

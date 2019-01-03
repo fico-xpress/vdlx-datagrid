@@ -30,6 +30,7 @@ const getTableOptions = (params) => () => {
         addRemoveRow: params.addRemoveRow,
         selectionAndNavigation: params.selectionNavigation,
         overrides: overrides,
+        columnFilter: params.columnFilter,
         onError: _.bindKey(self, '_wrapAlert'),
         alwaysShowSelection: params.alwaysShowSelection,
         gridHeight: params.gridHeight,
