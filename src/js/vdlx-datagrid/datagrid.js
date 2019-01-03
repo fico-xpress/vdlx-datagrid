@@ -215,7 +215,11 @@ class Datagrid {
     }
 
     recalculateWidth() {
-        const tableWidth = $(this.table.element).width();
+        const tableHolder = _.first(this.table.element
+            .getElementsByClassName('tabulator-tableHolder'));
+
+        const tableWidth = tableHolder ? tableHolder.clientWidth : 0;
+
         const columnsWidth = this.table.columnManager.getWidth();
 
         if (columnsWidth < tableWidth) {
