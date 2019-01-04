@@ -227,7 +227,12 @@ VDL('vdlx-datagrid-column', {
             if (!!params.entity) {
                 props.entity = params.entity;
                 if (!params.editorType) {
-                    const type = insight.getView().getProject().getModelSchema().getEntity(params.entity).getType();
+                    const type = insight
+                        .getView()
+                        .getProject()
+                        .getModelSchema()
+                        .getEntity(params.entity)
+                        .getElementType();
 
                     switch (type) {
                         case enums.DataType.BOOLEAN:

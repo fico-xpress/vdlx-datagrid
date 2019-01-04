@@ -215,8 +215,9 @@ class Datagrid {
     }
 
     recalculateWidth() {
-        const tableHolder = _.first(this.table.element
-            .getElementsByClassName('tabulator-tableHolder'));
+        const tableHolder = _.first(
+            this.table.element.getElementsByClassName('tabulator-tableHolder')
+        );
 
         const tableWidth = tableHolder ? tableHolder.clientWidth : 0;
 
@@ -513,7 +514,7 @@ class Datagrid {
             const title = _.get(entityOptions, 'title', entity.getAbbreviation() || name);
 
             const getCellEditingHandler = () => {
-                if (entityOptions.editorType !== 'select') {
+                if (entityOptions.editorType !== EDITOR_TYPES.select) {
                     return cell => {
                         const element = cell.getElement();
                         $(element).on('keyup', (evt) => {
@@ -529,7 +530,7 @@ class Datagrid {
                 if (isNumberEntity) {
                     classes = classes.concat('numeric');
                 }
-                if (entityOptions.editorType === 'select') {
+                if (entityOptions.editorType === EDITOR_TYPES.select) {
                     classes = classes.concat('select-editor')
                 }
                 return classes.join('-');
