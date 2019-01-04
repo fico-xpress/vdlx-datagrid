@@ -1,6 +1,6 @@
 /**
  * The transform function takes care of setting up/initialising a VDL extension.
- * @param element - The VDL DOM node.
+ * @param {HTMLElement} element - The VDL DOM node.
  * @param attributes - A map of attributes by key.
  * @param api - Helper methods for VDL extension creation.
  */
@@ -102,11 +102,10 @@ export default function transform(element, attributes, api) {
         paramsBuilder.addParam('class', klass.rawValue);
     }
 
-    // TODO any way to achieve this? Is it needed?
-    // var alwaysShowSelection = attributes['always-show-selection'];
-    // if (alwaysShowSelection && (alwaysShowSelection.rawValue.toUpperCase() === 'TRUE')) {
-    //     paramsBuilder.addParam('alwaysShowSelection', true);
-    // }
+    var alwaysShowSelection = attributes['always-show-selection'];
+    if (alwaysShowSelection && (alwaysShowSelection.rawValue.toUpperCase() === 'TRUE')) {
+        paramsBuilder.addParam('alwaysShowSelection', true);
+    }
 
     var rowFilter = attributes['row-filter'];
     if (rowFilter) {

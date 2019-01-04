@@ -85,7 +85,7 @@ class Datagrid {
 
         $(document).on('mousedown', e => {
             if (!$(e.target).parents('#' + this.table.element.id).length) {
-                if (!_.isEmpty(this.table.getSelectedRows())) {
+                if (!_.isEmpty(this.table.getSelectedRows()) && !options.alwaysShowSelection) {
                     this.table.modules.selectRow.deselectRows();
                 } 
             }
