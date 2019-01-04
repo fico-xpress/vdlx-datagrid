@@ -365,7 +365,7 @@ class Datagrid {
                 if (isNumberEntity) {
                     classes = classes.concat('numeric');
                 }
-                return classes.join('-');
+                return classes.join(' ');
             }
             let column = _.assign({}, setNameAndPosn.options, {
                 title: _.escape(String(title)),
@@ -534,7 +534,7 @@ class Datagrid {
                 if (entityOptions.editorType === EDITOR_TYPES.select) {
                     classes = classes.concat('select-editor')
                 }
-                return classes.join('-');
+                return classes.join(' ');
             }
 
             let column = _.assign({}, entityOptions, {
