@@ -215,6 +215,7 @@ class Datagrid {
     }
 
     recalculateWidth() {
+        debugger;
         const tableHolder = _.first(this.table.element
             .getElementsByClassName('tabulator-tableHolder'));
 
@@ -223,7 +224,11 @@ class Datagrid {
         const columnsWidth = this.table.columnManager.getWidth();
 
         if (columnsWidth < tableWidth) {
-            const columns = _.reject(this.table.getColumns(), column => !!column.getDefinition().width);
+            const columns = _.filter(
+              _.reject(this.table.getColumns(), column => !!column.getDefinition().width),
+              column => column.getVisibility()
+            );
+
             const toAddPx = (tableWidth - columnsWidth) / columns.length;
 
             _.each(columns, column =>
