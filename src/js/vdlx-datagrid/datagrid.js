@@ -215,7 +215,6 @@ class Datagrid {
     }
 
     recalculateWidth() {
-        debugger;
         const tableHolder = _.first(this.table.element
             .getElementsByClassName('tabulator-tableHolder'));
 
