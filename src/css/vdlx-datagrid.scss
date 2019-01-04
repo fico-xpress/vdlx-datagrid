@@ -284,6 +284,21 @@ vdlx-datagrid {
   vdlx-datagrid-column {
     display: none;
   }
+
+  .insight-table-locked {
+    position: relative;
+  }
+
+  .insight-table-locked-overlay {
+    .fico-spinner {
+      font-size: 40px;
+      animation: spin 2s linear infinite;
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    }
+  }
 }
 
 .tabulator.table-bordered .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {

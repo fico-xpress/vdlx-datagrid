@@ -8,6 +8,12 @@ const DEFAULT_MESSAGE = 'The table is currently locked';
 const TABLE_LOCKED_CLASS = 'insight-table-locked';
 const TABLE_LOCKED_OVERLAY_CLASS = 'insight-table-locked-overlay';
 const TABLE_LOCKED_OVERLAY_NON_TRANSPARENT_CLASS = 'non-transparent';
+const FICO_SPINNER_CLASS = 'fico-spinner';
+
+const OVERLAY_CLASSES = [
+    TABLE_LOCKED_OVERLAY_CLASS,
+    TABLE_LOCKED_OVERLAY_NON_TRANSPARENT_CLASS,
+].join(' ');
 
 export class DatagridLock {
     /**
@@ -38,15 +44,10 @@ export class DatagridLock {
                 e.preventDefault();
             });
 
-        var $overlay = $('<div>', { 'class': TABLE_LOCKED_OVERLAY_CLASS });
+        var $overlay = $(`<div class="${OVERLAY_CLASSES}"><div class="${FICO_SPINNER_CLASS}"></div></div>`);
         $overlay.appendTo(this.$wrapperElement);
 
-        // this.overlayDeferred = setTimeout(() => {
-            $overlay
-                .addClass(TABLE_LOCKED_OVERLAY_NON_TRANSPARENT_CLASS)
-                .append($('<div>').text(message));
-            this.overlayDeferred = null;
-        // }, 2000);
+        this.overlayDeferred = null;
     }
 
     unlock () {

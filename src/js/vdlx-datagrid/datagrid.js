@@ -81,7 +81,7 @@ class Datagrid {
         this.update();
 
         this.tableLock = new DatagridLock(this.table.element);
-        // this.tableLock.lock();
+        this.tableLock.lock();
 
         $(document).on('mousedown', e => {
             if (!$(e.target).parents('#' + this.table.element.id).length) {
@@ -335,7 +335,7 @@ class Datagrid {
     }
 
     setColumnsAndData(gridOptions, columnOptions, scenariosData) {
-        // this.tableLock.lock();
+        this.tableLock.lock();
         const table = this.table;
         const schema = this.schema;
         const indicesOptions = columnOptions.indicesOptions;
@@ -650,7 +650,7 @@ class Datagrid {
         return perf('PERF Tabulator.setData():', () => table
             .setData(data)
             .then(() => table.redraw())
-            // .then(() => this.tableLock.unlock())
+            .then(() => this.tableLock.unlock())
             .catch(err => {
                 debugger;
             }));
