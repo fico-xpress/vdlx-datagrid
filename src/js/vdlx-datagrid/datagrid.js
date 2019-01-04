@@ -25,16 +25,15 @@ import { DatagridLock } from './datagrid-lock';
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
 
-const addSelectNull = (items) => {
-    if (Array.isArray(items)) {
+const addSelectNull = items => {
+    if (_.isArray(items)) {
         // add empty option to the start of the list
-        items.unshift({key: '', value: ''});
+        return [{ key: undefined, value: '' }].concat(items);
     }
     return items;
 };
 
 // Make table inactive when clicking out of the table
-
 const resolveDisplayEntity = (schema, entity) => {
     const labelsEntityName = entity.getLabelsEntity();
     if (!labelsEntityName) {
@@ -401,6 +400,7 @@ class Datagrid {
             const columnScenario = _.get(scenariosData.scenarios, entityOptions.id, scenariosData.defaultScenario);
 
             const setArrayElement = (change) => columnScenario.modify().setArrayElement(entityOptions.name, change).commit();
+            const removeArrayElement = (rowKey) => columnScenario.modify().removeFromArray(entityOptions.name, rowKey).commit();
 
             const getRowKey = _.compose(
                 (rowData) => {
@@ -411,6 +411,7 @@ class Datagrid {
             );
 
             const saveValue = (rowData, value) => setArrayElement({key: getRowKey(rowData), value: value});
+            const removeValue = (rowData) => removeArrayElement(getRowKey(rowData));
 
             const checkboxFormatter = (cell) => {
                 const checked = String(cell.getValue()) === String(_.get(entityOptions, 'checkedValue', true)) ? 'checked' : '';
@@ -561,13 +562,23 @@ class Datagrid {
                         });
                     } else {
                         if (value !== oldValue) {
-                            saveValue(cell.getData(), value)
-                                .then(() => this.table.redraw(true))
-                                .catch(err => {
-                                    cell.restoreOldValue();
-                                    // TODO: message saying 
-                                    // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
-                                });
+                            if (_.isUndefined(value)) {
+                                removeValue(cell.getData())
+                                    .then(() => this.table.redraw(true))
+                                    .catch(err => {
+                                        cell.restoreOldValue();
+                                        // TODO: message saying 
+                                        // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
+                                    });
+                            } else {
+                                saveValue(cell.getData(), value)
+                                    .then(() => this.table.redraw(true))
+                                    .catch(err => {
+                                        cell.restoreOldValue();
+                                        // TODO: message saying 
+                                        // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
+                                    });
+                            }
                         }
                     }
                 },
