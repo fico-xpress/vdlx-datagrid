@@ -1,8 +1,8 @@
 import perf from '../performance-measurement';
-import createDenseData from './create-dense-data';
 
 const DataUtils = insightModules.load('utils/data-utils');
 const createSparseData = insightModules.load('components/table/create-sparse-data');
+const createDenseData = insightModules.load('components/table/create-dense-data');
 const SelectOptions = insightModules.load('components/autotable-select-options');
 
 export const getAllColumnIndices = _.curry((schema, columnOptions) => {
@@ -72,6 +72,9 @@ export const createGenerateCompositeKey = (setNameAndPosns) => {
     const setNameAndPosnsIndices = _.reduce(setNameAndPosns, (acc, setNameAndPosn, i) => _.set(acc, [setNameAndPosn.name, setNameAndPosn.position], i), {});
 
     return (setValues, __, arrayIndices, arrayOptions) => {
+        if (_.isEmpty(arrayOptions.filters)) {
+            return setValues;
+        }
         const setPosns = getIndexPosns(arrayIndices);
         const result = [];
         for(let i = 0; i < arrayIndices.length; i++) {

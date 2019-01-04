@@ -591,13 +591,13 @@ class Datagrid {
 
             if (gridOptions.columnFilter) {
                 const getHeaderFilter = () => {
-                    if (column.editor === 'checkbox') {
-                        return 'select';
+                    if (column.editor === EDITOR_TYPES.checkbox) {
+                        return EDITOR_TYPES.select;
                     }
                     return true;
                 }
                 const getHeaderFilterParams = () => {
-                    if (column.editor === 'checkbox') {
+                    if (column.editor === EDITOR_TYPES.checkbox) {
                         const checkedValue = _.get(entityOptions, 'checkedValue', true);
                         const uncheckedValue = _.get(entityOptions, 'uncheckedValue', false);
                         return {
