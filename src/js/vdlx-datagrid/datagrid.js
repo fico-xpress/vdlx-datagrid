@@ -83,13 +83,22 @@ class Datagrid {
         this.tableLock = new DatagridLock(this.table.element);
         this.tableLock.lock();
 
-        $(document).on('mousedown', e => {
-            if (!$(e.target).parents('#' + this.table.element.id).length) {
+        const mouseDownListener = e => {
+            if (!root.contains(e.target)) {
                 if (!_.isEmpty(this.table.getSelectedRows()) && !options.alwaysShowSelection) {
                     this.table.modules.selectRow.deselectRows();
                 } 
             }
-        });
+        }
+        document.addEventListener('mousedown', mouseDownListener);
+
+        this.subscriptions = this.subscriptions.concat([
+            {
+                dispose: () => {
+                    document.removeEventListener('mousedown', mouseDownListener);
+                }
+            }
+        ]);
     }
 
     buildTable() {
