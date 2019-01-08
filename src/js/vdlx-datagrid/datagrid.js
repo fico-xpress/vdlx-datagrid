@@ -114,7 +114,7 @@ class Datagrid {
                     const scenariosData = scenariosData$();
 
                     if (gridOptions && columnOptions && scenariosData) {
-                        perf('PERF TOTAL:', () => this.setColumnsAndData(gridOptions, columnOptions, scenariosData));
+                        return perf('PERF TOTAL:', () => this.setColumnsAndData(gridOptions, columnOptions, scenariosData));
                     }
                     return undefined;
                 })

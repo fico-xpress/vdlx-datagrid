@@ -126,8 +126,6 @@ export default function createViewModel(params, componentInfo) {
     var datagrid = new Datagrid(element, tableOptions$, columnConfig$);
 
     function buildTable () {
-
-
         /*
         Collect the column information from the child VDL extensions (vdlx-datagrid-column)
          */
@@ -137,6 +135,7 @@ export default function createViewModel(params, componentInfo) {
                 return _.clone(element['autotableConfig']);
             });
         if(!columnConfigs.length) {
+            columnConfig$({columnOptions: [], indicesOptions: {}, scenarioList: []});
             return;
         }
 
