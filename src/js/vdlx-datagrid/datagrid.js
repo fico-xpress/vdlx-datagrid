@@ -77,11 +77,10 @@ class Datagrid {
         this.paginatorControl = this.createPaginatorControl(footerToolbar, this.table, options);
         this.stateManager = null;
 
+        this.tableLock = new DatagridLock(this.table.element);
+
         this.buildTable();
         this.update();
-
-        this.tableLock = new DatagridLock(this.table.element);
-        this.tableLock.lock();
 
         const mouseDownListener = e => {
             if (!root.contains(e.target)) {
@@ -113,8 +112,15 @@ class Datagrid {
                     const columnOptions = columnOptions$();
                     const scenariosData = scenariosData$();
 
+                    if (!_.isEmpty(_.get(columnOptions, 'columnOptions'))) {
+                        this.tableLock.lock();
+                    }
+
                     if (gridOptions && columnOptions && scenariosData) {
-                        return perf('PERF TOTAL:', () => this.setColumnsAndData(gridOptions, columnOptions, scenariosData));
+                        return perf('PERF TOTAL:', () =>
+                            this.setColumnsAndData(gridOptions, columnOptions, scenariosData)
+                                .then(() => this.tableLock.unlock())
+                        );
                     }
                     return undefined;
                 })
@@ -334,7 +340,6 @@ class Datagrid {
     }
 
     setColumnsAndData(gridOptions, columnOptions, scenariosData) {
-        this.tableLock.lock();
         const table = this.table;
         const schema = this.schema;
         const indicesOptions = columnOptions.indicesOptions;
@@ -662,7 +667,6 @@ class Datagrid {
         return perf('PERF Tabulator.setData():', () => table
             .setData(data)
             .then(() => redraw())
-            .then(() => this.tableLock.unlock())
             .catch(err => {
                 debugger;
             }));
