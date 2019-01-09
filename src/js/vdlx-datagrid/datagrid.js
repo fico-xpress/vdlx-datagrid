@@ -144,22 +144,12 @@ class Datagrid {
             if (state) {
                 !_.isEmpty(state.sorters) && this.table.setSort(state.sorters);
                 if (!_.isEmpty(state.filters)) {
-                    // TODO: temporary until tabulator merges a pull request
-                    // https://github.com/olifolkerd/tabulator/pull/1685
-                    const removeOldHeaderFilter = column => _.each(
-                        column.getElement().getElementsByClassName('tabulator-header-filter'),
-                        elm => elm.parentNode.removeChild(elm)
-                    );
-                    _.each(this.table.getColumns(), removeOldHeaderFilter);
-
                     this.table.clearHeaderFilter();
                     _.each(state.filters, filter => {
                         const column = this.table.getColumn(filter.field);
                         if (!column) {
                             return;
                         }
-
-                        removeOldHeaderFilter(column);
 
                         this.table.setHeaderFilterValue(filter.field, filter.value)
                     });
@@ -295,9 +285,9 @@ class Datagrid {
         return paginatorControl;
     }
 
-    createStateManager(gridOptions, setNameAndPosns, scenarios) {
+    createStateManager(gridOptions, columns, scenarios) {
         if (gridOptions.saveState) {
-            const saveStateSuffix = _.map(setNameAndPosns, 'name')
+            const saveStateSuffix = _.map(columns, 'name')
                 .join('#');
 
             return createStateManager(gridOptions.tableId, saveStateSuffix);
@@ -652,7 +642,7 @@ class Datagrid {
 
         table.setColumns(columns);
 
-        this.stateManager = this.createStateManager(gridOptions, setNameAndPosns, _.map(entitiesColumns, 'scenario'));
+        this.stateManager = this.createStateManager(gridOptions, columns, _.map(entitiesColumns, 'scenario'));
         this.loadState();
 
         return perf('PERF Tabulator.setData():', () => table
