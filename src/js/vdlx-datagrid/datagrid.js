@@ -445,7 +445,9 @@ class Datagrid {
 
             const getCellClickHandler = () => {
                 if (entityOptions.editorType === EDITOR_TYPES.checkbox) {
-                    return checkboxCellClickHandler;
+                    if (entityOptions.editable) {
+                        return checkboxCellClickHandler;
+                    }
                 }
                 return undefined;
             };
