@@ -81,6 +81,7 @@ class Datagrid {
         this.update();
 
         this.tableLock = new DatagridLock(this.table.element);
+        this.tableLock.lock();
 
         const mouseDownListener = e => {
             if (!root.contains(e.target)) {
