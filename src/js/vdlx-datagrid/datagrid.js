@@ -592,7 +592,7 @@ class Datagrid {
                     if (column.editor === EDITOR_TYPES.checkbox) {
                         return EDITOR_TYPES.select;
                     }
-                    return true;
+                    return EDITOR_TYPES.text;
                 }
                 const getHeaderFilterParams = () => {
                     if (column.editor === EDITOR_TYPES.checkbox) {
