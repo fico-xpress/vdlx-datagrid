@@ -645,9 +645,22 @@ class Datagrid {
         this.stateManager = this.createStateManager(gridOptions, columns, _.map(entitiesColumns, 'scenario'));
         this.loadState();
 
+        const redraw = () => {
+            if (this.table.element.offsetParent) {
+                return Promise.resolve(this.table.redraw(true));
+            } else {
+                return new Promise((resolve, reject) => {
+                    _.delay(() => {
+                        redraw()
+                            .then(resolve)
+                            .catch(reject);
+                    }, 100);
+                })
+            }
+        };
         return perf('PERF Tabulator.setData():', () => table
             .setData(data)
-            .then(() => table.redraw())
+            .then(() => redraw())
             .then(() => this.tableLock.unlock())
             .catch(err => {
                 debugger;
