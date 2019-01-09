@@ -615,11 +615,23 @@ class Datagrid {
                         };
                     }
                 };
+                const headerFilter = getHeaderFilter();
+                const headerFilterParams = getHeaderFilterParams();
                 column = _.assign(column, {
                     headerFilterPlaceholder: 'No filter',
-                    headerFilter: getHeaderFilter(),
-                    headerFilterParams: getHeaderFilterParams(),
-                    headerFilterFunc: chooseColumnFilter(column)
+                    headerFilter: headerFilter,
+                    headerFilterParams: headerFilterParams,
+                    headerFilterFunc: chooseColumnFilter(column),
+                    headerFilterEmptyCheck: (value) => {
+                        if (headerFilter === EDITOR_TYPES.select) {
+                            if (!value) {
+                                return true;
+                            }
+                            return !_.contains(_.map(headerFilterParams.values, 'value'), value);
+                        }
+                        return !value;
+                    }
+
                 });
             }
 
