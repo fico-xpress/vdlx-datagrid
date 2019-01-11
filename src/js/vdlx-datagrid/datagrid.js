@@ -624,7 +624,7 @@ class Datagrid {
                     headerFilterFunc: chooseColumnFilter(column),
                     headerFilterEmptyCheck: (value) => {
                         if (headerFilter === EDITOR_TYPES.select) {
-                            if (!value) {
+                            if (value == null) {
                                 return true;
                             }
                             return !_.contains(_.map(headerFilterParams.values, 'value'), value);
