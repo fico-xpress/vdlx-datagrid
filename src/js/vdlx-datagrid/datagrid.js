@@ -423,10 +423,7 @@ class Datagrid {
                 return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
             };
 
-            const defaultFormatter = (cell) => {
-                const keys = getRowKey(cell.getData());
-                return window.insight.Formatter.getFormattedLabel(entity, columnScenario, cell.getValue(), keys);
-            }
+            const defaultFormatter = cell => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue());
 
             const getFormatter = () => {
                 if (entityOptions.editorType === EDITOR_TYPES.checkbox) {
@@ -647,7 +644,16 @@ class Datagrid {
                     if (column.editor === EDITOR_TYPES.checkbox) {
                         return checkboxFilterFunc;
                     }
-                    return chooseColumnFilter(column);
+                    const columnFilter = chooseColumnFilter(column);
+
+                    if (_.isUndefined(columnFilter)) {
+                        return undefined;
+                    }
+
+                    return (valueTxt, cellValue, rowData, params) => {
+                        const label = SelectOptions.getLabel(schema, allScenarios, entity, cellValue);
+                        return columnFilter(valueTxt, label, rowData, params);
+                    };
                 }
 
                 column = _.assign(column, {
