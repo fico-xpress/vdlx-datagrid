@@ -383,10 +383,21 @@ class Datagrid {
             });
 
             if (gridOptions.columnFilter) {
+                const getHeaderFilterFn = () => {
+                    const columnFilter = chooseColumnFilter(column);
+                    if (columnFilter) {
+                        return (valueTxt, cellValue, rowData, params) => {
+                            const label = SelectOptions.getLabel(schema, allScenarios, entity, cellValue);
+                            return columnFilter(valueTxt, label, rowData, params);
+                        }
+                    }
+                    return undefined;
+                };
+
                 column = _.assign(column, {
                     headerFilterPlaceholder: 'No filter',
                     headerFilter: !!gridOptions.columnFilter,
-                    headerFilterFunc: chooseColumnFilter(column)
+                    headerFilterFunc: getHeaderFilterFn()
                 });
             }
             return column;
