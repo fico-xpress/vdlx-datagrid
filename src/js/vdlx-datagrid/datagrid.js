@@ -617,21 +617,46 @@ class Datagrid {
                 };
                 const headerFilter = getHeaderFilter();
                 const headerFilterParams = getHeaderFilterParams();
+                const checkboxFilterFunc = (valueTxt, cellValue, rowData, params) => {
+                    if (valueTxt === cellValue) {
+                        return true;
+                    }
+
+                    const optionMatch =_.find(params.values, keyValue => keyValue.value === valueTxt || keyValue.label === valueTxt);
+                    if (_.isUndefined(optionMatch)) {
+                        return false;
+                    }
+                    return optionMatch.value === cellValue;
+                };
+
+                const checkboxFilterEmptyCheck = (value) => {
+                    if (value == null) {
+                        return true;
+                    }
+                    const optionMatch =_.find(headerFilterParams.values, keyValue => keyValue.value === value || keyValue.label === value);
+                    return _.isUndefined(optionMatch) || _.isUndefined(optionMatch.value);
+                }
+
+                const getHeaderFilterEmptyCheckFn = () => {
+                    if (column.editor === EDITOR_TYPES.checkbox) {
+                        return checkboxFilterEmptyCheck;
+                    }
+                    return undefined;
+                }
+                const getHeaderFilterFn = () => {
+                    if (column.editor === EDITOR_TYPES.checkbox) {
+                        return checkboxFilterFunc;
+                    }
+                    return chooseColumnFilter(column);
+                }
+
                 column = _.assign(column, {
                     headerFilterPlaceholder: 'No filter',
                     headerFilter: headerFilter,
                     headerFilterParams: headerFilterParams,
-                    headerFilterFunc: chooseColumnFilter(column),
-                    headerFilterEmptyCheck: (value) => {
-                        if (headerFilter === EDITOR_TYPES.select) {
-                            if (value == null) {
-                                return true;
-                            }
-                            return !_.contains(_.map(headerFilterParams.values, 'value'), value);
-                        }
-                        return !value;
-                    }
-
+                    headerFilterFuncParams: headerFilterParams,
+                    headerFilterFunc: getHeaderFilterFn(),
+                    headerFilterEmptyCheck: getHeaderFilterEmptyCheckFn()
                 });
             }
 
