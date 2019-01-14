@@ -377,7 +377,7 @@ class Datagrid {
                 cssClass: getClass(),
                 formatter: (cell) => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue()),
                 dataType: entity.getType(),
-                elementType: entity.getElementType(),
+                elementType: displayEntity.getElementType(),
                 labelsEntity: entity.getLabelsEntity(),
                 name: name,
             });
@@ -597,7 +597,7 @@ class Datagrid {
                     }
                 },
                 dataType: entity.getType(),
-                elementType: entity.getElementType(),
+                elementType: displayEntity.getElementType(),
                 scenario: columnScenario,
                 getRowKey: getRowKey,
                 validate: validateAndStyle
@@ -666,6 +666,7 @@ class Datagrid {
 
                     return (valueTxt, cellValue, rowData, params) => {
                         const label = SelectOptions.getLabel(schema, allScenarios, entity, cellValue);
+                        debugger;
                         return columnFilter(valueTxt, label, rowData, params);
                     };
                 }

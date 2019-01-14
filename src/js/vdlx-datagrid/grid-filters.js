@@ -122,15 +122,7 @@ let _partialMatchCell = (searchData, data, column) => {
     return result;
 };
 
-let integerFilter = (column, valueTxt, cellValue, rowData, params) => {
-    var exactColumnSearch = valueTxt.substring(0, 1) === '=';
-    if(exactColumnSearch) {
-        return _exactMatchCell(valueTxt.substring(1), String(cellValue), column);
-    }
-    return _partialMatchCell(valueTxt, String(cellValue), column);
-};
-
-let realFilter = (column, valueTxt, cellValue, rowData, params) => {
+let filter = (column, valueTxt, cellValue, rowData, params) => {
     var exactColumnSearch = valueTxt.substring(0, 1) === '=';
     if(exactColumnSearch) {
         return _exactMatchCell(valueTxt.substring(1), String(cellValue), column);
@@ -140,10 +132,10 @@ let realFilter = (column, valueTxt, cellValue, rowData, params) => {
 
 export let chooseColumnFilter = (column) => {
     switch (column.elementType) {
-        case 'INTEGER':
-            return _.partial(integerFilter, column);
-        case 'REAL':
-            return _.partial(realFilter, column);
+        case Enums.DataType.INTEGER:
+        case Enums.DataType.STRING:
+        case Enums.DataType.REAL:
+            return _.partial(filter, column);
         default:
             return undefined
     }
