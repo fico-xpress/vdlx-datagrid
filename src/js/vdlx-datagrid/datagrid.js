@@ -606,31 +606,34 @@ class Datagrid {
                         return {
                             values: [
                                 { value: undefined, label: 'No Filter' },
-                                { value: checkedValue, label: 'Checked' },
-                                { value: uncheckedValue, label: 'Unchecked' }
+                                { value: String(checkedValue), label: 'Checked' },
+                                { value: String(uncheckedValue), label: 'Unchecked' }
                             ]
                         };
                     }
                 };
                 const headerFilter = getHeaderFilter();
                 const headerFilterParams = getHeaderFilterParams();
-                const checkboxFilterFunc = (valueTxt, cellValue, rowData, params) => {
-                    if (valueTxt === cellValue) {
+                const checkboxFilterFunc = (value, cellValue, rowData, params) => {
+                    const valueString = String(value);
+                    const cellValueTxt = String(cellValue);
+                    if (valueString === cellValueTxt) {
                         return true;
                     }
 
-                    const optionMatch =_.find(params.values, keyValue => keyValue.value === valueTxt || keyValue.label === valueTxt);
+                    const optionMatch =_.find(params.values, keyValue => keyValue.value === valueString || keyValue.label === valueString);
                     if (_.isUndefined(optionMatch)) {
                         return false;
                     }
-                    return optionMatch.value === cellValue;
+                    return optionMatch.value === cellValueTxt;
                 };
 
                 const checkboxFilterEmptyCheck = (value) => {
                     if (value == null) {
                         return true;
                     }
-                    const optionMatch =_.find(headerFilterParams.values, keyValue => keyValue.value === value || keyValue.label === value);
+                    const valueString = String(value);
+                    const optionMatch =_.find(headerFilterParams.values, keyValue => keyValue.value === valueString || keyValue.label === valueString);
                     return _.isUndefined(optionMatch) || _.isUndefined(optionMatch.value);
                 }
 
