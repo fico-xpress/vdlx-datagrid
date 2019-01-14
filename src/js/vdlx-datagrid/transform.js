@@ -82,11 +82,10 @@ export default function transform(element, attributes, api) {
         paramsBuilder.addParam('width', width.rawValue);
     }
 
-    // TODO state saving?
-    // var saveState = attributes['save-state'];
-    // if (saveState && saveState.rawValue === 'false') {
-    //     paramsBuilder.addParam('saveState', false);
-    // }
+    var saveState = attributes['save-state'];
+    if (saveState && saveState.rawValue === 'false') {
+        paramsBuilder.addParam('saveState', false);
+    }
 
     var modifier = attributes['modifier'];
     if (modifier) {
