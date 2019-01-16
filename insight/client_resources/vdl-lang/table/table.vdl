@@ -153,7 +153,7 @@
 
 
         <vdl-section heading="Number formatting">
-            <vdl-column size="6" heading="Result:" class="example-failed">
+            <vdl-column size="6" heading="Formatted:" class="example-passed">
                 <vdlx-datagrid>
                     <vdlx-datagrid-column set="SupportLevels">Support L.</vdlx-datagrid-column>
                     <vdlx-datagrid-column entity="SupportCosts" format="$#,###.00"></vdlx-datagrid-column>
@@ -200,7 +200,7 @@
                 }
             </script>
 
-            <vdl-column size="6" heading="Custom renderer" class="example-failed">
+            <vdl-column size="6" heading="Custom renderer" class="example-passed">
                 <vdlx-datagrid>
                     <vdlx-datagrid-column render="=italic" entity="SupportCosts" heading="SUPPORT COSTS"></vdlx-datagrid-column>
                     <vdlx-datagrid-column render="=colorize" entity="ServiceLevelAgreements">Agreements</vdlx-datagrid-column>

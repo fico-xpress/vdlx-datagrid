@@ -16,7 +16,7 @@ import {chooseColumnFilter} from './grid-filters';
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');
 
-const dialogs = insightModules.load('dialogs')
+const dialogs = insightModules.load('dialogs');
 
 import perf from '../performance-measurement';
 import { createStateManager } from './state-peristence';
@@ -444,6 +444,18 @@ class Datagrid {
             const defaultFormatter = cell => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue());
 
             const getFormatter = () => {
+                if(entityOptions.render) {
+                    if(entityOptions.format) {
+                        return function(cell) {
+                            return entityOptions.render(cell.getValue(), 'display');
+                        }
+                    } else {
+                        return function(cell) {
+                            return entityOptions.render(cell.getValue(), 'display', _.values(cell.getData()));
+                        }
+                    }
+                }
+
                 if (entityOptions.editorType === EDITOR_TYPES.checkbox) {
                     return checkboxFormatter;
                 } else {
