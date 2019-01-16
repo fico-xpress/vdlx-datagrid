@@ -65,7 +65,7 @@ function getScenarios (config, scenarios) {
 /**
  *
  * @param {*} config$
- * @returns {KnockoutObservable<{defaultScenario: Scenario, scenarios: Scenario[]}>}
+ * @returns {{data: KnockoutObservable<{defaultScenario: Scenario, scenarios: Scenario[]}>, errors: KnockoutObservable}}
  */
 function withScenarioData (config$) {
     let hasSubscription = false;
@@ -80,42 +80,53 @@ function withScenarioData (config$) {
 
         return getScenarios(config, scenarios);
     });
+    const error$ = ko.observable();
 
     const scenarioObserverSubscription$ = ko.pureComputed(function () {
         const config = ko.unwrap(config$);
         if (!_.isEmpty(config.scenarioList) && !_.isEmpty(config.columnOptions)) {
-            return insight.getView()
-                .withScenarios(config.scenarioList)
-                .withEntities(getAutoTableEntities(config.columnOptions))
-                .notify(function (scenarios) {
-                    scenarios$(scenarios);
-                })
-                .start();
+            try {
+                error$(undefined);
+                return insight.getView()
+                    .withScenarios(config.scenarioList)
+                    .withEntities(getAutoTableEntities(config.columnOptions))
+                    .notify(function (scenarios) {
+                        scenarios$(scenarios);
+                    })
+                    .start();
+            } catch (err) {
+                error$(err);
+                return {
+                    dispose: _.noop
+                }
+            }
         }
         return undefined;
     });
 
-    return onSubscribe(function (subscription) {
-        let subscriptions = [];
+    return {
+        data: onSubscribe(function (subscription) {
+            let subscriptions = [];
 
-        if (!hasSubscription) {
-            subscriptions = [scenarioObserverSubscription$.subscribe(_.noop),
-            scenarioObserverSubscription$.subscribe(function (oldScenarioObserver) {
-                oldScenarioObserver && oldScenarioObserver.dispose();
-            }, null, 'beforeChange')];
-            hasSubscription = true;
-        }
-
-        onSubscriptionDispose(function () {
-            hasSubscription = !!scenarioData$.getSubscriptionsCount();
             if (!hasSubscription) {
-                const scenarioObserver = scenarioObserverSubscription$();
-                scenarioObserver && scenarioObserver.dispose();
-                _.each(subscriptions, sub => sub.dispose());
+                subscriptions = [scenarioObserverSubscription$.subscribe(_.noop),
+                scenarioObserverSubscription$.subscribe(function (oldScenarioObserver) {
+                    oldScenarioObserver && oldScenarioObserver.dispose();
+                }, null, 'beforeChange')];
+                hasSubscription = true;
             }
-        }, subscription);
 
-    }, scenarioData$);
+            onSubscriptionDispose(function () {
+                hasSubscription = !!scenarioData$.getSubscriptionsCount();
+                if (!hasSubscription) {
+                    const scenarioObserver = scenarioObserverSubscription$();
+                    scenarioObserver && scenarioObserver.dispose();
+                    _.each(subscriptions, sub => sub.dispose());
+                }
+            }, subscription);
+        }, scenarioData$),
+        errors: error$
+    }
 };
 
 export default withScenarioData;

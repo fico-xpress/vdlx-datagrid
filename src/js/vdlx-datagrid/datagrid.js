@@ -103,7 +103,7 @@ class Datagrid {
     buildTable() {
         const columnOptions$ = this.columnOptions$;
         const gridOptions$ = this.gridOptions$;
-        const scenariosData$ = withScenarioData(columnOptions$);
+        const { data: scenariosData$, errors: errors$ } = withScenarioData(columnOptions$);
 
         this.subscriptions = this.subscriptions.concat(
             ko
@@ -111,6 +111,13 @@ class Datagrid {
                     const gridOptions = ko.unwrap(gridOptions$());
                     const columnOptions = columnOptions$();
                     const scenariosData = scenariosData$();
+                    const errors = errors$();
+
+                    if (errors) {
+                        this.componentRoot.style.display = 'none';
+                    } else {
+                        this.componentRoot.style.display = 'block';
+                    }
 
                     if (!_.isEmpty(_.get(columnOptions, 'columnOptions'))) {
                         this.tableLock.lock();
