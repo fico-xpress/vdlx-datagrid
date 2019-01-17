@@ -616,7 +616,6 @@ class Datagrid {
                         if (value !== oldValue) {
                             if (_.isUndefined(value)) {
                                 removeValue(cell.getData())
-                                    .then(() => this.table.redraw(true))
                                     .catch(err => {
                                         cell.restoreOldValue();
                                         // TODO: message saying 
@@ -624,7 +623,6 @@ class Datagrid {
                                     });
                             } else {
                                 saveValue(cell.getData(), value)
-                                    .then(() => this.table.redraw(true))
                                     .catch(err => {
                                         cell.restoreOldValue();
                                         // TODO: message saying 
