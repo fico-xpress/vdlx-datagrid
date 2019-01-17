@@ -36,7 +36,7 @@
     "knockout": "^3.4.2"
   },
   "dependencies": {
-    "tabulator-tables": "git+https://gitserver.fairisaac.com:8443/scm/~denissdetkovs/tabulator.git"
+    "tabulator-tables": "https://github.com/fico-xpress/tabulator/tarball/build"
   },
   "jest": {
     "setupFiles": [
