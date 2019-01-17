@@ -214,7 +214,7 @@ export default class Paginator {
             }
         });
 
-        this.$perPageSelector.on('input', evt => {
+        this.$perPageSelector.on('change', evt => {
             let val = _.parseInt(evt.target.value);
             this.table.setPageSize(val);
             this.updatePageIndicators();
