@@ -685,7 +685,6 @@ class Datagrid {
 
                     return (valueTxt, cellValue, rowData, params) => {
                         const label = SelectOptions.getLabel(schema, allScenarios, entity, cellValue);
-                        debugger;
                         return columnFilter(valueTxt, label, rowData, params);
                     };
                 }
