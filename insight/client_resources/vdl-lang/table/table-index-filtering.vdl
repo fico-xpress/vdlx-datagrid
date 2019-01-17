@@ -2,11 +2,6 @@
     <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
-    <ol class="todo">
-        <li>Intro text/Explanation</li>
-        <li>VDL Source and Usage snippets</li>
-    </ol>
-
     <vdl-page>
         <vdl-section heading="Index filtering">
             <p class="lead">Table contents can be filtered by index values with <code>vdlx-datagrid-index-filter</code></p>
