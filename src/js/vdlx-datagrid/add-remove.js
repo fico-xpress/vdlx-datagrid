@@ -69,10 +69,25 @@ export default class AddRemove {
     addNewRowToTable (newRow) {
         return this.table.addRow(newRow)
             .then(row => {
-                this.table.setSort(this.table.getSorters());
+                this.table.setSort(_.map(this.table.getSorters(), sorter => ({
+                    dir: sorter.dir,
+                    column: sorter.field
+                })));
+
                 this.data = this.table.getData();
-                return this.table.scrollToRow(row)
-                    .then(_.constant(row));
+
+                if (this.table.getPageMax() === false) {
+                    return this.table.scrollToRow(row)
+                        .then(_.constant(row));
+                }
+
+                const position = row.getPosition(true);
+                const pageSize = this.table.getPageSize();
+                const page = Math.floor(position / pageSize) + 1;
+
+                this.table.setPage(page);
+
+                return row;
             })
             .then(row => {
                 const $row = $(row.getElement());
@@ -192,14 +207,13 @@ export default class AddRemove {
             .commit();
 
         this.$addRemoveControl.find('button.btn-table-add-row').attr('disabled', '');
-        return Promise.all([commitPromise, this.addNewRowToTable(_.set({}, field, nextValue))])
+        return commitPromise
+            .then(() => this.addNewRowToTable(_.set({}, field, nextValue)))
             .then(() => {
                 this.allSetValues[0] = this.allSetValues[0].concat({ key: nextValue, value: nextValue });
             })
-            .catch(() =>
-                dialogs.alert('Could not add row. There was an issue updating the server.', 'Row add failed')
-            )
-            .then(() => 
+            .catch(() => dialogs.alert('Could not add row. There was an issue updating the server.', 'Row add failed'))
+            .then(() =>
                 this.$addRemoveControl.find('button.btn-table-add-row').removeAttr('disabled')
             );
     }
