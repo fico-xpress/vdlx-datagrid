@@ -231,20 +231,18 @@ class Datagrid {
         );
 
         const tableWidth = tableHolder ? tableHolder.clientWidth : 0;
+        const tableOffsetWidth = tableHolder ? tableHolder.offsetWidth : 0;
 
         const columnsWidth = this.table.columnManager.getWidth();
 
-        if (columnsWidth < tableWidth) {
+        if (columnsWidth < tableWidth || _.inRange(columnsWidth, tableOffsetWidth - 2, tableOffsetWidth + 2)) {
             const columns = _.filter(
-              _.reject(this.table.getColumns(), column => !!column.getDefinition().width),
-              column => column.getVisibility()
+                _.reject(this.table.getColumns(), column => !!column.getDefinition().width),
+                column => column.getVisibility()
             );
-
             const toAddPx = (tableWidth - columnsWidth) / columns.length;
 
-            _.each(columns, column =>
-                column._column.setWidthActual(column._column.getWidth() + toAddPx)
-            );
+            _.each(columns, column => column._column.setWidthActual(column._column.getWidth() + toAddPx));
         }
     }
 
