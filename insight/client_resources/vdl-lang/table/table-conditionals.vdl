@@ -23,7 +23,7 @@
 
     <vdl-page>
 
-        <vdl-section heading="Table with conditionals and loops">
+        <vdl-section heading="Table with conditionals">
 
             <vdl-row>
                 <vdl-column heading="Single scalar form">
