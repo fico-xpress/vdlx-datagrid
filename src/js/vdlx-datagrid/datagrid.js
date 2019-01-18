@@ -244,9 +244,7 @@ class Datagrid {
 
             this.table.setHeight(height);
         } else if (options.pageMode === 'paged') {
-            if (this.table.getPageMax() === 1) {
-                this.table.setHeight('100%');
-            }
+            this.table.setHeight('100%');
         }
     }
 
