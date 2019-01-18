@@ -603,6 +603,7 @@ class Datagrid {
                 editorParams: getEditorParams(),
                 cellEditing: getCellEditingHandler(),
                 cellEdited: cell => {
+                    debugger;
                     $(cell.getElement()).off('keyup');
 
                     const oldValue = _.isUndefined(cell.getOldValue()) ? '' : cell.getOldValue();
@@ -618,7 +619,7 @@ class Datagrid {
                         });
                     } else {
                         if (value !== oldValue) {
-                            if (_.isUndefined(value)) {
+                            if (_.isUndefined(value) || value === '') {
                                 removeValue(cell.getData())
                                     .catch(err => {
                                         cell.restoreOldValue();
