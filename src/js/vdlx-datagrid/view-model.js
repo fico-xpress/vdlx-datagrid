@@ -41,8 +41,6 @@ const stripEmpties = _.partialRight(_.pick, _.flow(_.identity, _.negate(isNullOr
 
 const getTableOptions = (params) => () => {
     var overrides = stripEmpties({
-        paging: params.pageMode,
-        pageLength: params.pageSize,
         searching: params.showFilter,
         columnFilter: params.columnFilter,
     });
@@ -58,7 +56,8 @@ const getTableOptions = (params) => () => {
         gridHeight: params.gridHeight,
         gridData: params.gridData,
         paginationSize: params.pageSize || DEFAULT_GRID_PAGE_SIZE,
-        saveState: _.get(params, 'saveState', true)
+        saveState: _.get(params, 'saveState', true),
+        pageMode: params.pageMode
     };
 
     var pageMode = params['pageMode'];

@@ -230,7 +230,7 @@ class Datagrid {
     }
 
     recalculateHeight(options) {
-        if (_.get(options, 'overrides.paging', 'scrolling') === 'scrolling') {
+        if (options.pageMode === 'scrolling') {
             let height;
             if (this.table.getDataCount() > options.paginationSize) {
                 height = options.gridHeight;
@@ -243,6 +243,10 @@ class Datagrid {
             }
 
             this.table.setHeight(height);
+        } else if (options.pageMode === 'paged') {
+            if (this.table.getPageMax() === 1) {
+                this.table.setHeight('100%');
+            }
         }
     }
 
