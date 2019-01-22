@@ -465,16 +465,8 @@ class Datagrid {
             const defaultFormatter = cell => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue());
 
             const getFormatter = () => {
-                if(entityOptions.render) {
-                    if(entityOptions.format) {
-                        return function(cell) {
-                            return entityOptions.render(cell.getValue(), 'display');
-                        }
-                    } else {
-                        return function(cell) {
-                            return entityOptions.render(cell.getValue(), 'display', _.values(cell.getData()));
-                        }
-                    }
+                if (entityOptions.render) {
+                    return cell => entityOptions.render(cell.getValue(), 'display', getRowDataForColumns(cell.getData()));
                 }
 
                 if (entityOptions.editorType === EDITOR_TYPES.checkbox) {
@@ -710,8 +702,13 @@ class Datagrid {
                     }
 
                     return (valueTxt, cellValue, rowData, params) => {
-                        const label = SelectOptions.getLabel(schema, allScenarios, entity, cellValue);
-                        return columnFilter(valueTxt, label, rowData, params);
+                        let formattedCellValue;
+                        if (entityOptions.render) {
+                            formattedCellValue = entityOptions.render(cellValue, 'filter', getRowDataForColumns(rowData));
+                        } else {
+                            formattedCellValue = SelectOptions.getLabel(schema, allScenarios, entity, cellValue);
+                        }
+                        return columnFilter(valueTxt, formattedCellValue, rowData, params);
                     };
                 }
 
