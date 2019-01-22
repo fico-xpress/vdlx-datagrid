@@ -125,7 +125,7 @@ export default class AddRemove {
     openAddRowDialog() {
         const formFields = _.map(_.zip(this.indicesColumns, this.allSetValues), ([indicesColumn, setValues]) => {
             const id = _.uniqueId('add-remove-row-');
-            const selectOptions = _.map(setValues, setValue => `<option value="${setValue.value}">${setValue.key}</option>`).join('');
+            const selectOptions = _.map(setValues, setValue => `<option value="${setValue.key}">${setValue.value}</option>`).join('');
 
             return `
             <div class="form-group">
