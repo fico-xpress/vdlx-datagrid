@@ -634,6 +634,13 @@ class Datagrid {
                         }
                     }
                 },
+
+                cellEditCancelled: cell => {
+                    $(cell.getElement()).off('keyup');
+                    const value = cell.getValue();
+
+                    const validationResult = validateAndStyle(cell, value);
+                },
                 dataType: entity.getType(),
                 elementType: displayEntity.getElementType(),
                 scenario: columnScenario,
