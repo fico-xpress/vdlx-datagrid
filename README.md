@@ -65,3 +65,6 @@ This will only be needed for developing the `vdlx-datagrid` extension. Refer to 
 
 1. `npm install`
 1. `npm run watch`
+
+### Known issues
+1. sort-by-formatted attribute not supported
