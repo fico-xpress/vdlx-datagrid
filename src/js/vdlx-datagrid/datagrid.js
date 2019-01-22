@@ -244,9 +244,7 @@ class Datagrid {
 
             this.table.setHeight(height);
         } else if (options.pageMode === 'paged') {
-            if (this.table.getPageMax() === 1) {
-                this.table.setHeight('100%');
-            }
+            this.table.setHeight('100%');
         }
     }
 
@@ -635,6 +633,13 @@ class Datagrid {
                             }
                         }
                     }
+                },
+
+                cellEditCancelled: cell => {
+                    $(cell.getElement()).off('keyup');
+                    const value = cell.getValue();
+
+                    const validationResult = validateAndStyle(cell, value);
                 },
                 dataType: entity.getType(),
                 elementType: displayEntity.getElementType(),

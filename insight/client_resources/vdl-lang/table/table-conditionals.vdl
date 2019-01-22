@@ -59,9 +59,7 @@ limitations under the License.
                 <vdl-column heading="Form with conditional column" size="6">
                     <vdlx-datagrid>
                         <vdlx-datagrid-column entity="FactorySupply">Factory Supply</vdlx-datagrid-column>
-                        <vdlx-datagrid-column vdl-if="=scenario.entities.MyBool.value" entity="FactoryDemand">Factory
-                            Demand
-                        </vdlx-datagrid-column>
+                        <vdlx-datagrid-column vdl-if="=scenario.entities.MyBool.value" entity="FactoryDemand">Factory Demand</vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column heading="VDL source:" size="6">

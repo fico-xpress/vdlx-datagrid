@@ -36,8 +36,6 @@ limitations under the License.
                         <vdl-field label="Enable column filter & editing" label-size="4" entity="MyBool"></vdl-field>
                         <vdl-field label="Choose factory" label-size="4" entity="MyScalar"
                                    options-set="Factories"></vdl-field>
-                        <vdl-field label="Set width of the &quot;Factory Demand&quot; column" label-size="4"
-                                   entity="demand"></vdl-field>
                     </vdl-form>
                 </vdl-column>
             </vdl-row>
@@ -51,16 +49,23 @@ limitations under the License.
                     }
                     return label;
                 }
+                function chooseFactory(factories, factory) {
+                    var factoryValues = _.map(factories, 'value');
+                    if (_.contains(factoryValues, factory)) {
+                        return factory;
+                    }
+                    return _.first(factoryValues);
+                }
             </script>
 
             <vdl-row>
                 <vdl-column size="6" heading="Index filtered column">
                     <vdlx-datagrid>
-                        <vdlx-datagrid-column set="MonthsOfYear" width="100"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="MonthsOfYear" ></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="FactoryDemand" editable="=scenario.entities.MyBool.value"
                                           heading="=createFactoryDemandHeading(scenario.entities.MyScalar.label, scenario.entities.MyBool.value)"
-                                          width="=scenario.entities.demand.value">
-                            <vdlx-datagrid-index-filter set="Factories" value="=scenario.entities.MyScalar.value"
+                                          >
+                            <vdlx-datagrid-index-filter set="Factories" value="=chooseFactory(scenario.entities.Factories, scenario.entities.MyScalar.value)"
                                               vdl-if="=scenario.entities.MyBool.value"></vdlx-datagrid-index-filter>
                         </vdlx-datagrid-column>
                     </vdlx-datagrid>
@@ -72,8 +77,8 @@ limitations under the License.
     &lt;vdlx-datagrid-column set=&quot;MonthsOfYear&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;=scenario.entities.MyBool.value&quot;
                         heading=&quot;=&apos;Factory Demand (&apos; + scenario.entities.MyScalar.label + &apos;)&apos;&quot;
-                        width=&quot;=scenario.entities.demand.value&quot;&gt;
-        &lt;vdlx-datagrid-index-filter set=&quot;Factories&quot; value=&quot;=scenario.entities.MyScalar.value&quot;
+                        &gt;
+        &lt;vdlx-datagrid-index-filter set=&quot;Factories&quot; value=&quot;=chooseFactory(scenario.entities.Factories, scenario.entities.MyScalar.value)&quot;
                         vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;&lt;/vdlx-datagrid-index-filter&gt;
     &lt;/vdlx-datagrid-column&gt;
 &lt;/vdlx-datagrid&gt;
@@ -94,7 +99,7 @@ limitations under the License.
                                             scenario.entities.MyScalar.label +
                                               ', Destination)'">
                             <vdlx-datagrid-index-filter set="Factories"
-                                              value="=scenario.entities.MyScalar.value"
+                                              value="=chooseFactory(scenario.entities.Factories, scenario.entities.MyScalar.value)"
                                               vdl-if="=scenario.entities.MyBool.value"></vdlx-datagrid-index-filter>
                         </vdlx-datagrid-column>
                     </vdlx-datagrid>
@@ -112,7 +117,7 @@ limitations under the License.
                     scenario.entities.MyScalar.label +
                       ', Destination)'&quot;&gt;
         &lt;vdlx-datagrid-index-filter set=&quot;Factories&quot;
-                          value=&quot;=scenario.entities.MyScalar.value&quot;
+                          value=&quot;=chooseFactory(scenario.entities.Factories, scenario.entities.MyScalar.value)&quot;
                           vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;&lt;/vdlx-datagrid-index-filter&gt;
     &lt;/vdlx-datagrid-column&gt;
 &lt;/vdlx-datagrid&gt;
@@ -131,7 +136,7 @@ limitations under the License.
                                           heading="='Shipping Costs (Origin,' +
                                             scenario.entities.MyScalar.label + ')'">
                             <vdlx-datagrid-index-filter set="Factories" set-position="1"
-                                              value="=scenario.entities.MyScalar.value"
+                                              value="=chooseFactory(scenario.entities.Factories, scenario.entities.MyScalar.value)"
                                               vdl-if="=scenario.entities.MyBool.value"></vdlx-datagrid-index-filter>
                         </vdlx-datagrid-column>
                     </vdlx-datagrid>
@@ -148,7 +153,7 @@ limitations under the License.
                       heading=&quot;='Shipping Costs (Origin,' +
                     scenario.entities.MyScalar.label + ')'&quot;&gt;
         &lt;vdlx-datagrid-index-filter set=&quot;Factories&quot; set-position=&quot;1&quot;
-                          value=&quot;=scenario.entities.MyScalar.value&quot;
+                          value=&quot;=chooseFactory(scenario.entities.Factories, scenario.entities.MyScalar.value)&quot;
                           vdl-if=&quot;=scenario.entities.MyBool.value&quot;&gt;&lt;/vdlx-datagrid-index-filter&gt;
     &lt;/vdlx-datagrid-column&gt;
 &lt;/vdlx-datagrid&gt;
@@ -162,7 +167,7 @@ limitations under the License.
                     <vdlx-datagrid vdl-repeat-contents="=f in scenario.entities.Factories">
                         <vdlx-datagrid-column entity="FactoryDemand" editable="true"
                                         heading="='Factory Demand (' + f.label + ')'"
-                                        width="=scenario.entities.demand.value">
+                                        >
                             <vdlx-datagrid-index-filter set="Factories" value="=f.value"></vdlx-datagrid-index-filter>
                         </vdlx-datagrid-column>
                     </vdlx-datagrid>
@@ -173,7 +178,7 @@ limitations under the License.
 &lt;vdlx-datagrid vdl-repeat-contents=&quot;=f in scenario.entities.Factories&quot;&gt;
     &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; editable=&quot;true&quot;
                       heading=&quot;=&apos;Factory Demand (&apos; + f.label + &apos;)&apos;&quot;
-                      width=&quot;=scenario.entities.demand.value&quot;&gt;
+                      &gt;
         &lt;vdlx-datagrid-index-filter set=&quot;Factories&quot; value=&quot;=f.value&quot;&gt;&lt;/vdlx-datagrid-index-filter&gt;
     &lt;/vdlx-datagrid-column&gt;
 &lt;/vdlx-datagrid&gt;
