@@ -30,6 +30,7 @@ $color-selected: #fff8c1;
 $highlight-color: #ffc20e;
 $table-error-color: #D0002D;
 $table-focus-color: #00B5E2;
+$sorting-icon-right-offset: 6px;
 
 @mixin table-cell-border-active($color) {
   outline-offset: -1px;
@@ -136,8 +137,61 @@ vdlx-datagrid {
         background-color: white;
         padding: 5px;
       }
+
       .tabulator-sortable {
+        .tabulator-col-content .tabulator-arrow {
+          border: none;
+          top: initial;
+          &:after, &:before {
+            color: white;
+            opacity: 1;
+          }
+
+          &:after {
+            bottom: 10px;
+            line-height: 14px;
+            top: auto;
+            position: absolute;
+            font-family: "icomoon";
+            content: "\e3b4";
+            right: $sorting-icon-right-offset;
+          }
+
+          &:before {
+              bottom: 5px;
+              line-height: 12px;
+              position: absolute;
+              font-family: "icomoon";
+              content: "\e3b6";
+              float: right;
+              right: $sorting-icon-right-offset;
+          }
+        }
+
+        &[aria-sort="asc"] {
+          .tabulator-col-content .tabulator-arrow {
+            &:before {
+              visibility: hidden;
+            }
+            &:after {
+              color: #6E6D6A;
+              opacity: 1;
+            }
+          }
+        }
+        &[aria-sort="desc"] {
+          .tabulator-col-content .tabulator-arrow {
+            &:before {
+              color: #6E6D6A;
+              opacity: 1;
+            }
+            &:after {
+              visibility: hidden;
+            }
+          }
+        }
       }
+
       .tabulator-frozen {
       }
       .tabulator-frozen-left {
