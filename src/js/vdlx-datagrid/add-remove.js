@@ -168,7 +168,7 @@ export default class AddRemove {
 
             const alreadyExists = _.find(
                 this.data,
-                formData
+                row => _.every(formData, (value, columnName) => String(row[columnName]) === String(value))
             );
 
             if (alreadyExists) {
