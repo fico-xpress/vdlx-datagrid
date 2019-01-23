@@ -22,7 +22,7 @@
  */
 import { VDGCattributes } from './attributes';
 import { transform } from './transform';
-import { viewModel } from './viewModel';
+import { viewModel } from './view-model';
 
 /*
     vdlx-datagrid-column

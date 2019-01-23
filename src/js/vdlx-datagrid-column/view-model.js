@@ -2,7 +2,7 @@
    Xpress Insight vdlx-datagrid
    =============================
 
-   file vdlx-datagrid-column/index.js
+   file vdlx-datagrid-column/view-model.js
    ```````````````````````
    vdlx-datagrid-column extension.
 
