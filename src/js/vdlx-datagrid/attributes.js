@@ -49,11 +49,6 @@ export default [
         description: 'Grid height, When page-mode is set to "scrolling" you can set the height of the grid to something other than the default 600'
     },
     {
-        name: 'show-filter',
-        description:
-            'Set this to "true" to enable the grid filter. This will show a single input above the grid to filter across all grid cells.'
-    },
-    {
         name: 'column-filter',
         description:
             'Set this to "true" to enable the column filters. This will show a header row with filter inputs for each column.'
@@ -64,21 +59,6 @@ export default [
         'Setting this will show the add-remove row buttons at the bottom of the grid. Set to "true" ' +
         'to prompt for index selection on row add. Set to "addrow-autoinc" will switch the behaviour to allow new ' +
         'index values to be created, incrementing from the highest value in the set(s).'
-    },
-    {
-        name: 'selection-navigation',
-        description:
-        'Enable/disable grid navigation, selection and clipboard features. Set to "false" to disable ' +
-        'these features. Defaults to true.'
-    },
-    {
-        name: 'modifier',
-        description:
-        'Grid modifier function. Will be called after the grid configuration ' +
-        'has been built. Provides a way to change the configuration before the grid is rendered. Must ' +
-        'be an expression that resolves to a function. Takes the grid configuration object and ' +
-        'should return the modified configuration. If an object is not returned then the grid will be unaffected.',
-        acceptsExpression: true
     },
     {
         name: 'width',

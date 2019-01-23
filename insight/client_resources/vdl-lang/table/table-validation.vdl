@@ -21,12 +21,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <vdl version="4.1">
-    <vdl-include src="doc-extensions/code-panel.vdl"></vdl-include>
+    <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
-
-    <ol class="todo">
-        <li class="done">Intro text/Explanation</li>
-    </ol>
 
     <link rel="stylesheet" href="css/lib/solarized-light.css"/>
     <script src="js/lib/highlight.pack.js"></script>

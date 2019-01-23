@@ -24,11 +24,6 @@ limitations under the License.
     <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
-    <ol class="todo">
-        <li>Intro text/Explanation</li>
-        <li>No scrolling in source4 snippets</li>
-    </ol>
-
     <script>
         function greaterThan10 (rowData, indices) {
             return rowData[2] > 10;

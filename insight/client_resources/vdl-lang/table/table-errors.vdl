@@ -23,11 +23,6 @@ limitations under the License.
 <vdl version="4.1">
     <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
 
-    <ol class="todo">
-        <li>Intro text/Explanation</li>
-        <li>Tidy</li>
-    </ol>
-
     <style>
         vdl-row + vdl-row {
             border-top: 1px solid lightgray;

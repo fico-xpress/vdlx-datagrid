@@ -67,12 +67,6 @@ export default function transform(element, attributes, api) {
         $(element).addClass('scrolling');
     }
 
-    // TODO No table search in vdlx-datagrid
-    // var showFilter = attributes['show-filter'];
-    // if (showFilter) {
-    //     paramsBuilder.addParam('showFilter', showFilter.rawValue === 'true');
-    // }
-
     var columnFilter = attributes['column-filter'];
     if (columnFilter) {
         paramsBuilder.addParam('columnFilter', columnFilter.rawValue === 'true');
@@ -86,12 +80,6 @@ export default function transform(element, attributes, api) {
             paramsBuilder.addParam('addRemoveRow', 'addrow-autoinc');
         }
     }
-
-    // TODO row selection?
-    // var selectionNavigation = attributes['selection-navigation'];
-    // if (selectionNavigation && selectionNavigation.rawValue === 'false') {
-    //     paramsBuilder.addParam('selectionNavigation', false);
-    // }
 
     var tableIdAttr = attributes['id'];
     if (tableIdAttr) {
@@ -107,14 +95,6 @@ export default function transform(element, attributes, api) {
     var saveState = attributes['save-state'];
     if (saveState && saveState.rawValue === 'false') {
         paramsBuilder.addParam('saveState', false);
-    }
-
-    var modifier = attributes['modifier'];
-    if (modifier) {
-        if (modifier.expression.isString) {
-            throw Error('The vdl-table modifier attribute must be supplied as an expression');
-        }
-        paramsBuilder.addParam('modifier', modifier.expression.value, true);
     }
 
     var klass = attributes['class'];

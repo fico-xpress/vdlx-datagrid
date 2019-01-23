@@ -23,11 +23,6 @@ limitations under the License.
 <vdl version="4.1">
     <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
 
-    <ol class="todo">
-        <li>Intro text/Explanation</li>
-        <li>Move to presentation VG?</li>
-    </ol>
-
     <style>
         table.framed-table {
             border: 5px solid cornflowerblue;
