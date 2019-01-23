@@ -20,9 +20,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+import '../css/vdlx-datagrid.scss';
 import 'tabulator-tables/dist/css/bootstrap/tabulator_bootstrap.css';
 
-import '../css/vdlx-datagrid.scss';
 import './vdlx-datagrid';
 import './vdlx-datagrid-column';
 import './vdlx-datagrid-index-filter';

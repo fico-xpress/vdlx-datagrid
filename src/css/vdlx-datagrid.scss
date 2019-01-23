@@ -140,8 +140,8 @@ vdlx-datagrid {
 
       .tabulator-sortable {
         .tabulator-col-content .tabulator-arrow {
-          border: none;
-          top: initial;
+          border: none !important;
+          top: auto;
           &:after, &:before {
             color: white;
             opacity: 1;
