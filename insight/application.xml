@@ -6,8 +6,7 @@
             <vdl-view title="Welcome" path="welcome.vdl" requires-scenarios-loaded="false"/>
             <vdl-view title="Example One" path="datagrid.vdl"/>
         </view-group>
-
-        <view-group title="VDL Lang - Tables Compatibility">
+        <view-group title="vdlx-datagrid Features">
             <vdl-view title="Basic usage" path="vdl-lang/table/table.vdl"/>
             <vdl-view title="Editable tables" path="vdl-lang/table/table-editable.vdl"/>
             <vdl-view title="Editable tables - Select inputs" path="vdl-lang/table/table-editable-select.vdl"/>
@@ -26,12 +25,6 @@
             <vdl-view title="Big Data Table 4" path="big-data/datagrid-bd4.vdl"/>
             <vdl-view title="Big Data Table 5" path="big-data/datagrid-bd5.vdl"/>
         </view-group>
-
-        <view-group title="vdlx-datagrid Features">
-            <vdl-view title="VXDG - Basic Usage" path="datagrid/datagrid.vdl"/>
-        </view-group>
-
-        <client-resources-local-path>/Users/e48378/Documents/support/curtisfranks/table-performance/insight/client_resources</client-resources-local-path>
 
     </client>
 </model-companion>
