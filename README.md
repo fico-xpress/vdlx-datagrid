@@ -5,7 +5,7 @@
 A drop-in alternative for the `vdl-table` tag in a FICO Xpress Insight custom view.
 `vdlx-datagrid` provides the same tabular visualisation as `vdl-table` but allows for much larger datasets to be displayed while trading off a few features in `vdl-table`.
 
-`vdlx-datgrid` is experimental code for exploring new features. It is always preferred that the built-in `vdl-table` be used where possible because `vdl-table` has been tested for several years on production systems. 
+`vdlx-datagrid` is experimental code for exploring new features. It is always preferred that the built-in `vdl-table` be used where possible because `vdl-table` has been tested for several years on production systems. 
 
 #### Features comparison between `vdl-table` and `vdlx-datgrid`.
 
@@ -46,12 +46,12 @@ As mentioned above `vdlx-datagrid` is mostly a drop-in replacement for `vdl-tabl
 
 ### The 'table performance' app
 
-The `insight` folder contains an example app with a good number of exaamples showing `vdlx-datagrid` in use.
+The `insight` folder contains an example app with a good number of examples showing `vdlx-datagrid` in use.
 To upload it to your install of FICO Xpress Insight, folloing these instructions:
 
 1. clone the Git repository
-    1. `git clone https://JohnOConnor@gitserver.fairisaac.com:8443/scm/~johnoconnor/vdl-table-performance.git`
-1.  `cd vdl-table-performance`
+    1. `git clone https://gitserver.fairisaac.com:8443/scm/~johnoconnor/vdl-table-performance.git`
+1. `cd vdl-table-performance`
 1. `npm install`
 1. `node generate-data.js`
 1. `cd insight`
