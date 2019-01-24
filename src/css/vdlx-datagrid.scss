@@ -30,7 +30,7 @@ $color-selected: #fff8c1;
 $highlight-color: #ffc20e;
 $table-error-color: #D0002D;
 $table-focus-color: #00B5E2;
-$sorting-icon-right-offset: 0px;
+$sorting-icon-right-offset: -4px;
 
 @mixin table-cell-border-active($color) {
   outline-offset: -1px;
