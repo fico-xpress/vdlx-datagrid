@@ -22,7 +22,7 @@
  */
 const DEFAULT_VALIDATION_ERROR_MESSAGE = 'The value is not valid';
 
-const _ = insightModules.load('lodash');
+const {_, $} = window;
 
 export default function (element, attributes, api) {
     var $element = $(element);

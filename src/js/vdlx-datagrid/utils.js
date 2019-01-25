@@ -21,6 +21,6 @@
     limitations under the License.
  */
 
-const _ = insightModules.load('lodash');
+const {_, $} = window;
 
 export const getRowData = (columnsIds) => (data) => _.map(columnsIds, _.propertyOf(data));

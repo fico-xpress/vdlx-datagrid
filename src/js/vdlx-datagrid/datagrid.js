@@ -35,7 +35,7 @@ import {EDITOR_TYPES} from '../constants';
 import AddRemove from './add-remove';
 import {chooseColumnFilter} from './grid-filters';
 
-const _ = insightModules.load('lodash');
+const {_, $} = window;
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');
 

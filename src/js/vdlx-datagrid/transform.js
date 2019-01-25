@@ -21,7 +21,7 @@
     limitations under the License.
  */
 
-const _ = insightModules.load('lodash');
+const {_, $} = window;
 
 /**
  * The transform function takes care of setting up/initialising a VDL extension.

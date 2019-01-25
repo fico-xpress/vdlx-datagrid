@@ -21,7 +21,7 @@
     limitations under the License.
  */
 
-const _ = insightModules.load('lodash');
+const {_, $} = window;
 
 const VDL_QUERY_PARAM = 'vdl=';
 const KEY_PREFIX = 'TableState';

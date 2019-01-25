@@ -20,6 +20,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+
+const {_, $} = window;
+
 const LOCK_EVENT_NAMESPACE = '.insight-table-lock';
 const events = _.map(
     ['keydown', 'keypress', 'keyup', 'mousedown', 'mouseup', 'click', 'focusin'],
@@ -37,7 +40,6 @@ const OVERLAY_CLASSES = [
     TABLE_LOCKED_OVERLAY_NON_TRANSPARENT_CLASS,
 ].join(' ');
 
-const _ = insightModules.load('lodash');
 
 export class DatagridLock {
     /**

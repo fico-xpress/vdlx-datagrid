@@ -21,7 +21,7 @@
     limitations under the License.
  */
 const validatorRegistry = insightModules.load('vdl-validator-registry');
-const _ = insightModules.load('lodash');
+const {_, $} = window;
 
 export default function (params, componentInfo) {
     var fieldElement = $(componentInfo.element).parents('vdlx-datagrid-column')[0];

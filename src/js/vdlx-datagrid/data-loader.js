@@ -21,7 +21,7 @@
     limitations under the License.
  */
 import { onSubscribe, onSubscriptionDispose } from "./ko-utils";
-const _ = insightModules.load('lodash');
+const {_, $} = window;
 
 function findScenario (scenarios, identifier) {
     var result = null;

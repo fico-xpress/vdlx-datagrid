@@ -23,7 +23,7 @@
 
 const DataUtils = insightModules.load('utils/data-utils');
 const enums = insightModules.load('enums');
-const _ = insightModules.load('lodash');
+const {_, $} = window;
 
 /**
  * @param {HTMLElement} element
