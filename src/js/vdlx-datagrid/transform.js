@@ -20,6 +20,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+
+const _ = insightModules.load('lodash');
+
 /**
  * The transform function takes care of setting up/initialising a VDL extension.
  * @param {HTMLElement} element - The VDL DOM node.

@@ -37,6 +37,8 @@ const OVERLAY_CLASSES = [
     TABLE_LOCKED_OVERLAY_NON_TRANSPARENT_CLASS,
 ].join(' ');
 
+const _ = insightModules.load('lodash');
+
 export class DatagridLock {
     /**
      * @param {Element} element

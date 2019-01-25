@@ -22,6 +22,7 @@
  */
 import perf from '../performance-measurement';
 
+const _ = insightModules.load('lodash');
 const DataUtils = insightModules.load('utils/data-utils');
 const createSparseData = insightModules.load('components/table/create-sparse-data');
 const createDenseData = insightModules.load('components/table/create-dense-data');

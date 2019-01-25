@@ -23,6 +23,8 @@
 /** @type {KnockoutStatic} */ ko;
 /** @type {import('lodash').LoDashStatic} */ _;
 
+const _ = insightModules.load('lodash');
+
 export const onSubscribe = _.curry(function (f, observable) {
     var subscribe = observable.subscribe;
     observable.subscribe = function () {

@@ -23,6 +23,8 @@
 import Datagrid from './datagrid';
 import { withDeepEquals } from './ko-utils';
 
+const _ = insightModules.load('lodash');
+
 const DEFAULT_GRID_PAGE_SIZE = 50;
 
 function parseIntOrKeep (val) {

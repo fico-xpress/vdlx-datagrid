@@ -20,4 +20,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+
+const _ = insightModules.load('lodash');
+
 export const getRowData = (columnsIds) => (data) => _.map(columnsIds, _.propertyOf(data));

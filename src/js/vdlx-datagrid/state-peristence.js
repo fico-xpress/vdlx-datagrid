@@ -20,6 +20,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+
+const _ = insightModules.load('lodash');
+
 const VDL_QUERY_PARAM = 'vdl=';
 const KEY_PREFIX = 'TableState';
 const KEY_SEPARATOR = '__';

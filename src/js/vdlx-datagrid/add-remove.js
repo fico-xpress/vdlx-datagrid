@@ -21,6 +21,7 @@
     limitations under the License.
  */
 const dialogs = insightModules.load('dialogs');
+const _ = insightModules.load('lodash');
 
 const ADD_REMOVE_TEMPLATE = `
 <div class="add-remove-control">

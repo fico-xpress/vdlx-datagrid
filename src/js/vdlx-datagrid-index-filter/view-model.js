@@ -20,6 +20,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+
+const _ = insightModules.load('lodash');
+
 /**
  * @typedef {Object} indexFilterVMParams
  * @property {function(string, Object)} filterUpdate

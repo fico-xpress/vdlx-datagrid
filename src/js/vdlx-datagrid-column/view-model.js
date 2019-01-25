@@ -22,12 +22,13 @@
  */
 import { EDITOR_TYPES } from '../constants';
 
-export const enums = insightModules.load('enums');
-export const validatorFactory = insightModules.load('vdl/vdl-validator-factory');
-export const insightGetter = insightModules.load('insight-getter');
+const _ = insightModules.load('lodash');
+const enums = insightModules.load('enums');
+const validatorFactory = insightModules.load('vdl/vdl-validator-factory');
+const insightGetter = insightModules.load('insight-getter');
 
-export const COLUMN_BUILD_DELAY = 50;
-export const AUTOCOLUMN_PROP_NAME = 'autotableConfig';
+const COLUMN_BUILD_DELAY = 50;
+const AUTOCOLUMN_PROP_NAME = 'autotableConfig';
 
 export const viewModel = (params, componentInfo) => {
     var indexFilters$ = ko.observable({});

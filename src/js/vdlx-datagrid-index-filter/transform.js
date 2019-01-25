@@ -21,6 +21,7 @@
     limitations under the License.
  */
 const DataUtils = insightModules.load('utils/data-utils');
+const _ = insightModules.load('lodash');
 
 export default (element, attributes, api) => {
     var $element = $(element);
