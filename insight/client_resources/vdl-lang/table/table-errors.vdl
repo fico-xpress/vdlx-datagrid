@@ -33,7 +33,7 @@ limitations under the License.
 
     <vdl-page>
 
-        <vdl-section heading="Autotable errors">
+        <vdl-section heading="Datagri errors">
             <vdl-row>
                 <vdl-column size="6">
                     <p>Error shown when <code>vdlx-datagrid-column</code> is not contained within <code>vdlx-datagrid</code>.</p>
