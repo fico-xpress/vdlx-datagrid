@@ -22,7 +22,7 @@
  */
 import { EDITOR_TYPES } from '../constants';
 
-const {_, $} = window;
+import { _, $ } from '../globals';
 const enums = insightModules.load('enums');
 const validatorFactory = insightModules.load('vdl/vdl-validator-factory');
 const insightGetter = insightModules.load('insight-getter');

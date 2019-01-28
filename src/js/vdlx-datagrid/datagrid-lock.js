@@ -21,7 +21,7 @@
     limitations under the License.
  */
 
-const {_, $} = window;
+import { _, $ } from '../globals';
 
 const LOCK_EVENT_NAMESPACE = '.insight-table-lock';
 const events = _.map(

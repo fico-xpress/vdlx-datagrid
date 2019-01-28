@@ -21,7 +21,7 @@
     limitations under the License.
  */
 
-const {_, $} = window;
+import { _, $ } from '../globals';
 
 /**
  * The transform function takes care of setting up/initialising a VDL extension.

@@ -21,7 +21,7 @@
     limitations under the License.
  */
 
-const {_, $} = window;
+import { _, $ } from '../globals';
 
 const PAGINATOR_TEMPLATE = `
 <div class="pagination-control">

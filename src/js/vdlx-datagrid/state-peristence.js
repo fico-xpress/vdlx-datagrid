@@ -21,7 +21,7 @@
     limitations under the License.
  */
 
-const {_, $} = window;
+import { _ } from '../globals';
 
 const VDL_QUERY_PARAM = 'vdl=';
 const KEY_PREFIX = 'TableState';

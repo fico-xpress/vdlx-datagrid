@@ -20,7 +20,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-const {_, $} = window;
+import { _ } from '../globals';
 const Enums = {
     DataType: {
         "INTEGER": "INTEGER",

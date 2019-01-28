@@ -21,7 +21,7 @@
     limitations under the License.
  */
 import { onSubscribe, onSubscriptionDispose } from "./ko-utils";
-const {_, $} = window;
+import { _ } from '../globals';
 
 function findScenario (scenarios, identifier) {
     var result = null;

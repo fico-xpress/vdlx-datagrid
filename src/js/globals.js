@@ -2,9 +2,9 @@
    Xpress Insight vdlx-datagrid
    =============================
 
-   file vdlx-datagrid/utils.js
+   file globals.js
    ```````````````````````
-   vdlx-datagrid utils.
+   vdlx-datagrid performance measurements.
 
     (c) Copyright 2019 Fair Isaac Corporation
 
@@ -20,7 +20,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+/** @type {import("lodash").LoDashStatic} */
+export const _ = window._;
 
-import { _ } from '../globals';
-
-export const getRowData = (columnsIds) => (data) => _.map(columnsIds, _.propertyOf(data));
+/** @type {JQueryStatic} */
+export const $ = window.$;

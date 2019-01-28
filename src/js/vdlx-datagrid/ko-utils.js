@@ -20,10 +20,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-/** @type {KnockoutStatic} */ ko;
-/** @type {import('lodash').LoDashStatic} */ _;
 
-const {_, $} = window;
+import { _ } from '../globals';
 
 export const onSubscribe = _.curry(function (f, observable) {
     var subscribe = observable.subscribe;

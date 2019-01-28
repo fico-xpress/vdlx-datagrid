@@ -23,7 +23,7 @@
 import Datagrid from './datagrid';
 import { withDeepEquals } from './ko-utils';
 
-const {_, $} = window;
+import { _, $ } from '../globals';
 
 const DEFAULT_GRID_PAGE_SIZE = 50;
 

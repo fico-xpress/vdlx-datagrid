@@ -21,7 +21,7 @@
     limitations under the License.
  */
 const DataUtils = insightModules.load('utils/data-utils');
-const {_, $} = window;
+import { _, $ } from '../globals';
 
 export default (element, attributes, api) => {
     var $element = $(element);

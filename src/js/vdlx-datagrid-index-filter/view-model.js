@@ -21,7 +21,7 @@
     limitations under the License.
  */
 
-const {_, $} = window;
+import { _ } from '../globals';
 
 /**
  * @typedef {Object} indexFilterVMParams

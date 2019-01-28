@@ -21,7 +21,7 @@
     limitations under the License.
  */
 const dialogs = insightModules.load('dialogs');
-const {_, $} = window;
+import { _, $ } from '../globals';
 
 const ADD_REMOVE_TEMPLATE = `
 <div class="add-remove-control">
