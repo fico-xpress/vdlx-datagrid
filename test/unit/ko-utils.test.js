@@ -11,7 +11,7 @@ describe('ko-utils::onSubscribe', () => {
 
         const thing = onSubscribe(doIt, OBSERVABLE);
 
-        const subscription = OBSERVABLE.subscribe(_.noop);
+        const subscription = OBSERVABLE.subscribe(function () { });
 
         expect(thing).toEqual(OBSERVABLE);
         expect(doIt).toHaveBeenCalledWith(subscription);
