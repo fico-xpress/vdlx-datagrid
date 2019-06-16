@@ -55,6 +55,7 @@ export const viewModel = (params, componentInfo) => {
                 style: params.style,
                 sortByFormatted: params.sortByFormatted,
                 filterByFormatted: params.filterByFormatted,
+                frozen: params.frozen,
                 editorOptionsSet: params.editorOptionsSet,
                 selectNull: params.editorOptionsIncludeEmpty,
                 checkedValue: params.editorCheckedValue,

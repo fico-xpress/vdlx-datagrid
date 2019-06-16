@@ -207,4 +207,12 @@ export const transform = (element, attributes, api) => {
         }
         paramsBuilder.addParam('format', format.rawValue);
     }
+    var frozen = attributes['frozen'];
+    if (frozen) {
+        if (frozen.rawValue === 'true') {
+            paramsBuilder.addParam('frozen', true);
+        } else if (frozen.rawValue === 'false') {
+            paramsBuilder.addParam('frozen', false);
+        }
+    }
 };

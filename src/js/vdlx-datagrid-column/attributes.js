@@ -148,5 +148,9 @@ export var VDGCattributes = [
         name: 'format',
         description: 'Specify a number formatting string. Only applicable to array elements of type integer, real, ' +
             'decision variable and constraint. The formatting syntax is explained in the Xpress Insight Developer Guide.'
+    },
+    {
+        name: 'frozen',
+        description: 'If set to true freezes this column during horizontal scrolling. Defaults to false.'
     }
 ];
