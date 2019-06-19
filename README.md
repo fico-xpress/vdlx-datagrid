@@ -50,8 +50,8 @@ The `insight` folder contains an example app with a good number of examples show
 To upload it to your install of FICO Xpress Insight, follow these instructions:
 
 1. clone the Git repository
-    1. `git clone https://gitserver.fairisaac.com:8443/scm/~johnoconnor/vdl-table-performance.git`
-1. `cd vdl-table-performance`
+    1. `git clone https://github.com/fico-xpress/vdlx-datagrid.git`
+1. `cd vdlx-datagrid`
 1. `npm install`
 1. `node generate-data.js`
 1. `cd insight`
