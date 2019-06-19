@@ -399,7 +399,7 @@ class Datagrid {
                     classes = classes.concat('numeric');
                 }
                 return classes.join(' ');
-            }
+            };
             let column = _.assign({}, setNameAndPosn.options, {
                 title: _.escape(String(title)),
                 field: options.id,
@@ -726,7 +726,17 @@ class Datagrid {
             return column;
         });
 
-        const columns = [].concat(indicesColumns, entitiesColumns)
+        let columns = [].concat(indicesColumns, entitiesColumns);
+
+        let freezeColumns = _.parseInt(gridOptions.freezeColumns);
+        if(freezeColumns && !isNaN(freezeColumns)) {
+            columns = _.map(columns, function(col, idx) {
+                if(idx < freezeColumns) {
+                    col.frozen = true;
+                }
+                return col;
+            });
+        }
 
         const {data, allSetValues} = perf('PERF Data generation:', () =>
             dataTransform(

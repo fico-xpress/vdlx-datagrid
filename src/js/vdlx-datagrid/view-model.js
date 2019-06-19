@@ -59,7 +59,8 @@ const getTableOptions = (params) => () => {
         gridData: params.gridData,
         paginationSize: params.pageSize || DEFAULT_GRID_PAGE_SIZE,
         saveState: _.get(params, 'saveState', true),
-        pageMode: params.pageMode
+        pageMode: params.pageMode,
+        freezeColumns: params.freezeColumns
     };
 
     var pageMode = params['pageMode'];

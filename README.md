@@ -47,7 +47,7 @@ As mentioned above `vdlx-datagrid` is mostly a drop-in replacement for `vdl-tabl
 ### The 'table performance' app
 
 The `insight` folder contains an example app with a good number of examples showing `vdlx-datagrid` in use.
-To upload it to your install of FICO Xpress Insight, folloing these instructions:
+To upload it to your install of FICO Xpress Insight, follow these instructions:
 
 1. clone the Git repository
     1. `git clone https://gitserver.fairisaac.com:8443/scm/~johnoconnor/vdl-table-performance.git`

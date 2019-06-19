@@ -72,18 +72,24 @@ vdlx-datagrid {
     &.table-striped {
       .tabulator-table {
       }
+
       .tabulator-loader {
       }
+
       .tabulator-loader-msg {
       }
+
       .tabulator-loading {
       }
+
       .tabulator-error {
       }
+
       .tabulator-placeholder,
       .tabulator-placeholder[tabulator-render-mode=virtual] {
         position: relative;
         padding-bottom: 9px;
+
         span {
           margin: 0 auto 0 0;
           color: $black;
@@ -91,25 +97,33 @@ vdlx-datagrid {
           font-size: 14px;
         }
       }
+
       .tabulator-moving {
       }
+
       .tabulator-block-select {
       }
+
       .tabulator-movingrow-sending {
       }
+
       .tabulator-movingrow-receiving {
       }
+
       .tabulator-header {
         background-color: $color-table-header;
         border-bottom: 1px solid $color-medium-grey;
+
         .tabulator-headers {
           .tabulator-col {
             background-color: $color-table-header;
             line-height: 17px;
+
             &.expanding-cell-height {
               height: auto !important;
               min-height: 27px !important;
             }
+
             .tabulator-col-title {
               white-space: pre-wrap;
               padding: 5px 19px 5px 5px;
@@ -117,22 +131,41 @@ vdlx-datagrid {
           }
         }
       }
+
       .tabulator-calcs-holder {
+        .tabulator-calcs-bottom {
+          background-color: $color-table-header !important;
+          font-weight: normal;
+          .tabulator-cell {
+            border-left: 1px solid $color-medium-grey;
+            text-align: center;
+            &.numeric {
+              text-align: right;
+            }
+          }
+        }
       }
+
       .tabulator-col {
       }
+
       .tabulator-col-content {
         text-align: center;
         font-weight: 400;
       }
+
       .tabulator-col-group {
       }
+
       .tabulator-col-group-cols {
       }
+
       .tabulator-handle {
       }
+
       .tabulator-title-editor {
       }
+
       .tabulator-header-filter {
         background-color: white;
         padding: 5px;
@@ -142,6 +175,7 @@ vdlx-datagrid {
         .tabulator-col-content .tabulator-arrow {
           border: none !important;
           top: auto;
+
           &:after, &:before {
             color: white;
             opacity: 1;
@@ -157,12 +191,12 @@ vdlx-datagrid {
           }
 
           &:before {
-              bottom: 5px;
-              line-height: 12px;
-              position: absolute;
-              font-family: "icomoon";
-              content: "\e3b6";
-              right: $sorting-icon-right-offset;
+            bottom: 5px;
+            line-height: 12px;
+            position: absolute;
+            font-family: "icomoon";
+            content: "\e3b6";
+            right: $sorting-icon-right-offset;
           }
         }
 
@@ -171,18 +205,21 @@ vdlx-datagrid {
             &:before {
               visibility: hidden;
             }
+
             &:after {
               color: #6E6D6A;
               opacity: 1;
             }
           }
         }
+
         &[aria-sort="desc"] {
           .tabulator-col-content .tabulator-arrow {
             &:before {
               color: #6E6D6A;
               opacity: 1;
             }
+
             &:after {
               visibility: hidden;
             }
@@ -192,57 +229,84 @@ vdlx-datagrid {
 
       .tabulator-frozen {
       }
+
       .tabulator-frozen-left {
       }
+
       .tabulator-frozen-right {
       }
+
       .tabulator-row-resize-handle {
       }
+
       .tabulator-col-vertical {
       }
+
       .tabulator-col-vertical-flip {
       }
+
       .tabulator-row {
         border-bottom: 1px solid $color-medium-grey;
+
         &:nth-child(2n) {
           background-color: $color-light-grey;
         }
       }
+
       .tabulator-row-odd {
       }
+
       .tabulator-row-even {
       }
+
       .tabulator-selectable {
       }
+
       .tabulator-unselectable {
       }
+
       .tabulator-selected {
         background-color: $color-selected !important;
       }
+
       .tabulator-validation-fail {
       }
+
       .tabulator-group {
       }
+
       .tabulator-group-visible {
       }
+
       .tabulator-group-level-X {
       }
+
       .tabulator-calcs {
       }
+
       .tabulator-calcs-top {
       }
+
       .tabulator-calcs-bottom {
+        background-color: red;
       }
+
       .tabulator-row-handle {
       }
+
       .tabulator-row-handle-box {
       }
+
       .tabulator-row-handle-bar {
       }
+
       .tabulator-responsive-collapse {
       }
+
       .tabulator-footer {
+        border-top: 0;
       }
+
       .tabulator-paginator {
         .paging-fico {
           .btn {
@@ -250,33 +314,42 @@ vdlx-datagrid {
           }
         }
       }
+
       .tabulator-pages {
       }
+
       .tabulator-page {
       }
+
       .tabulator-tableHolder {
         .tabulator-cell {
           .checkbox-editor {
             text-align: center;
             line-height: 17px;
           }
+
           &.index {
             font-weight: bold;
             font-family: 'Roboto-Bold', sans-serif;
+
             &.numeric {
               text-align: right;
             }
           }
+
           &.editable-numeric {
             text-align: right;
           }
+
           &.numeric {
             text-align: right;
+
             input {
               text-align: right;
               padding: 9px 5px;
             }
           }
+
           &.tabulator-editing {
             &.select-editor {
               input {
@@ -287,12 +360,15 @@ vdlx-datagrid {
         }
       }
     }
+
     &.table-bordered {
       border: 1px solid $color-medium-grey;
+
       .tabulator-header .tabulator-col {
         border-color: $color-medium-grey;
       }
     }
+
     &.table-condensed .tabulator-tableHolder .tabulator-table .tabulator-row {
       &.highlight {
         background-color: $highlight-color !important;
@@ -300,28 +376,36 @@ vdlx-datagrid {
 
       .tabulator-cell {
         padding: 5px 9px;
+
         &.tabulator-editing {
           padding: 0;
           background-color: $color-selected;
+
           &, &:hover {
             @include table-cell-border-active($table-focus-color);
           }
+
           &.invalid, &.invalid:hover {
             @include table-cell-border-active($table-error-color);
           }
         }
+
         &.editable-numeric.tabulator-editing input {
           text-align: right;
           padding: 5px 9px !important;
         }
+
         &:hover {
           @include table-cell-border-hover($table-focus-color);
         }
+
         &.invalid {
           color: $table-error-color !important;
+
           &:hover {
             @include table-cell-border-hover($table-error-color);
           }
+
           input {
             color: $table-error-color !important;
           }
@@ -350,6 +434,7 @@ vdlx-datagrid {
     .add-remove-fico {
       margin: 25px 5px 0 0;
     }
+
     .footer-toolbar:empty {
       display: none;
     }
@@ -367,16 +452,24 @@ vdlx-datagrid {
     $spinner-delay: 2s;
     animation: show $spinner-delay step-end 0s 1 normal;
     @keyframes show {
-      0% {transform: scale(0);}
-      100% {transform: scale(1);}
+      0% {
+        transform: scale(0);
+      }
+      100% {
+        transform: scale(1);
+      }
     }
 
     .fico-spinner {
       font-size: 40px;
       animation: spin 2s linear $spinner-delay infinite;
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
     }
   }
@@ -388,6 +481,7 @@ vdlx-datagrid {
 
 vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col {
   height: 100% !important;
+
   .tabulator-col-content {
     padding: 0;
   }
@@ -399,6 +493,7 @@ vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tab
       background-color: white;
       color: $black;
     }
+
     .numeric {
       text-align: right;
     }
