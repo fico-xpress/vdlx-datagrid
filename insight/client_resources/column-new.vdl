@@ -1,0 +1,50 @@
+<!--
+Xpress Insight vdlx-datagrid
+=============================
+
+file big-data/datagrid-bd1.vdl
+```````````````````````
+vdlx-datagrid Big data example
+
+(c) Copyright 2019 Fair Isaac Corporation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<vdl version="4.1">
+
+    <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+
+    <vdl-page>
+        <vdl-section>
+            <vdl-row>
+                <vdl-column size="6" heading="Column Freeze and Calculation">
+                    <p>This example shows the big data 1 datagrid with the new column freeze and calculations features.</p>
+
+                    <vdlx-datagrid id="big-data-1" column-filter="true" freeze-columns="2">
+                        <vdlx-datagrid-column set="t1IndexA"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t1IndexB"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t1IndexC"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t1IndexD"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t1IndexE"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="t1Col1"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="t1Col2"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="t1Col3"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="t1Col4"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="t1Col5"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="t1Col6"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+    </vdl-page>
+</vdl>

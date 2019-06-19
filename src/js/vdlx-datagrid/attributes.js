@@ -112,5 +112,10 @@ export default [
     {
         name: 'grid-data',
         acceptsExpression: true
+    },
+    {
+        name: 'freeze-columns',
+        description: 'The number of columns to freeze in the table starting from the left hand column.',
+        required: false
     }
 ];

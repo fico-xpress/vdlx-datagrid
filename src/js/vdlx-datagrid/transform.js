@@ -100,6 +100,11 @@ export default function transform(element, attributes, api) {
         paramsBuilder.addParam('saveState', false);
     }
 
+    var freezeColumns = attributes['freeze-columns'];
+    if (freezeColumns) {
+        paramsBuilder.addParam('freezeColumns', freezeColumns.rawValue);
+    }
+
     var klass = attributes['class'];
     if (klass) {
         $element.removeAttr('class');
