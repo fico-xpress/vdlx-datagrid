@@ -730,11 +730,11 @@ class Datagrid {
 
         let freezeColumns = _.parseInt(gridOptions.freezeColumns);
         if(freezeColumns && !isNaN(freezeColumns)) {
-            columns = _.map(columns, function(row, idx) {
+            columns = _.map(columns, function(col, idx) {
                 if(idx < freezeColumns) {
-                    row.frozen = true;
+                    col.frozen = true;
                 }
-                return row;
+                return col;
             });
         }
 

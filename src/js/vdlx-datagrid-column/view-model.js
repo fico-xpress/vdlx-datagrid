@@ -59,7 +59,8 @@ export const viewModel = (params, componentInfo) => {
                 selectNull: params.editorOptionsIncludeEmpty,
                 checkedValue: params.editorCheckedValue,
                 uncheckedValue: params.editorUncheckedValue,
-                id: columnId
+                id: columnId,
+                bottomCalc: params.bottomCalc
             };
             if (params.editorOptions) {
                 props.editorOptions = function () {

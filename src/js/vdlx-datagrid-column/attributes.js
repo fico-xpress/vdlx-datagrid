@@ -148,5 +148,29 @@ export var VDGCattributes = [
         name: 'format',
         description: 'Specify a number formatting string. Only applicable to array elements of type integer, real, ' +
             'decision variable and constraint. The formatting syntax is explained in the Xpress Insight Developer Guide.'
+    },
+    {
+        name: 'bottom-calc',
+        description: 'Specify a built-in calculation, one of avg, max, min, sum, concat or count to show that calculated value, ' +
+            'alternatively provide a custom function, as a dynamic expression.',
+        acceptsExpression: true,
+        expressionVars: [
+            {
+                name: 'values',
+                type: '(string|boolean|number)',
+                description: 'Array of column values'
+            },
+            {
+                name: 'data',
+                type: 'string',
+                description: 'All table data'
+            },
+            {
+                name: 'calcParams',
+                type: 'Array.<(string|boolean|number)>',
+                description: 'params passed from the column definition object'
+            }
+        ]
+
     }
 ];

@@ -24,20 +24,52 @@ limitations under the License.
 
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
+    <script>
+        /**
+         * Calculate the standard deviation of an array of numbers.
+         * @param {Array<number>} values
+         * @returns {number}
+         */
+        function standardDeviation(values){
+            var avg = average(values);
+
+            var squareDiffs = values.map(function(value){
+                var diff = value - avg;
+                var sqrDiff = diff * diff;
+                return sqrDiff;
+            });
+
+            var avgSquareDiff = average(squareDiffs);
+
+            var stdDev = Math.sqrt(avgSquareDiff);
+            return stdDev;
+        }
+
+        function average(data){
+            var sum = data.reduce(function(sum, value){
+                return sum + value;
+            }, 0);
+
+            var avg = sum / data.length;
+            return avg;
+        }
+    </script>
+
     <vdl-page>
         <vdl-section>
             <vdl-row>
                 <vdl-column size="6" heading="Column Freeze and Calculation">
                     <p>This example shows the big data 1 datagrid with the new column freeze and calculations features.</p>
+                    <p>The bottom-calc attribute either accepts a dynamic expression or one of the built in calculations avg, max, min, sum, concat or count.</p>
 
                     <vdlx-datagrid id="big-data-1" column-filter="true" freeze-columns="2">
-                        <vdlx-datagrid-column set="t1IndexA"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column set="t1IndexB"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t1IndexA" bottom-calc="=_.constant('total')"></vdlx-datagrid-column><!-- An inline function that returns a string -->
+                        <vdlx-datagrid-column set="t1IndexB" bottom-calc="=standardDeviation"></vdlx-datagrid-column><!-- a reference to the function defined in the script tag above -->
                         <vdlx-datagrid-column set="t1IndexC"></vdlx-datagrid-column>
                         <vdlx-datagrid-column set="t1IndexD"></vdlx-datagrid-column>
                         <vdlx-datagrid-column set="t1IndexE"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column entity="t1Col1"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column entity="t1Col2"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="t1Col1" bottom-calc="count"></vdlx-datagrid-column><!-- built in 'count' calculation -->
+                        <vdlx-datagrid-column entity="t1Col2" bottom-calc="avg"></vdlx-datagrid-column><!-- built in 'average' calculation -->
                         <vdlx-datagrid-column entity="t1Col3"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="t1Col4"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="t1Col5"></vdlx-datagrid-column>

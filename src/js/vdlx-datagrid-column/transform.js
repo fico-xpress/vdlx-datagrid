@@ -200,6 +200,17 @@ export const transform = (element, attributes, api) => {
         }
         paramsBuilder.addParam('render', render.expression.value, true);
     }
+    var bottomCalc = attributes['bottom-calc'];
+    if (bottomCalc) {
+        if (bottomCalc.expression.isString) {
+            var inbuiltCalcs = ['avg', 'sum', 'min', 'max', 'count', 'concat'];
+            if(!_.contains(inbuiltCalcs, bottomCalc.rawValue))
+            throw Error('The "bottom-calc" attribute must either be an (=)expression or one of ' + (inbuiltCalcs.join(', ') + '. ' + bottomCalc.expression.value + ' is not a valid option.'));
+            paramsBuilder.addParam('bottomCalc', bottomCalc.rawValue, false);
+        } else {
+            paramsBuilder.addParam('bottomCalc', bottomCalc.expression.value, true);
+        }
+    }
     var format = attributes['format'];
     if (format) {
         if (!DataUtils.entityTypeIsNumber(entity)) {
