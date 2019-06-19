@@ -27,5 +27,7 @@
             <vdl-view title="Big Data Table 5" path="big-data/datagrid-bd5.vdl"/>
         </view-group>
 
+        <client-resources-local-path>/Users/johnoconnor/dev/insight/open-source/vdlx-datagrid/insight/client_resources</client-resources-local-path>
+
     </client>
 </model-companion>
