@@ -56,13 +56,27 @@ limitations under the License.
     </script>
 
     <vdl-page>
-        <vdl-section>
+
+        <vdl-section heading="Small table - column calculations and formatting">
+            <vdl-row>
+                <vdl-column size="6" heading="Column calculation format">
+                    <p>The bottom-calc attrinbute takes it's format from the column. In this case FactoryCustomerAgreements is set to '0.0000'</p>
+                    <vdlx-datagrid page-size="20" column-filter="true">
+                        <vdlx-datagrid-column set="Factories" bottom-calc="=_.constant('Total')"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column format="0.0000" entity="FactoryCustomerAgreements" bottom-calc="sum"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Large table - column freeze">
             <vdl-row>
                 <vdl-column size="6" heading="Column Freeze and Calculation">
                     <p>This example shows the big data 1 datagrid with the new column freeze and calculations features.</p>
                     <p>The bottom-calc attribute either accepts a dynamic expression or one of the built in calculations avg, max, min, sum, concat or count.</p>
 
-                    <vdlx-datagrid id="big-data-1" column-filter="true" freeze-columns="2">
+                    <vdlx-datagrid id="big-data-1" column-filter="true" freeze-columns="2" page-size="20">
                         <vdlx-datagrid-column set="t1IndexA" bottom-calc="=_.constant('total')"></vdlx-datagrid-column><!-- An inline function that returns a string -->
                         <vdlx-datagrid-column set="t1IndexB" bottom-calc="=standardDeviation"></vdlx-datagrid-column><!-- a reference to the function defined in the script tag above -->
                         <vdlx-datagrid-column set="t1IndexC"></vdlx-datagrid-column>
@@ -78,5 +92,6 @@ limitations under the License.
                 </vdl-column>
             </vdl-row>
         </vdl-section>
+
     </vdl-page>
 </vdl>
