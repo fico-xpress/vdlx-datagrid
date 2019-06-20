@@ -62,6 +62,15 @@ export const viewModel = (params, componentInfo) => {
                 id: columnId,
                 bottomCalc: params.bottomCalc
             };
+            if(params.bottomCalc) {
+                props.bottomCalcFormatter = function(data) {
+                    var val = data.getValue();
+                    if(_.isNumber(val)) {
+                        return insightGetter().Formatter.formatNumber(val, params.format);
+                    }
+                    return val;
+                };
+            }
             if (params.editorOptions) {
                 props.editorOptions = function () {
                     // Return an empty list of options if value is undefined
