@@ -55,7 +55,7 @@ limitations under the License.
                 <vdl-row>
                     <vdlx-datagrid >
                         <vdlx-datagrid-column entity="SupportCosts" editable="true" heading="SUPPORT COSTS"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column entity="ServiceLevelAgreements" editable="true" >
+                        <vdlx-datagrid-column entity="ServiceLevelAgreements" editable="=scenario.entities.MyBool.value" >
                             Agreements
                         </vdlx-datagrid-column>
                     </vdlx-datagrid>

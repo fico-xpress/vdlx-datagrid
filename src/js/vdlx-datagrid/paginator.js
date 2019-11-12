@@ -50,7 +50,6 @@ const PAGINATOR_TEMPLATE = `
 </div>
 `;
 
-
 /**
  * @param {JQuery<HTMLElement>} element
  * @returns {boolean}
@@ -62,18 +61,24 @@ export default class Paginator {
         this.$paginationControl = $(PAGINATOR_TEMPLATE);
 
         const pageSizeOptions = uniq(filter(sortBy([5, 10, 25, 50, 100, tablePageSize])));
-        const pageSizeOptionsHtml = map(pageSizeOptions, pageSize => `<option value="${pageSize}" ${tablePageSize === pageSize ? 'selected' : ''}>${pageSize}</option>`).join('');
+        const pageSizeOptionsHtml = map(
+            pageSizeOptions,
+            pageSize =>
+                `<option value="${pageSize}" ${tablePageSize === pageSize ? 'selected' : ''}>${pageSize}</option>`
+        ).join('');
         this.$paginationControl.find('.results-per-page-selector').append(pageSizeOptionsHtml);
     }
 
-    isActiveSelectionOutsideAPaginationControl (element) {
-        const targetDatagrid = element.closest(`vdlx-datagrid`)
+    isActiveSelectionOutsideAPaginationControl(element) {
+        const targetDatagrid = element.closest(`vdlx-datagrid`);
         if (isEmpty(targetDatagrid)) {
             return true;
         }
-        return $(this.table.element)
-            .closest('vdlx-datagrid')
-            .get(0) !== targetDatagrid.get(0);
+        return (
+            $(this.table.element)
+                .closest('vdlx-datagrid')
+                .get(0) !== targetDatagrid.get(0)
+        );
     }
 
     /*
@@ -93,7 +98,7 @@ export default class Paginator {
      * get the currentPage as integer
      * @returns {number}
      */
-    get currentPage () {
+    get currentPage() {
         return this.table.getPage();
     }
 
@@ -102,7 +107,7 @@ export default class Paginator {
      * @param {number} num
      * @returns {*|boolean}
      */
-    set currentPage (num) {
+    set currentPage(num) {
         return this.table.setPage(num);
     }
 
@@ -110,14 +115,14 @@ export default class Paginator {
      * get the number of the last page.
      * @returns {number} last page
      */
-    get maxPage () {
+    get maxPage() {
         return this.table.getPageMax();
     }
 
     /**
      * Refresh all the Paginator controls to display the correct pages, the enabled start of the previous and next buttons, ect..
      */
-    updatePageIndicators () {
+    updatePageIndicators() {
         if (this.table.getDataCount() === 0) {
             this.$paginationControl.hide();
         } else {
@@ -142,7 +147,7 @@ export default class Paginator {
     /**
      * Navigate the grid to the previous page.
      */
-    previousPage () {
+    previousPage() {
         if (this.currentPage > 1) {
             this.table.previousPage();
             this.updatePageIndicators();
@@ -152,7 +157,7 @@ export default class Paginator {
     /**
      * Navigate the grid to the next page.
      */
-    nextPage () {
+    nextPage() {
         if (this.currentPage < this.maxPage) {
             this.table.nextPage();
             this.updatePageIndicators();
@@ -164,14 +169,14 @@ export default class Paginator {
      * @param {integer} pageNum
      * @returns {number}
      */
-    goToPage (pageNum) {
+    goToPage(pageNum) {
         let currentPage = Math.max(1, Math.min(this.maxPage, pageNum));
         this.currentPage = currentPage;
 
         return currentPage;
     }
 
-    toggle () {
+    toggle() {
         this.$revealBtn.toggleClass('active-pager-btn');
         this.$dropdown.toggleClass('hide');
     }
@@ -185,7 +190,7 @@ export default class Paginator {
      * Given a jQuery node, appends this Paginator to it and sets up event handling.
      * @param {Element} container
      */
-    appendTo (container) {
+    appendTo(container) {
         this.$paginationControl.appendTo(container);
 
         this.$revealBtn = this.$paginationControl.find('.paging_fico .reveal-btn');
@@ -224,10 +229,11 @@ export default class Paginator {
             this.updatePageIndicators();
         });
 
-        $('html').on('mouseup', (e) => {
+        $('html').on('mouseup', e => {
             var currentElement = $(e.target);
 
-            if (this.isActiveSelectionOutsideAPaginationControl(currentElement)) { // hide all pagination dialogs
+            if (this.isActiveSelectionOutsideAPaginationControl(currentElement)) {
+                // hide all pagination dialogs
                 this.close();
             }
         });

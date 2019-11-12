@@ -112,7 +112,7 @@ export default function transform(element, attributes, api) {
     }
 
     var alwaysShowSelection = attributes['always-show-selection'];
-    if (alwaysShowSelection && (alwaysShowSelection.rawValue.toUpperCase() === 'TRUE')) {
+    if (alwaysShowSelection && alwaysShowSelection.rawValue.toUpperCase() === 'TRUE') {
         paramsBuilder.addParam('alwaysShowSelection', true);
     }
 
@@ -139,5 +139,4 @@ export default function transform(element, attributes, api) {
             paramsBuilder.addParam('gridHeight', gridHeight.expression.value, true);
         }
     }
-
 }
