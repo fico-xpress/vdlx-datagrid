@@ -66,7 +66,8 @@ import {
     defer,
     find,
     some,
-    delay
+    delay,
+    escape
 } from 'lodash';
 import _ from 'lodash';
 
