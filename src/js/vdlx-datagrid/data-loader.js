@@ -20,14 +20,14 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import { onSubscribe, onSubscriptionDispose } from "./ko-utils";
-import { map, flatten, filter, identity, uniq, isUndefined, zipObject, isEmpty, noop, each, fromPairs } from "lodash";
+import { onSubscribe, onSubscriptionDispose } from './ko-utils';
+import { map, flatten, filter, identity, uniq, isUndefined, zipObject, isEmpty, noop, each, fromPairs } from 'lodash';
 
-function findScenario (scenarios, identifier) {
+function findScenario(scenarios, identifier) {
     var result = null;
 
     // Find scenario by ID.
-    scenarios.some(function (currentScenario) {
+    scenarios.some(function(currentScenario) {
         if (currentScenario.getId() === identifier) {
             result = currentScenario;
             return true;
@@ -40,7 +40,7 @@ function findScenario (scenarios, identifier) {
     }
 
     // Find by position.
-    scenarios.some(function (currentScenario) {
+    scenarios.some(function(currentScenario) {
         if (currentScenario.getSelectionIndex() === identifier) {
             result = currentScenario;
             return true;
@@ -51,28 +51,25 @@ function findScenario (scenarios, identifier) {
     return result;
 }
 
-function getAutoTableEntities (columnOptions) {
-    var modelSchema = insight.getView().getProject().getModelSchema();
+function getAutoTableEntities(columnOptions) {
+    var modelSchema = insight
+        .getView()
+        .getProject()
+        .getModelSchema();
 
     let entities = map(columnOptions, 'name');
     // and index sets
-    entities = entities.concat(
-        flatten(map(entities, entity => modelSchema.getEntity(entity).getIndexSets()))
-    );
+    entities = entities.concat(flatten(map(entities, entity => modelSchema.getEntity(entity).getIndexSets())));
 
     // Also add entities from editor options set.
-    entities = entities.concat(
-        filter(map(columnOptions, 'editorOptionsSet'), identity)
-    );
+    entities = entities.concat(filter(map(columnOptions, 'editorOptionsSet'), identity));
 
     entities = uniq(entities);
 
-    return entities.concat(
-        filter(map(entities, (entity) => modelSchema.getEntity(entity).getLabelsEntity()), identity)
-    );
+    return entities.concat(filter(map(entities, entity => modelSchema.getEntity(entity).getLabelsEntity()), identity));
 }
 
-function getScenarios (config, scenarios) {
+function getScenarios(config, scenarios) {
     scenarios = [].concat(scenarios);
     const defaultScenario = isUndefined(config.scenario) ? scenarios[0] : findScenario(scenarios, config.scenario);
 
@@ -95,7 +92,7 @@ function getScenarios (config, scenarios) {
  * @param {*} config$
  * @returns {{data: KnockoutObservable<{defaultScenario: Scenario, scenarios: Scenario[]}>, errors: KnockoutObservable}}
  */
-function withScenarioData (config$) {
+function withScenarioData(config$) {
     let hasSubscription = false;
     const scenarios$ = ko.observable([]);
 
@@ -110,15 +107,16 @@ function withScenarioData (config$) {
     });
     const error$ = ko.observable();
 
-    const scenarioObserverSubscription$ = ko.pureComputed(function () {
+    const scenarioObserverSubscription$ = ko.pureComputed(function() {
         const config = ko.unwrap(config$);
         if (!isEmpty(config.scenarioList) && !isEmpty(config.columnOptions)) {
             try {
                 error$(undefined);
-                return insight.getView()
+                return insight
+                    .getView()
                     .withScenarios(config.scenarioList)
                     .withEntities(getAutoTableEntities(config.columnOptions))
-                    .notify(function (scenarios) {
+                    .notify(function(scenarios) {
                         scenarios$(scenarios);
                     })
                     .start();
@@ -126,25 +124,31 @@ function withScenarioData (config$) {
                 error$(err);
                 return {
                     dispose: noop
-                }
+                };
             }
         }
         return undefined;
     });
 
     return {
-        data: onSubscribe(function (subscription) {
+        data: onSubscribe(function(subscription) {
             let subscriptions = [];
 
             if (!hasSubscription) {
-                subscriptions = [scenarioObserverSubscription$.subscribe(noop),
-                scenarioObserverSubscription$.subscribe(function (oldScenarioObserver) {
-                    oldScenarioObserver && oldScenarioObserver.dispose();
-                }, null, 'beforeChange')];
+                subscriptions = [
+                    scenarioObserverSubscription$.subscribe(noop),
+                    scenarioObserverSubscription$.subscribe(
+                        function(oldScenarioObserver) {
+                            oldScenarioObserver && oldScenarioObserver.dispose();
+                        },
+                        null,
+                        'beforeChange'
+                    )
+                ];
                 hasSubscription = true;
             }
 
-            onSubscriptionDispose(function () {
+            onSubscriptionDispose(function() {
                 hasSubscription = !!scenarioData$.getSubscriptionsCount();
                 if (!hasSubscription) {
                     const scenarioObserver = scenarioObserverSubscription$();
@@ -154,7 +158,7 @@ function withScenarioData (config$) {
             }, subscription);
         }, scenarioData$),
         errors: error$
-    }
-};
+    };
+}
 
 export default withScenarioData;

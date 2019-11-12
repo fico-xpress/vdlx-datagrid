@@ -33,10 +33,10 @@ const AUTOCOLUMN_PROP_NAME = 'autotableConfig';
 
 export const viewModel = (params, componentInfo) => {
     var indexFilters$ = ko.observable({});
-    var filters$ = ko.pureComputed(function () {
+    var filters$ = ko.pureComputed(function() {
         return reduce(
             indexFilters$(),
-            function (memo, filterProps) {
+            function(memo, filterProps) {
                 return set(memo, [filterProps.setName, filterProps.setPosition], filterProps.value);
             },
             {}
@@ -44,9 +44,10 @@ export const viewModel = (params, componentInfo) => {
     });
     const columnId = uniqueId('datagrid-column');
     var buildColumn = throttle(
-        function (done) {
+        function(done) {
             console.log('vdlx-datagrid update column');
-            var columnReady = $(componentInfo.element).find('vdlx-datagrid-index-filter').length === size(indexFilters$());
+            var columnReady =
+                $(componentInfo.element).find('vdlx-datagrid-index-filter').length === size(indexFilters$());
             var props = {
                 scenario: ko.unwrap(params.scenario),
                 title: ko.unwrap(params.heading),
@@ -63,17 +64,17 @@ export const viewModel = (params, componentInfo) => {
                 id: columnId,
                 bottomCalc: params.bottomCalc
             };
-            if(params.bottomCalc) {
+            if (params.bottomCalc) {
                 props.bottomCalcFormatter = function(data) {
                     var val = data.getValue();
-                    if(isNumber(val)) {
+                    if (isNumber(val)) {
                         return insightGetter().Formatter.formatNumber(val, params.format);
                     }
                     return val;
                 };
             }
             if (params.editorOptions) {
-                props.editorOptions = function () {
+                props.editorOptions = function() {
                     // Return an empty list of options if value is undefined
                     return params.editorOptions.apply(null, arguments) || [];
                 };
@@ -130,26 +131,29 @@ export const viewModel = (params, componentInfo) => {
                 props.filters = filters$();
             }
             if (props.entity) {
-                var getValidationFn = function (indices) {
+                var getValidationFn = function(indices) {
                     var validationProperties = validatorFactory.getValidationProperties({
                         entity: props.entity,
                         indices: indices
                     });
-                    var customValidators = validatorFactory.getCustomValidators(validationProperties, componentInfo.element);
+                    var customValidators = validatorFactory.getCustomValidators(
+                        validationProperties,
+                        componentInfo.element
+                    );
                     return validatorFactory.createFromValidators(customValidators);
                 };
                 var validationObservable = ko.observable().extend({
                     functionObservable: {
-                        onDependenciesChange: function () {
+                        onDependenciesChange: function() {
                             params.tableValidate();
                         },
-                        read: function (indices, value, rowData) {
+                        read: function(indices, value, rowData) {
                             return getValidationFn(indices)(value, rowData);
                         },
                         disposeWhenDependenciesChange: false
                     }
                 });
-                props.editorValidate = function (newValue, rowData, keys) {
+                props.editorValidate = function(newValue, rowData, keys) {
                     validationObservable(keys, newValue, rowData);
                     return validationObservable.peek();
                 };
@@ -165,7 +169,7 @@ export const viewModel = (params, componentInfo) => {
         COLUMN_BUILD_DELAY,
         { leading: false }
     );
-    var paramsWatcher = ko.computed(function () {
+    var paramsWatcher = ko.computed(function() {
         var constructedParams = {
             scenario: ko.unwrap(params.scenario),
             title: ko.unwrap(params.heading),
@@ -179,15 +183,15 @@ export const viewModel = (params, componentInfo) => {
     return {
         columnUpdate: buildColumn,
         validate: buildColumn,
-        dispose: function () {
+        dispose: function() {
             paramsWatcher.dispose();
             isFunction(params.tableUpdate) && params.tableUpdate();
         },
-        filterUpdate: function (filterId, filterProperties) {
+        filterUpdate: function(filterId, filterProperties) {
             indexFilters$(set(indexFilters$(), filterId, filterProperties));
             buildColumn();
         },
-        filterRemove: function (filterId) {
+        filterRemove: function(filterId) {
             indexFilters$(omit(indexFilters$(), filterId));
             buildColumn();
         }

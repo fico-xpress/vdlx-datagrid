@@ -26,12 +26,12 @@ import { get, find, has } from 'lodash';
 
 export default (element, attributes, api) => {
     var $element = $(element);
-    var entityName = $element
-        .closest('[entity]')
-        .attr('entity');
+    var entityName = $element.closest('[entity]').attr('entity');
 
     if (!entityName) {
-        throw Error('<vdlx-datagrid-index-filter> must be contained within a <vdlx-datagrid-column> that defines an "entity".');
+        throw Error(
+            '<vdlx-datagrid-index-filter> must be contained within a <vdlx-datagrid-column> that defines an "entity".'
+        );
     }
     const parentArray = api.getModelEntityByName(entityName);
     if (!parentArray) {
@@ -57,7 +57,14 @@ export default (element, attributes, api) => {
     }
     if (!find(indexSetNameAndPosns, { name: setName, position: setPosition })) {
         if (has(attributes, 'set-position')) {
-            throw Error('Invalid index set name/position combination ("' + setName + '",' + setPosition + ') for array ' + entityName);
+            throw Error(
+                'Invalid index set name/position combination ("' +
+                    setName +
+                    '",' +
+                    setPosition +
+                    ') for array ' +
+                    entityName
+            );
         } else {
             throw Error('Invalid index set "' + setName + '" for array ' + entityName);
         }
@@ -69,4 +76,4 @@ export default (element, attributes, api) => {
         .addRawOrExpressionParam('value', attributes.value)
         .addParentCallbackParam('filterUpdate')
         .addParentCallbackParam('filterRemove');
-}
+};

@@ -24,7 +24,7 @@ const validatorRegistry = insightModules.load('vdl-validator-registry');
 import { $ } from '../globals';
 import { isFunction } from 'lodash';
 
-export default function (params, componentInfo) {
+export default function(params, componentInfo) {
     var fieldElement = $(componentInfo.element).parents('vdlx-datagrid-column')[0];
     if (!fieldElement) {
         throw Error('Cannot find parent <vdlx-datagrid-column> for <vdl-validate>');
@@ -37,7 +37,7 @@ export default function (params, componentInfo) {
 
     var registryId = validatorRegistry.add({
         element: fieldElement,
-        validate: function (entityName, value, indices, rowData) {
+        validate: function(entityName, value, indices, rowData) {
             if (callback(entityName, value, indices, rowData)) {
                 return {
                     isValid: true
@@ -55,7 +55,7 @@ export default function (params, componentInfo) {
     isFunction(params.validate) && params.validate();
 
     return {
-        dispose: function () {
+        dispose: function() {
             validatorRegistry.remove(registryId);
             isFunction(params.validate) && params.validate();
         }

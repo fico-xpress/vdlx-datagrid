@@ -21,7 +21,21 @@
     limitations under the License.
  */
 import perf from '../performance-measurement';
-import { curry, map, findIndex, reduce, isEmpty, get, uniq, filter, partial, zipObject, isFunction, fromPairs, set } from 'lodash';
+import {
+    curry,
+    map,
+    findIndex,
+    reduce,
+    isEmpty,
+    get,
+    uniq,
+    filter,
+    partial,
+    zipObject,
+    isFunction,
+    fromPairs,
+    set
+} from 'lodash';
 import _ from 'lodash';
 
 const DataUtils = insightModules.load('utils/data-utils');
@@ -30,7 +44,7 @@ const createDenseData = insightModules.load('components/table/create-dense-data'
 const SelectOptions = insightModules.load('components/autotable-select-options');
 
 export const getAllColumnIndices = curry((schema, columnOptions) => {
-    return map(columnOptions, function (option) {
+    return map(columnOptions, function(option) {
         return schema.getEntity(option.name).getIndexSets();
     });
 }, 2);
@@ -38,7 +52,7 @@ export const getAllColumnIndices = curry((schema, columnOptions) => {
 const getIndexPosns = DataUtils.getIndexPosns;
 
 /**
- * @typedef {{name: string, position: number}} SetNameAndPosition 
+ * @typedef {{name: string, position: number}} SetNameAndPosition
  */
 
 /** @returns {SetNameAndPosition[]} */
@@ -47,37 +61,39 @@ export const getDisplayIndices = (columnIndices, columnOptions) => {
     var numColumns = columnIndices.length;
 
     for (var i = 0; i < numColumns; i++) {
-        const indices = columnIndices[i], options = columnOptions[i];
+        const indices = columnIndices[i],
+            options = columnOptions[i];
         const setPosns = getIndexPosns(indices);
-        indices.forEach(function (setName, i) {
+        indices.forEach(function(setName, i) {
             const setPosn = setPosns[i];
             if (DataUtils.getFilterValue(options.filters, setName, setPosn) == null) {
                 // i.e. if there is no filter, then this index is to be used
-                const key = { name: setName, position: setPosn }, keyJson = JSON.stringify(key);
+                const key = { name: setName, position: setPosn },
+                    keyJson = JSON.stringify(key);
                 setCount[keyJson] = (setCount[keyJson] || 0) + 1;
             }
         });
     }
 
     return _(setCount)
-        .pickBy(function (count) {
+        .pickBy(function(count) {
             return count === numColumns;
         })
         .keys()
-        .map(function (k) {
+        .map(function(k) {
             return JSON.parse(k);
         })
         .value();
-}
+};
 
 // Build a key from the index set columns of a row. This may be partial, if not all index sets are displayed in the row
-export const getPartialExposedKey = (setNameAndPosns, rowData) => 
+export const getPartialExposedKey = (setNameAndPosns, rowData) =>
     // Assume index columns always start at the beginning of the rowData array
     rowData.slice(0, setNameAndPosns.length);
 
-export const generateCompositeKey = function (setValues, setNameAndPosns, arrayIndices, arrayOptions) {
+export const generateCompositeKey = function(setValues, setNameAndPosns, arrayIndices, arrayOptions) {
     const setPosns = getIndexPosns(arrayIndices);
-    return arrayIndices.map(function (setName, i) {
+    return arrayIndices.map(function(setName, i) {
         const setPosn = setPosns[i];
         const setIndex = findIndex(setNameAndPosns, { name: setName, position: setPosn });
         const filterValue = DataUtils.getFilterValue(arrayOptions.filters, setName, setPosn);
@@ -86,14 +102,22 @@ export const generateCompositeKey = function (setValues, setNameAndPosns, arrayI
         } else if (filterValue != null) {
             return filterValue;
         } else {
-            throw Error('Cannot generate table with incomplete index configuration. Missing indices: ' +
-                setName + ' for entity: ' + arrayOptions.name);
+            throw Error(
+                'Cannot generate table with incomplete index configuration. Missing indices: ' +
+                    setName +
+                    ' for entity: ' +
+                    arrayOptions.name
+            );
         }
     });
 };
 
-export const createGenerateCompositeKey = (setNameAndPosns) => {
-    const setNameAndPosnsIndices = reduce(setNameAndPosns, (acc, setNameAndPosn, i) => set(acc, [setNameAndPosn.name, setNameAndPosn.position], i), {});
+export const createGenerateCompositeKey = setNameAndPosns => {
+    const setNameAndPosnsIndices = reduce(
+        setNameAndPosns,
+        (acc, setNameAndPosn, i) => set(acc, [setNameAndPosn.name, setNameAndPosn.position], i),
+        {}
+    );
 
     return (setValues, __, arrayIndices, arrayOptions) => {
         if (isEmpty(arrayOptions.filters)) {
@@ -101,10 +125,10 @@ export const createGenerateCompositeKey = (setNameAndPosns) => {
         }
         const setPosns = getIndexPosns(arrayIndices);
         const result = [];
-        for(let i = 0; i < arrayIndices.length; i++) {
+        for (let i = 0; i < arrayIndices.length; i++) {
             const setName = arrayIndices[i];
             const setPosn = setPosns[i];
-            const setIndex = get(setNameAndPosnsIndices, [ setName, setPosn ]);
+            const setIndex = get(setNameAndPosnsIndices, [setName, setPosn]);
             if (setIndex !== undefined) {
                 result.push(setValues[setIndex]);
             } else {
@@ -112,49 +136,60 @@ export const createGenerateCompositeKey = (setNameAndPosns) => {
                 if (filterValue != null) {
                     result.push(filterValue);
                 } else {
-                    throw Error('Cannot generate table with incomplete index configuration. Missing indices: ' +
-                        setName + ' for entity: ' + arrayOptions.name);
+                    throw Error(
+                        'Cannot generate table with incomplete index configuration. Missing indices: ' +
+                            setName +
+                            ' for entity: ' +
+                            arrayOptions.name
+                    );
                 }
             }
         }
 
         return result;
     };
-}
+};
 
 const isSparse = (sets, arrays) => {
-    const totalPossibleKeys = reduce(sets, function (memo, set) {
-        return memo * set.length;
-    }, 1);
+    const totalPossibleKeys = reduce(
+        sets,
+        function(memo, set) {
+            return memo * set.length;
+        },
+        1
+    );
 
-    const totalCountOfArrayValues = reduce(arrays, function (memo, insightArray) {
-        return memo + insightArray.size();
-    }, 0);
+    const totalCountOfArrayValues = reduce(
+        arrays,
+        function(memo, insightArray) {
+            return memo + insightArray.size();
+        },
+        0
+    );
 
-    return (totalPossibleKeys * arrays.length > ((totalCountOfArrayValues * Math.log(totalCountOfArrayValues)) || 0));
+    return totalPossibleKeys * arrays.length > (totalCountOfArrayValues * Math.log(totalCountOfArrayValues) || 0);
 };
 
 export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions, scenariosData, rowFilter) => {
-
     var defaultScenario = scenariosData.defaultScenario;
-    const indexScenarios = uniq(map(map(columnOptions, 'id'), id =>
-        get(scenariosData.scenarios, id, defaultScenario)
-    ));
+    const indexScenarios = uniq(map(map(columnOptions, 'id'), id => get(scenariosData.scenarios, id, defaultScenario)));
 
     const arrayIds = map(columnOptions, 'id');
     const setIds = map(setNamePosnsAndOptions, 'options.id');
 
-    const arrays = filter(map(columnOptions, column => {
-        try {
-            return get(scenariosData.scenarios, column.id, defaultScenario).getArray(column.name)
-        } catch (err) {
-            return undefined;
-        } 
-    }));
+    const arrays = filter(
+        map(columnOptions, column => {
+            try {
+                return get(scenariosData.scenarios, column.id, defaultScenario).getArray(column.name);
+            } catch (err) {
+                return undefined;
+            }
+        })
+    );
 
     const sets = map(setNamePosnsAndOptions, setNameAndPosn => {
         return _(indexScenarios)
-            .map(function (scenario) {
+            .map(function(scenario) {
                 return scenario.getSet(setNameAndPosn.name);
             })
             .flatten()
@@ -162,7 +197,10 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
             .value();
     });
 
-    const schema = insight.getView().getProject().getModelSchema();
+    const schema = insight
+        .getView()
+        .getProject()
+        .getModelSchema();
 
     const allSetValues = map(setNamePosnsAndOptions, (setNamePosnAndOption, i) => {
         return SelectOptions.generateSelectOptions(schema, indexScenarios, setNamePosnAndOption.name, sets[i]);
@@ -196,13 +234,10 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
 
     // row filtering
     if (isFunction(rowFilter)) {
-        data = filter(data, (rowData) => {
-            return rowFilter(
-                rowData,
-                getPartialExposedKey(setNamePosnsAndOptions, rowData)
-            );
+        data = filter(data, rowData => {
+            return rowFilter(rowData, getPartialExposedKey(setNamePosnsAndOptions, rowData));
         });
     }
 
-    return {data: map(data, createRow), allSetValues: allSetValues};
+    return { data: map(data, createRow), allSetValues: allSetValues };
 };

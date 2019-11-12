@@ -29,18 +29,14 @@ const events = map(
     ['keydown', 'keypress', 'keyup', 'mousedown', 'mouseup', 'click', 'focusin'],
     eventName => eventName + LOCK_EVENT_NAMESPACE
 ).join(' ');
-const WRAPPER_SELECTOR = 'vdlx-datagrid'
+const WRAPPER_SELECTOR = 'vdlx-datagrid';
 const DEFAULT_MESSAGE = 'The table is currently locked';
 const TABLE_LOCKED_CLASS = 'insight-table-locked';
 const TABLE_LOCKED_OVERLAY_CLASS = 'insight-table-locked-overlay';
 const TABLE_LOCKED_OVERLAY_NON_TRANSPARENT_CLASS = 'non-transparent';
 const FICO_SPINNER_CLASS = 'fico-spinner';
 
-const OVERLAY_CLASSES = [
-    TABLE_LOCKED_OVERLAY_CLASS,
-    TABLE_LOCKED_OVERLAY_NON_TRANSPARENT_CLASS,
-].join(' ');
-
+const OVERLAY_CLASSES = [TABLE_LOCKED_OVERLAY_CLASS, TABLE_LOCKED_OVERLAY_NON_TRANSPARENT_CLASS].join(' ');
 
 export class DatagridLock {
     /**
@@ -57,19 +53,17 @@ export class DatagridLock {
      * @param {String} message
      * @memberof DatagridLock
      */
-    lock (message = DEFAULT_MESSAGE) {
+    lock(message = DEFAULT_MESSAGE) {
         if (this.locked) {
             return;
         }
 
         this.locked = true;
 
-        this.$wrapperElement
-            .addClass(TABLE_LOCKED_CLASS)
-            .on(events, function (e) {
-                e.stopImmediatePropagation();
-                e.preventDefault();
-            });
+        this.$wrapperElement.addClass(TABLE_LOCKED_CLASS).on(events, function(e) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+        });
 
         var $overlay = $(`<div class="${OVERLAY_CLASSES}"><div class="${FICO_SPINNER_CLASS}"></div></div>`);
         $overlay.appendTo(this.$wrapperElement);
@@ -77,7 +71,7 @@ export class DatagridLock {
         this.overlayDeferred = null;
     }
 
-    unlock () {
+    unlock() {
         if (!this.locked) {
             return;
         }
@@ -95,7 +89,7 @@ export class DatagridLock {
         this.locked = false;
     }
 
-    isLocked () {
+    isLocked() {
         return this.locked;
     }
 }

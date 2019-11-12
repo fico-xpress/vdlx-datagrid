@@ -24,14 +24,14 @@ export default [
     {
         name: 'id',
         description:
-        'Specify an element id for the grid. Useful if you later want to target the grid using a selector. ' +
-        'If not given then an id will be generated.'
+            'Specify an element id for the grid. Useful if you later want to target the grid using a selector. ' +
+            'If not given then an id will be generated.'
     },
     {
         name: 'scenario',
         description:
-        'The default scenario to use for fetching data in the grid. This can be overridden per column but the default ' +
-        'will be used when a column does not specify a particular scenario and the index sets will be fetched from the default scenario.',
+            'The default scenario to use for fetching data in the grid. This can be overridden per column but the default ' +
+            'will be used when a column does not specify a particular scenario and the index sets will be fetched from the default scenario.',
         acceptsExpression: true
     },
     {
@@ -41,12 +41,14 @@ export default [
     },
     {
         name: 'page-mode',
-        description: 'By default the grid will show all rows in scrolling mode. Set this attribute to "paged" to enable grid pagination.'
+        description:
+            'By default the grid will show all rows in scrolling mode. Set this attribute to "paged" to enable grid pagination.'
     },
     {
         name: 'height',
         acceptsExpression: true,
-        description: 'Grid height, When page-mode is set to "scrolling" you can set the height of the grid to something other than the default 600'
+        description:
+            'Grid height, When page-mode is set to "scrolling" you can set the height of the grid to something other than the default 600'
     },
     {
         name: 'column-filter',
@@ -56,16 +58,16 @@ export default [
     {
         name: 'add-remove-row',
         description:
-        'Setting this will show the add-remove row buttons at the bottom of the grid. Set to "true" ' +
-        'to prompt for index selection on row add. Set to "addrow-autoinc" will switch the behaviour to allow new ' +
-        'index values to be created, incrementing from the highest value in the set(s).'
+            'Setting this will show the add-remove row buttons at the bottom of the grid. Set to "true" ' +
+            'to prompt for index selection on row add. Set to "addrow-autoinc" will switch the behaviour to allow new ' +
+            'index values to be created, incrementing from the highest value in the set(s).'
     },
     {
         name: 'width',
         description:
-        'Set the grid to a fixed width, in pixels. Accepts an integer value. ' +
-        'If set to the string "custom" then the grid width is calculated by adding up all the widths of the columns in the grid. ' +
-        "If a column doesn't have a width specified then it is given a default value of 100px.",
+            'Set the grid to a fixed width, in pixels. Accepts an integer value. ' +
+            'If set to the string "custom" then the grid width is calculated by adding up all the widths of the columns in the grid. ' +
+            "If a column doesn't have a width specified then it is given a default value of 100px.",
         acceptsExpression: false
     },
     {
@@ -82,9 +84,9 @@ export default [
     {
         name: 'row-filter',
         description:
-        'Expression to be used for filtering the rows of a <vdl-datagrid>. This must be an expression and ' +
-        'should resolve to either a function or a boolean value. If a function it will be executed when grid updates. ' +
-        'The function will have the following signature (rowData, indices) and should return a boolean.',
+            'Expression to be used for filtering the rows of a <vdl-datagrid>. This must be an expression and ' +
+            'should resolve to either a function or a boolean value. If a function it will be executed when grid updates. ' +
+            'The function will have the following signature (rowData, indices) and should return a boolean.',
         acceptsExpression: true,
         required: false,
         expressionVars: [
@@ -103,9 +105,9 @@ export default [
     {
         name: 'save-state',
         description:
-        'Set this to "false" to disable grid state saving. By default grid state is stored in the ' +
-        "user's browser session so that user settings (e.g. page, sorting and search) are preserved if grid data " +
-        'is reloaded. Defaults to true.',
+            'Set this to "false" to disable grid state saving. By default grid state is stored in the ' +
+            "user's browser session so that user settings (e.g. page, sorting and search) are preserved if grid data " +
+            'is reloaded. Defaults to true.',
         acceptsExpression: false,
         required: false
     },

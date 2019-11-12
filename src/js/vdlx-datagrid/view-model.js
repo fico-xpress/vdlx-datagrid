@@ -24,12 +24,36 @@ import Datagrid from './datagrid';
 import { withDeepEquals } from './ko-utils';
 
 import { $ } from '../globals';
-import { isNaN, isNull, isUndefined, partialRight, pickBy, flow, identity, negate, bindKey, get, isFunction, cloneDeep, isPlainObject, uniqueId, clone, forEach, isNumber, omitBy, has, range, isEmpty, defer, parseInt } from 'lodash';
+import {
+    isNaN,
+    isNull,
+    isUndefined,
+    partialRight,
+    pickBy,
+    flow,
+    identity,
+    negate,
+    bindKey,
+    get,
+    isFunction,
+    cloneDeep,
+    isPlainObject,
+    uniqueId,
+    clone,
+    forEach,
+    isNumber,
+    omitBy,
+    has,
+    range,
+    isEmpty,
+    defer,
+    parseInt
+} from 'lodash';
 import _ from 'lodash';
 
 const DEFAULT_GRID_PAGE_SIZE = 50;
 
-function parseIntOrKeep (val) {
+function parseIntOrKeep(val) {
     var result = parseInt(val);
     if (isNaN(result)) {
         return val;
@@ -37,16 +61,22 @@ function parseIntOrKeep (val) {
     return result;
 }
 
-function isNullOrUndefined (val) {
+function isNullOrUndefined(val) {
     return isNull(val) || isUndefined(val);
 }
 
-const stripEmpties = partialRight(pickBy, flow(identity, negate(isNullOrUndefined)));
+const stripEmpties = partialRight(
+    pickBy,
+    flow(
+        identity,
+        negate(isNullOrUndefined)
+    )
+);
 
-const getTableOptions = (params) => () => {
+const getTableOptions = params => () => {
     var overrides = stripEmpties({
         searching: params.showFilter,
-        columnFilter: params.columnFilter,
+        columnFilter: params.columnFilter
     });
 
     var gridOptions = {
@@ -71,7 +101,6 @@ const getTableOptions = (params) => () => {
         gridOptions.pagination = 'local';
         gridOptions.paginationElement = $('.hidden-footer-toolbar').get(0); // hide the built-in paginator
     } else if (!pageMode || pageMode === 'none') {
-        
     }
 
     if (isFunction(params.rowFilter)) {
@@ -128,8 +157,10 @@ export default function createViewModel(params, componentInfo) {
     $tableDiv.addClass('vdlx-datagrid table-striped table-bordered table-condensed');
     $element.append($tableDiv);
 
-    if(!!params.class) {
-        $(element).find('.vdlx-datagrid').addClass(params.class);
+    if (!!params.class) {
+        $(element)
+            .find('.vdlx-datagrid')
+            .addClass(params.class);
     }
 
     /*
@@ -151,24 +182,22 @@ export default function createViewModel(params, componentInfo) {
 
     var datagrid = new Datagrid(element, tableOptions$, columnConfig$);
 
-    function buildTable () {
+    function buildTable() {
         /*
         Collect the column information from the child VDL extensions (vdlx-datagrid-column)
          */
-        const columnConfigs = $element
-            .find('vdlx-datagrid-column')
-            .map(function (idx, element) {
-                return clone(element['autotableConfig']);
-            });
-        if(!columnConfigs.length) {
-            columnConfig$({columnOptions: [], indicesOptions: {}, scenarioList: []});
+        const columnConfigs = $element.find('vdlx-datagrid-column').map(function(idx, element) {
+            return clone(element['autotableConfig']);
+        });
+        if (!columnConfigs.length) {
+            columnConfig$({ columnOptions: [], indicesOptions: {}, scenarioList: [] });
             return;
         }
 
         var entities = [];
         var indices = {};
 
-        forEach(columnConfigs, function (configItem) {
+        forEach(columnConfigs, function(configItem) {
             var scenarioNum = parseIntOrKeep(configItem.scenario || defaultScenario);
             if (isNumber(scenarioNum)) {
                 if (scenarioNum < 0) {
@@ -198,7 +227,7 @@ export default function createViewModel(params, componentInfo) {
                     // explicitly inserts null/undefined here, or some
                     // standard algorithms behave oddly. (E.g. _.map
                     // will count the missing items, but [].map won't)
-                    range(indexList.length).forEach(function (j) {
+                    range(indexList.length).forEach(function(j) {
                         if (!indexList[j]) {
                             indexList[j] = null;
                         }
@@ -209,28 +238,37 @@ export default function createViewModel(params, componentInfo) {
             }
         });
 
-        var scenarioList = _(entities).filter(function (item) {
-            return !isNullOrUndefined(item);
-        }).map(function (item) {
-            return ko.unwrap(item.scenario);
-        }).uniq().sortBy().value();
+        var scenarioList = _(entities)
+            .filter(function(item) {
+                return !isNullOrUndefined(item);
+            })
+            .map(function(item) {
+                return ko.unwrap(item.scenario);
+            })
+            .uniq()
+            .sortBy()
+            .value();
 
         if (isEmpty(scenarioList) || isEmpty(entities)) {
-            console.debug('vdl-table (' + params.tableId + '): Scenario list or table column configuration is empty, ignoring update');
+            console.debug(
+                'vdl-table (' +
+                    params.tableId +
+                    '): Scenario list or table column configuration is empty, ignoring update'
+            );
         }
 
-        columnConfig$({columnOptions: entities, indicesOptions: indices, scenarioList: scenarioList});
+        columnConfig$({ columnOptions: entities, indicesOptions: indices, scenarioList: scenarioList });
     }
-    
+
     vm.tableUpdate = () => {
         defer(() => buildTable());
     };
 
-    vm.tableValidate = function () {
+    vm.tableValidate = function() {
         datagrid.validate();
     };
 
-    vm.dispose = function () {
+    vm.dispose = function() {
         datagrid.dispose();
     };
 

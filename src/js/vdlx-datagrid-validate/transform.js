@@ -24,7 +24,7 @@ const DEFAULT_VALIDATION_ERROR_MESSAGE = 'The value is not valid';
 
 import { _, $ } from '../globals';
 
-export default function (element, attributes, api) {
+export default function(element, attributes, api) {
     var $element = $(element);
 
     if (!$element.parents('vdlx-datagrid-column').length) {

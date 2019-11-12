@@ -1,4 +1,4 @@
-import { uniqueId, partial } from "lodash";
+import { uniqueId, partial } from 'lodash';
 
 /*
    Xpress Insight vdlx-datagrid
@@ -35,27 +35,26 @@ import { uniqueId, partial } from "lodash";
 /**
  * @param {indexFilterVMParams} params
  */
-export default function (params) {
+export default function(params) {
     var guid = uniqueId('vdl-index-filter-');
     var filterUpdate = partial(params.filterUpdate, guid);
     var filterRemove = partial(params.filterRemove, guid);
 
-    var filters$ = ko
-        .pureComputed(function () {
-            return {
-                setName: params.setName,
-                setPosition: params.setPosition,
-                value: ko.unwrap(params.value).toString()
-            };
-        });
+    var filters$ = ko.pureComputed(function() {
+        return {
+            setName: params.setName,
+            setPosition: params.setPosition,
+            value: ko.unwrap(params.value).toString()
+        };
+    });
 
     var filters$Subscription = filters$.subscribe(filterUpdate);
     filterUpdate(filters$());
 
     return {
-        dispose: function () {
+        dispose: function() {
             filters$Subscription.dispose();
             filterRemove();
         }
     };
-};
+}

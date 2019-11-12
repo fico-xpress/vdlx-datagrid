@@ -89,11 +89,11 @@ export const transform = (element, attributes, api) => {
     } else {
         var textContent = $(element)
             .contents()
-            .filter(function (index, element) {
+            .filter(function(index, element) {
                 return element.nodeType === Node.TEXT_NODE && element.textContent.trim() !== '';
             })
             .toArray()
-            .map(function (element) {
+            .map(function(element) {
                 return element.textContent.trim();
             })
             .join(' ');
@@ -170,13 +170,15 @@ export const transform = (element, attributes, api) => {
         if (!optionsSetEntity) {
             throw Error(
                 'vdlx-datagrid-column editor-options-set entity "' +
-                editorOptionsSet.rawValue +
-                '" does not exist in the model schema.'
+                    editorOptionsSet.rawValue +
+                    '" does not exist in the model schema.'
             );
         }
         var optionsSetEntityType = optionsSetEntity.getType();
         if (optionsSetEntityType !== enums.DataType.SET) {
-            throw Error('Entity "' + editorOptionsSet.rawValue + '" cannot be used as editor-options-set, wrong data type.');
+            throw Error(
+                'Entity "' + editorOptionsSet.rawValue + '" cannot be used as editor-options-set, wrong data type.'
+            );
         }
         paramsBuilder.addParam('editorOptionsSet', editorOptionsSet.rawValue);
     }
@@ -185,7 +187,10 @@ export const transform = (element, attributes, api) => {
         if (editorOptions.expression.isString) {
             throw Error('vdlx-datagrid-column attribute "editor-options" must be an expression.');
         }
-        paramsBuilder.addFunctionOrExpressionParam('editorOptions', editorOptions.expression.value, ['value', 'rowData']);
+        paramsBuilder.addFunctionOrExpressionParam('editorOptions', editorOptions.expression.value, [
+            'value',
+            'rowData'
+        ]);
     }
     if (editorOptionsSet && editorOptions) {
         throw Error('vdlx-datagrid-column cannot have both editor-options-set and editor-options specified.');
@@ -205,8 +210,11 @@ export const transform = (element, attributes, api) => {
     if (bottomCalc) {
         if (bottomCalc.expression.isString) {
             var inbuiltCalcs = ['avg', 'sum', 'min', 'max', 'count', 'concat'];
-            if(!includes(inbuiltCalcs, bottomCalc.rawValue))
-            throw Error('The "bottom-calc" attribute must either be an (=)expression or one of ' + (inbuiltCalcs.join(', ') + '. ' + bottomCalc.expression.value + ' is not a valid option.'));
+            if (!includes(inbuiltCalcs, bottomCalc.rawValue))
+                throw Error(
+                    'The "bottom-calc" attribute must either be an (=)expression or one of ' +
+                        (inbuiltCalcs.join(', ') + '. ' + bottomCalc.expression.value + ' is not a valid option.')
+                );
             paramsBuilder.addParam('bottomCalc', bottomCalc.rawValue, false);
         } else {
             paramsBuilder.addParam('bottomCalc', bottomCalc.expression.value, true);
@@ -215,7 +223,9 @@ export const transform = (element, attributes, api) => {
     var format = attributes['format'];
     if (format) {
         if (!DataUtils.entityTypeIsNumber(entity)) {
-            throw Error('Entity ' + entityName + ' with element type ' + entity.getElementType() + ' cannot be formatted');
+            throw Error(
+                'Entity ' + entityName + ' with element type ' + entity.getElementType() + ' cannot be formatted'
+            );
         }
         paramsBuilder.addParam('format', format.rawValue);
     }

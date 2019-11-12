@@ -1,4 +1,4 @@
-import { startsWith } from "lodash";
+import { startsWith } from 'lodash';
 
 /*
    Xpress Insight vdlx-datagrid
@@ -23,7 +23,6 @@ import { startsWith } from "lodash";
     limitations under the License.
  */
 
-
 const VDL_QUERY_PARAM = 'vdl=';
 const KEY_PREFIX = 'TableState';
 const KEY_SEPARATOR = '__';
@@ -32,14 +31,14 @@ const KEY_SEPARATOR = '__';
  *
  * @returns {string}
  */
-function generateUrlKey () {
+function generateUrlKey() {
     let key = window.location.pathname + window.location.hash;
 
     if (window.location.search) {
         const matchedVdl = window.location.search
             .substr(1)
             .split('&')
-            .filter(function (part) {
+            .filter(function(part) {
                 // Find the vdl query parameter
                 return startsWith(part, VDL_QUERY_PARAM);
             });
@@ -52,7 +51,6 @@ function generateUrlKey () {
 }
 
 /** @typedef {{sorters: Array, filters: Array}} State*/
-
 
 /**
  * @param {string} tableId
@@ -83,4 +81,4 @@ export const createStateManager = (tableId, keySuffix) => {
             }
         }
     };
-}
+};
