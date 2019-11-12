@@ -1,3 +1,5 @@
+import { curry, isEqual } from "lodash";
+
 /*
    Xpress Insight vdlx-datagrid
    =============================
@@ -21,9 +23,8 @@
     limitations under the License.
  */
 
-import { _ } from '../globals';
 
-export const onSubscribe = _.curry(function (f, observable) {
+export const onSubscribe = curry(function (f, observable) {
     var subscribe = observable.subscribe;
     observable.subscribe = function () {
         var subscription = subscribe.apply(observable, arguments);
@@ -45,7 +46,7 @@ export function onSubscriptionDispose (f, subscription) {
     return subscription;
 }
 
-export const withEqualityComparer = _.curry(function (f, obs) {
+export const withEqualityComparer = curry(function (f, obs) {
     obs.equalityComparer = f;
     return obs;
 }, 2);
@@ -54,4 +55,4 @@ export const withEqualityComparer = _.curry(function (f, obs) {
  * Sets equalityComparer on the observable
  */
 
-export const withDeepEquals = withEqualityComparer(_.isEqual);
+export const withDeepEquals = withEqualityComparer(isEqual);

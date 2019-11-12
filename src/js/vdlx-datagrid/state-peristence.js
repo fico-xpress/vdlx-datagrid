@@ -1,3 +1,5 @@
+import { startsWith } from "lodash";
+
 /*
    Xpress Insight vdlx-datagrid
    =============================
@@ -21,7 +23,6 @@
     limitations under the License.
  */
 
-import { _ } from '../globals';
 
 const VDL_QUERY_PARAM = 'vdl=';
 const KEY_PREFIX = 'TableState';
@@ -40,7 +41,7 @@ function generateUrlKey () {
             .split('&')
             .filter(function (part) {
                 // Find the vdl query parameter
-                return _.startsWith(part, VDL_QUERY_PARAM);
+                return startsWith(part, VDL_QUERY_PARAM);
             });
 
         if (matchedVdl.length) {

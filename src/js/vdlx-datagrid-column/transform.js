@@ -23,7 +23,8 @@
 
 const DataUtils = insightModules.load('utils/data-utils');
 const enums = insightModules.load('enums');
-import { _, $ } from '../globals';
+import { $ } from '../globals';
+import { get, isEmpty, includes } from 'lodash';
 
 /**
  * @param {HTMLElement} element
@@ -55,7 +56,7 @@ export const transform = (element, attributes, api) => {
     if (!entity) {
         throw Error('Entity "' + entityName + '" does not exist in the model schema.');
     }
-    var setPosition = _.get(attributes, ['set-position', 'rawValue']);
+    var setPosition = get(attributes, ['set-position', 'rawValue']);
     if (setPosition != null) {
         if (!/^\d+$/.test(setPosition)) {
             throw Error('Invalid set-position "' + setPosition + '", must be a number at least zero');
@@ -113,7 +114,7 @@ export const transform = (element, attributes, api) => {
     }
     var visible = attributes['vdl-visible'];
     if (visible) {
-        if (visible.expression.isString || _.isEmpty(visible.expression.value)) {
+        if (visible.expression.isString || isEmpty(visible.expression.value)) {
             throw Error('vdl-visible has to be an expression');
         }
         paramsBuilder.addRawOrExpressionParam('visible', visible);
@@ -204,7 +205,7 @@ export const transform = (element, attributes, api) => {
     if (bottomCalc) {
         if (bottomCalc.expression.isString) {
             var inbuiltCalcs = ['avg', 'sum', 'min', 'max', 'count', 'concat'];
-            if(!_.contains(inbuiltCalcs, bottomCalc.rawValue))
+            if(!includes(inbuiltCalcs, bottomCalc.rawValue))
             throw Error('The "bottom-calc" attribute must either be an (=)expression or one of ' + (inbuiltCalcs.join(', ') + '. ' + bottomCalc.expression.value + ' is not a valid option.'));
             paramsBuilder.addParam('bottomCalc', bottomCalc.rawValue, false);
         } else {

@@ -1,3 +1,5 @@
+import { map, propertyOf } from "lodash";
+
 /*
    Xpress Insight vdlx-datagrid
    =============================
@@ -21,6 +23,4 @@
     limitations under the License.
  */
 
-import { _ } from '../globals';
-
-export const getRowData = (columnsIds) => (data) => _.map(columnsIds, _.propertyOf(data));
+export const getRowData = (columnsIds) => (data) => map(columnsIds, propertyOf(data));

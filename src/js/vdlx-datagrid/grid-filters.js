@@ -1,3 +1,5 @@
+import { partial } from "lodash";
+
 /*
    Xpress Insight vdlx-datagrid
    =============================
@@ -20,7 +22,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import { _ } from '../globals';
+
 const Enums = {
     DataType: {
         "INTEGER": "INTEGER",
@@ -158,7 +160,7 @@ export let chooseColumnFilter = (column) => {
         case Enums.DataType.INTEGER:
         case Enums.DataType.STRING:
         case Enums.DataType.REAL:
-            return _.partial(filter, column);
+            return partial(filter, column);
         default:
             return undefined
     }

@@ -21,10 +21,11 @@
     limitations under the License.
  */
 
-import { _, $ } from '../globals';
+import { $ } from '../globals';
+import { map } from 'lodash';
 
 const LOCK_EVENT_NAMESPACE = '.insight-table-lock';
-const events = _.map(
+const events = map(
     ['keydown', 'keypress', 'keyup', 'mousedown', 'mouseup', 'click', 'focusin'],
     eventName => eventName + LOCK_EVENT_NAMESPACE
 ).join(' ');

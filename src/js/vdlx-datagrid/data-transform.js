@@ -21,15 +21,16 @@
     limitations under the License.
  */
 import perf from '../performance-measurement';
+import { curry, map, findIndex, reduce, isEmpty, get, uniq, filter, partial, zipObject, isFunction, fromPairs, set } from 'lodash';
+import _ from 'lodash';
 
-import { _ } from '../globals';
 const DataUtils = insightModules.load('utils/data-utils');
 const createSparseData = insightModules.load('components/table/create-sparse-data');
 const createDenseData = insightModules.load('components/table/create-dense-data');
 const SelectOptions = insightModules.load('components/autotable-select-options');
 
-export const getAllColumnIndices = _.curry((schema, columnOptions) => {
-    return _.map(columnOptions, function (option) {
+export const getAllColumnIndices = curry((schema, columnOptions) => {
+    return map(columnOptions, function (option) {
         return schema.getEntity(option.name).getIndexSets();
     });
 }, 2);
@@ -59,7 +60,7 @@ export const getDisplayIndices = (columnIndices, columnOptions) => {
     }
 
     return _(setCount)
-        .pick(function (count) {
+        .pickBy(function (count) {
             return count === numColumns;
         })
         .keys()
@@ -78,7 +79,7 @@ export const generateCompositeKey = function (setValues, setNameAndPosns, arrayI
     const setPosns = getIndexPosns(arrayIndices);
     return arrayIndices.map(function (setName, i) {
         const setPosn = setPosns[i];
-        const setIndex = _.findIndex(setNameAndPosns, { name: setName, position: setPosn });
+        const setIndex = findIndex(setNameAndPosns, { name: setName, position: setPosn });
         const filterValue = DataUtils.getFilterValue(arrayOptions.filters, setName, setPosn);
         if (setIndex !== -1) {
             return setValues[setIndex];
@@ -92,10 +93,10 @@ export const generateCompositeKey = function (setValues, setNameAndPosns, arrayI
 };
 
 export const createGenerateCompositeKey = (setNameAndPosns) => {
-    const setNameAndPosnsIndices = _.reduce(setNameAndPosns, (acc, setNameAndPosn, i) => _.set(acc, [setNameAndPosn.name, setNameAndPosn.position], i), {});
+    const setNameAndPosnsIndices = reduce(setNameAndPosns, (acc, setNameAndPosn, i) => set(acc, [setNameAndPosn.name, setNameAndPosn.position], i), {});
 
     return (setValues, __, arrayIndices, arrayOptions) => {
-        if (_.isEmpty(arrayOptions.filters)) {
+        if (isEmpty(arrayOptions.filters)) {
             return setValues;
         }
         const setPosns = getIndexPosns(arrayIndices);
@@ -103,7 +104,7 @@ export const createGenerateCompositeKey = (setNameAndPosns) => {
         for(let i = 0; i < arrayIndices.length; i++) {
             const setName = arrayIndices[i];
             const setPosn = setPosns[i];
-            const setIndex = _.get(setNameAndPosnsIndices, [ setName, setPosn ]);
+            const setIndex = get(setNameAndPosnsIndices, [ setName, setPosn ]);
             if (setIndex !== undefined) {
                 result.push(setValues[setIndex]);
             } else {
@@ -122,11 +123,11 @@ export const createGenerateCompositeKey = (setNameAndPosns) => {
 }
 
 const isSparse = (sets, arrays) => {
-    const totalPossibleKeys = _.reduce(sets, function (memo, set) {
+    const totalPossibleKeys = reduce(sets, function (memo, set) {
         return memo * set.length;
     }, 1);
 
-    const totalCountOfArrayValues = _.reduce(arrays, function (memo, insightArray) {
+    const totalCountOfArrayValues = reduce(arrays, function (memo, insightArray) {
         return memo + insightArray.size();
     }, 0);
 
@@ -136,22 +137,22 @@ const isSparse = (sets, arrays) => {
 export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions, scenariosData, rowFilter) => {
 
     var defaultScenario = scenariosData.defaultScenario;
-    const indexScenarios = _.uniq(_.map(_.map(columnOptions, 'id'), id =>
-        _.get(scenariosData.scenarios, id, defaultScenario)
+    const indexScenarios = uniq(map(map(columnOptions, 'id'), id =>
+        get(scenariosData.scenarios, id, defaultScenario)
     ));
 
-    const arrayIds = _.map(columnOptions, 'id');
-    const setIds = _.map(setNamePosnsAndOptions, 'options.id');
+    const arrayIds = map(columnOptions, 'id');
+    const setIds = map(setNamePosnsAndOptions, 'options.id');
 
-    const arrays = _.filter(_.map(columnOptions, column => {
+    const arrays = filter(map(columnOptions, column => {
         try {
-            return _.get(scenariosData.scenarios, column.id, defaultScenario).getArray(column.name)
+            return get(scenariosData.scenarios, column.id, defaultScenario).getArray(column.name)
         } catch (err) {
             return undefined;
         } 
     }));
 
-    const sets = _.map(setNamePosnsAndOptions, setNameAndPosn => {
+    const sets = map(setNamePosnsAndOptions, setNameAndPosn => {
         return _(indexScenarios)
             .map(function (scenario) {
                 return scenario.getSet(setNameAndPosn.name);
@@ -163,13 +164,13 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
 
     const schema = insight.getView().getProject().getModelSchema();
 
-    const allSetValues = _.map(setNamePosnsAndOptions, (setNamePosnAndOption, i) => {
+    const allSetValues = map(setNamePosnsAndOptions, (setNamePosnAndOption, i) => {
         return SelectOptions.generateSelectOptions(schema, indexScenarios, setNamePosnAndOption.name, sets[i]);
     });
 
-    const createRow = _.partial(_.zipObject, setIds.concat(arrayIds));
+    const createRow = partial(zipObject, setIds.concat(arrayIds));
 
-    if (_.isEmpty(arrays)) {
+    if (isEmpty(arrays)) {
         return {
             data: [],
             allSetValues: allSetValues
@@ -194,8 +195,8 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
     }
 
     // row filtering
-    if (_.isFunction(rowFilter)) {
-        data = _.filter(data, (rowData) => {
+    if (isFunction(rowFilter)) {
+        data = filter(data, (rowData) => {
             return rowFilter(
                 rowData,
                 getPartialExposedKey(setNamePosnsAndOptions, rowData)
@@ -203,5 +204,5 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
         });
     }
 
-    return {data: _.map(data, createRow), allSetValues: allSetValues};
+    return {data: map(data, createRow), allSetValues: allSetValues};
 };

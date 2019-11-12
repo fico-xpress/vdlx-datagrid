@@ -35,7 +35,7 @@ import {EDITOR_TYPES} from '../constants';
 import AddRemove from './add-remove';
 import {chooseColumnFilter} from './grid-filters';
 
-import { _, $ } from '../globals';
+import { $ } from '../globals';
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');
 
@@ -44,12 +44,14 @@ const dialogs = insightModules.load('dialogs');
 import perf from '../performance-measurement';
 import { createStateManager } from './state-peristence';
 import { DatagridLock } from './datagrid-lock';
+import { isArray, isEmpty, noop, each, filter, first, inRange, reject, map, get, uniq, values, assign, flowRight, flow, partial, identity, isUndefined, defer, find, some, delay } from 'lodash';
+import _ from 'lodash';
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
 
 const addSelectNull = items => {
-    if (_.isArray(items)) {
+    if (isArray(items)) {
         // add empty option to the start of the list
         return [{ key: undefined, value: '' }].concat(items);
     }
@@ -107,7 +109,7 @@ class Datagrid {
 
         const mouseDownListener = e => {
             if (!root.contains(e.target)) {
-                if (!_.isEmpty(this.table.getSelectedRows()) && !options.alwaysShowSelection) {
+                if (!isEmpty(this.table.getSelectedRows()) && !options.alwaysShowSelection) {
                     this.table.modules.selectRow.deselectRows();
                 } 
             }
@@ -142,7 +144,7 @@ class Datagrid {
                         this.componentRoot.style.display = 'block';
                     }
 
-                    if (!_.isEmpty(_.get(columnOptions, 'columnOptions'))) {
+                    if (!isEmpty(get(columnOptions, 'columnOptions'))) {
                         this.tableLock.lock();
                     }
 
@@ -154,7 +156,7 @@ class Datagrid {
                     }
                     return undefined;
                 })
-                .subscribe(_.noop)
+                .subscribe(noop)
         );
     }
 
@@ -169,7 +171,7 @@ class Datagrid {
         if (this.stateManager) {
             const state = {
                 filters: this.table.getHeaderFilters(),
-                sorters: _.map(this.table.getSorters(), sorter => ({ dir: sorter.dir, column: sorter.field }))
+                sorters: map(this.table.getSorters(), sorter => ({ dir: sorter.dir, column: sorter.field }))
             };
 
             this.stateManager.saveState(state);
@@ -179,10 +181,10 @@ class Datagrid {
         if (this.stateManager) {
             const state = this.stateManager.loadState();
             if (state) {
-                !_.isEmpty(state.sorters) && this.table.setSort(state.sorters);
-                if (!_.isEmpty(state.filters)) {
+                !isEmpty(state.sorters) && this.table.setSort(state.sorters);
+                if (!isEmpty(state.filters)) {
                     this.table.clearHeaderFilter();
-                    _.each(state.filters, filter => {
+                    each(state.filters, filter => {
                         const column = this.table.getColumn(filter.field);
                         if (!column) {
                             return;
@@ -197,7 +199,7 @@ class Datagrid {
 
     createTable(options) {
         const select = (row) => {
-            _.each(_.filter(this.table.getSelectedRows(), selectedRow =>
+            each(filter(this.table.getSelectedRows(), selectedRow =>
                 selectedRow.getPosition() !== row.getPosition()
             ), selectedRow => selectedRow.deselect());
 
@@ -221,7 +223,7 @@ class Datagrid {
             dataSorting: saveState,
             cellEditing: (cell) => select(cell.getRow()),
             rowClick: (e, row) => select(row),
-            rowSelectionChanged: (data, rows) => this.setSelectedRow(_.first(rows)),
+            rowSelectionChanged: (data, rows) => this.setSelectedRow(first(rows)),
             renderComplete: () => this.update(),
         };
 
@@ -250,7 +252,7 @@ class Datagrid {
     }
 
     recalculateWidth() {
-        const tableHolder = _.first(
+        const tableHolder = first(
             this.table.element.getElementsByClassName('tabulator-tableHolder')
         );
 
@@ -259,14 +261,14 @@ class Datagrid {
 
         const columnsWidth = this.table.columnManager.getWidth();
 
-        if (columnsWidth < tableWidth || _.inRange(columnsWidth, tableOffsetWidth - 2, tableOffsetWidth + 2)) {
-            const columns = _.filter(
-                _.reject(this.table.getColumns(), column => !!column.getDefinition().width),
+        if (columnsWidth < tableWidth || inRange(columnsWidth, tableOffsetWidth - 2, tableOffsetWidth + 2)) {
+            const columns = filter(
+                reject(this.table.getColumns(), column => !!column.getDefinition().width),
                 column => column.getVisibility()
             );
             const toAddPx = (tableWidth - columnsWidth) / columns.length;
 
-            _.each(columns, column => column._column.setWidthActual(column._column.getWidth() + toAddPx));
+            each(columns, column => column._column.setWidthActual(column._column.getWidth() + toAddPx));
         }
     }
 
@@ -281,7 +283,7 @@ class Datagrid {
 
         if (row) {
             const rowPosition = row.getPosition();
-            const rowData = _.map(row.getCells(), cell => cell.getValue());
+            const rowData = map(row.getCells(), cell => cell.getValue());
 
             const getCell = (cell, cellIndex) => (
                 {
@@ -292,11 +294,11 @@ class Datagrid {
                 }
             );
 
-            const cells = _.map(row.getCells(), getCell);
+            const cells = map(row.getCells(), getCell);
 
             $(this.table.element).trigger(SELECTION_CHANGED_EVENT, {
                 selection: cells,
-                activeCell: _.first(cells),
+                activeCell: first(cells),
                 selectionType: 'ROW'
             });
         } else {
@@ -323,7 +325,7 @@ class Datagrid {
 
     createStateManager(gridOptions, columns, scenarios) {
         if (gridOptions.saveState) {
-            const saveStateSuffix = _.map(columns, 'name')
+            const saveStateSuffix = map(columns, 'name')
                 .join('#');
 
             return createStateManager(gridOptions.tableId, saveStateSuffix);
@@ -377,22 +379,22 @@ class Datagrid {
 
         const setNameAndPosns = getDisplayIndices(allColumnIndices, entitiesOptions);
 
-        const setNamePosnsAndOptions = _.map(setNameAndPosns, setNameAndPosn => ({
+        const setNamePosnsAndOptions = map(setNameAndPosns, setNameAndPosn => ({
             ...setNameAndPosn,
-            options: _.get(indicesOptions, `${setNameAndPosn.name}.${setNameAndPosn.position}`, {
+            options: get(indicesOptions, `${setNameAndPosn.name}.${setNameAndPosn.position}`, {
                 id: `${setNameAndPosn.name}_${setNameAndPosn.position}`
             })
         }));
 
-        const allScenarios = _.uniq([scenariosData.defaultScenario].concat(_.values(scenariosData.scenarios)));
+        const allScenarios = uniq([scenariosData.defaultScenario].concat(values(scenariosData.scenarios)));
 
-        const indicesColumns = _.map(setNamePosnsAndOptions, setNameAndPosn => {
+        const indicesColumns = map(setNamePosnsAndOptions, setNameAndPosn => {
             const {name, options} = setNameAndPosn;
             const entity = schema.getEntity(name);
             const displayEntity = resolveDisplayEntity(schema, entity);
             const isNumberEntity = DataUtils.entityTypeIsNumber(displayEntity);
 
-            const title = _.get(options, 'title', entity.getAbbreviation() || name);
+            const title = get(options, 'title', entity.getAbbreviation() || name);
             const getClass = () => {
                 let classes = ['index'];
                 if (isNumberEntity) {
@@ -400,8 +402,8 @@ class Datagrid {
                 }
                 return classes.join(' ');
             };
-            let column = _.assign({}, setNameAndPosn.options, {
-                title: _.escape(String(title)),
+            let column = assign({}, setNameAndPosn.options, {
+                title: escape(String(title)),
                 field: options.id,
                 cssClass: getClass(),
                 formatter: (cell) => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue()),
@@ -423,7 +425,7 @@ class Datagrid {
                     return undefined;
                 };
 
-                column = _.assign(column, {
+                column = assign(column, {
                     headerFilterPlaceholder: 'No filter',
                     headerFilter: !!gridOptions.columnFilter,
                     headerFilterFunc: getHeaderFilterFn()
@@ -432,21 +434,21 @@ class Datagrid {
             return column;
         });
 
-        const columnsIds = [].concat(_.map(setNamePosnsAndOptions, 'options.id'), _.map(entitiesOptions, 'id'));
+        const columnsIds = [].concat(map(setNamePosnsAndOptions, 'options.id'), map(entitiesOptions, 'id'));
 
         const getRowDataForColumns = getRowData(columnsIds);
 
-        const entitiesColumns = _.map(entitiesOptions, (entityOptions, columnNumber) => {
+        const entitiesColumns = map(entitiesOptions, (entityOptions, columnNumber) => {
             const entity = schema.getEntity(entityOptions.name);
             const displayEntity = resolveDisplayEntity(schema, entity);
             const isNumberEntity = DataUtils.entityTypeIsNumber(displayEntity);
 
-            const columnScenario = _.get(scenariosData.scenarios, entityOptions.id, scenariosData.defaultScenario);
+            const columnScenario = get(scenariosData.scenarios, entityOptions.id, scenariosData.defaultScenario);
 
             const setArrayElement = (change) => columnScenario.modify().setArrayElement(entityOptions.name, change).commit();
             const removeArrayElement = (rowKey) => columnScenario.modify().removeFromArray(entityOptions.name, rowKey).commit();
 
-            const getRowKey = _.compose(
+            const getRowKey = flowRight(
                 (rowData) => {
                     const tableKeys = getPartialExposedKey(setNameAndPosns, rowData);
                     return generateCompositeKey(tableKeys, setNameAndPosns, allColumnIndices[columnNumber], entityOptions);
@@ -458,7 +460,7 @@ class Datagrid {
             const removeValue = (rowData) => removeArrayElement(getRowKey(rowData));
 
             const checkboxFormatter = (cell) => {
-                const checked = String(cell.getValue()) === String(_.get(entityOptions, 'checkedValue', true)) ? 'checked' : '';
+                const checked = String(cell.getValue()) === String(get(entityOptions, 'checkedValue', true)) ? 'checked' : '';
                 const disabled = entityOptions.editable ? '' : 'disabled';
                 return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
             };
@@ -478,8 +480,8 @@ class Datagrid {
             };
 
             const checkboxCellClickHandler = (e, cell) => {
-                const checkedValue = _.get(entityOptions, 'checkedValue', true);
-                const uncheckedValue = _.get(entityOptions, 'uncheckedValue', false);
+                const checkedValue = get(entityOptions, 'checkedValue', true);
+                const uncheckedValue = get(entityOptions, 'uncheckedValue', false);
                 const newValue = String(cell.getValue()) === String(checkedValue) ? uncheckedValue : checkedValue;
                 cell.setValue(newValue);
             };
@@ -497,19 +499,19 @@ class Datagrid {
                 if (entityOptions.editorType === EDITOR_TYPES.select) {
                     let getOptions;
                     if (entityOptions.editorOptionsSet) {
-                        getOptions = _.flow(
+                        getOptions = flow(
                             () => SelectOptions.generateSelectOptions(
                                 schema,
                                 [columnScenario],
                                 entityOptions.editorOptionsSet,
                                 columnScenario.getSet(entityOptions.editorOptionsSet)),
-                            entityOptions.selectNull ? addSelectNull : _.identity
+                            entityOptions.selectNull ? addSelectNull : identity
                         );
                     } else if (entityOptions.editorOptions) {
-                        getOptions = _.flow(
+                        getOptions = flow(
                             entityOptions.editorOptions,
-                            _.partial(SelectOptions.generateSelectOptionsFromValues, _, isNumberEntity),
-                            entityOptions.selectNull ? addSelectNull : _.identity
+                            partial(SelectOptions.generateSelectOptionsFromValues, _, isNumberEntity),
+                            entityOptions.selectNull ? addSelectNull : identity
                         );
                     }
 
@@ -523,7 +525,7 @@ class Datagrid {
                     return cell =>
                         ({
                             listItemFormatter: getListItemFormatter(),
-                            values: _.map(getOptions(cell.getValue(), getRowKey(cell.getData())), option => ({
+                            values: map(getOptions(cell.getValue(), getRowKey(cell.getData())), option => ({
                                 value: option.key,
                                 label: option.value
                             }))
@@ -559,7 +561,7 @@ class Datagrid {
                 return validationResult;
             };
 
-            const title = _.get(entityOptions, 'title', entity.getAbbreviation() || name);
+            const title = get(entityOptions, 'title', entity.getAbbreviation() || name);
 
             const getCellEditingHandler = () => {
                 if (entityOptions.editorType !== EDITOR_TYPES.select) {
@@ -584,8 +586,8 @@ class Datagrid {
                 return classes.join(' ');
             }
 
-            let column = _.assign({}, entityOptions, {
-                title: _.escape(String(title)),
+            let column = assign({}, entityOptions, {
+                title: escape(String(title)),
                 field: entityOptions.id,
                 cssClass: getClasses(),
                 cellClick: getCellClickHandler(),
@@ -596,7 +598,7 @@ class Datagrid {
                 cellEdited: cell => {
                     $(cell.getElement()).off('keyup');
 
-                    const oldValue = _.isUndefined(cell.getOldValue()) ? '' : cell.getOldValue();
+                    const oldValue = isUndefined(cell.getOldValue()) ? '' : cell.getOldValue();
                     const value = cell.getValue();
 
                     const validationResult = validateAndStyle(cell, value);
@@ -605,11 +607,11 @@ class Datagrid {
                         cell.restoreOldValue();
                         validateAndStyle(cell, cell.getValue());
                         dialogs.alert(validationResult.errorMessage, VALIDATION_ERROR_TITLE, () => {
-                            _.defer(() => cell.edit(true));
+                            defer(() => cell.edit(true));
                         });
                     } else {
                         if (value !== oldValue) {
-                            if (_.isUndefined(value) || value === '') {
+                            if (isUndefined(value) || value === '') {
                                 removeValue(cell.getData())
                                     .catch(err => {
                                         cell.restoreOldValue();
@@ -650,8 +652,8 @@ class Datagrid {
                 }
                 const getHeaderFilterParams = () => {
                     if (column.editor === EDITOR_TYPES.checkbox) {
-                        const checkedValue = _.get(entityOptions, 'checkedValue', true);
-                        const uncheckedValue = _.get(entityOptions, 'uncheckedValue', false);
+                        const checkedValue = get(entityOptions, 'checkedValue', true);
+                        const uncheckedValue = get(entityOptions, 'uncheckedValue', false);
                         return {
                             values: [
                                 { value: undefined, label: 'No Filter' },
@@ -670,8 +672,8 @@ class Datagrid {
                         return true;
                     }
 
-                    const optionMatch =_.find(params.values, keyValue => keyValue.value === valueString || keyValue.label === valueString);
-                    if (_.isUndefined(optionMatch)) {
+                    const optionMatch =find(params.values, keyValue => keyValue.value === valueString || keyValue.label === valueString);
+                    if (isUndefined(optionMatch)) {
                         return false;
                     }
                     return optionMatch.value === cellValueTxt;
@@ -682,8 +684,8 @@ class Datagrid {
                         return true;
                     }
                     const valueString = String(value);
-                    const optionMatch =_.find(headerFilterParams.values, keyValue => keyValue.value === valueString || keyValue.label === valueString);
-                    return _.isUndefined(optionMatch) || _.isUndefined(optionMatch.value);
+                    const optionMatch =find(headerFilterParams.values, keyValue => keyValue.value === valueString || keyValue.label === valueString);
+                    return isUndefined(optionMatch) || isUndefined(optionMatch.value);
                 }
 
                 const getHeaderFilterEmptyCheckFn = () => {
@@ -698,7 +700,7 @@ class Datagrid {
                     }
                     const columnFilter = chooseColumnFilter(column);
 
-                    if (_.isUndefined(columnFilter)) {
+                    if (isUndefined(columnFilter)) {
                         return undefined;
                     }
 
@@ -713,7 +715,7 @@ class Datagrid {
                     };
                 }
 
-                column = _.assign(column, {
+                column = assign(column, {
                     headerFilterPlaceholder: 'No filter',
                     headerFilter: headerFilter,
                     headerFilterParams: headerFilterParams,
@@ -728,9 +730,9 @@ class Datagrid {
 
         let columns = [].concat(indicesColumns, entitiesColumns);
 
-        let freezeColumns = _.parseInt(gridOptions.freezeColumns);
+        let freezeColumns = parseInt(gridOptions.freezeColumns);
         if(freezeColumns && !isNaN(freezeColumns)) {
-            columns = _.map(columns, function(col, idx) {
+            columns = map(columns, function(col, idx) {
                 if(idx < freezeColumns) {
                     col.frozen = true;
                 }
@@ -749,7 +751,7 @@ class Datagrid {
             )
         );
 
-        const editable = _.some(_.reject(entitiesOptions, options => !_.get(options, 'visible', true)), 'editable');
+        const editable = some(reject(entitiesOptions, options => !get(options, 'visible', true)), 'editable');
         if (!editable && gridOptions.addRemoveRow) {
             console.log(`vdl-table (${gridOptions.tableId}): add/remove rows disabled. Table needs to have at least one editable column to use this feature.`);
         }
@@ -760,7 +762,7 @@ class Datagrid {
 
         table.setColumns(columns);
 
-        this.stateManager = this.createStateManager(gridOptions, columns, _.map(entitiesColumns, 'scenario'));
+        this.stateManager = this.createStateManager(gridOptions, columns, map(entitiesColumns, 'scenario'));
         this.loadState();
 
         const redraw = () => {
@@ -768,7 +770,7 @@ class Datagrid {
                 return Promise.resolve(this.table.redraw(true));
             } else {
                 return new Promise((resolve, reject) => {
-                    _.delay(() => {
+                    delay(() => {
                         redraw()
                             .then(resolve)
                             .catch(reject);
@@ -785,10 +787,10 @@ class Datagrid {
     }
 
     validate() {
-        const editableColumns = _.filter(this.entitiesColumns, 'editable');
-        _.each(editableColumns, column => {
+        const editableColumns = filter(this.entitiesColumns, 'editable');
+        each(editableColumns, column => {
             const cells = this.table.columnManager.columnsByField[column.field].cells;
-            _.each(cells, cell => {
+            each(cells, cell => {
                 column.validate(cell.getComponent(), cell.getValue());
             })
         });
@@ -796,7 +798,7 @@ class Datagrid {
 
     dispose() {
         this.table.destroy();
-        _.each(this.subscriptions, subscription => subscription.dispose());
+        each(this.subscriptions, subscription => subscription.dispose());
     }
 }
 

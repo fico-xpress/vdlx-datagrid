@@ -21,7 +21,7 @@
     limitations under the License.
  */
 import { onSubscribe, onSubscriptionDispose } from "./ko-utils";
-import { _ } from '../globals';
+import { map, flatten, filter, identity, uniq, isUndefined, zipObject, isEmpty, noop, each, fromPairs } from "lodash";
 
 function findScenario (scenarios, identifier) {
     var result = null;
@@ -54,33 +54,38 @@ function findScenario (scenarios, identifier) {
 function getAutoTableEntities (columnOptions) {
     var modelSchema = insight.getView().getProject().getModelSchema();
 
-    let entities = _.map(columnOptions, 'name');
+    let entities = map(columnOptions, 'name');
     // and index sets
     entities = entities.concat(
-        _.flatten(_.map(entities, entity => modelSchema.getEntity(entity).getIndexSets()))
+        flatten(map(entities, entity => modelSchema.getEntity(entity).getIndexSets()))
     );
 
     // Also add entities from editor options set.
     entities = entities.concat(
-        _.filter(_.map(columnOptions, 'editorOptionsSet'), _.identity)
+        filter(map(columnOptions, 'editorOptionsSet'), identity)
     );
 
-    entities = _.uniq(entities);
+    entities = uniq(entities);
 
     return entities.concat(
-        _.filter(_.map(entities, (entity) => modelSchema.getEntity(entity).getLabelsEntity()), _.identity)
+        filter(map(entities, (entity) => modelSchema.getEntity(entity).getLabelsEntity()), identity)
     );
 }
 
 function getScenarios (config, scenarios) {
     scenarios = [].concat(scenarios);
-    const defaultScenario = _.isUndefined(config.scenario) ? scenarios[0] : findScenario(scenarios, config.scenario);
+    const defaultScenario = isUndefined(config.scenario) ? scenarios[0] : findScenario(scenarios, config.scenario);
 
     // Bind a scenario per column - single table.
-    const columnsAndScenarios = _.zipObject(_.filter(_.map(config.columnOptions, currentColumn => [
-        currentColumn.id,
-        findScenario(scenarios, currentColumn.scenario)
-    ]), ([columnId, scenario]) => !!scenario));
+    const columnsAndScenarios = fromPairs(
+        filter(
+            map(config.columnOptions, currentColumn => [
+                currentColumn.id,
+                findScenario(scenarios, currentColumn.scenario)
+            ]),
+            ([columnId, scenario]) => !!scenario
+        )
+    );
 
     return { defaultScenario: defaultScenario, scenarios: columnsAndScenarios };
 }
@@ -97,7 +102,7 @@ function withScenarioData (config$) {
     const scenarioData$ = ko.pureComputed(() => {
         const config = ko.unwrap(config$);
         const scenarios = ko.unwrap(scenarios$);
-        if (_.isEmpty(config) || _.isEmpty(scenarios)) {
+        if (isEmpty(config) || isEmpty(scenarios)) {
             return undefined;
         }
 
@@ -107,7 +112,7 @@ function withScenarioData (config$) {
 
     const scenarioObserverSubscription$ = ko.pureComputed(function () {
         const config = ko.unwrap(config$);
-        if (!_.isEmpty(config.scenarioList) && !_.isEmpty(config.columnOptions)) {
+        if (!isEmpty(config.scenarioList) && !isEmpty(config.columnOptions)) {
             try {
                 error$(undefined);
                 return insight.getView()
@@ -120,7 +125,7 @@ function withScenarioData (config$) {
             } catch (err) {
                 error$(err);
                 return {
-                    dispose: _.noop
+                    dispose: noop
                 }
             }
         }
@@ -132,7 +137,7 @@ function withScenarioData (config$) {
             let subscriptions = [];
 
             if (!hasSubscription) {
-                subscriptions = [scenarioObserverSubscription$.subscribe(_.noop),
+                subscriptions = [scenarioObserverSubscription$.subscribe(noop),
                 scenarioObserverSubscription$.subscribe(function (oldScenarioObserver) {
                     oldScenarioObserver && oldScenarioObserver.dispose();
                 }, null, 'beforeChange')];
@@ -144,7 +149,7 @@ function withScenarioData (config$) {
                 if (!hasSubscription) {
                     const scenarioObserver = scenarioObserverSubscription$();
                     scenarioObserver && scenarioObserver.dispose();
-                    _.each(subscriptions, sub => sub.dispose());
+                    each(subscriptions, sub => sub.dispose());
                 }
             }, subscription);
         }, scenarioData$),

@@ -21,7 +21,8 @@
     limitations under the License.
  */
 const DataUtils = insightModules.load('utils/data-utils');
-import { _, $ } from '../globals';
+import { $ } from '../globals';
+import { get, find, has } from 'lodash';
 
 export default (element, attributes, api) => {
     var $element = $(element);
@@ -43,7 +44,7 @@ export default (element, attributes, api) => {
     const indexSetNameAndPosns = DataUtils.getSetNamesAndPosns(indexSetNames);
 
     var setName = attributes['set'].rawValue;
-    var setPosition = _.get(attributes, ['set-position', 'rawValue'], 0);
+    var setPosition = get(attributes, ['set-position', 'rawValue'], 0);
     if (!/^\d+$/.test(setPosition)) {
         throw Error('Invalid set-position: ' + setPosition);
     } else {
@@ -54,8 +55,8 @@ export default (element, attributes, api) => {
     if (!setEntity) {
         throw Error('Entity "' + setName + '" not found in the model. Cannot set index filter.');
     }
-    if (!_.find(indexSetNameAndPosns, { name: setName, position: setPosition })) {
-        if (_.has(attributes, 'set-position')) {
+    if (!find(indexSetNameAndPosns, { name: setName, position: setPosition })) {
+        if (has(attributes, 'set-position')) {
             throw Error('Invalid index set name/position combination ("' + setName + '",' + setPosition + ') for array ' + entityName);
         } else {
             throw Error('Invalid index set "' + setName + '" for array ' + entityName);

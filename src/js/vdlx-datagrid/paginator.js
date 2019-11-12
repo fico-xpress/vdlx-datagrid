@@ -21,7 +21,8 @@
     limitations under the License.
  */
 
-import { _, $ } from '../globals';
+import { $ } from '../globals';
+import { uniq, filter, sortBy, map, isEmpty, isNumber, parseInt } from 'lodash';
 
 const PAGINATOR_TEMPLATE = `
 <div class="pagination-control">
@@ -60,14 +61,14 @@ export default class Paginator {
         this.table = table;
         this.$paginationControl = $(PAGINATOR_TEMPLATE);
 
-        const pageSizeOptions = _.uniq(_.filter(_.sortBy([5, 10, 25, 50, 100, tablePageSize])));
-        const pageSizeOptionsHtml = _.map(pageSizeOptions, pageSize => `<option value="${pageSize}" ${tablePageSize === pageSize ? 'selected' : ''}>${pageSize}</option>`).join('');
+        const pageSizeOptions = uniq(filter(sortBy([5, 10, 25, 50, 100, tablePageSize])));
+        const pageSizeOptionsHtml = map(pageSizeOptions, pageSize => `<option value="${pageSize}" ${tablePageSize === pageSize ? 'selected' : ''}>${pageSize}</option>`).join('');
         this.$paginationControl.find('.results-per-page-selector').append(pageSizeOptionsHtml);
     }
 
     isActiveSelectionOutsideAPaginationControl (element) {
         const targetDatagrid = element.closest(`vdlx-datagrid`)
-        if (_.isEmpty(targetDatagrid)) {
+        if (isEmpty(targetDatagrid)) {
             return true;
         }
         return $(this.table.element)
@@ -208,8 +209,8 @@ export default class Paginator {
         });
 
         this.$pageInput.on('input', evt => {
-            let val = _.parseInt(evt.target.value);
-            if (_.isNumber(val)) {
+            let val = parseInt(evt.target.value);
+            if (isNumber(val)) {
                 let actual = this.goToPage(val);
                 if (actual !== val) {
                     this.updatePageIndicators();
@@ -218,7 +219,7 @@ export default class Paginator {
         });
 
         this.$perPageSelector.on('change', evt => {
-            let val = _.parseInt(evt.target.value);
+            let val = parseInt(evt.target.value);
             this.table.setPageSize(val);
             this.updatePageIndicators();
         });

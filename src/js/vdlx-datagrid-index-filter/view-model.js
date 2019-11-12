@@ -1,3 +1,5 @@
+import { uniqueId, partial } from "lodash";
+
 /*
    Xpress Insight vdlx-datagrid
    =============================
@@ -21,8 +23,6 @@
     limitations under the License.
  */
 
-import { _ } from '../globals';
-
 /**
  * @typedef {Object} indexFilterVMParams
  * @property {function(string, Object)} filterUpdate
@@ -36,9 +36,9 @@ import { _ } from '../globals';
  * @param {indexFilterVMParams} params
  */
 export default function (params) {
-    var guid = _.uniqueId('vdl-index-filter-');
-    var filterUpdate = _.partial(params.filterUpdate, guid);
-    var filterRemove = _.partial(params.filterRemove, guid);
+    var guid = uniqueId('vdl-index-filter-');
+    var filterUpdate = partial(params.filterUpdate, guid);
+    var filterRemove = partial(params.filterRemove, guid);
 
     var filters$ = ko
         .pureComputed(function () {

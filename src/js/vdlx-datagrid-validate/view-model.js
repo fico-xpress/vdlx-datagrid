@@ -21,7 +21,8 @@
     limitations under the License.
  */
 const validatorRegistry = insightModules.load('vdl-validator-registry');
-import { _, $ } from '../globals';
+import { $ } from '../globals';
+import { isFunction } from 'lodash';
 
 export default function (params, componentInfo) {
     var fieldElement = $(componentInfo.element).parents('vdlx-datagrid-column')[0];
@@ -51,12 +52,12 @@ export default function (params, componentInfo) {
         }
     });
 
-    _.isFunction(params.validate) && params.validate();
+    isFunction(params.validate) && params.validate();
 
     return {
         dispose: function () {
             validatorRegistry.remove(registryId);
-            _.isFunction(params.validate) && params.validate();
+            isFunction(params.validate) && params.validate();
         }
     };
 }

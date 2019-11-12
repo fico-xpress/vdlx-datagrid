@@ -22,7 +22,8 @@
  */
 import { EDITOR_TYPES } from '../constants';
 
-import { _, $ } from '../globals';
+import { $ } from '../globals';
+import { reduce, set, uniqueId, throttle, size, isNumber, isFunction, omit } from 'lodash';
 const enums = insightModules.load('enums');
 const validatorFactory = insightModules.load('vdl/vdl-validator-factory');
 const insightGetter = insightModules.load('insight-getter');
@@ -33,19 +34,19 @@ const AUTOCOLUMN_PROP_NAME = 'autotableConfig';
 export const viewModel = (params, componentInfo) => {
     var indexFilters$ = ko.observable({});
     var filters$ = ko.pureComputed(function () {
-        return _.reduce(
+        return reduce(
             indexFilters$(),
             function (memo, filterProps) {
-                return _.set(memo, [filterProps.setName, filterProps.setPosition], filterProps.value);
+                return set(memo, [filterProps.setName, filterProps.setPosition], filterProps.value);
             },
             {}
         );
     });
-    const columnId = _.uniqueId('datagrid-column');
-    var buildColumn = _.throttle(
+    const columnId = uniqueId('datagrid-column');
+    var buildColumn = throttle(
         function (done) {
             console.log('vdlx-datagrid update column');
-            var columnReady = $(componentInfo.element).find('vdlx-datagrid-index-filter').length === _.size(indexFilters$());
+            var columnReady = $(componentInfo.element).find('vdlx-datagrid-index-filter').length === size(indexFilters$());
             var props = {
                 scenario: ko.unwrap(params.scenario),
                 title: ko.unwrap(params.heading),
@@ -65,7 +66,7 @@ export const viewModel = (params, componentInfo) => {
             if(params.bottomCalc) {
                 props.bottomCalcFormatter = function(data) {
                     var val = data.getValue();
-                    if(_.isNumber(val)) {
+                    if(isNumber(val)) {
                         return insightGetter().Formatter.formatNumber(val, params.format);
                     }
                     return val;
@@ -77,7 +78,7 @@ export const viewModel = (params, componentInfo) => {
                     return params.editorOptions.apply(null, arguments) || [];
                 };
             }
-            if (_.isFunction(params.render)) {
+            if (isFunction(params.render)) {
                 props.render = params.render;
             }
             if (params.format) {
@@ -125,7 +126,7 @@ export const viewModel = (params, componentInfo) => {
             if (params.setPosition != null) {
                 props.setPosition = params.setPosition;
             }
-            if (_.size(filters$())) {
+            if (size(filters$())) {
                 props.filters = filters$();
             }
             if (props.entity) {
@@ -155,9 +156,9 @@ export const viewModel = (params, componentInfo) => {
             }
             if (columnReady) {
                 componentInfo.element[AUTOCOLUMN_PROP_NAME] = props;
-                _.isFunction(params.tableUpdate) && params.tableUpdate();
+                isFunction(params.tableUpdate) && params.tableUpdate();
             }
-            if (_.isFunction(done)) {
+            if (isFunction(done)) {
                 done();
             }
         },
@@ -180,14 +181,14 @@ export const viewModel = (params, componentInfo) => {
         validate: buildColumn,
         dispose: function () {
             paramsWatcher.dispose();
-            _.isFunction(params.tableUpdate) && params.tableUpdate();
+            isFunction(params.tableUpdate) && params.tableUpdate();
         },
         filterUpdate: function (filterId, filterProperties) {
-            indexFilters$(_.set(indexFilters$(), filterId, filterProperties));
+            indexFilters$(set(indexFilters$(), filterId, filterProperties));
             buildColumn();
         },
         filterRemove: function (filterId) {
-            indexFilters$(_.omit(indexFilters$(), filterId));
+            indexFilters$(omit(indexFilters$(), filterId));
             buildColumn();
         }
     };
