@@ -323,21 +323,21 @@ model "Table Performance"
         [t1Col1,t1Col2,t1Col3,t1Col4,t1Col5,t1Col6] as "skiph;[A1:K2001]"
     end-initializations
 
-    ! initializations from "mmsheet.csv:table2.csv"
-    !     [t2Col1,t2Col2,t2Col3,t2Col4] as "skiph;[A1:J10001]"
-    ! end-initializations
+    initializations from "mmsheet.csv:table2.csv"
+        [t2Col1,t2Col2,t2Col3,t2Col4] as "skiph;[A1:J10001]"
+    end-initializations
 
-    ! initializations from "mmsheet.csv:table3.csv"
-    !     [t3Col1,t3Col2,t3Col3,t3Col4] as "skiph;[A1:J100001]"
-    ! end-initializations
+    initializations from "mmsheet.csv:table3.csv"
+        [t3Col1,t3Col2,t3Col3,t3Col4] as "skiph;[A1:J100001]"
+    end-initializations
 
-    ! initializations from "mmsheet.csv:table4.csv"
-    !     [t4Col1,t4Col2,t4Col3,t4Col4] as "skiph;[A1:J500001]"
-    ! end-initializations
+    initializations from "mmsheet.csv:table4.csv"
+        [t4Col1,t4Col2,t4Col3,t4Col4] as "skiph;[A1:J500001]"
+    end-initializations
 
-    ! initializations from "mmsheet.csv:table5.csv"
-    !     [t5Col1,t5Col2,t5Col3,t5Col4] as "skiph;[A1:J1000001]"
-    ! end-initializations
+    initializations from "mmsheet.csv:table5.csv"
+        [t5Col1,t5Col2,t5Col3,t5Col4] as "skiph;[A1:J1000001]"
+    end-initializations
   end-procedure
 
   forall(d in DAYS, s in SITES) do
