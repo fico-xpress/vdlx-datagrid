@@ -52,7 +52,7 @@ limitations under the License.
                 }
                 function chooseFactory(factories, factory) {
                     var factoryValues = _.map(factories, 'value');
-                    if (_.contains(factoryValues, factory)) {
+                    if (_.includes(factoryValues, factory)) {
                         return factory;
                     }
                     return _.first(factoryValues);

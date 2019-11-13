@@ -30,9 +30,8 @@ VDL('vdlx-datagrid-index-filter', {
     createViewModel: viewModel,
     transform: transform,
     // Apply errors to the parent vdlx-datagrid
-    errorTargetSelector: function (element) {
+    errorTargetSelector: function(element) {
         return $(element).closest('vdlx-datagrid')[0] || element;
     },
-    requiredParent: ['vdlx-datagrid'],
+    requiredParent: ['vdlx-datagrid']
 });
-

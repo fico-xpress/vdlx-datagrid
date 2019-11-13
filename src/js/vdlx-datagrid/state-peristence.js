@@ -1,3 +1,4 @@
+
 /*
    Xpress Insight vdlx-datagrid
    =============================
@@ -21,8 +22,7 @@
     limitations under the License.
  */
 
-import { _ } from '../globals';
-
+import startsWith  from 'lodash/startsWith';
 const VDL_QUERY_PARAM = 'vdl=';
 const KEY_PREFIX = 'TableState';
 const KEY_SEPARATOR = '__';
@@ -31,16 +31,16 @@ const KEY_SEPARATOR = '__';
  *
  * @returns {string}
  */
-function generateUrlKey () {
+function generateUrlKey() {
     let key = window.location.pathname + window.location.hash;
 
     if (window.location.search) {
         const matchedVdl = window.location.search
             .substr(1)
             .split('&')
-            .filter(function (part) {
+            .filter(function(part) {
                 // Find the vdl query parameter
-                return _.startsWith(part, VDL_QUERY_PARAM);
+                return startsWith(part, VDL_QUERY_PARAM);
             });
 
         if (matchedVdl.length) {
@@ -51,7 +51,6 @@ function generateUrlKey () {
 }
 
 /** @typedef {{sorters: Array, filters: Array}} State*/
-
 
 /**
  * @param {string} tableId
@@ -82,4 +81,4 @@ export const createStateManager = (tableId, keySuffix) => {
             }
         }
     };
-}
+};

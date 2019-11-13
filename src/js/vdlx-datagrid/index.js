@@ -29,5 +29,5 @@ VDL('vdlx-datagrid', {
     attributes: VXDAttributes,
     createViewModel: viewModel,
     transform: transform,
-    modifiesDescendants: false,
+    modifiesDescendants: false
 });

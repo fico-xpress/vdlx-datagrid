@@ -21,7 +21,22 @@
     limitations under the License.
  */
 const dialogs = insightModules.load('dialogs');
-import { _, $ } from '../globals';
+import each  from 'lodash/each';
+import mapValues from 'lodash/mapValues';
+import max from 'lodash/max';
+import isEmpty from 'lodash/isEmpty';
+import reduce from 'lodash/reduce';
+import set from 'lodash/set';
+import assign from 'lodash/assign';
+import every from 'lodash/every';
+import find from 'lodash/find';
+import identity from 'lodash/identity';
+import negate from 'lodash/negate';
+import some from 'lodash/some';
+import uniqueId from 'lodash/uniqueId';
+import zip from 'lodash/zip';
+import constant from 'lodash/constant';
+import map from 'lodash/map';
 
 const ADD_REMOVE_TEMPLATE = `
 <div class="add-remove-control">
@@ -47,9 +62,9 @@ const ADD_REMOVE_TEMPLATE = `
 
 export default class AddRemove {
     /**
-     * 
-     * @param {*} table 
-     * @param {boolean} autoinc 
+     *
+     * @param {*} table
+     * @param {boolean} autoinc
      */
     constructor(table, autoinc) {
         this.$addRemoveControl = $(ADD_REMOVE_TEMPLATE);
@@ -70,14 +85,14 @@ export default class AddRemove {
      */
     appendTo(container) {
         this.$addRemoveControl.appendTo(container);
-        this.$addRemoveControl.on('click', '.btn-table-add-row', (evt) => {
+        this.$addRemoveControl.on('click', '.btn-table-add-row', evt => {
             if (this.autoinc) {
                 this.autoAddRow();
             } else {
                 this.openAddRowDialog();
             }
         });
-        this.$addRemoveControl.on('click', '.btn-table-remove-row', (evt) => this.removeRow());
+        this.$addRemoveControl.on('click', '.btn-table-remove-row', evt => this.removeRow());
     }
 
     /**
@@ -89,19 +104,21 @@ export default class AddRemove {
         enabled ? this.$addRemoveControl.show() : this.$addRemoveControl.hide();
     }
 
-    addNewRowToTable (newRow) {
-        return this.table.addRow(newRow)
+    addNewRowToTable(newRow) {
+        return this.table
+            .addRow(newRow)
             .then(row => {
-                this.table.setSort(_.map(this.table.getSorters(), sorter => ({
-                    dir: sorter.dir,
-                    column: sorter.field
-                })));
+                this.table.setSort(
+                    map(this.table.getSorters(), sorter => ({
+                        dir: sorter.dir,
+                        column: sorter.field
+                    }))
+                );
 
                 this.data = this.table.getData();
 
                 if (this.table.getPageMax() === false) {
-                    return this.table.scrollToRow(row)
-                        .then(_.constant(row));
+                    return this.table.scrollToRow(row).then(constant(row));
                 }
 
                 const position = row.getPosition(true);
@@ -117,16 +134,19 @@ export default class AddRemove {
                 $row.addClass('highlight').css('opacity', 0.2);
                 $row.animate({ opacity: 1.0 });
                 $row.animate({ opacity: 0.2 });
-                $row.animate({ opacity: 1.0 }, 2000, 'swing', function () {
+                $row.animate({ opacity: 1.0 }, 2000, 'swing', function() {
                     $row.removeClass('highlight');
                 });
             });
-    } 
+    }
 
     openAddRowDialog() {
-        const formFields = _.map(_.zip(this.indicesColumns, this.allSetValues), ([indicesColumn, setValues]) => {
-            const id = _.uniqueId('add-remove-row-');
-            const selectOptions = _.map(setValues, setValue => `<option value="${setValue.key}">${setValue.value}</option>`).join('');
+        const formFields = map(zip(this.indicesColumns, this.allSetValues), ([indicesColumn, setValues]) => {
+            const id = uniqueId('add-remove-row-');
+            const selectOptions = map(
+                setValues,
+                setValue => `<option value="${setValue.key}">${setValue.value}</option>`
+            ).join('');
 
             return `
             <div class="form-group">
@@ -157,19 +177,18 @@ export default class AddRemove {
         `);
 
         /**
-         * @param {Object} formData 
+         * @param {Object} formData
          * @returns {string?}
          */
-        const validateForm = (formData) => {
-            const emptyValue = _.some(formData, _.negate(_.identity));
+        const validateForm = formData => {
+            const emptyValue = some(formData, negate(identity));
 
             if (emptyValue) {
                 return 'Please set all indices to create a new row';
             }
 
-            const alreadyExists = _.find(
-                this.data,
-                row => _.every(formData, (value, columnName) => String(row[columnName]) === String(value))
+            const alreadyExists = find(this.data, row =>
+                every(formData, (value, columnName) => String(row[columnName]) === String(value))
             );
 
             if (alreadyExists) {
@@ -179,9 +198,9 @@ export default class AddRemove {
         };
 
         const submit = evt => {
-            const formData = _.reduce(
+            const formData = reduce(
                 $message.find('form').serializeArray(),
-                (acc, value) => _.assign(acc, _.set({}, value.name, value.value)),
+                (acc, value) => assign(acc, set({}, value.name, value.value)),
                 {}
             );
             const err = validateForm(formData);
@@ -204,7 +223,7 @@ export default class AddRemove {
                     label: 'OK',
                     className: 'btn btn-primary btn-add',
                     callback: evt => {
-                        const newRow = submit(evt)
+                        const newRow = submit(evt);
                         if (!newRow) {
                             return false;
                         }
@@ -214,14 +233,14 @@ export default class AddRemove {
                 },
                 cancel: {
                     label: 'CANCEL',
-                    className: 'btn',
+                    className: 'btn'
                 }
             }
         });
     }
 
-    autoAddRow () {
-        const nextValue = _.isEmpty(this.allSetValues[0]) ? 1 : _.max(_.map(this.allSetValues[0], 'key')) + 1;
+    autoAddRow() {
+        const nextValue = isEmpty(this.allSetValues[0]) ? 1 : max(map(this.allSetValues[0], 'key')) + 1;
         const { name, field } = this.indicesColumns[0];
 
         const commitPromise = this.defaultScenario
@@ -231,30 +250,28 @@ export default class AddRemove {
 
         this.$addRemoveControl.find('button.btn-table-add-row').attr('disabled', '');
         return commitPromise
-            .then(() => this.addNewRowToTable(_.set({}, field, nextValue)))
+            .then(() => this.addNewRowToTable(set({}, field, nextValue)))
             .then(() => {
                 this.allSetValues[0] = this.allSetValues[0].concat({ key: nextValue, value: nextValue });
             })
             .catch(() => dialogs.alert('Could not add row. There was an issue updating the server.', 'Row add failed'))
-            .then(() =>
-                this.$addRemoveControl.find('button.btn-table-add-row').removeAttr('disabled')
-            );
+            .then(() => this.$addRemoveControl.find('button.btn-table-add-row').removeAttr('disabled'));
     }
 
-    removeRow () {
+    removeRow() {
         const data = this.selectedRow.getData();
 
-        const modifiers = _.mapValues(
-            _.reduce(this.entitiesColumns, (acc, column) => _.set(acc, column.scenario.getId(), column.scenario), {}),
+        const modifiers = mapValues(
+            reduce(this.entitiesColumns, (acc, column) => set(acc, column.scenario.getId(), column.scenario), {}),
             scenario => scenario.modify()
         );
 
-        _.each(this.entitiesColumns, (column) => {
+        each(this.entitiesColumns, column => {
             const rowKey = column.getRowKey(data);
             modifiers[column.scenario.getId()].removeFromArray(column.name, rowKey);
         });
 
-        const promises = _.map(modifiers, modifier => modifier.commit());
+        const promises = map(modifiers, modifier => modifier.commit());
 
         return Promise.all([promises].concat(this.selectedRow.delete()))
             .then(() => {
@@ -270,7 +287,7 @@ export default class AddRemove {
             });
     }
 
-    update (indicesColumns, entitiesColumns, defaultScenario, allSetValues, data) {
+    update(indicesColumns, entitiesColumns, defaultScenario, allSetValues, data) {
         this.indicesColumns = indicesColumns;
         this.entitiesColumns = entitiesColumns;
         this.allSetValues = allSetValues;
@@ -278,7 +295,7 @@ export default class AddRemove {
         this.defaultScenario = defaultScenario;
     }
 
-    setSelectedRow (row) {
+    setSelectedRow(row) {
         this.selectedRow = row;
         if (this.selectedRow) {
             this.$addRemoveControl
@@ -292,4 +309,4 @@ export default class AddRemove {
                 .addClass('disabled');
         }
     }
-};
+}

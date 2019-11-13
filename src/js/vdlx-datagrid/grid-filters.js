@@ -1,3 +1,5 @@
+import partial  from 'lodash/partial';
+
 /*
    Xpress Insight vdlx-datagrid
    =============================
@@ -20,14 +22,14 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import { _ } from '../globals';
+
 const Enums = {
     DataType: {
-        "INTEGER": "INTEGER",
-        "REAL": "REAL",
-        "CONSTRAINT": "CONSTRAINT",
-        "DECISION_VARIABLE": "DECISION_VARIABLE",
-        "STRING": "STRING"
+        INTEGER: 'INTEGER',
+        REAL: 'REAL',
+        CONSTRAINT: 'CONSTRAINT',
+        DECISION_VARIABLE: 'DECISION_VARIABLE',
+        STRING: 'STRING'
     }
 };
 
@@ -39,14 +41,12 @@ const Enums = {
  * @returns {*}
  * @private
  */
-let _filterFloat = (value) => {
-    if (/^(\-|\+)?([0-9]+(\.([0-9]*))?|Infinity)$/
-        .test(value))
-        return Number(value);
+let _filterFloat = value => {
+    if (/^(\-|\+)?([0-9]+(\.([0-9]*))?|Infinity)$/.test(value)) return Number(value);
     return NaN;
 };
 
-let _getFormatter = (columnConfig) => {
+let _getFormatter = columnConfig => {
     if (columnConfig.format) {
         return columnConfig.format;
     } else {
@@ -63,9 +63,10 @@ let _getFormatter = (columnConfig) => {
 
 let _formatSearchDataIfNecessary = (searchData, displayType, format) => {
     //Check if the searchData is a number. If so, apply the appropriate formatter, else assume it is already formatted
-    var columnIsFloatingPoint = displayType === Enums.DataType.REAL
-        || displayType === Enums.DataType.DECISION_VARIABLE
-        || displayType === Enums.DataType.CONSTRAINT;
+    var columnIsFloatingPoint =
+        displayType === Enums.DataType.REAL ||
+        displayType === Enums.DataType.DECISION_VARIABLE ||
+        displayType === Enums.DataType.CONSTRAINT;
     var columnIsInteger = displayType === Enums.DataType.INTEGER;
 
     if (!columnIsFloatingPoint && !columnIsInteger) {
@@ -147,19 +148,19 @@ let _partialMatchCell = (searchData, data, column) => {
 
 let filter = (column, valueTxt, cellValue, rowData, params) => {
     var exactColumnSearch = valueTxt.substring(0, 1) === '=';
-    if(exactColumnSearch) {
+    if (exactColumnSearch) {
         return _exactMatchCell(valueTxt.substring(1), String(cellValue), column);
     }
     return _partialMatchCell(valueTxt, String(cellValue), column);
 };
 
-export let chooseColumnFilter = (column) => {
+export let chooseColumnFilter = column => {
     switch (column.elementType) {
         case Enums.DataType.INTEGER:
         case Enums.DataType.STRING:
         case Enums.DataType.REAL:
-            return _.partial(filter, column);
+            return partial(filter, column);
         default:
-            return undefined
+            return undefined;
     }
 };

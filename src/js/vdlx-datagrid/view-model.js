@@ -4,7 +4,7 @@
 
    file vdlx-datagrid/view-model.js
    ```````````````````````
-   vdlx-datagrid VDL extension view model.
+   vdlx-datagrid VDL extension view model
 
     (c) Copyright 2019 Fair Isaac Corporation
 
@@ -23,28 +23,54 @@
 import Datagrid from './datagrid';
 import { withDeepEquals } from './ko-utils';
 
-import { _, $ } from '../globals';
+import parseInt  from 'lodash/parseInt';
+import defer from 'lodash/defer';
+import isEmpty from 'lodash/isEmpty';
+import range from 'lodash/range';
+import has from 'lodash/has';
+import omitBy from 'lodash/omitBy';
+import isNumber from 'lodash/isNumber';
+import forEach from 'lodash/forEach';
+import clone from 'lodash/clone';
+import uniqueId from 'lodash/uniqueId';
+import isPlainObject from 'lodash/isPlainObject';
+import cloneDeep from 'lodash/cloneDeep';
+import isFunction from 'lodash/isFunction';
+import get from 'lodash/get';
+import bindKey from 'lodash/bindKey';
+import negate from 'lodash/negate';
+import identity from 'lodash/identity';
+import flow from 'lodash/flow';
+import pickBy from 'lodash/pickBy';
+import isUndefined from 'lodash/isUndefined';
+import isNull from 'lodash/isNull';
+import isNaN from 'lodash/isNaN';
+import sortBy from 'lodash/sortBy';
+import uniq from 'lodash/uniq';
+import map from 'lodash/map';
+import filter from 'lodash/filter';
 
 const DEFAULT_GRID_PAGE_SIZE = 50;
 
-function parseIntOrKeep (val) {
-    var result = _.parseInt(val);
-    if (_.isNaN(result)) {
+function parseIntOrKeep(val) {
+    var result = parseInt(val);
+    if (isNaN(result)) {
         return val;
     }
     return result;
 }
 
-function isNullOrUndefined (val) {
-    return _.isNull(val) || _.isUndefined(val);
+function isNullOrUndefined(val) {
+    return isNull(val) || isUndefined(val);
 }
 
-const stripEmpties = _.partialRight(_.pick, _.flow(_.identity, _.negate(isNullOrUndefined)));
+const stripEmpties = obj =>
+  pickBy(obj, flow(identity, negate(isNullOrUndefined)));
 
-const getTableOptions = (params) => () => {
+const getTableOptions = params => () => {
     var overrides = stripEmpties({
         searching: params.showFilter,
-        columnFilter: params.columnFilter,
+        columnFilter: params.columnFilter
     });
 
     var gridOptions = {
@@ -53,12 +79,12 @@ const getTableOptions = (params) => () => {
         selectionAndNavigation: params.selectionNavigation,
         overrides: overrides,
         columnFilter: params.columnFilter,
-        onError: _.bindKey(self, '_wrapAlert'),
+        onError: bindKey(self, '_wrapAlert'),
         alwaysShowSelection: params.alwaysShowSelection,
         gridHeight: params.gridHeight,
         gridData: params.gridData,
         paginationSize: params.pageSize || DEFAULT_GRID_PAGE_SIZE,
-        saveState: _.get(params, 'saveState', true),
+        saveState: get(params, 'saveState', true),
         pageMode: params.pageMode,
         freezeColumns: params.freezeColumns
     };
@@ -69,20 +95,19 @@ const getTableOptions = (params) => () => {
         gridOptions.pagination = 'local';
         gridOptions.paginationElement = $('.hidden-footer-toolbar').get(0); // hide the built-in paginator
     } else if (!pageMode || pageMode === 'none') {
-        
     }
 
-    if (_.isFunction(params.rowFilter)) {
+    if (isFunction(params.rowFilter)) {
         gridOptions.rowFilter = params.rowFilter;
     }
 
     gridOptions = stripEmpties(gridOptions);
 
-    if (!_.isUndefined(params.modifier)) {
-        if (_.isFunction(params.modifier)) {
+    if (!isUndefined(params.modifier)) {
+        if (isFunction(params.modifier)) {
             // Pass cloned options so they cannot modify the original table options object
-            var modifiedTableOptions = params.modifier(_.cloneDeep(gridOptions));
-            if (_.isPlainObject(modifiedTableOptions)) {
+            var modifiedTableOptions = params.modifier(cloneDeep(gridOptions));
+            if (isPlainObject(modifiedTableOptions)) {
                 gridOptions = modifiedTableOptions;
             }
         } else {
@@ -114,7 +139,7 @@ export default function createViewModel(params, componentInfo) {
     const element = componentInfo.element;
     const defaultScenario = params.scenarioId || 0;
 
-    const tableId = _.get(params, 'tableId', _.uniqueId('vdlx-datagrid-'));
+    const tableId = get(params, 'tableId', uniqueId('vdlx-datagrid-'));
     params.tableId = tableId;
 
     const $element = $(element);
@@ -126,8 +151,10 @@ export default function createViewModel(params, componentInfo) {
     $tableDiv.addClass('vdlx-datagrid table-striped table-bordered table-condensed');
     $element.append($tableDiv);
 
-    if(!!params.class) {
-        $(element).find('.vdlx-datagrid').addClass(params.class);
+    if (!!params.class) {
+        $(element)
+            .find('.vdlx-datagrid')
+            .addClass(params.class);
     }
 
     /*
@@ -149,26 +176,24 @@ export default function createViewModel(params, componentInfo) {
 
     var datagrid = new Datagrid(element, tableOptions$, columnConfig$);
 
-    function buildTable () {
+    function buildTable() {
         /*
         Collect the column information from the child VDL extensions (vdlx-datagrid-column)
          */
-        const columnConfigs = $element
-            .find('vdlx-datagrid-column')
-            .map(function (idx, element) {
-                return _.clone(element['autotableConfig']);
-            });
-        if(!columnConfigs.length) {
-            columnConfig$({columnOptions: [], indicesOptions: {}, scenarioList: []});
+        const columnConfigs = $element.find('vdlx-datagrid-column').map(function(idx, element) {
+            return clone(element['autotableConfig']);
+        });
+        if (!columnConfigs.length) {
+            columnConfig$({ columnOptions: [], indicesOptions: {}, scenarioList: [] });
             return;
         }
 
         var entities = [];
         var indices = {};
 
-        _.forEach(columnConfigs, function (configItem) {
+        forEach(columnConfigs, function(configItem) {
             var scenarioNum = parseIntOrKeep(configItem.scenario || defaultScenario);
-            if (_.isNumber(scenarioNum)) {
+            if (isNumber(scenarioNum)) {
                 if (scenarioNum < 0) {
                     // reject('Scenario index must be a positive integer.');
                 }
@@ -177,13 +202,13 @@ export default function createViewModel(params, componentInfo) {
             if (!!configItem.entity) {
                 configItem.name = configItem.entity;
                 delete configItem.entity;
-                entities.push(_.omit(configItem, isNullOrUndefined));
+                entities.push(omitBy(configItem, isNullOrUndefined));
             } else if (!!configItem.set) {
-                if (!_.has(indices, [configItem.set])) {
+                if (!has(indices, [configItem.set])) {
                     indices[configItem.set] = [];
                 }
                 const indexList = indices[configItem.set];
-                const cleanItem = _.omit(configItem, isNullOrUndefined);
+                const cleanItem = omitBy(configItem, isNullOrUndefined);
                 const setPosn = configItem.setPosition;
                 if (setPosn == null) {
                     indexList.push(cleanItem);
@@ -196,7 +221,7 @@ export default function createViewModel(params, componentInfo) {
                     // explicitly inserts null/undefined here, or some
                     // standard algorithms behave oddly. (E.g. _.map
                     // will count the missing items, but [].map won't)
-                    _.range(indexList.length).forEach(function (j) {
+                    range(indexList.length).forEach(function(j) {
                         if (!indexList[j]) {
                             indexList[j] = null;
                         }
@@ -207,28 +232,39 @@ export default function createViewModel(params, componentInfo) {
             }
         });
 
-        var scenarioList = _(entities).filter(function (item) {
-            return !isNullOrUndefined(item);
-        }).map(function (item) {
-            return ko.unwrap(item.scenario);
-        }).uniq().sortBy().value();
+        var scenarioList = sortBy(
+          uniq(
+            map(
+              filter(entities, function(item) {
+                return !isNullOrUndefined(item);
+              }),
+              function(item) {
+                return ko.unwrap(item.scenario);
+              }
+            )
+          )
+        );
 
-        if (_.isEmpty(scenarioList) || _.isEmpty(entities)) {
-            console.debug('vdl-table (' + params.tableId + '): Scenario list or table column configuration is empty, ignoring update');
+        if (isEmpty(scenarioList) || isEmpty(entities)) {
+            console.debug(
+                'vdl-table (' +
+                    params.tableId +
+                    '): Scenario list or table column configuration is empty, ignoring update'
+            );
         }
 
-        columnConfig$({columnOptions: entities, indicesOptions: indices, scenarioList: scenarioList});
+        columnConfig$({ columnOptions: entities, indicesOptions: indices, scenarioList: scenarioList });
     }
-    
+
     vm.tableUpdate = () => {
-        _.defer(() => buildTable());
+        defer(() => buildTable());
     };
 
-    vm.tableValidate = function () {
+    vm.tableValidate = function() {
         datagrid.validate();
     };
 
-    vm.dispose = function () {
+    vm.dispose = function() {
         datagrid.dispose();
     };
 

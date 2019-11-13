@@ -22,7 +22,16 @@
  */
 import { EDITOR_TYPES } from '../constants';
 
-import { _, $ } from '../globals';
+import omit  from 'lodash/omit';
+import isFunction from 'lodash/isFunction';
+import isNumber from 'lodash/isNumber';
+import size from 'lodash/size';
+import throttle from 'lodash/throttle';
+import uniqueId from 'lodash/uniqueId';
+import set from 'lodash/set';
+import reduce from 'lodash/reduce';
+
+
 const enums = insightModules.load('enums');
 const validatorFactory = insightModules.load('vdl/vdl-validator-factory');
 const insightGetter = insightModules.load('insight-getter');
@@ -32,20 +41,21 @@ const AUTOCOLUMN_PROP_NAME = 'autotableConfig';
 
 export const viewModel = (params, componentInfo) => {
     var indexFilters$ = ko.observable({});
-    var filters$ = ko.pureComputed(function () {
-        return _.reduce(
+    var filters$ = ko.pureComputed(function() {
+        return reduce(
             indexFilters$(),
-            function (memo, filterProps) {
-                return _.set(memo, [filterProps.setName, filterProps.setPosition], filterProps.value);
+            function(memo, filterProps) {
+                return set(memo, [filterProps.setName, filterProps.setPosition], filterProps.value);
             },
             {}
         );
     });
-    const columnId = _.uniqueId('datagrid-column');
-    var buildColumn = _.throttle(
-        function (done) {
+    const columnId = uniqueId('datagrid-column');
+    var buildColumn = throttle(
+        function(done) {
             console.log('vdlx-datagrid update column');
-            var columnReady = $(componentInfo.element).find('vdlx-datagrid-index-filter').length === _.size(indexFilters$());
+            var columnReady =
+                $(componentInfo.element).find('vdlx-datagrid-index-filter').length === size(indexFilters$());
             var props = {
                 scenario: ko.unwrap(params.scenario),
                 title: ko.unwrap(params.heading),
@@ -62,22 +72,22 @@ export const viewModel = (params, componentInfo) => {
                 id: columnId,
                 bottomCalc: params.bottomCalc
             };
-            if(params.bottomCalc) {
+            if (params.bottomCalc) {
                 props.bottomCalcFormatter = function(data) {
                     var val = data.getValue();
-                    if(_.isNumber(val)) {
+                    if (isNumber(val)) {
                         return insightGetter().Formatter.formatNumber(val, params.format);
                     }
                     return val;
                 };
             }
             if (params.editorOptions) {
-                props.editorOptions = function () {
+                props.editorOptions = function() {
                     // Return an empty list of options if value is undefined
                     return params.editorOptions.apply(null, arguments) || [];
                 };
             }
-            if (_.isFunction(params.render)) {
+            if (isFunction(params.render)) {
                 props.render = params.render;
             }
             if (params.format) {
@@ -125,46 +135,49 @@ export const viewModel = (params, componentInfo) => {
             if (params.setPosition != null) {
                 props.setPosition = params.setPosition;
             }
-            if (_.size(filters$())) {
+            if (size(filters$())) {
                 props.filters = filters$();
             }
             if (props.entity) {
-                var getValidationFn = function (indices) {
+                var getValidationFn = function(indices) {
                     var validationProperties = validatorFactory.getValidationProperties({
                         entity: props.entity,
                         indices: indices
                     });
-                    var customValidators = validatorFactory.getCustomValidators(validationProperties, componentInfo.element);
+                    var customValidators = validatorFactory.getCustomValidators(
+                        validationProperties,
+                        componentInfo.element
+                    );
                     return validatorFactory.createFromValidators(customValidators);
                 };
                 var validationObservable = ko.observable().extend({
                     functionObservable: {
-                        onDependenciesChange: function () {
+                        onDependenciesChange: function() {
                             params.tableValidate();
                         },
-                        read: function (indices, value, rowData) {
+                        read: function(indices, value, rowData) {
                             return getValidationFn(indices)(value, rowData);
                         },
                         disposeWhenDependenciesChange: false
                     }
                 });
-                props.editorValidate = function (newValue, rowData, keys) {
+                props.editorValidate = function(newValue, rowData, keys) {
                     validationObservable(keys, newValue, rowData);
                     return validationObservable.peek();
                 };
             }
             if (columnReady) {
                 componentInfo.element[AUTOCOLUMN_PROP_NAME] = props;
-                _.isFunction(params.tableUpdate) && params.tableUpdate();
+                isFunction(params.tableUpdate) && params.tableUpdate();
             }
-            if (_.isFunction(done)) {
+            if (isFunction(done)) {
                 done();
             }
         },
         COLUMN_BUILD_DELAY,
         { leading: false }
     );
-    var paramsWatcher = ko.computed(function () {
+    var paramsWatcher = ko.computed(function() {
         var constructedParams = {
             scenario: ko.unwrap(params.scenario),
             title: ko.unwrap(params.heading),
@@ -178,16 +191,16 @@ export const viewModel = (params, componentInfo) => {
     return {
         columnUpdate: buildColumn,
         validate: buildColumn,
-        dispose: function () {
+        dispose: function() {
             paramsWatcher.dispose();
-            _.isFunction(params.tableUpdate) && params.tableUpdate();
+            isFunction(params.tableUpdate) && params.tableUpdate();
         },
-        filterUpdate: function (filterId, filterProperties) {
-            indexFilters$(_.set(indexFilters$(), filterId, filterProperties));
+        filterUpdate: function(filterId, filterProperties) {
+            indexFilters$(set(indexFilters$(), filterId, filterProperties));
             buildColumn();
         },
-        filterRemove: function (filterId) {
-            indexFilters$(_.omit(indexFilters$(), filterId));
+        filterRemove: function(filterId) {
+            indexFilters$(omit(indexFilters$(), filterId));
             buildColumn();
         }
     };
