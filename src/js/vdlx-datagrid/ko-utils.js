@@ -54,4 +54,4 @@ export const withEqualityComparer = (function(f, obs) {
  * Sets equalityComparer on the observable
  */
 
-export const withDeepEquals = withEqualityComparer(isEqual);
+export const withDeepEquals = obs => withEqualityComparer(isEqual, obs);
