@@ -21,18 +21,16 @@
     limitations under the License.
  */
 import perf from '../performance-measurement';
-import {
-    map,
-    findIndex,
-    reduce,
-    isEmpty,
-    get,
-    uniq,
-    filter,
-    zipObject,
-    isFunction,
-    set
-} from 'lodash';
+import set  from 'lodash/set';
+import isFunction from 'lodash/isFunction';
+import zipObject from 'lodash/zipObject';
+import filter from 'lodash/filter';
+import uniq from 'lodash/uniq';
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import reduce from 'lodash/reduce';
+import findIndex from 'lodash/findIndex';
+import map from 'lodash/map';
 
 const DataUtils = insightModules.load('utils/data-utils');
 const createSparseData = insightModules.load('components/table/create-sparse-data');

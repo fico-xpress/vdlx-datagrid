@@ -22,7 +22,8 @@
     limitations under the License.
  */
 
-import { uniqueId, partial } from 'lodash';
+import partial  from 'lodash/partial';
+import uniqueId from 'lodash/uniqueId';
 
 /**
  * @typedef {Object} indexFilterVMParams

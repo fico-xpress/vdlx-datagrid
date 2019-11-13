@@ -22,24 +22,22 @@
  */
 const dialogs = insightModules.load('dialogs');
 import $ from 'jquery';
-import {
-    map,
-    constant,
-    zip,
-    uniqueId,
-    some,
-    negate,
-    identity,
-    find,
-    every,
-    assign,
-    set,
-    reduce,
-    isEmpty,
-    max,
-    mapValues,
-    each
-} from 'lodash';
+import each  from 'lodash/each';
+import mapValues from 'lodash/mapValues';
+import max from 'lodash/max';
+import isEmpty from 'lodash/isEmpty';
+import reduce from 'lodash/reduce';
+import set from 'lodash/set';
+import assign from 'lodash/assign';
+import every from 'lodash/every';
+import find from 'lodash/find';
+import identity from 'lodash/identity';
+import negate from 'lodash/negate';
+import some from 'lodash/some';
+import uniqueId from 'lodash/uniqueId';
+import zip from 'lodash/zip';
+import constant from 'lodash/constant';
+import map from 'lodash/map';
 
 const ADD_REMOVE_TEMPLATE = `
 <div class="add-remove-control">

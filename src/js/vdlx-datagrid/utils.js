@@ -22,6 +22,7 @@
     limitations under the License.
  */
 
-import { map, propertyOf } from 'lodash';
+import propertyOf  from 'lodash/propertyOf';
+import map from 'lodash/map';
 
 export const getRowData = columnsIds => data => map(columnsIds, propertyOf(data));

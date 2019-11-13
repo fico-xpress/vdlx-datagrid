@@ -23,7 +23,14 @@
 import { EDITOR_TYPES } from '../constants';
 
 import $ from 'jquery';
-import { reduce, set, uniqueId, throttle, size, isNumber, isFunction, omit } from 'lodash';
+import omit  from 'lodash/omit';
+import isFunction from 'lodash/isFunction';
+import isNumber from 'lodash/isNumber';
+import size from 'lodash/size';
+import throttle from 'lodash/throttle';
+import uniqueId from 'lodash/uniqueId';
+import set from 'lodash/set';
+import reduce from 'lodash/reduce';
 
 
 const enums = insightModules.load('enums');

@@ -44,31 +44,28 @@ const dialogs = insightModules.load('dialogs');
 import perf from '../performance-measurement';
 import { createStateManager } from './state-peristence';
 import { DatagridLock } from './datagrid-lock';
-import {
-    isArray,
-    isEmpty,
-    noop,
-    each,
-    filter,
-    first,
-    inRange,
-    reject,
-    map,
-    get,
-    uniq,
-    values,
-    assign,
-    flowRight,
-    flow,
-    partial,
-    identity,
-    isUndefined,
-    defer,
-    find,
-    some,
-    delay,
-    escape
-} from 'lodash';
+import escape  from 'lodash/escape';
+import delay from 'lodash/delay';
+import some from 'lodash/some';
+import find from 'lodash/find';
+import defer from 'lodash/defer';
+import isUndefined from 'lodash/isUndefined';
+import identity from 'lodash/identity';
+import flow from 'lodash/flow';
+import flowRight from 'lodash/flowRight';
+import assign from 'lodash/assign';
+import values from 'lodash/values';
+import uniq from 'lodash/uniq';
+import get from 'lodash/get';
+import map from 'lodash/map';
+import reject from 'lodash/reject';
+import inRange from 'lodash/inRange';
+import first from 'lodash/first';
+import filter from 'lodash/filter';
+import each from 'lodash/each';
+import noop from 'lodash/noop';
+import isEmpty from 'lodash/isEmpty';
+import isArray from 'lodash/isArray';
 
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';

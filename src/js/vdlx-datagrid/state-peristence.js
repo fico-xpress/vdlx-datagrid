@@ -22,7 +22,7 @@
     limitations under the License.
  */
 
-import { startsWith } from 'lodash';
+import startsWith  from 'lodash/startsWith';
 const VDL_QUERY_PARAM = 'vdl=';
 const KEY_PREFIX = 'TableState';
 const KEY_SEPARATOR = '__';

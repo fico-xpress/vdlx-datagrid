@@ -25,30 +25,28 @@ import { withDeepEquals } from './ko-utils';
 
 import $ from 'jquery';
 
-import {
-    isNaN,
-    isNull,
-    isUndefined,
-    pickBy,
-    flow,
-    identity,
-    negate,
-    bindKey,
-    get,
-    isFunction,
-    cloneDeep,
-    isPlainObject,
-    uniqueId,
-    clone,
-    forEach,
-    isNumber,
-    omitBy,
-    has,
-    range,
-    isEmpty,
-    defer,
-    parseInt
-} from 'lodash';
+import parseInt  from 'lodash/parseInt';
+import defer from 'lodash/defer';
+import isEmpty from 'lodash/isEmpty';
+import range from 'lodash/range';
+import has from 'lodash/has';
+import omitBy from 'lodash/omitBy';
+import isNumber from 'lodash/isNumber';
+import forEach from 'lodash/forEach';
+import clone from 'lodash/clone';
+import uniqueId from 'lodash/uniqueId';
+import isPlainObject from 'lodash/isPlainObject';
+import cloneDeep from 'lodash/cloneDeep';
+import isFunction from 'lodash/isFunction';
+import get from 'lodash/get';
+import bindKey from 'lodash/bindKey';
+import negate from 'lodash/negate';
+import identity from 'lodash/identity';
+import flow from 'lodash/flow';
+import pickBy from 'lodash/pickBy';
+import isUndefined from 'lodash/isUndefined';
+import isNull from 'lodash/isNull';
+import isNaN from 'lodash/isNaN';
 
 const DEFAULT_GRID_PAGE_SIZE = 50;
 

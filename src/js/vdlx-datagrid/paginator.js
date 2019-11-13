@@ -21,7 +21,13 @@
     limitations under the License.
  */
 
-import { uniq, filter, sortBy, map, isEmpty, isNumber, parseInt } from 'lodash';
+import parseInt  from 'lodash/parseInt';
+import isNumber from 'lodash/isNumber';
+import isEmpty from 'lodash/isEmpty';
+import map from 'lodash/map';
+import sortBy from 'lodash/sortBy';
+import filter from 'lodash/filter';
+import uniq from 'lodash/uniq';
 
 const PAGINATOR_TEMPLATE = `
 <div class="pagination-control">

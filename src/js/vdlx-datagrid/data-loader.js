@@ -21,7 +21,16 @@
     limitations under the License.
  */
 import { onSubscribe, onSubscriptionDispose } from './ko-utils';
-import { map, flatten, filter, identity, uniq, isUndefined, zipObject, isEmpty, noop, each, fromPairs } from 'lodash';
+import fromPairs  from 'lodash/fromPairs';
+import each from 'lodash/each';
+import noop from 'lodash/noop';
+import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
+import uniq from 'lodash/uniq';
+import identity from 'lodash/identity';
+import filter from 'lodash/filter';
+import flatten from 'lodash/flatten';
+import map from 'lodash/map';
 
 function findScenario(scenarios, identifier) {
     var result = null;

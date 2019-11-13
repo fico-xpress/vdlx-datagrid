@@ -21,7 +21,7 @@
     limitations under the License.
  */
 
-import { isEqual } from 'lodash';
+import isEqual  from 'lodash/isEqual';
 
 export const onSubscribe = (function(f, observable) {
     var subscribe = observable.subscribe;

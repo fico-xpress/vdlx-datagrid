@@ -22,7 +22,7 @@
  */
 const validatorRegistry = insightModules.load('vdl-validator-registry');
 import $ from 'jquery';
-import { isFunction } from 'lodash';
+import isFunction  from 'lodash/isFunction';
 
 export default function(params, componentInfo) {
     var fieldElement = $(componentInfo.element).parents('vdlx-datagrid-column')[0];
