@@ -31,6 +31,9 @@ import isEmpty from 'lodash/isEmpty';
 import reduce from 'lodash/reduce';
 import findIndex from 'lodash/findIndex';
 import map from 'lodash/map';
+import keys from 'lodash/keys';
+import pickBy from 'lodash/pickBy';
+import flatMap from 'lodash/flatMap';
 
 const DataUtils = insightModules.load('utils/data-utils');
 const createSparseData = insightModules.load('components/table/create-sparse-data');
