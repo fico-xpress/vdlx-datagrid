@@ -23,7 +23,6 @@
 
 const DataUtils = insightModules.load('utils/data-utils');
 const enums = insightModules.load('enums');
-import $ from 'jquery';
 
 import includes  from 'lodash/includes';
 import isEmpty from 'lodash/isEmpty';

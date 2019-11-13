@@ -22,8 +22,6 @@
  */
 const DEFAULT_VALIDATION_ERROR_MESSAGE = 'The value is not valid';
 
-import $ from 'jquery';
-
 export default function(element, attributes, api) {
     var $element = $(element);
 

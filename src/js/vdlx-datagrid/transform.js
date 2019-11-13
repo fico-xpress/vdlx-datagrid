@@ -21,7 +21,6 @@
     limitations under the License.
  */
 
-import $ from 'jquery';
 
 /**
  * The transform function takes care of setting up/initialising a VDL extension.

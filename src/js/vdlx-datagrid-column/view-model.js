@@ -22,7 +22,6 @@
  */
 import { EDITOR_TYPES } from '../constants';
 
-import $ from 'jquery';
 import omit  from 'lodash/omit';
 import isFunction from 'lodash/isFunction';
 import isNumber from 'lodash/isNumber';

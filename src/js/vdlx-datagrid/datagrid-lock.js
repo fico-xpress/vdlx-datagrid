@@ -21,7 +21,6 @@
     limitations under the License.
  */
 
-import $ from 'jquery';
 import map  from 'lodash/map';
 
 const LOCK_EVENT_NAMESPACE = '.insight-table-lock';

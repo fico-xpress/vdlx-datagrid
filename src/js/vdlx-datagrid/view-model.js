@@ -23,8 +23,6 @@
 import Datagrid from './datagrid';
 import { withDeepEquals } from './ko-utils';
 
-import $ from 'jquery';
-
 import parseInt  from 'lodash/parseInt';
 import defer from 'lodash/defer';
 import isEmpty from 'lodash/isEmpty';

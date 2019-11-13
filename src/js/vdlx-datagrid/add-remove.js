@@ -21,7 +21,6 @@
     limitations under the License.
  */
 const dialogs = insightModules.load('dialogs');
-import $ from 'jquery';
 import each  from 'lodash/each';
 import mapValues from 'lodash/mapValues';
 import max from 'lodash/max';
