@@ -21,8 +21,9 @@
     limitations under the License.
  */
 const DataUtils = insightModules.load('utils/data-utils');
-import { $ } from '../globals';
+import $ from 'jquery';
 import { get, find, has } from 'lodash';
+
 
 export default (element, attributes, api) => {
     var $element = $(element);

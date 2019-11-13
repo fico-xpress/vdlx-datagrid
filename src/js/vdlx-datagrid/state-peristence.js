@@ -1,4 +1,3 @@
-import { startsWith } from 'lodash';
 
 /*
    Xpress Insight vdlx-datagrid
@@ -23,6 +22,7 @@ import { startsWith } from 'lodash';
     limitations under the License.
  */
 
+import { startsWith } from 'lodash';
 const VDL_QUERY_PARAM = 'vdl=';
 const KEY_PREFIX = 'TableState';
 const KEY_SEPARATOR = '__';

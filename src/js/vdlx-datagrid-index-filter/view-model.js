@@ -1,4 +1,3 @@
-import { uniqueId, partial } from 'lodash';
 
 /*
    Xpress Insight vdlx-datagrid
@@ -22,6 +21,8 @@ import { uniqueId, partial } from 'lodash';
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+
+import { uniqueId, partial } from 'lodash';
 
 /**
  * @typedef {Object} indexFilterVMParams

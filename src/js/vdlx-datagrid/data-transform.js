@@ -22,7 +22,6 @@
  */
 import perf from '../performance-measurement';
 import {
-    curry,
     map,
     findIndex,
     reduce,
@@ -30,24 +29,21 @@ import {
     get,
     uniq,
     filter,
-    partial,
     zipObject,
     isFunction,
-    fromPairs,
     set
 } from 'lodash';
-import _ from 'lodash';
 
 const DataUtils = insightModules.load('utils/data-utils');
 const createSparseData = insightModules.load('components/table/create-sparse-data');
 const createDenseData = insightModules.load('components/table/create-dense-data');
 const SelectOptions = insightModules.load('components/autotable-select-options');
 
-export const getAllColumnIndices = curry((schema, columnOptions) => {
+export const getAllColumnIndices = (schema, columnOptions) => {
     return map(columnOptions, function(option) {
         return schema.getEntity(option.name).getIndexSets();
     });
-}, 2);
+}
 
 const getIndexPosns = DataUtils.getIndexPosns;
 
@@ -74,16 +70,16 @@ export const getDisplayIndices = (columnIndices, columnOptions) => {
             }
         });
     }
-
-    return _(setCount)
-        .pickBy(function(count) {
-            return count === numColumns;
-        })
-        .keys()
-        .map(function(k) {
+    return map(
+        keys(
+            pickBy(setCount, function(count) {
+                return count === numColumns;
+            })
+        ),
+        function(k) {
             return JSON.parse(k);
-        })
-        .value();
+        }
+    );
 };
 
 // Build a key from the index set columns of a row. This may be partial, if not all index sets are displayed in the row
@@ -188,13 +184,11 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
     );
 
     const sets = map(setNamePosnsAndOptions, setNameAndPosn => {
-        return _(indexScenarios)
-            .map(function(scenario) {
-                return scenario.getSet(setNameAndPosn.name);
-            })
-            .flatten()
-            .uniq()
-            .value();
+        return uniq(
+          flatMap(indexScenarios, function(scenario) {
+            return scenario.getSet(setNameAndPosn.name);
+          })
+        );
     });
 
     const schema = insight
@@ -206,7 +200,7 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
         return SelectOptions.generateSelectOptions(schema, indexScenarios, setNamePosnAndOption.name, sets[i]);
     });
 
-    const createRow = partial(zipObject, setIds.concat(arrayIds));
+    const createRow = values => zipObject(setIds.concat(arrayIds), values);
 
     if (isEmpty(arrays)) {
         return {

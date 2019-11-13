@@ -23,7 +23,7 @@
 import { VDGCattributes } from './attributes';
 import { transform } from './transform';
 import { viewModel } from './view-model';
-
+import $ from 'jquery';
 /*
     vdlx-datagrid-column
 

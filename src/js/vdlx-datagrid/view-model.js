@@ -4,7 +4,7 @@
 
    file vdlx-datagrid/view-model.js
    ```````````````````````
-   vdlx-datagrid VDL extension view model.
+   vdlx-datagrid VDL extension view model
 
     (c) Copyright 2019 Fair Isaac Corporation
 
@@ -23,12 +23,12 @@
 import Datagrid from './datagrid';
 import { withDeepEquals } from './ko-utils';
 
-import { $ } from '../globals';
+import $ from 'jquery';
+
 import {
     isNaN,
     isNull,
     isUndefined,
-    partialRight,
     pickBy,
     flow,
     identity,
@@ -49,7 +49,6 @@ import {
     defer,
     parseInt
 } from 'lodash';
-import _ from 'lodash';
 
 const DEFAULT_GRID_PAGE_SIZE = 50;
 
@@ -65,13 +64,8 @@ function isNullOrUndefined(val) {
     return isNull(val) || isUndefined(val);
 }
 
-const stripEmpties = partialRight(
-    pickBy,
-    flow(
-        identity,
-        negate(isNullOrUndefined)
-    )
-);
+const stripEmpties = obj =>
+  pickBy(obj, flow(identity, negate(isNullOrUndefined)));
 
 const getTableOptions = params => () => {
     var overrides = stripEmpties({
@@ -238,16 +232,18 @@ export default function createViewModel(params, componentInfo) {
             }
         });
 
-        var scenarioList = _(entities)
-            .filter(function(item) {
+        var scenarioList = sortBy(
+          uniq(
+            map(
+              filter(entities, function(item) {
                 return !isNullOrUndefined(item);
-            })
-            .map(function(item) {
+              }),
+              function(item) {
                 return ko.unwrap(item.scenario);
-            })
-            .uniq()
-            .sortBy()
-            .value();
+              }
+            )
+          )
+        );
 
         if (isEmpty(scenarioList) || isEmpty(entities)) {
             console.debug(

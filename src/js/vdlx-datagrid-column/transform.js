@@ -23,8 +23,10 @@
 
 const DataUtils = insightModules.load('utils/data-utils');
 const enums = insightModules.load('enums');
-import { $ } from '../globals';
+import $ from 'jquery';
+
 import { get, isEmpty, includes } from 'lodash';
+
 
 /**
  * @param {HTMLElement} element

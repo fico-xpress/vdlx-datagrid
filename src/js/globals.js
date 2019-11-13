@@ -20,8 +20,3 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-/** @type {import("lodash").LoDashStatic} */
-export const _ = window._;
-
-/** @type {JQueryStatic} */
-export const $ = window.$;

@@ -21,7 +21,6 @@
     limitations under the License.
  */
 
-import { $ } from '../globals';
 import { uniq, filter, sortBy, map, isEmpty, isNumber, parseInt } from 'lodash';
 
 const PAGINATOR_TEMPLATE = `

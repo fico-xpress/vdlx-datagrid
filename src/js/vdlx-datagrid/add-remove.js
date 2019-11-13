@@ -21,7 +21,7 @@
     limitations under the License.
  */
 const dialogs = insightModules.load('dialogs');
-import { $ } from '../globals';
+import $ from 'jquery';
 import {
     map,
     constant,

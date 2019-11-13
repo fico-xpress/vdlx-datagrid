@@ -35,7 +35,7 @@ import { EDITOR_TYPES } from '../constants';
 import AddRemove from './add-remove';
 import { chooseColumnFilter } from './grid-filters';
 
-import { $ } from '../globals';
+import $ from 'jquery';
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');
 
@@ -69,7 +69,7 @@ import {
     delay,
     escape
 } from 'lodash';
-import _ from 'lodash';
+
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
@@ -544,9 +544,13 @@ class Datagrid {
                         );
                     } else if (entityOptions.editorOptions) {
                         getOptions = flow(
-                            entityOptions.editorOptions,
-                            partial(SelectOptions.generateSelectOptionsFromValues, _, isNumberEntity),
-                            entityOptions.selectNull ? addSelectNull : identity
+                          entityOptions.editorOptions,
+                          options =>
+                            SelectOptions.generateSelectOptionsFromValues(
+                              options,
+                              isNumberEntity
+                            ),
+                          entityOptions.selectNull ? addSelectNull : identity
                         );
                     }
 

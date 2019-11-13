@@ -23,6 +23,7 @@
 import IndexFilterAttributes from './attributes';
 import transform from './transform';
 import viewModel from './view-model';
+import $ from 'jquery';
 
 VDL('vdlx-datagrid-index-filter', {
     tag: 'vdlx-datagrid-index-filter',

@@ -22,7 +22,7 @@
  */
 const DEFAULT_VALIDATION_ERROR_MESSAGE = 'The value is not valid';
 
-import { _, $ } from '../globals';
+import $ from 'jquery';
 
 export default function(element, attributes, api) {
     var $element = $(element);

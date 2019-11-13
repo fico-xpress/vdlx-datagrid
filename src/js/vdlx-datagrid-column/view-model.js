@@ -22,8 +22,10 @@
  */
 import { EDITOR_TYPES } from '../constants';
 
-import { $ } from '../globals';
+import $ from 'jquery';
 import { reduce, set, uniqueId, throttle, size, isNumber, isFunction, omit } from 'lodash';
+
+
 const enums = insightModules.load('enums');
 const validatorFactory = insightModules.load('vdl/vdl-validator-factory');
 const insightGetter = insightModules.load('insight-getter');

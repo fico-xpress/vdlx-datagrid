@@ -21,7 +21,7 @@
     limitations under the License.
  */
 const validatorRegistry = insightModules.load('vdl-validator-registry');
-import { $ } from '../globals';
+import $ from 'jquery';
 import { isFunction } from 'lodash';
 
 export default function(params, componentInfo) {
