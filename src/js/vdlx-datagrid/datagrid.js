@@ -244,7 +244,8 @@ class Datagrid {
             cellEditing: cell => select(cell.getRow()),
             rowClick: (e, row) => select(row),
             rowSelectionChanged: (data, rows) => this.setSelectedRow(first(rows)),
-            renderComplete: () => this.update()
+            renderComplete: () => this.update(),
+            invalidOptionWarnings: false
         };
 
         const table = new Tabulator(`#${options.tableId}`, tabulatorOptions);
