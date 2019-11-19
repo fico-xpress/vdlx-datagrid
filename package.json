@@ -9,7 +9,8 @@
     "unit-test": "jest",
     "unit-test-debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "watch": "parcel watch -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --no-hmr src/js/index.js",
-    "build": "parcel build -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --experimental-scope-hoisting src/js/index.js"
+    "copy-production-to-app": "copyfiles -f \"dist/insight/client_resources/vdlx-datagrid/*\" insight/client_resources/vdlx-datagrid",
+    "build": "parcel build -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js src/js/index.js && npm run copy-production-to-app"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +26,7 @@
     "autoprefixer": "^9.7.1",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^24.9.0",
+    "copyfiles": "^2.1.1",
     "csv-stringify": "^4.3.1",
     "jest": "^24.9.0",
     "knockout": "^3.5.1",
