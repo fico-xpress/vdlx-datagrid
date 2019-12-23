@@ -30,6 +30,7 @@ import throttle from 'lodash/throttle';
 import uniqueId from 'lodash/uniqueId';
 import set from 'lodash/set';
 import reduce from 'lodash/reduce';
+import filter from 'lodash/filter';
 
 
 const enums = insightModules.load('enums');
@@ -50,6 +51,19 @@ export const viewModel = (params, componentInfo) => {
             {}
         );
     });
+    var remoteFilters$ = ko.pureComputed(() =>
+      reduce(
+        filter(indexFilters$(), ({ remote }) => remote),
+        (memo, filterProps) =>
+          set(
+            memo,
+            [filterProps.setName, filterProps.setPosition],
+            filterProps.value
+          ),
+        {}
+      )
+    );
+
     const columnId = uniqueId('datagrid-column');
     var buildColumn = throttle(
         function(done) {
@@ -137,6 +151,7 @@ export const viewModel = (params, componentInfo) => {
             }
             if (size(filters$())) {
                 props.filters = filters$();
+                props.remoteFilters = remoteFilters$();
             }
             if (props.entity) {
                 var getValidationFn = function(indices) {

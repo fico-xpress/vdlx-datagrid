@@ -36,5 +36,9 @@ export default [
         description: 'Single value to fix the indices to.',
         acceptsExpression: true,
         required: true
+    },
+    {
+        name: 'remote',
+        acceptsExpression: false
     }
 ];

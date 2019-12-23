@@ -32,6 +32,7 @@ import uniqueId from 'lodash/uniqueId';
  * @property {string} setName
  * @property {string} setPosition
  * @property {string} value
+ * @property {boolean} remote
  */
 
 /**
@@ -46,7 +47,8 @@ export default function(params) {
         return {
             setName: params.setName,
             setPosition: params.setPosition,
-            value: ko.unwrap(params.value).toString()
+            remote: params.remote,
+            value: ko.unwrap(params.value)
         };
     });
 

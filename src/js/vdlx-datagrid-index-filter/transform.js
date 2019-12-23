@@ -75,6 +75,7 @@ export default (element, attributes, api) => {
     api.getComponentParamsBuilder(element)
         .addParam('setName', setName)
         .addParam('setPosition', setPosition)
+        .addParam('remote', get(attributes, 'remote.rawValue', 'false') === 'true')
         .addRawOrExpressionParam('value', attributes.value)
         .addParentCallbackParam('filterUpdate')
         .addParentCallbackParam('filterRemove');
