@@ -62,9 +62,10 @@ $sorting-icon-right-offset: -4px;
 }
 
 vdlx-datagrid {
-  display: block;
   color: $black;
   user-select: none;
+  display: inline-block;
+  width: 100%;
 
   .tabulator {
     margin-bottom: 0;
