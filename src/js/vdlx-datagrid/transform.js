@@ -138,4 +138,27 @@ export default function transform(element, attributes, api) {
             paramsBuilder.addParam('gridHeight', gridHeight.expression.value, true);
         }
     }
+
+    var showExport = attributes['show-export'];
+    if (showExport) {
+        // todo to.lowercase()
+
+        if (showExport.expression.isString) {
+            paramsBuilder.addParam('showExport', showExport.rawValue === 'true', false);
+            //debugger;
+        } else {
+            paramsBuilder.addParam('showExport', showExport.expression.value, true);
+            //debugger;
+        }
+    }
+
+    var exportFilename = attributes['export-filename'];
+    if (exportFilename) {
+        if (exportFilename.expression.isString) {
+            paramsBuilder.addParam('exportFilename', exportFilename.rawValue, false);
+        } else {
+            paramsBuilder.addParam('exportFilename', exportFilename.expression.value, true);
+        }
+    }
+
 }

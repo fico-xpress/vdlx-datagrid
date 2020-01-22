@@ -29,6 +29,7 @@ import dataTransform, {
     generateCompositeKey
 } from './data-transform';
 import withScenarioData from './data-loader';
+import ExportCsv from './export-csv';
 import Paginator from './paginator';
 import { getRowData } from './utils';
 import { EDITOR_TYPES } from '../constants';
@@ -114,10 +115,12 @@ class Datagrid {
 
         this.table = this.createTable(options);
 
+        const headerToolbar = root.querySelector('.header-toolbar');
         const footerToolbar = root.querySelector('.footer-toolbar');
 
         this.addRemoveRowControl = this.createAddRemoveRowControl(footerToolbar, this.table, options);
         this.paginatorControl = this.createPaginatorControl(footerToolbar, this.table, options);
+        this.exportCsvControl = this.createExportControl(headerToolbar, options);
         this.stateManager = null;
 
         this.tableLock = new DatagridLock(this.table.element);
@@ -346,6 +349,13 @@ class Datagrid {
             return createStateManager(gridOptions.tableId, saveStateSuffix);
         }
         return undefined;
+    }
+
+    createExportControl(headerToolbar, options) {
+        if (!options.showExport) {
+            return undefined;
+        }
+        new ExportCsv(this.table, headerToolbar, options);
     }
 
     /**
@@ -851,6 +861,7 @@ class Datagrid {
     }
 
     dispose() {
+        /// TODO - debug and check button is destroyed
         this.table.destroy();
         each(this.subscriptions, subscription => subscription.dispose());
     }
