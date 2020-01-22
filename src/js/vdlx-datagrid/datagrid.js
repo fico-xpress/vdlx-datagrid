@@ -21,7 +21,7 @@
     limitations under the License.
  */
 import Tabulator from 'tabulator-tables/dist/js/tabulator';
-
+import {insightModules, insight}  from '../insight-globals';
 import dataTransform, {
     getAllColumnIndices,
     getDisplayIndices,
@@ -35,12 +35,6 @@ import { getRowData } from './utils';
 import { EDITOR_TYPES } from '../constants';
 import AddRemove from './add-remove';
 import { chooseColumnFilter } from './grid-filters';
-
-const SelectOptions = insightModules.load('components/autotable-select-options');
-const DataUtils = insightModules.load('utils/data-utils');
-
-const dialogs = insightModules.load('dialogs');
-
 import perf from '../performance-measurement';
 import { createStateManager } from './state-peristence';
 import { DatagridLock } from './datagrid-lock';
@@ -67,6 +61,9 @@ import noop from 'lodash/noop';
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
 
+const SelectOptions = insightModules.load('components/autotable-select-options');
+const DataUtils = insightModules.load('utils/data-utils');
+const dialogs = insightModules.load('dialogs');
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
