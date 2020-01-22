@@ -20,11 +20,12 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-const DataUtils = insightModules.load('utils/data-utils');
+import {insightModules}  from '../insight-globals';
 import has  from 'lodash/has';
 import find from 'lodash/find';
 import get from 'lodash/get';
 
+const DataUtils = insightModules.load('utils/data-utils');
 
 export default (element, attributes, api) => {
     var $element = $(element);
