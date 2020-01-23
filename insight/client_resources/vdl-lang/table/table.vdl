@@ -342,9 +342,29 @@ limitations under the License.
                         <vdlx-datagrid-column entity="FactorySupply" heading="SUPPORT COSTS"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
+                <vdl-column heading="VDL source:" size="6" page-size="5" page-mode="paged">
+                    <code-panel>
+&lt;vdlx-datagrid always-show-selection=&quot;true&quot; page-size=&quot;5&quot; page-mode=&quot;paged&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot; heading=&quot;SUPPORT COSTS&quot;&gt;&lt;&#x2F;vdlx-datagrid-column&gt;
+&lt;&#x2F;vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Export Button">
+            <vdl-row>
+                <vdl-column size="6">
+                    <p class="lead">Export data as a CSV file.</p>
+                    <p>To display the button set <code>"show-export"</code> to <code>"true"</code>, or use an expression that resolves to <code>"true"</code></p>
+                    <p><code>"export-filename"</code> (optional) will accept an expression and can be used to give the exported file a name.</p>
+                    <vdlx-datagrid show-export="true" export-filename="support_costs" page-size="5" >
+                        <vdlx-datagrid-column entity="FactorySupply" heading="SUPPORT COSTS"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
                 <vdl-column heading="VDL source:" size="6" page-size="5" page-mode="paged" >
                     <code-panel>
-&lt;vdlx-datagrid always-show-selection=&quot;true&quot; page-size=&quot;5&quot; page-mode=&quot;paged&quot; &gt;
+&lt;vdlx-datagrid show-export="true" export-filename="support_costs"&gt;
     &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot; heading=&quot;SUPPORT COSTS&quot;&gt;&lt;&#x2F;vdlx-datagrid-column&gt;
 &lt;&#x2F;vdlx-datagrid&gt;
                     </code-panel>
