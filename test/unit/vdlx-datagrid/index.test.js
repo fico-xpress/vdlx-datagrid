@@ -21,4 +21,8 @@ describe('vdlx-datagrid', () => {
         });
     });
 
+    it('fails', function () {
+        expect(true).toBeFalsy();
+    });
+
 });
