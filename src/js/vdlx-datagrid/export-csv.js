@@ -21,72 +21,41 @@
     limitations under the License.
  */
 
-import isFunction from 'lodash/isFunction';
-
 /**
  * adds a button that exports table data to a file
  */
-export default class ExportCsv {
+export default (table, container, filename = 'data') => {
+    const exportCsvControl = document.createElement('div');
+    exportCsvControl.classList.add('export-csv-control');
 
-    /**
-     * @param {*} table
-     * @param {*} container
-     * @param {*} options
-     */
-    constructor(table, container, options) {
-        this.table = table;
-        this.container = container;
-        this.exportFilename = options.exportFilename;
-        const that = this;
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('pull-right');
 
-        let showExport = options.showExport;
-        if (!isFunction(showExport) && !!showExport) {
-            that.create(table, container);
-            return;
-        }
+    const exportButton = document.createElement('button');
+    exportButton.appendChild(document.createTextNode('EXPORT'));
+    exportButton.setAttribute('title', 'Export to CSV file');
+    exportButton.classList.add('btn', 'btn-sm');
 
-        showExport.subscribe(show => {
-            if (show) {
-                that.create();
+    exportButton.addEventListener('click', () => exportData());
+
+    exportCsvControl.appendChild(buttonContainer);
+    buttonContainer.appendChild(exportButton);
+    container.appendChild(exportCsvControl);
+
+    const exportData = () => {
+        table.download('csv', filename + '.csv');
+    };
+
+    return {
+        dispose: () => {
+            container.removeChild(exportCsvControl);
+        },
+        enable: (enable) => {
+            if (enable) {
+                exportButton.removeAttribute('disabled');
             } else {
-                that.destroy();
+                exportButton.setAttribute('disabled', true);
             }
-        });
-
-    }
-
-    create() {
-
-        const exportCsvControl = document.createElement('div');
-        exportCsvControl.classList.add('export-csv-control');
-
-        const buttonContainer = document.createElement('div');
-        buttonContainer.classList.add('pull-right');
-
-        const exportButton = document.createElement('button');
-        exportButton.appendChild(document.createTextNode('EXPORT'));
-        exportButton.setAttribute('title', 'Export to CSV file');
-        exportButton.classList.add('btn', 'btn-sm');
-
-        const that = this;
-        exportButton.addEventListener('click', () => that.exportData());
-
-        exportCsvControl.appendChild(buttonContainer);
-        buttonContainer.appendChild(exportButton);
-        this.container.appendChild(exportCsvControl);
-
-    }
-
-    destroy () {
-        const headerToolbar = this.container.querySelector('.export-csv-control');
-        if (headerToolbar) {
-            this.container.removeChild(headerToolbar);
         }
-    }
-
-    exportData() {
-        let fileName = isFunction(this.exportFilename) ? this.exportFilename() : this.exportFilename;
-        this.table.download('csv', fileName !== undefined ? fileName + '.csv': 'data' + '.csv');
-    }
-
-}
+    };
+};
