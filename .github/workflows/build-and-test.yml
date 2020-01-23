@@ -1,4 +1,4 @@
-name: Build with Unit Tests
+name: Build and Test
 
 on: [push]
 
@@ -7,14 +7,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Use Node.js 10.x
-      uses: actions/setup-node@v1
+    - uses: actions/setup-node@v1
       with:
         node-version: 10.x
-    - name: npm build and test
+    - name: Build
       run: |
         npm ci
         npm run build
+    - name: Test
+      run: |
         npm run test:coverage
       env:
         CI: true
