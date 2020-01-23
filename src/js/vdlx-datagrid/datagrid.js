@@ -355,7 +355,8 @@ class Datagrid {
                 return exportCsv(this.table, this.headerToolbar, ko.unwrap(options.exportFilename));
             } else {
                 // enable/disable button based on row count
-                this.exportControl.enable(this.table.getDataCount(true));
+                const rowCount = this.table.getDataCount(true);
+                this.exportControl.enable(rowCount > 0);
             }
             return this.exportControl;
         }

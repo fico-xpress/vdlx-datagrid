@@ -22,7 +22,11 @@
  */
 
 /**
- * adds a button that exports table data to a file
+ * adds an export button
+ * @param table
+ * @param container
+ * @param filename
+ * @returns {{enable: enable, dispose: dispose}}
  */
 export default (table, container, filename = 'data') => {
     const exportCsvControl = document.createElement('div');
@@ -47,9 +51,16 @@ export default (table, container, filename = 'data') => {
     };
 
     return {
+        /**
+         * remove the control
+         */
         dispose: () => {
             container.removeChild(exportCsvControl);
         },
+        /**
+         * enable/disable the button
+         * @param enable
+         */
         enable: (enable) => {
             if (enable) {
                 exportButton.removeAttribute('disabled');
