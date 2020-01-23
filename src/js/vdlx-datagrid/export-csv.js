@@ -45,15 +45,13 @@ export default class ExportCsv {
             return;
         }
 
-        showExport.subscribe(function (show) {
+        showExport.subscribe(show => {
             if (show) {
                 that.create();
             } else {
                 that.destroy();
             }
         });
-
-        this.rowCount = ko.observable(this.table.getDataCount("active"));
 
     }
 
@@ -70,20 +68,8 @@ export default class ExportCsv {
         exportButton.setAttribute('title', 'Export to CSV file');
         exportButton.classList.add('btn', 'btn-sm');
 
-        exportButton.setAttribute('disabled');
-
-        //
-        // if (!this.rowCount()) {
-        //     exportButton.setAttribute('disabled', true);
-        // } else {
-        //     exportButton.removeAttribute('disabled');
-        // }
-        //
-
         const that = this;
-        exportButton.addEventListener('click', function () {
-            that.exportData();
-        });
+        exportButton.addEventListener('click', () => that.exportData());
 
         exportCsvControl.appendChild(buttonContainer);
         buttonContainer.appendChild(exportButton);

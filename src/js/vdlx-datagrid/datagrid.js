@@ -861,7 +861,6 @@ class Datagrid {
     }
 
     dispose() {
-        /// TODO - debug and check button is destroyed
         this.table.destroy();
         each(this.subscriptions, subscription => subscription.dispose());
     }

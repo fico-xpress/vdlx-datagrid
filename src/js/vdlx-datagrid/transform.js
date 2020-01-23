@@ -71,12 +71,12 @@ export default function transform(element, attributes, api) {
 
     var columnFilter = attributes['column-filter'];
     if (columnFilter) {
-        paramsBuilder.addParam('columnFilter', columnFilter.rawValue === 'true');
+        paramsBuilder.addParam('columnFilter', columnFilter.rawValue.toUpperCase() === 'TRUE');
     }
 
     var addRemoveRow = attributes['add-remove-row'];
     if (addRemoveRow) {
-        if (addRemoveRow.rawValue === 'true') {
+        if (addRemoveRow.rawValue.toUpperCase() === 'TRUE') {
             paramsBuilder.addParam('addRemoveRow', true);
         } else if (addRemoveRow.rawValue === 'addrow-autoinc') {
             paramsBuilder.addParam('addRemoveRow', 'addrow-autoinc');
@@ -141,14 +141,10 @@ export default function transform(element, attributes, api) {
 
     var showExport = attributes['show-export'];
     if (showExport) {
-        // todo to.lowercase()
-
         if (showExport.expression.isString) {
-            paramsBuilder.addParam('showExport', showExport.rawValue === 'true', false);
-            //debugger;
+            paramsBuilder.addParam('showExport', showExport.rawValue.toUpperCase() === 'TRUE', false);
         } else {
             paramsBuilder.addParam('showExport', showExport.expression.value, true);
-            //debugger;
         }
     }
 
