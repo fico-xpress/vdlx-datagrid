@@ -1,6 +1,7 @@
 .DS_Store
 .idea/
 archive/
+coverage/
 build.sh
 **/.DS_Store
 **/.c9
