@@ -12,6 +12,23 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2.0.0
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+      - name: Test
+        run: |
+          npm run test:coverage
+        env:
+          CI: true
+      - name: Bundle
+        run: |
+          npm run generate-test-data
+          npm run bundle:library
+          npm run bundle:app
       - name: Create draft release
         id: create_release
         uses: actions/create-release@master
@@ -20,9 +37,25 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: |
-            Changes in this Release...
-            - First Change
-            - Second Change
           draft: true
           prerelease: false
+      - name: Upload component bundle
+        id: upload-component-bundle
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/insight/client_resources/vdlx-datagrid.zip
+          asset_name: vdlx-datagrid.zip
+          asset_content_type: application/zip
+      - name: Upload app
+        id: upload-app
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: vdlx-datagrid-example-app.zip
+          asset_name: vdlx-datagrid-example-app.zip
+          asset_content_type: application/zip
