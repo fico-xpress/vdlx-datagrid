@@ -1,4 +1,5 @@
 import partial  from 'lodash/partial';
+import {insight} from '../insight-globals';
 
 /*
    Xpress Insight vdlx-datagrid
@@ -52,11 +53,11 @@ let _getFormatter = columnConfig => {
     } else {
         switch (columnConfig.elementType) {
             case Enums.DataType.INTEGER:
-                return window.insight.Formatter.format.integer;
+                return insight.Formatter.format.integer;
             case Enums.DataType.REAL:
             case Enums.DataType.CONSTRAINT:
             case Enums.DataType.DECISION_VARIABLE:
-                return window.insight.Formatter.format.decimal;
+                return insight.Formatter.format.decimal;
         }
     }
 };
@@ -75,9 +76,9 @@ let _formatSearchDataIfNecessary = (searchData, displayType, format) => {
 
     var searchDataAsFloat = _filterFloat(searchData);
     if (columnIsFloatingPoint && searchDataAsFloat) {
-        return window.insight.Formatter.formatNumber(searchData, format);
+        return insight.Formatter.formatNumber(searchData, format);
     } else if (columnIsInteger && parseInt(searchData, 10) === searchDataAsFloat) {
-        return window.insight.Formatter.formatNumber(searchData, format);
+        return insight.Formatter.formatNumber(searchData, format);
     }
 
     return searchData;
@@ -139,7 +140,7 @@ let _partialMatchCell = (searchData, data, column) => {
         var format = _getFormatter(column);
         if (format) {
             var formattedSearchData = _formatSearchDataIfNecessary(searchData, column.displayType, format);
-            var formattedCellData = window.insight.Formatter.formatNumber(data, format);
+            var formattedCellData = insight.Formatter.formatNumber(data, format);
             result = formattedCellData.indexOf(formattedSearchData) >= 0;
         }
     }

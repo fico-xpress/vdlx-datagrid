@@ -1,16 +1,15 @@
 {
-  "name": "table-performance",
-  "version": "1.0.0",
+  "name": "@fico-xpress/vdlx-datagrid",
+  "version": "4.6.0",
   "description": "",
-  "main": "generate-data.js",
   "scripts": {
-    "ui-test": "./node_modules/.bin/testcafe chrome test/ui/ -e --screenshots-on-fails -s screenshots",
-    "ui-test-headless": "./node_modules/.bin/testcafe \"chrome:headless\" test/ui/ -e --screenshots-on-fails -s screenshots",
-    "unit-test": "jest",
-    "unit-test-debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
     "watch": "parcel watch -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --no-hmr src/js/index.js",
     "copy-production-to-app": "copyfiles -f \"dist/insight/client_resources/vdlx-datagrid/*\" insight/client_resources/vdlx-datagrid",
-    "build": "parcel build -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js src/js/index.js && npm run copy-production-to-app"
+    "build": "parcel build -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js src/js/index.js && npm run copy-production-to-app",
+    "generate-test-data": "node generate-data.js"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +18,7 @@
     "@babel/core": "^7.7.2",
     "@babel/preset-env": "^7.7.1",
     "@types/bootbox": "^4.4.36",
+    "@types/jest": "^24.9.0",
     "@types/jquery": "^3.3.31",
     "@types/knockout": "^3.4.60",
     "@types/lodash": "^4.14.146",
@@ -32,16 +32,15 @@
     "knockout": "^3.5.1",
     "parcel-bundler": "^1.12.4",
     "postcss-modules": "^1.4.1",
-    "sass": "^1.23.3",
-    "testcafe": "^1.6.1"
+    "sass": "^1.23.3"
   },
   "dependencies": {
     "lodash-es": "^4.17.15",
     "tabulator-tables": "^4.4.3"
   },
   "jest": {
-    "setupFiles": [
-      "./test/jest/globals.js"
+    "setupFilesAfterEnv": [
+      "./test/jest/mocks/insight-globals.js"
     ]
   }
 }

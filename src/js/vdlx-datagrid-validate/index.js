@@ -20,6 +20,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+import {VDL} from '../insight-globals';
 import VDGValidateAttributes from './attributes';
 import transform from './transform';
 import viewModel from './view-model';

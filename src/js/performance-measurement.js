@@ -20,6 +20,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+import {insight} from './insight-globals';
+
 export default function(measurementDescription, measurement) {
     const debugEnabled = insight.isDebugEnabled();
     if (debugEnabled) {

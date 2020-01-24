@@ -20,9 +20,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import { EDITOR_TYPES } from '../constants';
-
-import omit  from 'lodash/omit';
+import {EDITOR_TYPES} from '../constants';
+import {insightModules} from '../insight-globals';
+import omit from 'lodash/omit';
 import isFunction from 'lodash/isFunction';
 import isNumber from 'lodash/isNumber';
 import size from 'lodash/size';
@@ -30,7 +30,6 @@ import throttle from 'lodash/throttle';
 import uniqueId from 'lodash/uniqueId';
 import set from 'lodash/set';
 import reduce from 'lodash/reduce';
-
 
 const enums = insightModules.load('enums');
 const validatorFactory = insightModules.load('vdl/vdl-validator-factory');

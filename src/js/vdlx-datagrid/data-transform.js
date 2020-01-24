@@ -20,6 +20,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+import {insightModules}  from '../insight-globals';
 import perf from '../performance-measurement';
 import set  from 'lodash/set';
 import isFunction from 'lodash/isFunction';
