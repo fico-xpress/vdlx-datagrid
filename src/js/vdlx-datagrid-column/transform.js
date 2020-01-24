@@ -21,6 +21,7 @@
     limitations under the License.
  */
 
+
 import {insightModules}  from '../insight-globals';
 import includes  from 'lodash/includes';
 import isEmpty from 'lodash/isEmpty';
@@ -32,6 +33,32 @@ import { withDefaultValue, getAttributeMetadata, validateAllowedValues } from '.
 const DataUtils = insightModules.load('utils/data-utils');
 const enums = insightModules.load('enums');
 
+const COLUMN_TYPES = {
+    ENTITY: 'ENTITY',
+    SET: 'SET',
+    CALCULATED: 'CALCULATED',
+    INVALID_MIX: 'INVALID_MIX',
+    INVALID_EMPTY: 'INVALID_EMPTY'
+};
+
+const getColumnType = attributes => {
+    if (attributes.entity && attributes.set) {
+        return COLUMN_TYPES.INVALID_MIX;
+    }
+
+    if (attributes.entity) {
+        return COLUMN_TYPES.ENTITY;
+    }
+    if (attributes.set) {
+        return COLUMN_TYPES.SET;
+    }
+    if (attributes.render) {
+        return COLUMN_TYPES.CALCULATED;
+    }
+
+    return COLUMN_TYPES.INVALID_EMPTY;
+};
+
 /**
  * @param {HTMLElement} element
  * @param {{ [x: string]: any; }} attributes
@@ -42,53 +69,134 @@ export const transform = (element, attributes, api) => {
     if (!$element.closest('vdlx-datagrid').length) {
         throw Error('<vdlx-datagrid-column> must be contained within a <vdlx-datagrid> tag.');
     }
-    if (!attributes.entity && !attributes.set) {
-        throw Error('Must specify either an "entity" or "set" attribute for <vdlx-datagrid-column>.');
+
+    const columnType = getColumnType(attributes);
+
+    if (columnType === COLUMN_TYPES.INVALID_EMPTY) {
+        throw Error('Must specify either an "entity", "set" or "render" attribute for <vdlx-datagrid-column>.');
     }
-    if (attributes.entity && attributes.set) {
+    if (columnType === COLUMN_TYPES.INVALID_MIX) {
         throw Error('You cannot specify both "entity" and "set" on a <vdlx-datagrid-column>.');
     }
-    if (attributes['set-position'] && !attributes.set) {
+    if (columnType !== COLUMN_TYPES.SET && attributes['set-position']) {
         throw Error('You cannot specify "set-position" without also specifying "set"');
     }
-    if (attributes.set && attributes.scenario) {
-        throw Error(
-            'The "scenario" attribute cannot be used in combination with the "set" attribute on a <vdlx-datagrid-column>.'
-        );
-    }
-    var entityAttr = !!attributes.entity ? attributes.entity : attributes.set;
-    var entityName = entityAttr.rawValue;
-    var entity = api.getModelEntityByName(entityName);
-    if (!entity) {
-        throw Error('Entity "' + entityName + '" does not exist in the model schema.');
-    }
-    var setPosition = get(attributes, ['set-position', 'rawValue']);
-    if (setPosition != null) {
-        if (!/^\d+$/.test(setPosition)) {
-            throw Error('Invalid set-position "' + setPosition + '", must be a number at least zero');
-        } else {
-            setPosition = +setPosition;
-        }
-    }
-    var entityType = entity.getType();
-    if (attributes.entity && entityType !== enums.DataType.ARRAY) {
-        throw Error('Entity type ' + entityType + ' cannot be displayed as a column in <vdlx-datagrid>.');
-    } else if (attributes.set && entityType !== enums.DataType.SET) {
-        throw Error('Entity type ' + entityType + ' cannot be specified as an index set in <vdlx-datagrid>.');
-    }
+
     var paramsBuilder = api
         .getComponentParamsBuilder(element)
         .addParam('tableUpdate', '$component.tableUpdate', true)
         .addParam('tableValidate', '$component.tableValidate', true)
         .addParam('validate', '$component.validate', true);
-    if (!!attributes.entity) {
-        paramsBuilder.addParam('entity', entityName);
-    } else {
+
+    if (columnType === COLUMN_TYPES.SET) {
+        var entityName = attributes.set.rawValue;
+        var entity = api.getModelEntityByName(entityName);
+        if (!entity) {
+            throw Error('Entity "' + entityName + '" does not exist in the model schema.');
+        }
+        var setPosition = get(attributes, ['set-position', 'rawValue']);
+        if (setPosition != null) {
+            if (!/^\d+$/.test(setPosition)) {
+                throw Error('Invalid set-position "' + setPosition + '", must be a number at least zero');
+            } else {
+                setPosition = +setPosition;
+            }
+        }
+        var entityType = entity.getType();
+        if (entityType !== enums.DataType.SET) {
+            throw Error('Entity type ' + entityType + ' cannot be specified as an index set in <vdlx-datagrid>.');
+        }
         paramsBuilder.addParam('set', entityName);
+
+        if (setPosition != null) {
+            paramsBuilder.addParam('setPosition', setPosition);
+        }
     }
-    if (setPosition != null) {
-        paramsBuilder.addParam('setPosition', setPosition);
+    if (columnType === COLUMN_TYPES.ENTITY) {
+        var entityName = attributes.entity.rawValue;
+        var entity = api.getModelEntityByName(entityName);
+        if (!entity) {
+            throw Error('Entity "' + entityName + '" does not exist in the model schema.');
+        }
+
+        var entityType = entity.getType();
+        if (entityType !== enums.DataType.ARRAY) {
+            throw Error('Entity type ' + entityType + ' cannot be displayed as a column in <vdlx-datagrid>.');
+        }
+        paramsBuilder.addParam('entity', entityName);
+
+        if (setPosition != null) {
+            paramsBuilder.addParam('setPosition', setPosition);
+        }
+
+        var scenario = attributes['scenario'];
+        if (scenario) {
+            paramsBuilder.addRawOrExpressionParam('scenario', scenario);
+        }
+        var editable = attributes['editable'];
+        if (attributes['editable']) {
+            if (entity.getManagementType() === enums.EntityManagementType.RESULT) {
+                throw Error('Cannot set editable attribute on a <vdlx-datagrid-column> bound to a result entity.');
+            }
+            paramsBuilder.addRawOrExpressionParam('editable', editable);
+        }
+        var editorType = attributes['editor-type'];
+        var editorTypes = ['checkbox', 'select', 'text'];
+        if (editorType && editorTypes.indexOf(editorType.rawValue) !== -1) {
+            if (editorType.rawValue === 'select') {
+                if (!attributes['editor-options-set'] && !attributes['editor-options']) {
+                    throw Error(
+                        'vdlx-datagrid-column with "editor-type" of "select" needs either the "editor-options-set" or the "editor-options" attribute to be supplied.'
+                    );
+                }
+            }
+            paramsBuilder.addParam('editorType', editorType.rawValue);
+        }
+        var editorCheckedValue = attributes['editor-checked-value'];
+        if (editorCheckedValue) {
+            paramsBuilder.addParam('editorCheckedValue', editorCheckedValue.rawValue);
+        }
+        var editorUncheckedValue = attributes['editor-unchecked-value'];
+        if (editorUncheckedValue) {
+            paramsBuilder.addParam('editorUncheckedValue', editorUncheckedValue.rawValue);
+        }
+        var editorOptionsSet = attributes['editor-options-set'];
+        if (editorOptionsSet) {
+            var optionsSetEntity = api.getModelEntityByName(editorOptionsSet.rawValue);
+            if (!optionsSetEntity) {
+                throw Error(
+                    'vdlx-datagrid-column editor-options-set entity "' +
+                        editorOptionsSet.rawValue +
+                        '" does not exist in the model schema.'
+                );
+            }
+            var optionsSetEntityType = optionsSetEntity.getType();
+            if (optionsSetEntityType !== enums.DataType.SET) {
+                throw Error(
+                    'Entity "' + editorOptionsSet.rawValue + '" cannot be used as editor-options-set, wrong data type.'
+                );
+            }
+            paramsBuilder.addParam('editorOptionsSet', editorOptionsSet.rawValue);
+        }
+        var editorOptions = attributes['editor-options'];
+        if (editorOptions) {
+            if (editorOptions.expression.isString) {
+                throw Error('vdlx-datagrid-column attribute "editor-options" must be an expression.');
+            }
+            paramsBuilder.addFunctionOrExpressionParam('editorOptions', editorOptions.expression.value, [
+                'value',
+                'rowData'
+            ]);
+        }
+        if (editorOptionsSet && editorOptions) {
+            throw Error('vdlx-datagrid-column cannot have both editor-options-set and editor-options specified.');
+        }
+        var editorOptionsIncludeEmpty = attributes['editor-options-include-empty'];
+        if (editorOptionsIncludeEmpty) {
+            paramsBuilder.addParam('editorOptionsIncludeEmpty', editorOptionsIncludeEmpty.rawValue === 'true');
+        }
     }
+
     var heading = attributes['heading'];
     if (heading) {
         paramsBuilder.addRawOrExpressionParam('heading', heading);
@@ -106,17 +214,6 @@ export const transform = (element, attributes, api) => {
         if (textContent) {
             paramsBuilder.addParam('heading', textContent);
         }
-    }
-    var scenario = attributes['scenario'];
-    if (scenario) {
-        paramsBuilder.addRawOrExpressionParam('scenario', scenario);
-    }
-    var editable = attributes['editable'];
-    if (attributes['editable']) {
-        if (entity.getManagementType() === enums.EntityManagementType.RESULT) {
-            throw Error('Cannot set editable attribute on a <vdlx-datagrid-column> bound to a result entity.');
-        }
-        paramsBuilder.addRawOrExpressionParam('editable', editable);
     }
     var visible = attributes['vdl-visible'];
     if (visible) {
@@ -150,61 +247,6 @@ export const transform = (element, attributes, api) => {
             paramsBuilder.addParam('filterByFormatted', false);
         }
     }
-    var editorType = attributes['editor-type'];
-    var editorTypes = ['checkbox', 'select', 'text'];
-    if (editorType && editorTypes.indexOf(editorType.rawValue) !== -1) {
-        if (editorType.rawValue === 'select') {
-            if (!attributes['editor-options-set'] && !attributes['editor-options']) {
-                throw Error(
-                    'vdlx-datagrid-column with "editor-type" of "select" needs either the "editor-options-set" or the "editor-options" attribute to be supplied.'
-                );
-            }
-        }
-        paramsBuilder.addParam('editorType', editorType.rawValue);
-    }
-    var editorCheckedValue = attributes['editor-checked-value'];
-    if (editorCheckedValue) {
-        paramsBuilder.addParam('editorCheckedValue', editorCheckedValue.rawValue);
-    }
-    var editorUncheckedValue = attributes['editor-unchecked-value'];
-    if (editorUncheckedValue) {
-        paramsBuilder.addParam('editorUncheckedValue', editorUncheckedValue.rawValue);
-    }
-    var editorOptionsSet = attributes['editor-options-set'];
-    if (editorOptionsSet) {
-        var optionsSetEntity = api.getModelEntityByName(editorOptionsSet.rawValue);
-        if (!optionsSetEntity) {
-            throw Error(
-                'vdlx-datagrid-column editor-options-set entity "' +
-                    editorOptionsSet.rawValue +
-                    '" does not exist in the model schema.'
-            );
-        }
-        var optionsSetEntityType = optionsSetEntity.getType();
-        if (optionsSetEntityType !== enums.DataType.SET) {
-            throw Error(
-                'Entity "' + editorOptionsSet.rawValue + '" cannot be used as editor-options-set, wrong data type.'
-            );
-        }
-        paramsBuilder.addParam('editorOptionsSet', editorOptionsSet.rawValue);
-    }
-    var editorOptions = attributes['editor-options'];
-    if (editorOptions) {
-        if (editorOptions.expression.isString) {
-            throw Error('vdlx-datagrid-column attribute "editor-options" must be an expression.');
-        }
-        paramsBuilder.addFunctionOrExpressionParam('editorOptions', editorOptions.expression.value, [
-            'value',
-            'rowData'
-        ]);
-    }
-    if (editorOptionsSet && editorOptions) {
-        throw Error('vdlx-datagrid-column cannot have both editor-options-set and editor-options specified.');
-    }
-    var editorOptionsIncludeEmpty = attributes['editor-options-include-empty'];
-    if (editorOptionsIncludeEmpty) {
-        paramsBuilder.addParam('editorOptionsIncludeEmpty', editorOptionsIncludeEmpty.rawValue === 'true');
-    }
     var render = attributes['render'];
     if (render) {
         if (render.expression.isString) {
@@ -228,6 +270,11 @@ export const transform = (element, attributes, api) => {
     }
     var format = attributes['format'];
     if (format) {
+
+        if (attributes.render) {
+            throw Error('"format" and "render" attributes can not be defined together');
+        }
+
         if (!DataUtils.entityTypeIsNumber(entity)) {
             throw Error(
                 'Entity ' + entityName + ' with element type ' + entity.getElementType() + ' cannot be formatted'

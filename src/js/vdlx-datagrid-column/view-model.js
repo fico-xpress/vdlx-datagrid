@@ -52,6 +52,7 @@ export const viewModel = (params, componentInfo) => {
     const columnId = uniqueId('datagrid-column');
     var buildColumn = throttle(
         function(done) {
+            debugger;
             console.log('vdlx-datagrid update column');
             var columnReady =
                 $(componentInfo.element).find('vdlx-datagrid-index-filter').length === size(indexFilters$());

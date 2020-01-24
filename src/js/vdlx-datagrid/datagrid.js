@@ -34,7 +34,7 @@ import Paginator from './paginator';
 import {getRowData} from './utils';
 import {EDITOR_TYPES} from '../constants';
 import AddRemove from './add-remove';
-import {chooseColumnFilter} from './grid-filters';
+import { chooseColumnFilter } from './grid-filters';
 import perf from '../performance-measurement';
 import {createStateManager} from './state-peristence';
 import {DatagridLock} from './datagrid-lock';
@@ -67,6 +67,8 @@ import cloneDeep from 'lodash/cloneDeep';
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');
 const dialogs = insightModules.load('dialogs');
+const Enums = insightModules.load('enums');
+
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
@@ -426,6 +428,7 @@ class Datagrid {
         const schema = this.schema;
         const indicesOptions = columnOptions.indicesOptions;
         const entitiesOptions = columnOptions.columnOptions;
+        const calculatedColumnsOptions = columnOptions.calculatedColumnsOptions
         const allColumnIndices = getAllColumnIndices(schema, entitiesOptions);
 
         const setNameAndPosns = getDisplayIndices(allColumnIndices, entitiesOptions);
@@ -807,6 +810,40 @@ class Datagrid {
 
             return column;
         });
+
+        const calculatedColumns = map(calculatedColumnsOptions, (options) => {
+            const title = get(options, 'title', options.name);
+            var a =0;
+            let column = assign({}, options, {
+                title: escape(String(title)),
+                formatter: cell =>
+                    options.render(cell.getValue(), 'display', getRowDataForColumns(cell.getData())),
+                name: options.name,
+                field: 'random',
+                elementType: Enums.DataType.STRING
+            });
+            if (gridOptions.columnFilter) {
+                const getHeaderFilterFn = () => {
+                    const columnFilter = chooseColumnFilter(column);
+                    if (columnFilter) {
+                        return (valueTxt, cellValue, rowData, params) => {
+                            var value = column.render(cellValue, 'filter', getRowDataForColumns(rowData));
+                            return columnFilter(valueTxt, value, rowData, params);
+                        };
+                    }
+                    return undefined;
+                };
+
+                column = assign(column, {
+                    headerFilterPlaceholder: 'No filter',
+                    headerFilter: !!gridOptions.columnFilter,
+                    headerFilterFunc: getHeaderFilterFn()
+                });
+            }
+
+            return column;
+
+        })
 
         let columns = sortBy([].concat(indicesColumns, entitiesColumns), (column) => column.index || -1)
 

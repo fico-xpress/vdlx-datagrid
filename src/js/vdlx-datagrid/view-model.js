@@ -193,12 +193,13 @@ export default function createViewModel(params, componentInfo) {
             return set(clone(element[AUTOCOLUMN_PROP_NAME]), 'index', idx);
         });
         if (!columnConfigs.length) {
-            columnConfig$({ columnOptions: [], indicesOptions: {}, scenarioList: [] });
+            columnConfig$({ columnOptions: [], indicesOptions: {}, calculatedColumnsOptions: [], scenarioList: [] });
             return;
         }
 
         var entities = [];
         var indices = {};
+        var calculatedColumnsOptions = [];
 
         forEach(columnConfigs, function(configItem) {
             var scenarioNum = parseIntOrKeep(configItem.scenario || defaultScenario);
@@ -236,6 +237,8 @@ export default function createViewModel(params, componentInfo) {
                         }
                     });
                 }
+            } else if (configItem.render) {
+                calculatedColumnsOptions.push(omitBy(configItem, isNullOrUndefined));
             } else {
                 // reject('Unknown column type');
             }
@@ -262,7 +265,12 @@ export default function createViewModel(params, componentInfo) {
             );
         }
 
-        columnConfig$({ columnOptions: entities, indicesOptions: indices, scenarioList: scenarioList });
+        columnConfig$({
+            columnOptions: entities,
+            indicesOptions: indices,
+            scenarioList: scenarioList,
+            calculatedColumnsOptions: calculatedColumnsOptions
+        });
     }
 
     vm.tableUpdate = () => {
