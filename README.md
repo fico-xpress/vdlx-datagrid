@@ -46,12 +46,12 @@ The [insight](./insight) folder contains an example app showing `vdlx-datagrid` 
 To upload it to your install of FICO Xpress Insight, follow these instructions:
 
 1. Clone this Git repository:
-  - `git clone https://github.com/fico-xpress/vdlx-datagrid.git`
+   * `git clone https://github.com/fico-xpress/vdlx-datagrid.git`
 1. `cd vdlx-datagrid`
 1. Generate the test data for the app: 
-  1. `npm install`
-  1. `npm run generate-test-data`
-  1. `cd insight`
+   1. `npm install`
+   1. `npm run generate-test-data`
+   1. `cd insight`
 1. Zip everything in this folder.
 1. Upload the App zip to Xpress Insight
 
