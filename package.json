@@ -1,15 +1,15 @@
 {
-  "name": "table-performance",
-  "version": "1.0.0",
+  "name": "@fico-xpress/vdlx-datagrid",
+  "version": "4.6.0",
   "description": "",
-  "main": "generate-data.js",
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
     "watch": "parcel watch -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --no-hmr src/js/index.js",
     "copy-production-to-app": "copyfiles -f \"dist/insight/client_resources/vdlx-datagrid/*\" insight/client_resources/vdlx-datagrid",
-    "build": "parcel build -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js src/js/index.js && npm run copy-production-to-app"
+    "build": "parcel build -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js src/js/index.js && npm run copy-production-to-app",
+    "generate-test-data": "node generate-data.js"
   },
   "keywords": [],
   "author": "",
