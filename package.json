@@ -10,7 +10,7 @@
     "copy-production-to-app": "copyfiles -f \"dist/insight/client_resources/vdlx-datagrid/*\" insight/client_resources/vdlx-datagrid",
     "build": "parcel build -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js src/js/index.js && npm run copy-production-to-app",
     "bundle:library": "cd dist/insight/client_resources/ && bestzip vdlx-datagrid.zip vdlx-datagrid/",
-    "bundle:app": "cd insight && bestzip ../vdlx-datagrid-example-app.zip *",
+    "bundle:app": "cd insight && bestzip ../vdlx-datagrid-examples-app.zip *",
     "generate-test-data": "node generate-data.js"
   },
   "keywords": [],

@@ -56,6 +56,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: vdlx-datagrid-example-app.zip
-          asset_name: vdlx-datagrid-example-app.zip
+          asset_path: vdlx-datagrid-examples-app.zip
+          asset_name: vdlx-datagrid-examples-app.zip
           asset_content_type: application/zip
