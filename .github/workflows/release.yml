@@ -3,16 +3,16 @@ on:
     tags:
       - 'v*'
 
-name: Create Release
+name: Create draft release
 
 jobs:
   build:
-    name: Create Release
+    name: Create draft release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@master
-      - name: Create Release
+      - name: Create draft release
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -21,8 +21,6 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: |
-            Changes in this Release
-            - First Change
-            - Second Change
+            Changes in this Release...
           draft: true
           prerelease: false
