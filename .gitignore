@@ -12,7 +12,6 @@ insight/model_resources/*.csv
 screenshots
 .cache
 
-insight/client_resources/vdlx-datagrid/vdlx-datagrid.js.map
-insight/client_resources/vdlx-datagrid/vdlx-datagrid.css.map
-dist/insight/client_resources/vdlx-datagrid/vdlx-datagrid.js.map
-dist/insight/client_resources/vdlx-datagrid/vdlx-datagrid.css.map
+insight/client_resources/vdlx-datagrid/
+dist/insight/client_resources/vdlx-datagrid/vdlx-datagrid.js*
+dist/insight/client_resources/vdlx-datagrid/vdlx-datagrid.css*

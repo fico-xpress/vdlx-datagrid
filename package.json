@@ -1,8 +1,9 @@
 {
   "name": "@fico-xpress/vdlx-datagrid",
-  "version": "4.6.0",
+  "version": "4.6.1",
   "description": "",
   "scripts": {
+    "postinstall": "npm run build",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
@@ -25,19 +26,19 @@
     "@types/knockout": "^3.4.60",
     "@types/lodash": "^4.14.146",
     "@types/tabulator-tables": "^4.4.5",
+    "jest": "^24.9.0",
+    "babel-jest": "^24.9.0"
+  },
+  "dependencies": {
     "autoprefixer": "^9.7.1",
     "babel-core": "7.0.0-bridge.0",
-    "babel-jest": "^24.9.0",
     "bestzip": "^2.1.5",
     "copyfiles": "^2.1.1",
     "csv-stringify": "^4.3.1",
-    "jest": "^24.9.0",
     "knockout": "^3.5.1",
     "parcel-bundler": "^1.12.4",
     "postcss-modules": "^1.4.1",
-    "sass": "^1.23.3"
-  },
-  "dependencies": {
+    "sass": "^1.23.3",
     "lodash-es": "^4.17.15",
     "tabulator-tables": "^4.4.3"
   }
