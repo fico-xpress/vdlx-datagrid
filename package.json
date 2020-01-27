@@ -17,7 +17,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "@babel/core": "^7.7.2",
     "@babel/preset-env": "^7.7.1",
     "@types/bootbox": "^4.4.36",
@@ -36,9 +36,7 @@
     "knockout": "^3.5.1",
     "parcel-bundler": "^1.12.4",
     "postcss-modules": "^1.4.1",
-    "sass": "^1.23.3"
-  },
-  "dependencies": {
+    "sass": "^1.23.3",
     "lodash-es": "^4.17.15",
     "tabulator-tables": "^4.4.3"
   }
