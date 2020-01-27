@@ -20,17 +20,16 @@ __Note:__ There are some features shared between `vdl-table` and `vdlx-datagrid`
 
 ## Usage
 
-Everything you need to use the `vdlx-datagrid` VDL extension, for your own VDL app, is in the `dist` folder of this repo. 
+You can download a release version of `vdx-datagrid` from [releases](https://github.com/fico-xpress/vdlx-datagrid/releases).
+Choose a release where the first two numbers of the version match the version of VDL you are developing against.
 
-For an existing Insight app copy the `vdlx-datgrid` folder into the `client_resources` folder of your app.
-
-The VDL code needed to use `vdlx-datagid` in a VDL view is:
+Download the `vdlx-datagrid.zip` release bundle. Unzip the library into your `client_resources`, then include into your views as follows:
 
 ```html
 <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 ```
 
-As mentioned above `vdlx-datagrid` is mostly a drop-in replacement for `vdl-table` and can generally be used by renaming code examples:
+`vdlx-datagrid` is mostly a drop-in replacement for `vdl-table` and can generally be used by renaming code examples:
 
 ```html
 <vdlx-datagrid id="basic-example-1">
@@ -40,24 +39,22 @@ As mentioned above `vdlx-datagrid` is mostly a drop-in replacement for `vdl-tabl
 </vdlx-datagrid>
 ``` 
 
-## The 'vdl-datagrid example' app
+## The vdl-datagrid examples app
 
-The [insight](./insight) folder contains an example app showing `vdlx-datagrid` in use.
-To upload it to your install of FICO Xpress Insight, follow these instructions:
+Each release includes an Insight app containing examples of how to use `vdlx-datagrid` features.
 
-1. Clone this Git repository:
-   * `git clone https://github.com/fico-xpress/vdlx-datagrid.git`
-1. `cd vdlx-datagrid`
-1. Generate the test data for the app: 
-   1. `npm install`
-   1. `npm run generate-test-data`
-   1. `cd insight`
-1. Zip everything in this folder.
-1. Upload the App zip to Xpress Insight
+- Download `vdlx-datagrid-examples-app.zip` from one of the [releases](https://github.com/fico-xpress/vdlx-datagrid/releases).
+- Upload the App zip to Xpress Insight
 
 ## Building from source
 
 This will only be needed for developing the `vdlx-datagrid` extension. Refer to the 'Usage' section above for using this tag in your own views. 
 
 1. `npm install`
-1. `npm run watch`
+1. `npm run build`
+
+To watch the src and rebuild on changes run: `npm run watch`
+
+## Building a release
+
+See [RELEASE](./RELEASE.md) for instructions.
