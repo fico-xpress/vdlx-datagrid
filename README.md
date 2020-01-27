@@ -58,3 +58,7 @@ To watch the src and rebuild on changes run: `npm run watch`
 ## Building a release
 
 See [RELEASE](./RELEASE.md) for instructions.
+
+## Versions
+
+See [CHANGELOG](./CHANGELOG.md) for a list of changes per version.
