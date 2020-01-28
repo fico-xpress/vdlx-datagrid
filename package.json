@@ -1,6 +1,6 @@
 {
   "name": "@fico-xpress/vdlx-datagrid",
-  "version": "4.6.1",
+  "version": "4.6.2",
   "description": "",
   "scripts": {
     "postinstall": "npm run build",
@@ -11,7 +11,8 @@
     "copy-production-to-app": "copyfiles -f \"dist/insight/client_resources/vdlx-datagrid/*\" insight/client_resources/vdlx-datagrid",
     "concat-header-js": "concat src/build/license-header.txt dist/insight/client_resources/vdlx-datagrid/vdlx-datagrid.js -o dist/insight/client_resources/vdlx-datagrid/vdlx-datagrid.js",
     "concat-header-css": "concat src/build/license-header.txt dist/insight/client_resources/vdlx-datagrid/vdlx-datagrid.css -o dist/insight/client_resources/vdlx-datagrid/vdlx-datagrid.css",
-    "prebuild": "rimraf dist/insight/client_resources/vdlx-datagrid/*.js dist/insight/client_resources/vdlx-datagrid/*.css dist/insight/client_resources/vdlx-datagrid-debug/*.js dist/insight/client_resources/vdlx-datagrid-debug/*.css insight/client_resources/vdlx-datagrid",
+    "prebuild": "npm run clean",
+    "clean": "rimraf dist/insight/client_resources/vdlx-datagrid/*.js dist/insight/client_resources/vdlx-datagrid/*.css dist/insight/client_resources/vdlx-datagrid-debug/*.js dist/insight/client_resources/vdlx-datagrid-debug/*.css insight/client_resources/vdlx-datagrid dist/insight/client_resources/*.zip insight/model_resources/*.csv *.zip",
     "build": "parcel build --no-cache --no-source-maps -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js src/js/index.js",
     "postbuild": "npm run concat-header-js && npm run concat-header-css && npm run copy-production-to-app",
     "build:debug": "NODE_ENV=development parcel build --no-cache --no-minify --no-source-maps -d dist/insight/client_resources/vdlx-datagrid-debug -o vdlx-datagrid-debug.js src/js/index.js",
