@@ -21,6 +21,9 @@
     limitations under the License.
  */
 
+import isEmpty from 'lodash/isEmpty';
+import trim from 'lodash/trim';
+
 /**
  * adds an export button
  * @param table
@@ -38,6 +41,7 @@ export default (table, container, filename = 'data') => {
     const exportButton = document.createElement('button');
     exportButton.appendChild(document.createTextNode('EXPORT'));
     exportButton.setAttribute('title', 'Export to CSV file');
+    exportButton.setAttribute('disabled', true);
     exportButton.classList.add('btn', 'btn-sm');
 
     exportButton.addEventListener('click', () => exportData());
@@ -47,6 +51,9 @@ export default (table, container, filename = 'data') => {
     container.appendChild(exportCsvControl);
 
     const exportData = () => {
+        if (isEmpty(trim(filename))) {
+            filename = 'data';
+        }
         table.download('csv', filename + '.csv');
     };
 
