@@ -261,7 +261,11 @@ class Datagrid {
                 height = options.gridHeight;
                 if (!height) {
                     const row = this.table.getRowFromPosition(0, true);
-                    height = $(row.getElement()).outerHeight(true) * options.paginationSize;
+                    if (row) {
+                        height = $(row.getElement()).outerHeight(true) * options.paginationSize;
+                    } else {
+                        height = '100%';
+                    }
                 }
             } else {
                 height = '100%';
