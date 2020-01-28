@@ -75,9 +75,10 @@ export const transform = (element, attributes, api) => {
     }
     var paramsBuilder = api
         .getComponentParamsBuilder(element)
-        .addParam('tableUpdate', '$component.tableUpdate', true)
-        .addParam('tableValidate', '$component.tableValidate', true)
-        .addParam('validate', '$component.validate', true);
+        .addParam('addColumn', '$component.addColumn', true)
+        .addParam('removeColumn', '$component.removeColumn', true)
+        .addParam('tableValidate', '$component.tableValidate', true);
+        
     if (!!attributes.entity) {
         paramsBuilder.addParam('entity', entityName);
     } else {

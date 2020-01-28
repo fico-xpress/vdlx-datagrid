@@ -51,6 +51,8 @@ import map from 'lodash/map';
 import filter from 'lodash/filter';
 import { AUTOCOLUMN_PROP_NAME } from '../vdlx-datagrid-column/view-model';
 import set from 'lodash/set';
+import size from 'lodash/size';
+import omit from 'lodash/omit';
 
 const DEFAULT_GRID_PAGE_SIZE = 50;
 
@@ -120,6 +122,9 @@ const getTableOptions = params => () => {
     return gridOptions;
 };
 
+const isTableReady = (/** @type {HTMLElement} */ element, columnIds) =>
+    element.getElementsByTagName('vdlx-datagrid-column').length === size(columnIds);
+
 /**
  * VDL Extensions callback.
  *
@@ -170,15 +175,28 @@ export default function createViewModel(params, componentInfo) {
      */
     const $footerToolBar = $('<div class="footer-toolbar"/>');
     $element.append($footerToolBar);
+
+    const columnIds$ = ko.observable({});
+
     /**
      * Wrap the options for the
      */
-    const tableOptions$ = withDeepEquals(ko.pureComputed(getTableOptions(params)));
-    const columnConfig$ = withDeepEquals(ko.observable({}));
+    const tableOptions$ = withDeepEquals(ko.pureComputed(getTableOptions(params)).extend({ deferred: true }));
+    const columnConfig$ = withDeepEquals(
+        ko
+            .pureComputed(() => {
+                return buildTable();
+            })
+            .extend({ deferred: true })
+    );
 
-    var datagrid = new Datagrid(element, tableOptions$, columnConfig$);
+    const datagrid = new Datagrid(element, tableOptions$, columnConfig$);
+
 
     function buildTable() {
+        if (!isTableReady(element, columnIds$())) {
+            return { columnOptions: [], indicesOptions: {}, scenarioList: [] };
+        }
         /*
         Collect the column information from the child VDL extensions (vdlx-datagrid-column)
          */
@@ -186,8 +204,7 @@ export default function createViewModel(params, componentInfo) {
             return set(clone(element[AUTOCOLUMN_PROP_NAME]), 'index', idx);
         });
         if (!columnConfigs.length) {
-            columnConfig$({ columnOptions: [], indicesOptions: {}, scenarioList: [] });
-            return;
+            return { columnOptions: [], indicesOptions: {}, scenarioList: [] };
         }
 
         var entities = [];
@@ -255,11 +272,14 @@ export default function createViewModel(params, componentInfo) {
             );
         }
 
-        columnConfig$({ columnOptions: entities, indicesOptions: indices, scenarioList: scenarioList });
+        return { columnOptions: entities, indicesOptions: indices, scenarioList: scenarioList };
     }
 
-    vm.tableUpdate = () => {
-        defer(() => buildTable());
+    vm.addColumn = columnId => {
+        columnIds$(set(columnIds$(), columnId, undefined));
+    };
+    vm.removeColumn = columnId => {
+        columnIds$(omit(columnIds$(), columnId));
     };
 
     vm.tableValidate = function() {
@@ -270,7 +290,6 @@ export default function createViewModel(params, componentInfo) {
         datagrid.dispose();
     };
 
-    buildTable();
 
     return vm;
 }
