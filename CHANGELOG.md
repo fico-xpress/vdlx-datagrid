@@ -2,8 +2,9 @@
 
 ## v4.6.1
 
-- Option to download datagrid contents as a CSV file. Added new attributes `show-export` and `export-filename` to control 
-  whether the datagrid export button is visible to the end-user.
+- Added debug bundle of the vdlx-datagrid library. This can be used in place of the standard library bundle to facilitate 
+  better JavaScript debugging. Although the debug version concatenates the original source it does not minify it so it's easier
+  to cross-reference with the original source.
 
 ## v4.6.0
 

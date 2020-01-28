@@ -1,7 +1,8 @@
 # VDLX-DATAGRID release process
 
 The version numbering for vdlx-datagrid is `major.minor.patch`. Where `major.minor` match the version of VDL that the release
-is compatible with, see [vdlx-datagrid.vdl](dist/insight/client_resources/vdlx-datagrid/vdlx-datagrid.vdl).
+is compatible with, see [vdlx-datagrid.vdl](dist/insight/client_resources/vdlx-datagrid/vdlx-datagrid.vdl) and the corresponding 
+[vdlx-datagrid-debug.vdl](dist/insight/client_resources/vdlx-datagrid-debug/vdlx-datagrid-debug.vdl)
 
 ## Creating a release off master
 

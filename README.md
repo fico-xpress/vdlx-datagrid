@@ -1,3 +1,5 @@
+![Build and Test](https://github.com/fico-xpress/vdlx-datagrid/workflows/Build%20and%20Test/badge.svg?branch=master)
+
 # VDLX-DATAGRID
 
 A drop-in alternative for the `vdl-table` component in a FICO Xpress Insight VDL view.
