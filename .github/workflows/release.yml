@@ -28,6 +28,7 @@ jobs:
         run: |
           npm run generate-test-data
           npm run bundle:library
+          npm run bundle:debug-library
           npm run bundle:app
       - name: Create draft release
         id: create_release
@@ -48,6 +49,16 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: dist/insight/client_resources/vdlx-datagrid.zip
           asset_name: vdlx-datagrid.zip
+          asset_content_type: application/zip
+      - name: Upload component debug bundle
+        id: upload-component-debug-bundle
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/insight/client_resources/vdlx-datagrid-debug.zip
+          asset_name: vdlx-datagrid-debug.zip
           asset_content_type: application/zip
       - name: Upload app
         id: upload-app
