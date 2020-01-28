@@ -15,3 +15,5 @@ screenshots
 insight/client_resources/vdlx-datagrid/
 dist/insight/client_resources/vdlx-datagrid/*.js
 dist/insight/client_resources/vdlx-datagrid/*.css
+dist/insight/client_resources/vdlx-datagrid-debug/*.js
+dist/insight/client_resources/vdlx-datagrid-debug/*.css
