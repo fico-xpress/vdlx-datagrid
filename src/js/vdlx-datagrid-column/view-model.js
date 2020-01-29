@@ -30,6 +30,7 @@ import uniqueId from 'lodash/uniqueId';
 import set from 'lodash/set';
 import reduce from 'lodash/reduce';
 import noop from 'lodash/noop';
+import mapValues from 'lodash/mapValues';
 
 const enums = insightModules.load('enums');
 const validatorFactory = insightModules.load('vdl/vdl-validator-factory');
@@ -44,11 +45,11 @@ export const AUTOCOLUMN_PROP_NAME = 'autotableConfig';
 
 const createProps = (columnId, params, filters, element) => {
     var props = {
-        scenario: ko.unwrap(params.scenario),
-        title: ko.unwrap(params.heading),
-        width: ko.unwrap(params.width),
-        editable: ('' + ko.unwrap(params.editable)).toLowerCase() === 'true',
-        visible: !(('' + ko.unwrap(params.visible)).toLowerCase() === 'false'),
+        scenario: params.scenario,
+        title: params.heading,
+        width: params.width,
+        editable: ('' + params.editable).toLowerCase() === 'true',
+        visible: !(('' + params.visible).toLowerCase() === 'false'),
         style: params.style,
         sortByFormatted: params.sortByFormatted,
         filterByFormatted: params.filterByFormatted,
@@ -179,13 +180,12 @@ export const viewModel = (params, /** @type {ComponentInfo} */ componentInfo) =>
                 return undefined;
             }
             const filters = ko.unwrap(filters$);
-            const props = createProps(columnId, params, filters, componentInfo.element);
+            const props = createProps(columnId, mapValues(params, ko.unwrap), filters, componentInfo.element);
             return props;
         })
         .extend({
             deferred: true
         });
-
     const subscription = ko
         .pureComputed(() => {
             const props = props$();
