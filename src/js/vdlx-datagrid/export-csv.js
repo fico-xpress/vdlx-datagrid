@@ -2,9 +2,8 @@
    Xpress Insight vdlx-datagrid
    =============================
 
-   file vdlx-datagrid/add-remove.js
+   file vdlx-datagrid/export-csv.js
    ```````````````````````
-   vdlx-datagrid add remove rows.
 
     (c) Copyright 2019 Fair Isaac Corporation
 
@@ -24,14 +23,22 @@
 import isEmpty from 'lodash/isEmpty';
 import trim from 'lodash/trim';
 
+const DEFAULT_FILENAME = 'data';
+
 /**
- * adds an export button
- * @param table
- * @param container
- * @param filename
- * @returns {{enable: enable, dispose: dispose}}
+ * Adds an export button to datagrid.
+ *
+ * @param {Tabulator} table The datagrid
+ * @param {Element} container The table header element
+ * @param {boolean} enabled Whether the button is enabled
+ * @param {string} filename
  */
-export default (table, container, filename = 'data') => {
+export default (table, container, {enabled = false, filename = DEFAULT_FILENAME}) => {
+    filename = trim(filename);
+    if (isEmpty(filename)) {
+        filename = DEFAULT_FILENAME;
+    }
+
     const exportCsvControl = document.createElement('div');
     exportCsvControl.classList.add('export-csv-control');
 
@@ -41,39 +48,25 @@ export default (table, container, filename = 'data') => {
     const exportButton = document.createElement('button');
     exportButton.appendChild(document.createTextNode('EXPORT'));
     exportButton.setAttribute('title', 'Export to CSV file');
-    exportButton.setAttribute('disabled', true);
     exportButton.classList.add('btn', 'btn-sm');
-
     exportButton.addEventListener('click', () => exportData());
+
+    if (!enabled) {
+        exportButton.setAttribute('disabled', 'disabled');
+    }
 
     exportCsvControl.appendChild(buttonContainer);
     buttonContainer.appendChild(exportButton);
     container.appendChild(exportCsvControl);
 
-    const exportData = () => {
-        if (isEmpty(trim(filename))) {
-            filename = 'data';
-        }
-        table.download('csv', filename + '.csv');
-    };
+    const exportData = () => table.download('csv', `${filename}.csv`);
 
     return {
         /**
-         * remove the control
+         * Remove the export csv control.
          */
         dispose: () => {
             container.removeChild(exportCsvControl);
-        },
-        /**
-         * enable/disable the button
-         * @param enable
-         */
-        enable: (enable) => {
-            if (enable) {
-                exportButton.removeAttribute('disabled');
-            } else {
-                exportButton.setAttribute('disabled', true);
-            }
         }
     };
 };

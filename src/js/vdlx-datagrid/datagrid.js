@@ -183,7 +183,7 @@ class Datagrid {
         this.updatePaginator();
         this.recalculateHeight(ko.unwrap(this.gridOptions$));
         this.recalculateWidth();
-        this.exportControl = this.updateExportControl(this.headerToolbar, ko.unwrap(this.gridOptions$));
+        this.exportControl = this.updateExportControl(this.table, this.headerToolbar, ko.unwrap(this.gridOptions$));
     }
 
     saveState() {
@@ -353,20 +353,17 @@ class Datagrid {
         return undefined;
     }
 
-    updateExportControl(headerToolbar, options) {
-        if (ko.unwrap(options.showExport)) {
-            if (!this.exportControl) {
-                return exportCsv(this.table, this.headerToolbar, ko.unwrap(options.exportFilename));
-            } else {
-                // enable/disable button based on row count
-                const rowCount = this.table.getDataCount(true);
-                this.exportControl.enable(rowCount > 0);
-            }
-            return this.exportControl;
-        }
-
+    updateExportControl(table, headerToolbar, options) {
         if (this.exportControl) {
             this.exportControl.dispose();
+        }
+
+        if (options.showExport) {
+            const rowCount = table.getDataCount(true);
+            return exportCsv(table, headerToolbar, {
+                enabled: rowCount > 0,
+                filename: options.exportFilename
+            });
         }
     }
 

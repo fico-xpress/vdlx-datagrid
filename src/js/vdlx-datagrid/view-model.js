@@ -87,8 +87,8 @@ const getTableOptions = params => () => {
         saveState: get(params, 'saveState', true),
         pageMode: params.pageMode,
         freezeColumns: params.freezeColumns,
-        showExport: params.showExport,
-        exportFilename: params.exportFilename
+        showExport: ko.unwrap(params.showExport),
+        exportFilename: ko.unwrap(params.exportFilename)
     };
 
     var pageMode = params['pageMode'];
