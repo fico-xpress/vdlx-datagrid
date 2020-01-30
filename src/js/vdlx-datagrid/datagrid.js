@@ -140,46 +140,15 @@ class Datagrid {
         ]);
 
         this.unloadHandlerId = null;
-        this.inEditMode = false;
-        this.editCell = null;
-        const that = this;
+        this.savingPromise = Promise.resolve();
 
         this.viewUnloadHandler = () => {
-            if (this.inEditMode) {
-                const newValue = this.editCell.getValue();
-                this.editCell.setValue(newValue, false);
-                console.log('%c executing viewUnloadHandler and setting new value', 'color: red; font-weight: bold;');
-                this.setEditMode(false);
-            }
-            return Promise.resolve();
+            return Promise.resolve(this.savingPromise).catch((err) => dialogs.toast(err.message, dialogs.level.ERROR));
         };
+
+        this.unloadHandlerId = this.view.addUnloadHandler(this.viewUnloadHandler);
     }
 
-
-
-    attachUnloadHandler() {
-        this.unloadHandlerId = this.view.addUnloadHandler(this.viewUnloadHandler);
-        console.log('%c attach Handler: ' + this.unloadHandlerId, 'color: green; font-weight: bold;');
-    };
-
-    removeUnloadHandler() {
-        console.log('%c remove Handler: ' + this.unloadHandlerId, 'color: green; font-weight: bold;');
-        this.view.removeUnloadHandler(this.unloadHandlerId);
-    };
-
-    setEditMode(mode, cell) {
-
-        this.inEditMode = mode;
-        this.editCell = cell || null;
-
-        if (mode) {
-            this.attachUnloadHandler();
-        } else {
-            this.removeUnloadHandler();
-        }
-
-        console.log('%c set edit mode: ' + mode,  'color: black; font-weight: bold;');
-    };
 
     buildTable() {
         const columnOptions$ = this.columnOptions$;
@@ -639,7 +608,6 @@ class Datagrid {
             const getCellEditingHandler = () => {
                 if (entityOptions.editorType !== EDITOR_TYPES.select) {
                     return cell => {
-                        this.setEditMode(true, cell);
                         const element = cell.getElement();
                         $(element).on('keyup', evt => {
                             validateAndStyle(cell, evt.target.value);
@@ -654,9 +622,6 @@ class Datagrid {
                 const oldValue = isUndefined(cell.getOldValue()) ? '' : cell.getOldValue();
                 const value = cell.getValue();
                 const validationResult = validateAndStyle(cell, value);
-                this.setEditMode(false);
-                console.log('%c cellEdited: ', 'color: gold; font-weight: bold;');
-
 
                 if (!validationResult.isValid && !validationResult.allowSave) {
                     cell.restoreOldValue();
@@ -664,16 +629,17 @@ class Datagrid {
                     dialogs.alert(validationResult.errorMessage, VALIDATION_ERROR_TITLE, () => {
                         defer(() => cell.edit(true));
                     });
+                    this.savingPromise = Promise.reject({message: validationResult.errorMessage});
                 } else {
                     if (value !== oldValue) {
                         if (isUndefined(value) || value === '') {
-                            removeValue(cell.getData()).catch(err => {
+                            this.savingPromise = removeValue(cell.getData()).catch(err => {
                                 cell.restoreOldValue();
                                 // TODO: message saying
                                 // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
                             });
                         } else {
-                            saveValue(cell.getData(), value).catch(err => {
+                            this.savingPromise = saveValue(cell.getData(), value).catch(err => {
                                 cell.restoreOldValue();
                                 // TODO: message saying
                                 // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
@@ -685,7 +651,6 @@ class Datagrid {
 
             const cellEditCancelled = (cell) => {
                 $(cell.getElement()).off('keyup');
-                this.setEditMode(false);
                 const value = cell.getValue();
                 const validationResult = validateAndStyle(cell, value);
             };
@@ -894,6 +859,7 @@ class Datagrid {
     }
 
     dispose() {
+        this.view.removeUnloadHandler(this.unloadHandlerId);
         this.table.destroy();
         each(this.subscriptions, subscription => subscription.dispose());
     }
