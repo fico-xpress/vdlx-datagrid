@@ -838,10 +838,12 @@ class Datagrid {
                 });
             }
         };
+
+        this.table.element.style.visibility = 'hidden';
+
         return perf('PERF Tabulator.setData():', () =>
             table
                 .setData(data)
-                .then(() => this.table.element.style.visibility = 'hidden')
                 .then(() => redraw())
                 .then(() => this.table.element.style.visibility = 'visible')
                 .catch(err => {
