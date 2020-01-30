@@ -195,7 +195,7 @@ export default function createViewModel(params, componentInfo) {
 
     function buildTable() {
         if (!isTableReady(element, columnIds$())) {
-            return { columnOptions: [], indicesOptions: {}, scenarioList: [] };
+            return undefined;
         }
         /*
         Collect the column information from the child VDL extensions (vdlx-datagrid-column)

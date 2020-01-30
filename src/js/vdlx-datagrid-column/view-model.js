@@ -43,7 +43,7 @@ const ko = global.ko;
 
 export const AUTOCOLUMN_PROP_NAME = 'autotableConfig';
 
-const createProps = (columnId, params, filters, element) => {
+export const createProps = (columnId, params, filters, element) => {
     var props = {
         scenario: params.scenario,
         title: params.heading,
@@ -95,7 +95,7 @@ const createProps = (columnId, params, filters, element) => {
         if (!params.editorType) {
             const type = insight
                 .getView()
-                .getProject()
+                .getApp()
                 .getModelSchema()
                 .getEntity(params.entity)
                 .getElementType();
@@ -154,10 +154,10 @@ const createProps = (columnId, params, filters, element) => {
     return props;
 };
 
-const isColumnReady = (/** @type {HTMLElement} */ element, filters) =>
+export const isColumnReady = (/** @type {HTMLElement} */ element, filters) =>
     element.getElementsByTagName('vdlx-datagrid-index-filter').length === size(filters);
 
-export const viewModel = (params, /** @type {ComponentInfo} */ componentInfo) => {
+export default (params, /** @type {ComponentInfo} */ componentInfo) => {
     var indexFilters$ = ko.observable({}).extend({ deferred: true });
     var filters$ = ko.pureComputed(function() {
         return reduce(

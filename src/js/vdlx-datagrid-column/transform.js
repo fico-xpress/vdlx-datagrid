@@ -34,7 +34,7 @@ const enums = insightModules.load('enums');
  * @param {{ [x: string]: any; }} attributes
  * @param {*} api
  */
-export const transform = (element, attributes, api) => {
+export default (element, attributes, api) => {
     var $element = $(element);
     if (!$element.closest('vdlx-datagrid').length) {
         throw Error('<vdlx-datagrid-column> must be contained within a <vdlx-datagrid> tag.');
