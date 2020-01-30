@@ -119,5 +119,19 @@ export default [
         name: 'freeze-columns',
         description: 'The number of columns to freeze in the table starting from the left hand column.',
         required: false
+    },
+    {
+        name: 'show-export',
+        description: 'Set this to true to display an export to CSV button.',
+        acceptsExpression: true,
+        required: false,
+        defaultValue: false
+    },
+    {
+        name: 'export-filename',
+        description: 'The name of the file exported from the table. A file extension will be assigned.',
+        acceptsExpression: true,
+        required: false,
+        defaultValue: 'data'
     }
 ];

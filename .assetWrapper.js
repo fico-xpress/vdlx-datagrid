@@ -1,6 +1,12 @@
-/*
+const path = require('path');
+
+const CWD = process.cwd();
+const PACKAGE = require(path.join(CWD, 'package.json'));
+const SOURCE_HEADER = `/*
    Xpress Insight vdlx-datagrid
    ============================
+   package: ${PACKAGE.name}
+   version: ${PACKAGE.version}
 
    (c) Copyright 2019 Fair Isaac Corporation
 
@@ -16,3 +22,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
+`;
+
+const headersAndFooters = async ({name, bundler}) => {
+    let filename = path.basename(name);
+    let extension = path.extname(name);
+
+    if (extension === '.js' /*&& bundler.options.production*/) {
+        return {
+            header: SOURCE_HEADER,
+            footer: `//# sourceURL=${filename}`
+        }
+    }
+};
+
+module.exports = headersAndFooters;
