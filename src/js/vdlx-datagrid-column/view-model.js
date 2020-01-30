@@ -31,12 +31,14 @@ import set from 'lodash/set';
 import reduce from 'lodash/reduce';
 import noop from 'lodash/noop';
 import mapValues from 'lodash/mapValues';
+import defer from 'lodash/defer';
 
 const enums = insightModules.load('enums');
 const validatorFactory = insightModules.load('vdl/vdl-validator-factory');
 const insightGetter = insightModules.load('insight-getter');
 
 /** @type {KnockoutStatic} */
+// @ts-ignore
 const ko = global.ko;
 
 /** @typedef {{element: HTMLElement}} ComponentInfo */
@@ -93,6 +95,7 @@ export const createProps = (columnId, params, filters, element) => {
     if (!!params.entity) {
         props.entity = params.entity;
         if (!params.editorType) {
+            // @ts-ignore
             const type = insight
                 .getView()
                 .getApp()
@@ -147,6 +150,7 @@ export const createProps = (columnId, params, filters, element) => {
             }
         });
         props.editorValidate = function(newValue, rowData, keys) {
+            // @ts-ignore
             validationObservable(keys, newValue, rowData);
             return validationObservable.peek();
         };
@@ -158,11 +162,12 @@ export const isColumnReady = (/** @type {HTMLElement} */ element, filters) =>
     element.getElementsByTagName('vdlx-datagrid-index-filter').length === size(filters);
 
 export default (params, /** @type {ComponentInfo} */ componentInfo) => {
-    var indexFilters$ = ko.observable({}).extend({ deferred: true });
+    var indexFilters$ = ko.observable().extend({ deferred: true });
     var filters$ = ko.pureComputed(function() {
         return reduce(
             indexFilters$(),
             function(memo, filterProps) {
+                // @ts-ignore
                 return set(memo, [filterProps.setName, filterProps.setPosition], filterProps.value);
             },
             {}
@@ -186,13 +191,18 @@ export default (params, /** @type {ComponentInfo} */ componentInfo) => {
         .extend({
             deferred: true
         });
+
     const subscription = ko
         .pureComputed(() => {
             const props = props$();
-            set(componentInfo.element, AUTOCOLUMN_PROP_NAME, props);
-            params.addColumn(columnId);
+            if (props) {
+                set(componentInfo.element, AUTOCOLUMN_PROP_NAME, props);
+                params.addColumn(columnId);
+            }
         })
         .subscribe(noop);
+    
+    indexFilters$({});
 
     return {
         dispose: function() {
@@ -200,10 +210,10 @@ export default (params, /** @type {ComponentInfo} */ componentInfo) => {
             params.removeColumn(columnId);
         },
         filterUpdate: function(filterId, filterProperties) {
-            indexFilters$(set(indexFilters$(), filterId, filterProperties));
+            defer(() => indexFilters$(set(indexFilters$(), filterId, filterProperties)));
         },
         filterRemove: function(filterId) {
-            indexFilters$(omit(indexFilters$(), filterId));
+            defer(() => indexFilters$(omit(indexFilters$(), filterId)));
         }
     };
 };
