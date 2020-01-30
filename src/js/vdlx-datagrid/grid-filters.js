@@ -1,4 +1,4 @@
-import partial  from 'lodash/partial';
+import partial from 'lodash/partial';
 import {insight} from '../insight-globals';
 
 /*
@@ -24,7 +24,7 @@ import {insight} from '../insight-globals';
     limitations under the License.
  */
 
-const Enums = {
+export const Enums = {
     DataType: {
         INTEGER: 'INTEGER',
         REAL: 'REAL',
@@ -137,20 +137,53 @@ let _partialMatchCell = (searchData, data, column) => {
     var result = data.indexOf(searchData) >= 0;
 
     if (!result && column.elememtType !== Enums.DataType.STRING) {
-        var format = _getFormatter(column);
-        if (format) {
-            var formattedSearchData = _formatSearchDataIfNecessary(searchData, column.displayType, format);
-            var formattedCellData = insight.Formatter.formatNumber(data, format);
+        var formatter = _getFormatter(column);
+        if (formatter) {
+            var formattedSearchData = _formatSearchDataIfNecessary(searchData, column.displayType, formatter);
+            var formattedCellData = insight.Formatter.formatNumber(data, formatter);
             result = formattedCellData.indexOf(formattedSearchData) >= 0;
         }
     }
     return result;
 };
 
+const EQUALS_OPERATOR = '=';
+const NOT_OPERATOR = '!';
+const LESS_THAN_OPERATOR = '<';
+const GREATER_THAN_OPERATOR = '>';
+
+
 let filter = (column, valueTxt, cellValue, rowData, params) => {
-    var exactColumnSearch = valueTxt.substring(0, 1) === '=';
+    const firstChar = valueTxt.substring(0, 1);
+    var exactColumnSearch = firstChar === EQUALS_OPERATOR;
     if (exactColumnSearch) {
         return _exactMatchCell(valueTxt.substring(1), String(cellValue), column);
+    }
+    if(!!column.elementType && (column.elementType === Enums.DataType.INTEGER || column.elementType === Enums.DataType.REAL)) {
+        const secondChar = valueTxt.length > 1 ? valueTxt.substring(1,2) : '';
+        if (firstChar === LESS_THAN_OPERATOR) {
+            if(secondChar === EQUALS_OPERATOR) { // '<='
+                var searchValue = parseFloat(valueTxt.substr(2));
+                return cellValue <= searchValue;
+            } else if(secondChar === GREATER_THAN_OPERATOR) { // '<>'
+                var searchValue = parseFloat(valueTxt.substr(2));
+                return cellValue !== searchValue;
+            } else { // '<'
+                var searchValue = parseFloat(valueTxt.substr(1));
+                return cellValue < searchValue;
+            }
+        } else if (firstChar === GREATER_THAN_OPERATOR) {
+            if(secondChar === EQUALS_OPERATOR) { // '>='
+                var searchValue = parseFloat(valueTxt.substr(2));
+                return cellValue >= searchValue;
+            } else { // '>'
+                var searchValue = parseFloat(valueTxt.substr(1));
+                return cellValue > searchValue;
+            }
+        } else if (firstChar === NOT_OPERATOR && secondChar === EQUALS_OPERATOR) { // '!='
+            var searchValue = parseFloat(valueTxt.substr(2));
+            return cellValue !== searchValue;
+        }
     }
     return _partialMatchCell(valueTxt, String(cellValue), column);
 };
