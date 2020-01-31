@@ -166,7 +166,7 @@ let filter = (column, valueTxt, cellValue, rowData, params) => {
                 var searchValue = parseFloat(valueTxt.substr(2));
                 return cellValue <= searchValue;
             } else if(secondChar === GREATER_THAN_OPERATOR) { // '<>'
-                var searchValue = parseFloat(valueTxt.substr(2));
+                var searchValue = valueTxt.substr(2);
                 return cellValue !== searchValue;
             } else { // '<'
                 var searchValue = parseFloat(valueTxt.substr(1));
@@ -181,7 +181,7 @@ let filter = (column, valueTxt, cellValue, rowData, params) => {
                 return cellValue > searchValue;
             }
         } else if (firstChar === NOT_OPERATOR && secondChar === EQUALS_OPERATOR) { // '!='
-            var searchValue = parseFloat(valueTxt.substr(2));
+            var searchValue = valueTxt.substr(2);
             return cellValue !== searchValue;
         }
     }
