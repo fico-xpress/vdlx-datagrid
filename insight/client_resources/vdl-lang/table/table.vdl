@@ -98,6 +98,26 @@ limitations under the License.
                 </vdl-column>
 
             </vdl-row>
+            <vdl-row>
+                <vdl-column heading="Simple datagrid with positioned index sets" size="6"  class="example-passed">
+                    <vdlx-datagrid id="basic-example-positioned-index-sets">
+                        <vdlx-datagrid-column set="Factories" heading="Origin"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ShippingCosts"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="Factories" heading="Destination"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;vdlx-datagrid id=&quot;basic-example-positioned-index-sets&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot; heading=&quot;Origin&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;ShippingCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot; heading=&quot;Destination&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+
+            </vdl-row>
         </vdl-section>
 
         <style>
