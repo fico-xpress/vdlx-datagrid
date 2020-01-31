@@ -140,7 +140,17 @@ class Datagrid {
                 }
             }
         ]);
+
+        this.unloadHandlerId = null;
+        this.savingPromise = Promise.resolve();
+
+        this.viewUnloadHandler = () => {
+            return Promise.resolve(this.savingPromise).catch((err) => dialogs.toast(err.message, dialogs.level.ERROR));
+        };
+
+        this.unloadHandlerId = this.view.addUnloadHandler(this.viewUnloadHandler);
     }
+
 
     buildTable() {
         const columnOptions$ = this.columnOptions$;
@@ -629,6 +639,44 @@ class Datagrid {
                 return undefined;
             };
 
+            const cellEdited = (cell) => {
+                $(cell.getElement()).off('keyup');
+                const oldValue = isUndefined(cell.getOldValue()) ? '' : cell.getOldValue();
+                const value = cell.getValue();
+                const validationResult = validateAndStyle(cell, value);
+
+                if (!validationResult.isValid && !validationResult.allowSave) {
+                    cell.restoreOldValue();
+                    validateAndStyle(cell, cell.getValue());
+                    dialogs.alert(validationResult.errorMessage, VALIDATION_ERROR_TITLE, () => {
+                        defer(() => cell.edit(true));
+                    });
+                    this.savingPromise = Promise.reject({message: validationResult.errorMessage});
+                } else {
+                    if (value !== oldValue) {
+                        if (isUndefined(value) || value === '') {
+                            this.savingPromise = removeValue(cell.getData()).catch(err => {
+                                cell.restoreOldValue();
+                                // TODO: message saying
+                                // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
+                            });
+                        } else {
+                            this.savingPromise = saveValue(cell.getData(), value).catch(err => {
+                                cell.restoreOldValue();
+                                // TODO: message saying
+                                // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
+                            });
+                        }
+                    }
+                }
+            };
+
+            const cellEditCancelled = (cell) => {
+                $(cell.getElement()).off('keyup');
+                const value = cell.getValue();
+                const validationResult = validateAndStyle(cell, value);
+            };
+
             const getClasses = () => {
                 let classes = [];
                 if (isNumberEntity) {
@@ -649,45 +697,8 @@ class Datagrid {
                 editor: entityOptions.editorType,
                 editorParams: getEditorParams(),
                 cellEditing: getCellEditingHandler(),
-                cellEdited: cell => {
-                    $(cell.getElement()).off('keyup');
-
-                    const oldValue = isUndefined(cell.getOldValue()) ? '' : cell.getOldValue();
-                    const value = cell.getValue();
-
-                    const validationResult = validateAndStyle(cell, value);
-
-                    if (!validationResult.isValid && !validationResult.allowSave) {
-                        cell.restoreOldValue();
-                        validateAndStyle(cell, cell.getValue());
-                        dialogs.alert(validationResult.errorMessage, VALIDATION_ERROR_TITLE, () => {
-                            defer(() => cell.edit(true));
-                        });
-                    } else {
-                        if (value !== oldValue) {
-                            if (isUndefined(value) || value === '') {
-                                removeValue(cell.getData()).catch(err => {
-                                    cell.restoreOldValue();
-                                    // TODO: message saying
-                                    // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
-                                });
-                            } else {
-                                saveValue(cell.getData(), value).catch(err => {
-                                    cell.restoreOldValue();
-                                    // TODO: message saying
-                                    // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
-                                });
-                            }
-                        }
-                    }
-                },
-
-                cellEditCancelled: cell => {
-                    $(cell.getElement()).off('keyup');
-                    const value = cell.getValue();
-
-                    const validationResult = validateAndStyle(cell, value);
-                },
+                cellEdited: cellEdited,
+                cellEditCancelled: cellEditCancelled,
                 dataType: entity.getType(),
                 elementType: displayEntity.getElementType(),
                 scenario: columnScenario,
@@ -870,6 +881,7 @@ class Datagrid {
     }
 
     dispose() {
+        this.view.removeUnloadHandler(this.unloadHandlerId);
         this.table.destroy();
         each(this.subscriptions, subscription => subscription.dispose());
     }
