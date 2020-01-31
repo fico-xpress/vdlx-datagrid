@@ -88,7 +88,9 @@ const getTableOptions = params => () => {
         paginationSize: params.pageSize || DEFAULT_GRID_PAGE_SIZE,
         saveState: get(params, 'saveState', true),
         pageMode: params.pageMode,
-        freezeColumns: params.freezeColumns
+        freezeColumns: params.freezeColumns,
+        showExport: ko.unwrap(params.showExport),
+        exportFilename: ko.unwrap(params.exportFilename)
     };
 
     var pageMode = params['pageMode'];
@@ -159,6 +161,10 @@ export default function createViewModel(params, componentInfo) {
             .addClass(params.class);
     }
 
+    // Create the header bar for the export button
+    const $headerToolBar = $('<div class="header-toolbar"/>');
+    $element.prepend($headerToolBar);
+
     /*
     Create to DIV to hide the built-in pagination
      */
@@ -170,6 +176,7 @@ export default function createViewModel(params, componentInfo) {
      */
     const $footerToolBar = $('<div class="footer-toolbar"/>');
     $element.append($footerToolBar);
+
     /**
      * Wrap the options for the
      */
