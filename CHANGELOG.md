@@ -4,6 +4,7 @@
 
 - Export data as CSV: New vdlx-datagrid attributes `show-export` and `export-filename` that display a datagrid header 
   button to allow the user to download the current table contents to a CSV file.
+- Save any pending cell edits when the view is unloaded. 
 
 ## v4.6.1
 
