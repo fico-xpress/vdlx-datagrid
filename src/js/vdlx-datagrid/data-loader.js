@@ -118,7 +118,7 @@ function withScenarioData(config$) {
 
     const scenarioObserverSubscription$ = ko.pureComputed(function() {
         const config = ko.unwrap(config$);
-        if (!isEmpty(config) && !isEmpty(config.scenarioList) && !isEmpty(config.columnOptions)) {
+        if (!isEmpty(config.scenarioList) && !isEmpty(config.columnOptions)) {
             try {
                 error$(undefined);
                 return insight

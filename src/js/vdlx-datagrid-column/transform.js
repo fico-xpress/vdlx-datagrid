@@ -34,7 +34,7 @@ const enums = insightModules.load('enums');
  * @param {{ [x: string]: any; }} attributes
  * @param {*} api
  */
-export default (element, attributes, api) => {
+export const transform = (element, attributes, api) => {
     var $element = $(element);
     if (!$element.closest('vdlx-datagrid').length) {
         throw Error('<vdlx-datagrid-column> must be contained within a <vdlx-datagrid> tag.');
@@ -75,10 +75,9 @@ export default (element, attributes, api) => {
     }
     var paramsBuilder = api
         .getComponentParamsBuilder(element)
-        .addParam('addColumn', '$component.addColumn', true)
-        .addParam('removeColumn', '$component.removeColumn', true)
-        .addParam('tableValidate', '$component.tableValidate', true);
-        
+        .addParam('tableUpdate', '$component.tableUpdate', true)
+        .addParam('tableValidate', '$component.tableValidate', true)
+        .addParam('validate', '$component.validate', true);
     if (!!attributes.entity) {
         paramsBuilder.addParam('entity', entityName);
     } else {

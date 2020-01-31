@@ -51,9 +51,6 @@ import map from 'lodash/map';
 import filter from 'lodash/filter';
 import { AUTOCOLUMN_PROP_NAME } from '../vdlx-datagrid-column/view-model';
 import set from 'lodash/set';
-import size from 'lodash/size';
-import omit from 'lodash/omit';
-import every from 'lodash/every';
 
 const DEFAULT_GRID_PAGE_SIZE = 50;
 
@@ -123,9 +120,6 @@ const getTableOptions = params => () => {
     return gridOptions;
 };
 
-const isTableReady = (/** @type {HTMLElement} */ element, columnIds) =>
-    element.getElementsByTagName('vdlx-datagrid-column').length === size(columnIds);
-
 /**
  * VDL Extensions callback.
  *
@@ -176,36 +170,24 @@ export default function createViewModel(params, componentInfo) {
      */
     const $footerToolBar = $('<div class="footer-toolbar"/>');
     $element.append($footerToolBar);
-
-    const columnIds$ = ko.observable().extend({ deferred: true });
-
     /**
      * Wrap the options for the
      */
-    const tableOptions$ = withDeepEquals(ko.pureComputed(getTableOptions(params)).extend({ deferred: true }));
-    const columnConfig$ = withDeepEquals(
-        ko
-            .pureComputed(() => {
-                return buildTable();
-            })
-            .extend({ deferred: true })
-    );
+    const tableOptions$ = withDeepEquals(ko.pureComputed(getTableOptions(params)));
+    const columnConfig$ = withDeepEquals(ko.observable({}));
 
-    const datagrid = new Datagrid(element, tableOptions$, columnConfig$);
+    var datagrid = new Datagrid(element, tableOptions$, columnConfig$);
 
     function buildTable() {
-        if (!isTableReady(element, columnIds$())) {
-            return undefined;
-        }
         /*
         Collect the column information from the child VDL extensions (vdlx-datagrid-column)
          */
-        const columnConfigs = map(element.getElementsByTagName('vdlx-datagrid-column'), (element, idx) =>
-            set(clone(element[AUTOCOLUMN_PROP_NAME]), 'index', idx)
-        );
-
+        const columnConfigs = $element.find('vdlx-datagrid-column').map(function(idx, element) {
+            return set(clone(element[AUTOCOLUMN_PROP_NAME]), 'index', idx);
+        });
         if (!columnConfigs.length) {
-            return { columnOptions: [], indicesOptions: {}, scenarioList: [] };
+            columnConfig$({ columnOptions: [], indicesOptions: {}, scenarioList: [] });
+            return;
         }
 
         var entities = [];
@@ -273,15 +255,11 @@ export default function createViewModel(params, componentInfo) {
             );
         }
 
-        return { columnOptions: entities, indicesOptions: indices, scenarioList: scenarioList };
+        columnConfig$({ columnOptions: entities, indicesOptions: indices, scenarioList: scenarioList });
     }
 
-    columnIds$({});
-    vm.addColumn = columnId => {
-        defer(() => columnIds$(set(columnIds$(), columnId, undefined)));
-    };
-    vm.removeColumn = columnId => {
-        defer(() => columnIds$(omit(columnIds$(), columnId)));
+    vm.tableUpdate = () => {
+        defer(() => buildTable());
     };
 
     vm.tableValidate = function() {
@@ -291,6 +269,8 @@ export default function createViewModel(params, componentInfo) {
     vm.dispose = function() {
         datagrid.dispose();
     };
+
+    buildTable();
 
     return vm;
 }
