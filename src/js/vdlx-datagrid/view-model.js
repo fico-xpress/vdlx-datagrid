@@ -49,6 +49,8 @@ import sortBy from 'lodash/sortBy';
 import uniq from 'lodash/uniq';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
+import { AUTOCOLUMN_PROP_NAME } from '../vdlx-datagrid-column/view-model';
+import set from 'lodash/set';
 
 const DEFAULT_GRID_PAGE_SIZE = 50;
 
@@ -188,7 +190,7 @@ export default function createViewModel(params, componentInfo) {
         Collect the column information from the child VDL extensions (vdlx-datagrid-column)
          */
         const columnConfigs = $element.find('vdlx-datagrid-column').map(function(idx, element) {
-            return clone(element['autotableConfig']);
+            return set(clone(element[AUTOCOLUMN_PROP_NAME]), 'index', idx);
         });
         if (!columnConfigs.length) {
             columnConfig$({ columnOptions: [], indicesOptions: {}, scenarioList: [] });

@@ -36,7 +36,7 @@ const validatorFactory = insightModules.load('vdl/vdl-validator-factory');
 const insightGetter = insightModules.load('insight-getter');
 
 const COLUMN_BUILD_DELAY = 50;
-const AUTOCOLUMN_PROP_NAME = 'autotableConfig';
+export const AUTOCOLUMN_PROP_NAME = 'autotableConfig';
 
 export const viewModel = (params, componentInfo) => {
     var indexFilters$ = ko.observable({});

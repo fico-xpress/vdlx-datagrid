@@ -60,6 +60,7 @@ import each from 'lodash/each';
 import noop from 'lodash/noop';
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
+import sortBy from 'lodash/sortBy';
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');
@@ -801,7 +802,7 @@ class Datagrid {
             return column;
         });
 
-        let columns = [].concat(indicesColumns, entitiesColumns);
+        let columns = sortBy([].concat(indicesColumns, entitiesColumns), (column) => column.index || -1)
 
         let freezeColumns = parseInt(gridOptions.freezeColumns);
         if (freezeColumns && !isNaN(freezeColumns)) {
