@@ -5,6 +5,8 @@
 - Export data as CSV: New vdlx-datagrid attributes `show-export` and `export-filename` that display a datagrid header 
   button to allow the user to download the current table contents to a CSV file.
 - Save any pending cell edits when the view is unloaded. 
+- Index columns can be positioned anywhere in the datagrid. When index column is defined in VDL, its' position in VDL defines its'
+  position in datagrid.
 
 ## v4.6.1
 
