@@ -75,12 +75,15 @@ export var VDGCattributes = [
     },
     {
         name: 'sort-by-formatted',
-        description: 'Use formatted values for sorting.'
+        description: 'Use formatted values for sorting.',
+        valueType: 'boolean',
+        defaultValue: false
     },
     {
         name: 'filter-by-formatted',
         description:
-            'Use formatted values for filtering. This defaults to false unless the entity has a label in which case the default is true.'
+            'Use formatted values for filtering. This defaults to false unless the entity has a label in which case the default is true.',
+        valueType: 'boolean'
     },
     {
         name: 'editor-type',
