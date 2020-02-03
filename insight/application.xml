@@ -19,7 +19,6 @@
             <vdl-view title="Error handling" path="vdl-lang/table/table-errors.vdl"/>
             <vdl-view title="Validation" path="vdl-lang/table/table-validation.vdl"/>
         </view-group>
-
         <view-group title="Big Data">
             <vdl-view title="Big Data Table 1" path="big-data/datagrid-bd1.vdl"/>
             <vdl-view title="Big Data Table 2" path="big-data/datagrid-bd2.vdl"/>
@@ -27,6 +26,6 @@
             <vdl-view title="Big Data Table 4" path="big-data/datagrid-bd4.vdl"/>
             <vdl-view title="Big Data Table 5" path="big-data/datagrid-bd5.vdl"/>
         </view-group>
-
     </client>
+
 </model-companion>

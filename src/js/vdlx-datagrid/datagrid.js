@@ -21,7 +21,7 @@
     limitations under the License.
  */
 import Tabulator from 'tabulator-tables/dist/js/tabulator';
-import {insightModules, insight}  from '../insight-globals';
+import {insightModules, insight} from '../insight-globals';
 import dataTransform, {
     getAllColumnIndices,
     getDisplayIndices,
@@ -29,15 +29,16 @@ import dataTransform, {
     generateCompositeKey
 } from './data-transform';
 import withScenarioData from './data-loader';
+import exportCsv from './export-csv';
 import Paginator from './paginator';
-import { getRowData } from './utils';
-import { EDITOR_TYPES } from '../constants';
+import {getRowData} from './utils';
+import {EDITOR_TYPES} from '../constants';
 import AddRemove from './add-remove';
-import { chooseColumnFilter } from './grid-filters';
+import {chooseColumnFilter} from './grid-filters';
 import perf from '../performance-measurement';
-import { createStateManager } from './state-peristence';
-import { DatagridLock } from './datagrid-lock';
-import escape  from 'lodash/escape';
+import {createStateManager} from './state-peristence';
+import {DatagridLock} from './datagrid-lock';
+import escape from 'lodash/escape';
 import delay from 'lodash/delay';
 import some from 'lodash/some';
 import find from 'lodash/find';
@@ -59,6 +60,7 @@ import each from 'lodash/each';
 import noop from 'lodash/noop';
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
+import sortBy from 'lodash/sortBy';
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');
@@ -70,7 +72,7 @@ const SELECTION_REMOVED_EVENT = 'selection-removed';
 const addSelectNull = items => {
     if (isArray(items)) {
         // add empty option to the start of the list
-        return [{ key: undefined, value: '' }].concat(items);
+        return [{key: undefined, value: ''}].concat(items);
     }
     return items;
 };
@@ -111,6 +113,7 @@ class Datagrid {
 
         this.table = this.createTable(options);
 
+        this.headerToolbar = root.querySelector('.header-toolbar');
         const footerToolbar = root.querySelector('.footer-toolbar');
 
         this.addRemoveRowControl = this.createAddRemoveRowControl(footerToolbar, this.table, options);
@@ -138,12 +141,22 @@ class Datagrid {
                 }
             }
         ]);
+
+        this.unloadHandlerId = null;
+        this.savingPromise = Promise.resolve();
+
+        this.viewUnloadHandler = () => {
+            return Promise.resolve(this.savingPromise).catch((err) => dialogs.toast(err.message, dialogs.level.ERROR));
+        };
+
+        this.unloadHandlerId = this.view.addUnloadHandler(this.viewUnloadHandler);
     }
+
 
     buildTable() {
         const columnOptions$ = this.columnOptions$;
         const gridOptions$ = this.gridOptions$;
-        const { data: scenariosData$, errors: errors$ } = withScenarioData(columnOptions$);
+        const {data: scenariosData$, errors: errors$} = withScenarioData(columnOptions$);
 
         this.subscriptions = this.subscriptions.concat(
             ko
@@ -181,18 +194,20 @@ class Datagrid {
         this.updatePaginator();
         this.recalculateHeight(ko.unwrap(this.gridOptions$));
         this.recalculateWidth();
+        this.exportControl = this.updateExportControl(this.table, this.headerToolbar, ko.unwrap(this.gridOptions$));
     }
 
     saveState() {
         if (this.stateManager) {
             const state = {
                 filters: this.table.getHeaderFilters(),
-                sorters: map(this.table.getSorters(), sorter => ({ dir: sorter.dir, column: sorter.field }))
+                sorters: map(this.table.getSorters(), sorter => ({dir: sorter.dir, column: sorter.field}))
             };
 
             this.stateManager.saveState(state);
         }
     }
+
     loadState() {
         if (this.stateManager) {
             const state = this.stateManager.loadState();
@@ -257,7 +272,11 @@ class Datagrid {
                 height = options.gridHeight;
                 if (!height) {
                     const row = this.table.getRowFromPosition(0, true);
-                    height = $(row.getElement()).outerHeight(true) * options.paginationSize;
+                    if (row) {
+                        height = $(row.getElement()).outerHeight(true) * options.paginationSize;
+                    } else {
+                        height = '100%';
+                    }
                 }
             } else {
                 height = '100%';
@@ -304,7 +323,7 @@ class Datagrid {
                 rowData: rowData,
                 value: cell.getValue(),
                 element: cell.getElement(),
-                displayPosition: { row: rowPosition, column: cellIndex }
+                displayPosition: {row: rowPosition, column: cellIndex}
             });
 
             const cells = map(row.getCells(), getCell);
@@ -343,6 +362,20 @@ class Datagrid {
             return createStateManager(gridOptions.tableId, saveStateSuffix);
         }
         return undefined;
+    }
+
+    updateExportControl(table, headerToolbar, options) {
+        if (this.exportControl) {
+            this.exportControl.dispose();
+        }
+
+        if (options.showExport) {
+            const rowCount = table.getDataCount(true);
+            return exportCsv(table, headerToolbar, {
+                enabled: rowCount > 0,
+                filename: options.exportFilename
+            });
+        }
     }
 
     /**
@@ -401,7 +434,7 @@ class Datagrid {
         const allScenarios = uniq([scenariosData.defaultScenario].concat(values(scenariosData.scenarios)));
 
         const indicesColumns = map(setNamePosnsAndOptions, setNameAndPosn => {
-            const { name, options } = setNameAndPosn;
+            const {name, options} = setNameAndPosn;
             const entity = schema.getEntity(name);
             const displayEntity = resolveDisplayEntity(schema, entity);
             const isNumberEntity = DataUtils.entityTypeIsNumber(displayEntity);
@@ -481,7 +514,7 @@ class Datagrid {
                 getRowDataForColumns
             );
 
-            const saveValue = (rowData, value) => setArrayElement({ key: getRowKey(rowData), value: value });
+            const saveValue = (rowData, value) => setArrayElement({key: getRowKey(rowData), value: value});
             const removeValue = rowData => removeArrayElement(getRowKey(rowData));
 
             const checkboxFormatter = cell => {
@@ -538,13 +571,13 @@ class Datagrid {
                         );
                     } else if (entityOptions.editorOptions) {
                         getOptions = flow(
-                          entityOptions.editorOptions,
-                          options =>
-                            SelectOptions.generateSelectOptionsFromValues(
-                              options,
-                              isNumberEntity
-                            ),
-                          entityOptions.selectNull ? addSelectNull : identity
+                            entityOptions.editorOptions,
+                            options =>
+                                SelectOptions.generateSelectOptionsFromValues(
+                                    options,
+                                    isNumberEntity
+                                ),
+                            entityOptions.selectNull ? addSelectNull : identity
                         );
                     }
 
@@ -607,6 +640,44 @@ class Datagrid {
                 return undefined;
             };
 
+            const cellEdited = (cell) => {
+                $(cell.getElement()).off('keyup');
+                const oldValue = isUndefined(cell.getOldValue()) ? '' : cell.getOldValue();
+                const value = cell.getValue();
+                const validationResult = validateAndStyle(cell, value);
+
+                if (!validationResult.isValid && !validationResult.allowSave) {
+                    cell.restoreOldValue();
+                    validateAndStyle(cell, cell.getValue());
+                    dialogs.alert(validationResult.errorMessage, VALIDATION_ERROR_TITLE, () => {
+                        defer(() => cell.edit(true));
+                    });
+                    this.savingPromise = Promise.reject({message: validationResult.errorMessage});
+                } else {
+                    if (value !== oldValue) {
+                        if (isUndefined(value) || value === '') {
+                            this.savingPromise = removeValue(cell.getData()).catch(err => {
+                                cell.restoreOldValue();
+                                // TODO: message saying
+                                // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
+                            });
+                        } else {
+                            this.savingPromise = saveValue(cell.getData(), value).catch(err => {
+                                cell.restoreOldValue();
+                                // TODO: message saying
+                                // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
+                            });
+                        }
+                    }
+                }
+            };
+
+            const cellEditCancelled = (cell) => {
+                $(cell.getElement()).off('keyup');
+                const value = cell.getValue();
+                const validationResult = validateAndStyle(cell, value);
+            };
+
             const getClasses = () => {
                 let classes = [];
                 if (isNumberEntity) {
@@ -627,45 +698,8 @@ class Datagrid {
                 editor: entityOptions.editorType,
                 editorParams: getEditorParams(),
                 cellEditing: getCellEditingHandler(),
-                cellEdited: cell => {
-                    $(cell.getElement()).off('keyup');
-
-                    const oldValue = isUndefined(cell.getOldValue()) ? '' : cell.getOldValue();
-                    const value = cell.getValue();
-
-                    const validationResult = validateAndStyle(cell, value);
-
-                    if (!validationResult.isValid && !validationResult.allowSave) {
-                        cell.restoreOldValue();
-                        validateAndStyle(cell, cell.getValue());
-                        dialogs.alert(validationResult.errorMessage, VALIDATION_ERROR_TITLE, () => {
-                            defer(() => cell.edit(true));
-                        });
-                    } else {
-                        if (value !== oldValue) {
-                            if (isUndefined(value) || value === '') {
-                                removeValue(cell.getData()).catch(err => {
-                                    cell.restoreOldValue();
-                                    // TODO: message saying
-                                    // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
-                                });
-                            } else {
-                                saveValue(cell.getData(), value).catch(err => {
-                                    cell.restoreOldValue();
-                                    // TODO: message saying
-                                    // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
-                                });
-                            }
-                        }
-                    }
-                },
-
-                cellEditCancelled: cell => {
-                    $(cell.getElement()).off('keyup');
-                    const value = cell.getValue();
-
-                    const validationResult = validateAndStyle(cell, value);
-                },
+                cellEdited: cellEdited,
+                cellEditCancelled: cellEditCancelled,
                 dataType: entity.getType(),
                 elementType: displayEntity.getElementType(),
                 scenario: columnScenario,
@@ -686,9 +720,9 @@ class Datagrid {
                         const uncheckedValue = get(entityOptions, 'uncheckedValue', false);
                         return {
                             values: [
-                                { value: undefined, label: 'No Filter' },
-                                { value: String(checkedValue), label: 'Checked' },
-                                { value: String(uncheckedValue), label: 'Unchecked' }
+                                {value: undefined, label: 'No Filter'},
+                                {value: String(checkedValue), label: 'Checked'},
+                                {value: String(uncheckedValue), label: 'Unchecked'}
                             ]
                         };
                     }
@@ -768,11 +802,11 @@ class Datagrid {
             return column;
         });
 
-        let columns = [].concat(indicesColumns, entitiesColumns);
+        let columns = sortBy([].concat(indicesColumns, entitiesColumns), (column) => column.index || -1)
 
         let freezeColumns = parseInt(gridOptions.freezeColumns);
         if (freezeColumns && !isNaN(freezeColumns)) {
-            columns = map(columns, function(col, idx) {
+            columns = map(columns, function (col, idx) {
                 if (idx < freezeColumns) {
                     col.frozen = true;
                 }
@@ -780,7 +814,7 @@ class Datagrid {
             });
         }
 
-        const { data, allSetValues } = perf('PERF Data generation:', () =>
+        const {data, allSetValues} = perf('PERF Data generation:', () =>
             dataTransform(
                 allColumnIndices,
                 columns,
@@ -848,6 +882,7 @@ class Datagrid {
     }
 
     dispose() {
+        this.view.removeUnloadHandler(this.unloadHandlerId);
         this.table.destroy();
         each(this.subscriptions, subscription => subscription.dispose());
     }
