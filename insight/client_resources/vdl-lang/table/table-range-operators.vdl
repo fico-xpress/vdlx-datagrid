@@ -174,5 +174,22 @@ limitations under the License.
             </vdl-column>
         </vdl-section>
 
+        <vdl-section heading="Editable">
+            <vdl-column heading="Column filters" size="6" class="example-passed">
+                <vdlx-datagrid show-filter="true" column-filter="true">
+                    <vdlx-datagrid-column entity="SupportCosts" heading="SUPPORT COSTS" editable="true"></vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="ServiceLevelAgreements" editable="truew">Agreements Custom Title</vdlx-datagrid-column>
+                </vdlx-datagrid>
+            </vdl-column>
+
+            <vdl-column heading="VDL source:" size="6">
+                <code-panel><pre>&lt;vdlx-datagrid show-filter=&quot;true&quot; column-filter=&quot;true&quot;&gt;
+                    &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot; heading=&quot;SUPPORT COSTS&quot; editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+                    &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot; editable=&quot;truew&quot;&gt;Agreements Custom Title&lt;/vdlx-datagrid-column&gt;
+                &lt;/vdlx-datagrid&gt;</pre>
+                </code-panel>
+            </vdl-column>
+        </vdl-section>
+
     </vdl-page>
 </vdl>
