@@ -204,6 +204,7 @@ let filter = (column, valueTxt, cellValue, rowData, params) => {
 };
 
 export const TESTING_ONLY = {
+    _filterFloat,
     _exactCompareAsNumber,
     _exactCompareAsNumberRounded
 };

@@ -5,6 +5,7 @@ import {Enums} from '../../../src/js/vdlx-datagrid/grid-filters';
 describe('grid filters functions', () => {
     let exactCompareAsNumber = TESTING_ONLY._exactCompareAsNumber;
     let exactCompareAsNumberRounded = TESTING_ONLY._exactCompareAsNumberRounded;
+    let filterFloat = TESTING_ONLY._filterFloat;
 
     beforeEach(() => {
 
@@ -15,6 +16,35 @@ describe('grid filters functions', () => {
             }
         };
 
+    });
+
+    describe('filter float testing as NaN', () => {
+        [
+            'rrr',
+            '12A',
+            '1,000'
+        ]
+            .forEach((input) => {
+            it(`${input} is NaN`, () => {
+                let result = filterFloat(input);
+                expect(result).toBeNaN();
+            });
+        });
+    });
+
+    describe('filter float testing as valid', () => {
+        [
+            ['0', 0],
+            ['12', 12],
+            ['1.0', 1.0],
+            ['-1.0', -1.0],
+        ]
+            .forEach(([input, expected]) => {
+                it(`${input} is valid`, () => {
+                    let result = filterFloat(input);
+                    expect(result).toBe(expected);
+                });
+            });
     });
 
     describe('tests exact number comparison', () => {
