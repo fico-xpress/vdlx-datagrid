@@ -7,15 +7,18 @@ describe('vdlx-datagrid grid-filters', () => {
     beforeEach(() => {
 
         insight.Formatter = {
-            formatNumber: (d, fn) => {
-                if(!!fn) {
-                    return fn(d);
+            formatNumber: (d, fmt) => {
+                if(!!fmt) {
+                    if((typeof fmt) === 'string') {
+                        return fmt;
+                    }
+                    return fmt(d);
                 }
                 return '' + d;
             },
             format: {
-                decimal: jest.fn(n => n),
-                integer: jest.fn(n => n)
+                integer: '#,##0',
+                decimal: '#,##0.0###'
             }
         }
     });
@@ -28,29 +31,32 @@ describe('vdlx-datagrid grid-filters', () => {
         expect(filter).toBeUndefined();
     });
 
-    /*
-    Check that something is returned when passing an elementType that has a corresponding column filter.
-     */
-    [Enums.DataType.INTEGER, Enums.DataType.REAL, Enums.DataType.STRING].forEach(elementType => {
-        it(`chooseColumnFilter with elementType as ${elementType}`, () => {
-            var filter = chooseColumnFilter({
-                elementType: elementType
+    describe('check formatters', () => {
+        /*
+        Check that something is returned when passing an elementType that has a corresponding column filter.
+         */
+        [Enums.DataType.INTEGER, Enums.DataType.REAL, Enums.DataType.STRING].forEach(elementType => {
+            it(`chooseColumnFilter with elementType as ${elementType}`, () => {
+                var filter = chooseColumnFilter({
+                    elementType: elementType
+                });
+                expect(filter).toBeDefined();
             });
-            expect(filter).toBeDefined();
+        });
+
+        /*
+        Check that undefined is returned when passing an elementType that doesn't have a corresponding column filter.
+         */
+        [Enums.DataType.CONSTRAINT, Enums.DataType.DECISION_VARIABLE].forEach(elementType => {
+            it(`chooseColumnFilter with elementType as ${elementType}`, () => {
+                var filter = chooseColumnFilter({
+                    elementType: elementType
+                });
+                expect(filter).toBeUndefined();
+            });
         });
     });
 
-    /*
-    Check that undefined is returned when passing an elementType that doesn't have a corresponding column filter.
-     */
-    [Enums.DataType.CONSTRAINT, Enums.DataType.DECISION_VARIABLE].forEach(elementType => {
-        it(`chooseColumnFilter with elementType as ${elementType}`, () => {
-            var filter = chooseColumnFilter({
-                elementType: elementType
-            });
-            expect(filter).toBeUndefined();
-        });
-    });
 
     describe('Partial match', () => {
         describe('Integer type', () => {
@@ -103,7 +109,8 @@ describe('vdlx-datagrid grid-filters', () => {
             });
             it('chooseColumnFilter call it with a non-matching real but formatted version matches', () => {
                 var column = {
-                    elementType: Enums.DataType.REAL
+                    elementType: Enums.DataType.REAL,
+                    format: '2.5'
                 };
                 var filter = chooseColumnFilter(column);
                 var result = filter("2.5", 99);
@@ -144,16 +151,16 @@ describe('vdlx-datagrid grid-filters', () => {
         describe('Integer type', () => {
             it('chooseColumnFilter call it with a matching integer', () => {
                 const column = {
-                    elementType: Enums.DataType.INTEGER
+                    elementType: Enums.DataType.INTEGER,
+                    format: undefined
                 };
                 const filter = chooseColumnFilter(column);
-                const result = filter("=2", 20);
+                const result = filter("=20", 20);
                 expect(result).toBeTruthy();
             });
             it('chooseColumnFilter call it with a non-matching integer', () => {
                 var column = {
-                    elementType: Enums.DataType.INTEGER,
-                    format: n => n
+                    elementType: Enums.DataType.INTEGER
                 };
                 var filter = chooseColumnFilter(column);
                 var result = filter("=3", 2);
@@ -162,7 +169,7 @@ describe('vdlx-datagrid grid-filters', () => {
             it('chooseColumnFilter call it with a non-matching integer but formatted version matches', () => {
                 var column = {
                     elementType: Enums.DataType.INTEGER,
-                    format: n => n
+                    format: '3'
                 };
                 var filter = chooseColumnFilter(column);
                 var result = filter("=3", 2);
@@ -190,8 +197,10 @@ describe('vdlx-datagrid grid-filters', () => {
             });
             it('chooseColumnFilter call it with a non-matching real but formatted version matches', () => {
                 var column = {
-                    elementType: Enums.DataType.REAL
+                    elementType: Enums.DataType.REAL,
+                    format: '2.5'
                 };
+
                 var filter = chooseColumnFilter(column);
                 var result = filter("=2.5", 99);
                 expect(result).toBeTruthy();
@@ -456,7 +465,7 @@ describe('vdlx-datagrid grid-filters', () => {
                 });
 
                 it('3.000001 !=3', () => {
-                    const result = matchesAgainst(column, '!=3.000001', 4);
+                    const result = matchesAgainst(column, '!=3.000001', 3);
                     expect(result).toBeTruthy();
                 });
             });

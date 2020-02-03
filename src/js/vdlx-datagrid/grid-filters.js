@@ -95,9 +95,17 @@ let _exactCompareAsNumber = (searchData, data) => {
     return searchTermAsFloat === originalValueAsFloat;
 };
 
-let _exactCompareAsNumberRounded = (searchData, data, columnConfig) => {
+/**
+ *
+ * @param searchData
+ * @param cellData
+ * @param columnConfig
+ * @returns {boolean}
+ * @private
+ */
+let _exactCompareAsNumberRounded = (searchData, cellData, columnConfig) => {
     let searchTermAsFloat = _filterFloat(searchData);
-    let originalValueAsFloat = _filterFloat(data);
+    let originalValueAsFloat = _filterFloat(cellData);
 
     let roundedOriginalValue;
     let decimalPlaces;
@@ -110,37 +118,45 @@ let _exactCompareAsNumberRounded = (searchData, data, columnConfig) => {
     return searchTermAsFloat === roundedOriginalValue;
 };
 
-let _exactMatchCell = (searchData, data, column) => {
+/**
+ *
+ * @param searchData
+ * @param cellData
+ * @param column
+ * @returns {*}
+ * @private
+ */
+let _exactMatchCell = (searchData, cellData, column) => {
     let result = true;
 
     if (!column.elementType || column.elementType === Enums.DataType.STRING) {
-        result = _exactCompareAsString(searchData, data);
+        result = _exactCompareAsString(searchData, cellData);
     } else {
-        result = _exactCompareAsNumber(searchData, data);
+        result = _exactCompareAsNumber(searchData, cellData);
 
         if (!result) {
-            result = _exactCompareAsNumberRounded(searchData, data, column);
+            result = _exactCompareAsNumberRounded(searchData, cellData, column);
         }
     }
     return result;
 };
 
-let _partialMatchCell = (searchData, data, column) => {
-    data = data.toLowerCase();
+let _partialMatchCell = (searchData, cellData, column) => {
+    cellData = cellData.toLowerCase();
     searchData = searchData.toLowerCase();
 
     // If search term is an empty string then need to perform an exact match
     if (searchData === '') {
-        return data === searchData;
+        return cellData === searchData;
     }
 
-    var result = data.indexOf(searchData) >= 0;
+    var result = cellData.indexOf(searchData) >= 0;
 
     if (!result && column.elememtType !== Enums.DataType.STRING) {
         var formatter = _getFormatter(column);
         if (formatter) {
             var formattedSearchData = _formatSearchDataIfNecessary(searchData, column.displayType, formatter);
-            var formattedCellData = insight.Formatter.formatNumber(data, formatter);
+            var formattedCellData = insight.Formatter.formatNumber(cellData, formatter);
             result = formattedCellData.indexOf(formattedSearchData) >= 0;
         }
     }
@@ -151,7 +167,6 @@ const EQUALS_OPERATOR = '=';
 const NOT_OPERATOR = '!';
 const LESS_THAN_OPERATOR = '<';
 const GREATER_THAN_OPERATOR = '>';
-
 
 let filter = (column, valueTxt, cellValue, rowData, params) => {
     const firstChar = valueTxt.substring(0, 1);
@@ -186,6 +201,11 @@ let filter = (column, valueTxt, cellValue, rowData, params) => {
         }
     }
     return _partialMatchCell(valueTxt, String(cellValue), column);
+};
+
+export const TESTING_ONLY = {
+    _exactCompareAsNumber,
+    _exactCompareAsNumberRounded
 };
 
 export let chooseColumnFilter = column => {
