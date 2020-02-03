@@ -11,6 +11,7 @@
             <vdl-view title="Basic usage" path="vdl-lang/table/table.vdl"/>
             <vdl-view title="Editable tables" path="vdl-lang/table/table-editable.vdl"/>
             <vdl-view title="Editable tables - Select inputs" path="vdl-lang/table/table-editable-select.vdl"/>
+            <vdl-view title="Range operators" path="vdl-lang/table/table-range-operators.vdl"/>
             <vdl-view title="Multi-scenario" path="vdl-lang/table/table-multi-scenario.vdl"/>
             <vdl-view title="Conditionals" path="vdl-lang/table/table-conditionals.vdl"/>
             <vdl-view title="Index filtering" path="vdl-lang/table/table-index-filtering.vdl"/>
