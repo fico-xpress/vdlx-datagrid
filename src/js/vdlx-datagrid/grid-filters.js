@@ -120,42 +120,42 @@ let _exactCompareAsNumberRounded = (searchData, cellData, columnConfig) => {
 
 /**
  *
- * @param searchData
+ * @param searchText
  * @param cellData
  * @param column
  * @returns {*}
  * @private
  */
-let _exactMatchCell = (searchData, cellData, column) => {
+let _exactMatchCell = (searchText, cellData, column) => {
     let result = true;
 
     if (!column.elementType || column.elementType === Enums.DataType.STRING) {
-        result = _exactCompareAsString(searchData, cellData);
+        result = _exactCompareAsString(searchText, cellData);
     } else {
-        result = _exactCompareAsNumber(searchData, cellData);
+        result = _exactCompareAsNumber(searchText, cellData);
 
         if (!result) {
-            result = _exactCompareAsNumberRounded(searchData, cellData, column);
+            result = _exactCompareAsNumberRounded(searchText, cellData, column);
         }
     }
     return result;
 };
 
-let _partialMatchCell = (searchData, cellData, column) => {
+let _partialMatchCell = (searchText, cellData, column) => {
     cellData = cellData.toLowerCase();
-    searchData = searchData.toLowerCase();
+    searchText = searchText.toLowerCase();
 
     // If search term is an empty string then need to perform an exact match
-    if (searchData === '') {
-        return cellData === searchData;
+    if (searchText === '') {
+        return cellData === searchText;
     }
 
-    var result = cellData.indexOf(searchData) >= 0;
+    var result = cellData.indexOf(searchText) >= 0;
 
     if (!result && column.elememtType !== Enums.DataType.STRING) {
         var formatter = _getFormatter(column);
         if (formatter) {
-            var formattedSearchData = _formatSearchDataIfNecessary(searchData, column.displayType, formatter);
+            var formattedSearchData = _formatSearchDataIfNecessary(searchText, column.displayType, formatter);
             var formattedCellData = insight.Formatter.formatNumber(cellData, formatter);
             result = formattedCellData.indexOf(formattedSearchData) >= 0;
         }
@@ -168,39 +168,40 @@ const NOT_OPERATOR = '!';
 const LESS_THAN_OPERATOR = '<';
 const GREATER_THAN_OPERATOR = '>';
 
-let filter = (column, valueTxt, cellValue, rowData, params) => {
-    const firstChar = valueTxt.substring(0, 1);
+let filter = (column, searchText, cellValue, rowData, params) => {
+    debugger;
+    const firstChar = searchText.substring(0, 1);
     var exactColumnSearch = firstChar === EQUALS_OPERATOR;
     if (exactColumnSearch) {
-        return _exactMatchCell(valueTxt.substring(1), String(cellValue), column);
+        return _exactMatchCell(searchText.substring(1), String(cellValue), column);
     }
     if(!!column.elementType && (column.elementType === Enums.DataType.INTEGER || column.elementType === Enums.DataType.REAL)) {
-        const secondChar = valueTxt.length > 1 ? valueTxt.substring(1,2) : '';
+        const secondChar = searchText.length > 1 ? searchText.substring(1,2) : '';
         if (firstChar === LESS_THAN_OPERATOR) {
             if(secondChar === EQUALS_OPERATOR) { // '<='
-                var searchValue = parseFloat(valueTxt.substr(2));
+                var searchValue = parseFloat(searchText.substr(2));
                 return cellValue <= searchValue;
             } else if(secondChar === GREATER_THAN_OPERATOR) { // '<>'
-                var searchValue = valueTxt.substr(2);
+                var searchValue = searchText.substr(2);
                 return cellValue !== searchValue;
             } else { // '<'
-                var searchValue = parseFloat(valueTxt.substr(1));
+                var searchValue = parseFloat(searchText.substr(1));
                 return cellValue < searchValue;
             }
         } else if (firstChar === GREATER_THAN_OPERATOR) {
             if(secondChar === EQUALS_OPERATOR) { // '>='
-                var searchValue = parseFloat(valueTxt.substr(2));
+                var searchValue = parseFloat(searchText.substr(2));
                 return cellValue >= searchValue;
             } else { // '>'
-                var searchValue = parseFloat(valueTxt.substr(1));
+                var searchValue = parseFloat(searchText.substr(1));
                 return cellValue > searchValue;
             }
         } else if (firstChar === NOT_OPERATOR && secondChar === EQUALS_OPERATOR) { // '!='
-            var searchValue = valueTxt.substr(2);
+            var searchValue = searchText.substr(2);
             return cellValue !== searchValue;
         }
     }
-    return _partialMatchCell(valueTxt, String(cellValue), column);
+    return _partialMatchCell(searchText, String(cellValue), column);
 };
 
 export const TESTING_ONLY = {
