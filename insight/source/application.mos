@@ -26,8 +26,6 @@ model "vdlx-datagrid examples"
 
   !@insight.resultdata.delete on-execute
   !@insight.execmodes.FAST.threads=1
-  !@insight.execmodes.TABLEONE.clearinput true
-  !@insight.execmodes.TABLEONE.threads=1
   !@insight.execmodes.FAST.preferredservice=SECONDARY
   !@insight.execmodes.REPORT.threads=8
 
@@ -168,17 +166,25 @@ model "vdlx-datagrid examples"
 
     ! read in table 1
     ! t1IndexA,t1IndexB,t1IndexC,t1IndexD,t1IndexE,t1Col1,t1Col2,t1Col3,t1Col4,t1Col5,t1Col6
+
+    !@insight.transform.labels.entity t1IndexNames
     t1IndexA = 1..4
+    t1IndexNames:array(t1IndexA) of string
+
     t1IndexB = 1..4
     t1IndexC = 1..5
     t1IndexD = 1..5
     t1IndexE = 1..5
+
     t1Col1,t1Col2,t1Col3,t1Col4,t1Col5: array(t1IndexA,t1IndexB,t1IndexC,t1IndexD,t1IndexE) of integer
     t1Col6: array(t1IndexA,t1IndexB,t1IndexC,t1IndexD,t1IndexE) of boolean
 
     ! read in table 2
     ! t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF,t2Col1,t2Col2,t2Col3,t2Col4
+    !@insight.transform.labels.entity t2IndexNames
     t2IndexA = 1..5
+    t2IndexNames:array(t2IndexA) of string
+
     t2IndexB = 1..5
     t2IndexC = 1..5
     t2IndexD = 1..4
@@ -193,7 +199,10 @@ model "vdlx-datagrid examples"
 
     ! read in table 3
     ! t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF,t3Col1,t3Col2,t3Col3,t3Col4
+    !@insight.transform.labels.entity t3IndexNames
     t3IndexA = 1..10
+    t3IndexNames:array(t3IndexA) of string
+
     t3IndexB = 1..10
     t3IndexC = 1..10
     t3IndexD = 1..5
@@ -207,7 +216,9 @@ model "vdlx-datagrid examples"
 
     ! read in table 4
     ! t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF,t4Col1,t4Col2,t4Col3,t4Col4
+    !@insight.transform.labels.entity t3IndexNames
     t4IndexA = 1..10
+
     t4IndexB = 1..10
     t4IndexC = 1..5
     t4IndexD = 1..10
@@ -221,7 +232,9 @@ model "vdlx-datagrid examples"
 
     ! read in table 5
     ! t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF,t5Col1,t5Col2,t5Col3,t5Col4
+    !@insight.transform.labels.entity t3IndexNames
     t5IndexA = 1..10
+
     t5IndexB = 1..10
     t5IndexC = 1..10
     t5IndexD = 1..10
@@ -284,11 +297,6 @@ model "vdlx-datagrid examples"
 
   !Third Table
   procedure LoadTableThree100K
-    ! t3Col1: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of real
-    ! t3Col2: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of boolean
-    ! t3Col3: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of string
-    ! t3Col4: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of integer
-
     forall (a in t3IndexA,b in t3IndexB,c in t3IndexC,d in t3IndexD,e in t3IndexE, f in t3IndexF) do
         t3Col1(a,b,c,d,e,f) :=integer(round(10000*random))
         if e mod 2 = 0 then          ! Mosel's built-in mod operator
@@ -304,11 +312,6 @@ model "vdlx-datagrid examples"
 
   !Fourth Table
   procedure LoadTableFour500K
-    ! t4Col1: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of real
-    ! t4Col2: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of boolean
-    ! t4Col3: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of string
-    ! t4Col4: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of integer
-
     forall (a in t4IndexA,b in t4IndexB,c in t4IndexC,d in t4IndexD,e in t4IndexE, f in t4IndexF) do
         t4Col1(a,b,c,d,e,f) :=integer(round((1000*random)+0.5))
         if e mod 2 = 0 then          ! Mosel's built-in mod operator
@@ -323,10 +326,6 @@ model "vdlx-datagrid examples"
 
   !Fifth Table
   procedure LoadTableFive1Million
-    ! t5Col1: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of real
-    ! t5Col2: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of boolean
-    ! t5Col3: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of string
-    ! t5Col4: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of integer
     forall (a in t5IndexA,b in t5IndexB,c in t5IndexC,d in t5IndexD,e in t5IndexE, f in t5IndexF) do
         t5Col1(a,b,c,d,e,f) :=integer(round((1000*random)+0.5))
         if e mod 2 = 0 then          ! Mosel's built-in mod operator
@@ -463,6 +462,10 @@ model "vdlx-datagrid examples"
     ! initializations from "mmsheet.csv:table1.csv"
     !     [t1Col1,t1Col2,t1Col3,t1Col4,t1Col5,t1Col6] as "skiph;[A1:K2001]"
     ! end-initializations
+    t1IndexNames  :: ["Alpha","Beta","Gamma","Delta"]
+    t2IndexNames  :: ["White","Yellow","Orange","Green","Blue"]
+    t3IndexNames  :: ["Antigua and Barbuda","Marshall Islands","Mecklenburg-Schwerin","Montenegro","Equatorial Guinea","Russia","Czechoslovakia","Pakistan","Brunswick and Lüneburg","Bosnia and Herzegovina"]
+
     LoadTableOne2k
     LoadTableTwo10K
     ! initializations from "mmsheet.csv:table2.csv"
@@ -504,17 +507,14 @@ model "vdlx-datagrid examples"
   case insightgetmode of
     INSIGHT_MODE_LOAD: do
       datainput
-    end-do
-    INSIGHT_MODE_RUN: do
-      insightpopulate
-    end-do
-    "TABLEONE": do
-      datainput
       LoadTableOne2k
       LoadTableTwo10K
       LoadTableThree100K
 	    LoadTableFour500K
 	    LoadTableFive1Million
+    end-do
+    INSIGHT_MODE_RUN: do
+      insightpopulate
     end-do
     "FAST": do
     	writeln("FAST STUPID - Execution mode")
