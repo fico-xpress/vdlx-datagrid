@@ -16,9 +16,8 @@
     "build:debug": "cross-env NODE_ENV=development npm run version-txt && parcel build --no-cache --no-minify --no-source-maps -d dist/insight/client_resources/vdlx-datagrid-debug -o vdlx-datagrid-debug.js src/js/index.js",
     "bundle:library": "cd dist/insight/client_resources/ && bestzip vdlx-datagrid.zip vdlx-datagrid/",
     "bundle:debug-library": "cd dist/insight/client_resources/ && bestzip vdlx-datagrid-debug.zip vdlx-datagrid-debug/",
-    "bundle:app": "npm run generate-test-data && cd insight && bestzip ../vdlx-datagrid-examples-app.zip *",
-    "version-txt": "node ./scripts/create-version-files.js dist/insight/client_resources/vdlx-datagrid/VERSION.txt dist/insight/client_resources/vdlx-datagrid-debug/VERSION.txt",
-    "generate-test-data": "node generate-data.js"
+    "bundle:app": "cd insight && bestzip ../vdlx-datagrid-examples-app.zip *",
+    "version-txt": "node ./scripts/create-version-files.js dist/insight/client_resources/vdlx-datagrid/VERSION.txt dist/insight/client_resources/vdlx-datagrid-debug/VERSION.txt"
   },
   "keywords": [],
   "author": "",
