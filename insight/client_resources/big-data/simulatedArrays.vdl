@@ -1,0 +1,44 @@
+<!--
+Xpress Insight vdlx-datagrid
+=============================
+
+file big-data/datagrid-bd5.vdl
+```````````````````````
+vdlx-datagrid Big data example
+
+(c) Copyright 2019 Fair Isaac Corporation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<vdl version="4.6">
+
+    <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+
+    <vdl-page>
+            <vdl-section heading="Data" layout="fluid">
+              <vdl-execute-button mode="INPUT_EXPORT_PURCHASE" caption="Export purchase data" />
+              <P/>
+             <vdl-row >
+                <vdl-column>
+                  <vdlx-datagrid page-mode="paged" page-mode="paged" page-size="15" show-filter="true" column-filter="true">
+                    <vdlx-datagrid-column entity="UI_OwnProdPerPeriod" editable="false"> Own Product </vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="UI_IsPurchMatInT" editable="false"> Purchase allowed </vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="UI_PurchPrice" format="##,###.00" editable="true"> Price [in EUR per t] </vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="UI_PurchMin" format="##,###.00" editable="false"> Minimum [in t] </vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="UI_PurchMax" format="##,###.00" editable="false"> Maximum [in t] </vdlx-datagrid-column>
+                 </vdlx-datagrid>
+                </vdl-column>
+              </vdl-row>
+            </vdl-section>
+    </vdl-page>
+</vdl>

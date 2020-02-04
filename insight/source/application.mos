@@ -26,6 +26,8 @@ model "vdlx-datagrid examples"
 
   !@insight.resultdata.delete on-execute
   !@insight.execmodes.FAST.threads=1
+  !@insight.execmodes.TABLEONE.clearinput true
+  !@insight.execmodes.TABLEONE.threads=1
   !@insight.execmodes.FAST.preferredservice=SECONDARY
   !@insight.execmodes.REPORT.threads=8
 
@@ -37,11 +39,12 @@ model "vdlx-datagrid examples"
     LENGTH = 400
     DATAFOLDER = ""
     DATAFILE = DATAFOLDER + "agency_example_data.txt"
+    MaxPeriods = 15
   end-parameters
 
   ! *** Declare public data *** !
   public declarations
-
+    mycounter: integer
     !@insight.alias A scalar
     MyScalar: string        ! A string scalar
 
@@ -165,47 +168,185 @@ model "vdlx-datagrid examples"
 
     ! read in table 1
     ! t1IndexA,t1IndexB,t1IndexC,t1IndexD,t1IndexE,t1Col1,t1Col2,t1Col3,t1Col4,t1Col5,t1Col6
-    t1IndexA,t1IndexB,t1IndexC,t1IndexD,t1IndexE: set of integer
-    t1Col1,t1Col2,t1Col3,t1Col4,t1Col5: dynamic array(t1IndexA,t1IndexB,t1IndexC,t1IndexD,t1IndexE) of integer
-    t1Col6: dynamic array(t1IndexA,t1IndexB,t1IndexC,t1IndexD,t1IndexE) of boolean
+    t1IndexA = 1..4
+    t1IndexB = 1..4
+    t1IndexC = 1..5
+    t1IndexD = 1..5
+    t1IndexE = 1..5
+    t1Col1,t1Col2,t1Col3,t1Col4,t1Col5: array(t1IndexA,t1IndexB,t1IndexC,t1IndexD,t1IndexE) of integer
+    t1Col6: array(t1IndexA,t1IndexB,t1IndexC,t1IndexD,t1IndexE) of boolean
 
     ! read in table 2
     ! t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF,t2Col1,t2Col2,t2Col3,t2Col4
-    t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF: set of integer
-    t2Col1: dynamic array(t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF) of real
-    t2Col2: dynamic array(t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF) of boolean
-    t2Col3: dynamic array(t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF) of string
-    t2Col4: dynamic array(t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF) of integer
+    t2IndexA = 1..5
+    t2IndexB = 1..5
+    t2IndexC = 1..5
+    t2IndexD = 1..4
+    t2IndexE = 1..4
+    t2IndexF = 1..5
+   ! t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF: set of integer
+    t2Col1: array(t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF) of real
+    t2Col2: array(t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF) of boolean
+    t2Col3: array(t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF) of string
+    t2Col4: array(t2IndexA,t2IndexB,t2IndexC,t2IndexD,t2IndexE,t2IndexF) of integer
+
 
     ! read in table 3
     ! t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF,t3Col1,t3Col2,t3Col3,t3Col4
-    t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF: set of integer
-    t3Col1: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of real
-    t3Col2: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of boolean
-    t3Col3: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of string
-    t3Col4: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of integer
+    t3IndexA = 1..10
+    t3IndexB = 1..10
+    t3IndexC = 1..10
+    t3IndexD = 1..5
+    t3IndexE = 1..4
+    t3IndexF = 1..5
+    !t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF: set of integer
+    t3Col1:  array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of real
+    t3Col2:  array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of boolean
+    t3Col3:  array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of string
+    t3Col4:  array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of integer
 
     ! read in table 4
     ! t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF,t4Col1,t4Col2,t4Col3,t4Col4
-    t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF: set of integer
-    t4Col1: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of real
-    t4Col2: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of boolean
-    t4Col3: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of string
-    t4Col4: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of integer
+    t4IndexA = 1..10
+    t4IndexB = 1..10
+    t4IndexC = 1..5
+    t4IndexD = 1..10
+    t4IndexE = 1..10
+    t4IndexF = 1..10
+    !t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF: set of integer
+    t4Col1:  array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of real
+    t4Col2:  array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of boolean
+    t4Col3:  array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of string
+    t4Col4:  array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of integer
 
     ! read in table 5
     ! t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF,t5Col1,t5Col2,t5Col3,t5Col4
-    t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF: set of integer
-    t5Col1: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of real
-    t5Col2: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of boolean
-    t5Col3: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of string
-    t5Col4: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of integer
+    t5IndexA = 1..10
+    t5IndexB = 1..10
+    t5IndexC = 1..10
+    t5IndexD = 1..10
+    t5IndexE = 1..10
+    t5IndexF = 1..10
+    !t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF: set of integer
+    t5Col1:  array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of real
+    t5Col2:  array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of boolean
+    t5Col3:  array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of string
+    t5Col4:  array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of integer
+
+
+
+    MAT: set of integer
+    SITE: set of string
+    VEN: set of string
+    MAT_NAMES: set of string
+
+
+    T= 1..MaxPeriods
+    UI_PurchPrice:         array(SITE,VEN,MAT,MAT_NAMES,T) of real
+    UI_PurchMin:           array(SITE,VEN,MAT,MAT_NAMES,T) of real
+    UI_PurchMax:           array(SITE,VEN,MAT,MAT_NAMES,T) of real
+    UI_IsPurchMatInT:      array(SITE,VEN,MAT,MAT_NAMES,T) of boolean
+    UI_OwnProdPerPeriod:   array(SITE,VEN,MAT,MAT_NAMES,T) of boolean
 
   end-declarations
 
-  ! *** Loading input data *** !
+
+  !First Table
+  procedure LoadTableOne2k
+    forall (a in t1IndexA,b in t1IndexB,c in t1IndexC,d in t1IndexD,e in t1IndexE) do
+        t1Col1(a,b,c,d,e) :=integer(round((1000*random)+0.5))
+        t1Col2(a,b,c,d,e) :=integer(round((1000*random)+0.5))
+        t1Col3(a,b,c,d,e) :=integer(round((1000*random)+0.5))
+        t1Col4(a,b,c,d,e) :=integer(round((1000 *random)+0.5))
+        t1Col5(a,b,c,d,e) :=integer(round((1000 *random)+0.5))
+        if e mod 2 = 0 then          ! Mosel's built-in mod operator
+          t1Col6(a,b,c,d,e) :=false                    ! The same as sum:= sum + d
+        else
+          t1Col6(a,b,c,d,e) :=true                    ! The same as sum:= sum + d
+        end-if
+    end-do
+  end-procedure
+
+  !Second Table
+  procedure LoadTableTwo10K
+    forall (a in t2IndexA,b in t2IndexB,c in t2IndexC,d in t2IndexD,e in t2IndexE, f in t2IndexF) do
+        t2Col1(a,b,c,d,e,f) :=integer(round((1000*random)+0.5))
+        if e mod 2 = 0 then          ! Mosel's built-in mod operator
+          t2Col2(a,b,c,d,e,f) :=false                    ! The same as sum:= sum + d
+        else
+          t2Col2(a,b,c,d,e,f) :=true                    ! The same as sum:= sum + d
+        end-if
+        t2Col3(a,b,c,d,e,f) :="a long string"
+        t2Col4(a,b,c,d,e,f) :=integer(round((1000 *random)+0.5))
+
+    end-do
+  end-procedure
+
+  !Third Table
+  procedure LoadTableThree100K
+    ! t3Col1: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of real
+    ! t3Col2: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of boolean
+    ! t3Col3: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of string
+    ! t3Col4: dynamic array(t3IndexA,t3IndexB,t3IndexC,t3IndexD,t3IndexE,t3IndexF) of integer
+
+    forall (a in t3IndexA,b in t3IndexB,c in t3IndexC,d in t3IndexD,e in t3IndexE, f in t3IndexF) do
+        t3Col1(a,b,c,d,e,f) :=integer(round(10000*random))
+        if e mod 2 = 0 then          ! Mosel's built-in mod operator
+          t3Col2(a,b,c,d,e,f) :=false                    ! The same as sum:= sum + d
+        else
+          t3Col2(a,b,c,d,e,f) :=true                    ! The same as sum:= sum + d
+        end-if
+        t3Col3(a,b,c,d,e,f) :="a long string"
+        t3Col4(a,b,c,d,e,f) :=integer(round((10000 *random)+0.5))
+
+    end-do
+  end-procedure
+
+  !Fourth Table
+  procedure LoadTableFour500K
+    ! t4Col1: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of real
+    ! t4Col2: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of boolean
+    ! t4Col3: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of string
+    ! t4Col4: dynamic array(t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF) of integer
+
+    forall (a in t4IndexA,b in t4IndexB,c in t4IndexC,d in t4IndexD,e in t4IndexE, f in t4IndexF) do
+        t4Col1(a,b,c,d,e,f) :=integer(round((1000*random)+0.5))
+        if e mod 2 = 0 then          ! Mosel's built-in mod operator
+          t4Col2(a,b,c,d,e,f) :=false                    ! The same as sum:= sum + d
+        else
+          t4Col2(a,b,c,d,e,f) :=true                    ! The same as sum:= sum + d
+        end-if
+        t4Col3(a,b,c,d,e,f) :="a long string"
+        t4Col4(a,b,c,d,e,f) :=integer(round((1000 *random)+0.5))
+    end-do
+  end-procedure
+
+  !Fifth Table
+  procedure LoadTableFive1Million
+    ! t5Col1: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of real
+    ! t5Col2: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of boolean
+    ! t5Col3: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of string
+    ! t5Col4: dynamic array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of integer
+    forall (a in t5IndexA,b in t5IndexB,c in t5IndexC,d in t5IndexD,e in t5IndexE, f in t5IndexF) do
+        t5Col1(a,b,c,d,e,f) :=integer(round((1000*random)+0.5))
+        if e mod 2 = 0 then          ! Mosel's built-in mod operator
+          t5Col2(a,b,c,d,e,f) :=false                    ! The same as sum:= sum + d
+        else
+          t5Col2(a,b,c,d,e,f) :=true                    ! The same as sum:= sum + d
+        end-if
+        t5Col3(a,b,c,d,e,f) :="a long string"
+        t5Col4(a,b,c,d,e,f) :=integer(round((1000 *random)+0.5))
+    end-do
+  end-procedure
+
+
 
   procedure datainput
+    SITE:= {"OneSite","TwoSite","ThreeeSite","FourSite","FiveSite","SixSite","SevenSite"}
+    VEN:= {"v_OneSite","v_TwoSite","v_ThreeeSite","v_FourSite","v_FiveSite","v_SixSite","v_SevenSite"}
+    MAT_NAMES:=  {"MAT_OneSite","MAT__TwoSite","MAT__ThreeeSite","MAT__FourSite","MAT__FiveSite","MAT__SixSite","MAT__SevenSite"}
+    MAT:= {1,2,3,4,5,6,7,8,9,10,11,12}
+
     PlanetsAsString := {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
     PlanetsAsInteger := {1, 2, 3, 4, 5, 6, 7, 8, 9}
 
@@ -319,30 +460,46 @@ model "vdlx-datagrid examples"
         MAX_PERC_AGENCY
     end-initializations
 
-    initializations from "mmsheet.csv:table1.csv"
-        [t1Col1,t1Col2,t1Col3,t1Col4,t1Col5,t1Col6] as "skiph;[A1:K2001]"
-    end-initializations
+    ! initializations from "mmsheet.csv:table1.csv"
+    !     [t1Col1,t1Col2,t1Col3,t1Col4,t1Col5,t1Col6] as "skiph;[A1:K2001]"
+    ! end-initializations
+    LoadTableOne2k
+    LoadTableTwo10K
+    ! initializations from "mmsheet.csv:table2.csv"
+    !     [t2Col1,t2Col2,t2Col3,t2Col4] as "skiph;[A1:J10001]"
+    ! end-initializations
 
-    initializations from "mmsheet.csv:table2.csv"
-        [t2Col1,t2Col2,t2Col3,t2Col4] as "skiph;[A1:J10001]"
-    end-initializations
+    ! initializations from "mmsheet.csv:table3.csv"
+    !     [t3Col1,t3Col2,t3Col3,t3Col4] as "skiph;[A1:J100001]"
+    ! end-initializations
 
-    initializations from "mmsheet.csv:table3.csv"
-        [t3Col1,t3Col2,t3Col3,t3Col4] as "skiph;[A1:J100001]"
-    end-initializations
+    ! initializations from "mmsheet.csv:table4.csv"
+    !     [t4Col1,t4Col2,t4Col3,t4Col4] as "skiph;[A1:J500001]"
+    ! end-initializations
 
-    initializations from "mmsheet.csv:table4.csv"
-        [t4Col1,t4Col2,t4Col3,t4Col4] as "skiph;[A1:J500001]"
-    end-initializations
+    ! initializations from "mmsheet.csv:table5.csv"
+    !     [t5Col1,t5Col2,t5Col3,t5Col4] as "skiph;[A1:J1000001]"
+    ! end-initializations
+    LoadTableThree100K
+	  LoadTableFour500K
+	  LoadTableFive1Million
 
-    initializations from "mmsheet.csv:table5.csv"
-        [t5Col1,t5Col2,t5Col3,t5Col4] as "skiph;[A1:J1000001]"
-    end-initializations
+    mycounter:=1
+    forall(i in SITE,j in VEN,k in MAT,l in MAT_NAMES,m in T) do
+        UI_PurchPrice(i,j,k,l,m):=round(100*random)         !dynamic array(SITE,VEN,MAT,MAT_NAMES,T) of real
+        UI_PurchMin(i,j,k,l,m):=round(100*random)          !dynamic array(SITE,VEN,MAT,MAT_NAMES,T) of real
+        UI_PurchMax(i,j,k,l,m):= round(10000*random)           !dynamic array(SITE,VEN,MAT,MAT_NAMES,T) of real
+        UI_IsPurchMatInT(i,j,k,l,m):= false     !dynamic array(SITE,VEN,MAT,MAT_NAMES,T) of boolean
+        UI_OwnProdPerPeriod(i,j,k,l,m):= true  !dynamic array(SITE,VEN,MAT,MAT_NAMES,T) of boolean
+        mycounter:=mycounter+1
+    end-do
+
   end-procedure
 
   forall(d in DAYS, s in SITES) do
     staffingpersite(d,s) = sum(p in STAFF) assign(p,d,s)
   end-do
+
 
   case insightgetmode of
     INSIGHT_MODE_LOAD: do
@@ -351,17 +508,26 @@ model "vdlx-datagrid examples"
     INSIGHT_MODE_RUN: do
       insightpopulate
     end-do
+    "TABLEONE": do
+      datainput
+      LoadTableOne2k
+      LoadTableTwo10K
+      LoadTableThree100K
+	    LoadTableFour500K
+	    LoadTableFive1Million
+    end-do
     "FAST": do
-    	writeln("FAST - Execution mode")
+    	writeln("FAST STUPID - Execution mode")
     end-do
     "REPORT": do
     	writeln("REPORT - Execution mode")
     end-do
-
   end-case
 
   reported_execution_mode := insightgetmode
+  writeln("UI arrays total rows: ",mycounter);
   writeln("EXECUTION MODE:", reported_execution_mode)
+
   writeln("\nModel run finished.")
 
 end-model

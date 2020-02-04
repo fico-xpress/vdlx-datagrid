@@ -24,6 +24,7 @@
             <vdl-view title="Big Data Table 3" path="big-data/datagrid-bd3.vdl"/>
             <vdl-view title="Big Data Table 4" path="big-data/datagrid-bd4.vdl"/>
             <vdl-view title="Big Data Table 5" path="big-data/datagrid-bd5.vdl"/>
+            <vdl-view title="Simulated Arrays (61741 rows)" path="big-data/datagrid-bd5.vdl"/>
         </view-group>
     </client>
 
