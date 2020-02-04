@@ -21,7 +21,7 @@
     limitations under the License.
  */
 import { VDL } from '../insight-globals';
-import { VDGCattributes } from './attributes';
+import attributes from './attributes';
 import { transform } from './transform';
 import { viewModel } from './view-model';
 /*
@@ -35,7 +35,7 @@ import { viewModel } from './view-model';
 
 VDL('vdlx-datagrid-column', {
     tag: 'vdlx-datagrid-column',
-    attributes: VDGCattributes,
+    attributes: attributes,
     // Apply errors to the parent vdlx-datagrid element
     errorTargetSelector: function(element) {
         // error is displayed on autotable, or if there isn't one, the parent

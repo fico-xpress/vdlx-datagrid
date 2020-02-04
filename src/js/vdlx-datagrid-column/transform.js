@@ -26,6 +26,9 @@ import includes  from 'lodash/includes';
 import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
 
+import ColumnAttributes from './attributes';
+import { withDefaultValue, getAttributeMetadata, validateAllowedValues } from '../transform-utils';
+
 const DataUtils = insightModules.load('utils/data-utils');
 const enums = insightModules.load('enums');
 
@@ -232,4 +235,18 @@ export const transform = (element, attributes, api) => {
         }
         paramsBuilder.addParam('format', format.rawValue);
     }
+
+    if (attributes['sort-order']){
+        const sortOrder = Number(attributes['sort-order'].rawValue)
+
+        paramsBuilder.addParam('sortOrder', sortOrder, false);
+        const sortDirectionMetadata = getAttributeMetadata('sort-direction', ColumnAttributes);
+        const sortDirection = withDefaultValue(attributes['sort-direction'], sortDirectionMetadata);
+        const { isValid, message } = validateAllowedValues(sortDirection, sortDirectionMetadata);
+        if (!isValid) {
+            throw new Error(message);
+        }
+        paramsBuilder.addParam('sortDirection', sortDirection.rawValue, false);
+    }
+
 };
