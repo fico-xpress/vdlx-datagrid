@@ -241,8 +241,8 @@ export const transform = (element, attributes, api) => {
 
         paramsBuilder.addParam('sortOrder', sortOrder, false);
         const sortDirectionMetadata = getAttributeMetadata('sort-direction', ColumnAttributes);
-        const sortDirection = withDefaultValue(attributes['sort-direction'], sortDirectionMetadata);
-        const { isValid, message } = validateAllowedValues(sortDirection, sortDirectionMetadata);
+        const sortDirection = withDefaultValue(sortDirectionMetadata, attributes['sort-direction']);
+        const { isValid, message } = validateAllowedValues(sortDirectionMetadata, sortDirection);
         if (!isValid) {
             throw new Error(message);
         }
