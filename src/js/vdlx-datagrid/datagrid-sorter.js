@@ -60,6 +60,7 @@ export const createSorter = (entity, tabulatorSorters) => {
  */
 export const createFormattedSorter = (entity, formatter, tabulatorSorters) => {
     const entityName = entity.getName();
+    const sorter = tabulatorSorters[DEFAULT_SORTER_REF];
 
     return (a, b, aRow, bRow, column, dir, sorterParams) => {
         let aCell = {
@@ -72,7 +73,6 @@ export const createFormattedSorter = (entity, formatter, tabulatorSorters) => {
         };
 
         try {
-            const sorter = tabulatorSorters[DEFAULT_SORTER_REF];
             // TODO cache sort values per column?
             return sorter(formatter(aCell), formatter(bCell), aRow, bRow, column, dir, sorterParams);
         } catch (e) {
