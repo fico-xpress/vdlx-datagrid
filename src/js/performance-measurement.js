@@ -29,8 +29,8 @@ export default function(measurementDescription, measurement) {
         const res = measurement();
         const printEnd = () => {
             const endTime = window.performance.now();
-            console.info(
-                `${measurementDescription} has finished in: ${Math.round(
+            console.debug(
+                `PERF: ${measurementDescription} has finished in: ${Math.round(
                     endTime - startTime
                 ).toLocaleString()} milliseconds`
             );

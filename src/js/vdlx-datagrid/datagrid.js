@@ -178,7 +178,7 @@ class Datagrid {
                     }
 
                     if (gridOptions && columnOptions && scenariosData) {
-                        return perf('PERF TOTAL:', () =>
+                        return perf('TOTAL:', () =>
                             this.setColumnsAndData(gridOptions, columnOptions, scenariosData).then(() =>
                                 this.tableLock.unlock()
                             )
@@ -829,7 +829,7 @@ class Datagrid {
             });
         }
 
-        const {data, allSetValues} = perf('PERF Data generation:', () =>
+        const {data, allSetValues} = perf('Data generation:', () =>
             dataTransform(
                 allColumnIndices,
                 columns,
@@ -876,7 +876,7 @@ class Datagrid {
                 });
             }
         };
-        return perf('PERF Tabulator.setData():', () =>
+        return perf('Tabulator.setData():', () =>
             table
                 .setData(data)
                 .then(() => redraw())
