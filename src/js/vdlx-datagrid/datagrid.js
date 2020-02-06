@@ -66,6 +66,7 @@ import constant from "lodash/constant";
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');
 const dialogs = insightModules.load('dialogs');
+const enums = insightModules.load('enums');
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
@@ -541,17 +542,17 @@ class Datagrid {
 
             const defaultFormatter = cell => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue());
 
-            const getFormatter = () => {
+            const getFormatter = (type = 'display') => {
                 if (entityOptions.render) {
                     return cell =>
-                        entityOptions.render(cell.getValue(), 'display', getRowDataForColumns(cell.getData()));
+                        entityOptions.render(cell.getValue(), type, getRowDataForColumns(cell.getData()));
                 }
 
-                if (entityOptions.editorType === EDITOR_TYPES.checkbox) {
+                if (entityOptions.editorType === EDITOR_TYPES.checkbox && type === 'display') {
                     return checkboxFormatter;
-                } else {
-                    return defaultFormatter;
                 }
+
+                return defaultFormatter;
             };
 
             const checkboxCellClickHandler = (e, cell) => {
@@ -704,12 +705,56 @@ class Datagrid {
                 return classes.join(' ');
             };
 
+            // TODO cache sort values per column?
+            // TODO add this sorter wrapper to indices columns too
+            // TODO move into a separate module, datagrid-sorting.js for example
+            const DEFAULT_SORTER_REF = 'alphanum';
+            const getColumnSorter = (displayEntity, sortByFormatted, getFormatter) => {
+                const sorters = this.table.modules.sort.sorters;
+                if (sortByFormatted) {
+                    const formatter = getFormatter('sort');
+                    const entityName = displayEntity.getName();
+                    return (a, b, aRow, bRow, column, dir, sorterParams) => {
+                        let aCell = {
+                            getValue: constant(a),
+                            getData: aRow.getData.bind(aRow)
+                        };
+                        let bCell = {
+                            getValue: constant(b),
+                            getData: bRow.getData.bind(bRow)
+                        };
+
+                        try {
+                            const sorter = sorters[DEFAULT_SORTER_REF];
+                            return sorter(formatter(aCell), formatter(bCell), aRow, bRow, column, dir, sorterParams);
+                        } catch (e) {
+                            console.error(`Error whilst calling cell render function for sorting with sort-by-formatted` +
+                                ` applied to column bound to ${entityName}. ${e.message}`, e);
+                        }
+                    };
+                } else {
+                    const elementType = displayEntity.getElementType();
+                    const isNumberEntity = DataUtils.entityTypeIsNumber(displayEntity);
+
+                    let sorterRef = DEFAULT_SORTER_REF;
+                    if (isNumberEntity) {
+                        sorterRef = 'number';
+                    }
+                    if (elementType === enums.DataType.BOOLEAN) {
+                        sorterRef = 'boolean';
+                    }
+                    return sorters[sorterRef];
+                }
+            };
+
             let column = assign({}, entityOptions, {
                 title: escape(String(title)),
                 field: entityOptions.id,
                 cssClass: getClasses(),
                 cellClick: getCellClickHandler(),
                 formatter: getFormatter(),
+                sortByFormatted: entityOptions.sortByFormatted,
+                sorter: getColumnSorter(displayEntity, entityOptions.sortByFormatted, getFormatter),
                 editor: entityOptions.editorType,
                 editorParams: getEditorParams(),
                 cellEditing: getCellEditingHandler(),
