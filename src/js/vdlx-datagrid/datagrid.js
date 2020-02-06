@@ -21,6 +21,7 @@
     limitations under the License.
  */
 import Tabulator from 'tabulator-tables/dist/js/tabulator';
+import {createSorter, createFormattedSorter} from './datagrid-sorter';
 import {insightModules, insight} from '../insight-globals';
 import dataTransform, {
     getAllColumnIndices,
@@ -66,7 +67,6 @@ import constant from "lodash/constant";
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');
 const dialogs = insightModules.load('dialogs');
-const enums = insightModules.load('enums');
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
@@ -114,6 +114,7 @@ class Datagrid {
         const options = ko.unwrap(gridOptions$);
 
         this.table = this.createTable(options);
+        this.tableLock = new DatagridLock(this.table.element);
 
         this.headerToolbar = root.querySelector('.header-toolbar');
         const footerToolbar = root.querySelector('.footer-toolbar');
@@ -121,8 +122,6 @@ class Datagrid {
         this.addRemoveRowControl = this.createAddRemoveRowControl(footerToolbar, this.table, options);
         this.paginatorControl = this.createPaginatorControl(footerToolbar, this.table, options);
         this.stateManager = null;
-
-        this.tableLock = new DatagridLock(this.table.element);
 
         this.buildTable();
         this.update();
@@ -258,7 +257,7 @@ class Datagrid {
             resizableColumns: false,
             dataFiltered: saveState,
             dataSorting: () => {
-                this.tableLock.lock('Sorting data');
+                this.tableLock && this.tableLock.lock('Sorting data');
                 sortPromise = new Promise(resolve => {
                     sortPromiseResolve = resolve;
                 });
@@ -267,7 +266,7 @@ class Datagrid {
             },
             dataSorted: () => {
                 sortPromiseResolve();
-                this.tableLock.unlock();
+                this.tableLock && this.tableLock.unlock();
             },
             cellEditing: cell => select(cell.getRow()),
             rowClick: (e, row) => select(row),
@@ -449,6 +448,8 @@ class Datagrid {
 
         const allScenarios = uniq([scenariosData.defaultScenario].concat(values(scenariosData.scenarios)));
 
+        const tabulatorSorters = this.table.modules.sort.sorters;
+
         const indicesColumns = map(setNamePosnsAndOptions, setNameAndPosn => {
             const {name, options} = setNameAndPosn;
             const entity = schema.getEntity(name);
@@ -463,11 +464,25 @@ class Datagrid {
                 }
                 return classes.join(' ');
             };
+
+            const defaultFormatter = cell => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue());
+
+            const getFormatter = (type = 'display') => {
+                if (options.render) {
+                    return cell =>
+                        options.render(cell.getValue(), type, getRowDataForColumns(cell.getData()));
+                }
+                return defaultFormatter;
+            };
+
             let column = assign({}, setNameAndPosn.options, {
                 title: escape(String(title)),
                 field: options.id,
                 cssClass: getClass(),
-                formatter: cell => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue()),
+                formatter: getFormatter(),
+                sorter: options.sortByFormatted
+                    ? createFormattedSorter(displayEntity, getFormatter('sort'), tabulatorSorters)
+                    : createSorter(displayEntity, tabulatorSorters),
                 dataType: entity.getType(),
                 elementType: displayEntity.getElementType(),
                 labelsEntity: entity.getLabelsEntity(),
@@ -705,48 +720,6 @@ class Datagrid {
                 return classes.join(' ');
             };
 
-            // TODO cache sort values per column?
-            // TODO add this sorter wrapper to indices columns too
-            // TODO move into a separate module, datagrid-sorting.js for example
-            const DEFAULT_SORTER_REF = 'alphanum';
-            const getColumnSorter = (displayEntity, sortByFormatted, getFormatter) => {
-                const sorters = this.table.modules.sort.sorters;
-                if (sortByFormatted) {
-                    const formatter = getFormatter('sort');
-                    const entityName = displayEntity.getName();
-                    return (a, b, aRow, bRow, column, dir, sorterParams) => {
-                        let aCell = {
-                            getValue: constant(a),
-                            getData: aRow.getData.bind(aRow)
-                        };
-                        let bCell = {
-                            getValue: constant(b),
-                            getData: bRow.getData.bind(bRow)
-                        };
-
-                        try {
-                            const sorter = sorters[DEFAULT_SORTER_REF];
-                            return sorter(formatter(aCell), formatter(bCell), aRow, bRow, column, dir, sorterParams);
-                        } catch (e) {
-                            console.error(`Error whilst calling cell render function for sorting with sort-by-formatted` +
-                                ` applied to column bound to ${entityName}. ${e.message}`, e);
-                        }
-                    };
-                } else {
-                    const elementType = displayEntity.getElementType();
-                    const isNumberEntity = DataUtils.entityTypeIsNumber(displayEntity);
-
-                    let sorterRef = DEFAULT_SORTER_REF;
-                    if (isNumberEntity) {
-                        sorterRef = 'number';
-                    }
-                    if (elementType === enums.DataType.BOOLEAN) {
-                        sorterRef = 'boolean';
-                    }
-                    return sorters[sorterRef];
-                }
-            };
-
             let column = assign({}, entityOptions, {
                 title: escape(String(title)),
                 field: entityOptions.id,
@@ -754,7 +727,9 @@ class Datagrid {
                 cellClick: getCellClickHandler(),
                 formatter: getFormatter(),
                 sortByFormatted: entityOptions.sortByFormatted,
-                sorter: getColumnSorter(displayEntity, entityOptions.sortByFormatted, getFormatter),
+                sorter: entityOptions.sortByFormatted
+                    ? createFormattedSorter(displayEntity, getFormatter('sort'), tabulatorSorters)
+                    : createSorter(displayEntity, tabulatorSorters),
                 editor: entityOptions.editorType,
                 editorParams: getEditorParams(),
                 cellEditing: getCellEditingHandler(),
