@@ -61,6 +61,7 @@ import noop from 'lodash/noop';
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
 import sortBy from 'lodash/sortBy';
+import constant from "lodash/constant";
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');
@@ -241,6 +242,9 @@ class Datagrid {
         };
         const saveState = () => this.saveState();
 
+        let sortPromise = Promise.resolve();
+        let sortPromiseResolve = noop;
+
         const tabulatorOptions = {
             pagination: options.pagination,
             paginationSize: options.paginationSize,
@@ -252,7 +256,18 @@ class Datagrid {
             height: '100%',
             resizableColumns: false,
             dataFiltered: saveState,
-            dataSorting: saveState,
+            dataSorting: () => {
+                this.tableLock.lock('Sorting data');
+                sortPromise = new Promise(resolve => {
+                    sortPromiseResolve = resolve;
+                });
+                perf('datagrid sorting', constant(sortPromise));
+                saveState();
+            },
+            dataSorted: () => {
+                sortPromiseResolve();
+                this.tableLock.unlock();
+            },
             cellEditing: cell => select(cell.getRow()),
             rowClick: (e, row) => select(row),
             rowSelectionChanged: (data, rows) => this.setSelectedRow(first(rows)),
