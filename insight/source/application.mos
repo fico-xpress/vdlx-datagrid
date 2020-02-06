@@ -171,8 +171,14 @@ model "vdlx-datagrid examples"
     t1IndexA = 1..4
     t1IndexNames:array(t1IndexA) of string
 
+    !@insight.transform.labels.entity t1IndexNames2
     t1IndexB = 1..4
+    t1IndexNames2:array(t1IndexB) of string
+
+    !@insight.transform.labels.entity t1IndexNames3
     t1IndexC = 1..5
+    t1IndexNames3:array(t1IndexC) of string
+
     t1IndexD = 1..5
     t1IndexE = 1..5
 
@@ -185,8 +191,14 @@ model "vdlx-datagrid examples"
     t2IndexA = 1..5
     t2IndexNames:array(t2IndexA) of string
 
+    !@insight.transform.labels.entity t2IndexNames2
     t2IndexB = 1..5
+    t2IndexNames2:array(t2IndexB) of string
+
+    !@insight.transform.labels.entity t2IndexNames3
     t2IndexC = 1..5
+    t2IndexNames3:array(t2IndexC) of string
+
     t2IndexD = 1..4
     t2IndexE = 1..4
     t2IndexF = 1..5
@@ -203,8 +215,14 @@ model "vdlx-datagrid examples"
     t3IndexA = 1..10
     t3IndexNames:array(t3IndexA) of string
 
+    !@insight.transform.labels.entity t3IndexNames2
     t3IndexB = 1..10
+    t3IndexNames2:array(t3IndexB) of string
+
+    !@insight.transform.labels.entity t3IndexNames3
     t3IndexC = 1..10
+    t3IndexNames3:array(t3IndexC) of string
+
     t3IndexD = 1..5
     t3IndexE = 1..4
     t3IndexF = 1..5
@@ -219,7 +237,10 @@ model "vdlx-datagrid examples"
     !@insight.transform.labels.entity t3IndexNames
     t4IndexA = 1..10
 
+    !@insight.transform.labels.entity t3IndexNames2
     t4IndexB = 1..10
+
+    !@insight.transform.labels.entity t3IndexNames3
     t4IndexC = 1..5
     t4IndexD = 1..10
     t4IndexE = 1..10
@@ -235,7 +256,9 @@ model "vdlx-datagrid examples"
     !@insight.transform.labels.entity t3IndexNames
     t5IndexA = 1..10
 
+    !@insight.transform.labels.entity t3IndexNames2
     t5IndexB = 1..10
+    !@insight.transform.labels.entity t3IndexNames3
     t5IndexC = 1..10
     t5IndexD = 1..10
     t5IndexE = 1..10
@@ -460,8 +483,20 @@ model "vdlx-datagrid examples"
     end-initializations
 
     t1IndexNames  :: ["Alpha","Beta","Gamma","Delta"]
+    ! initializations from "mmsheet.csv:table1.csv"
+    !     [t1Col1,t1Col2,t1Col3,t1Col4,t1Col5,t1Col6] as "skiph;[A1:K2001]"
+    ! end-initializations
+    t1IndexNames::["Alpha","Beta","Gamma","Delta"]
+    t1IndexNames2::["Alpha2","Beta2","Gamma2","Delta2"]
+    t1IndexNames3::["Alpha3","Beta3","Gamma3","Delta3","Penta"]
+
     t2IndexNames  :: ["White","Yellow","Orange","Green","Blue"]
+    t2IndexNames2 :: ["White2","Yellow2","Orange2","Green2","Blue2"]
+    t2IndexNames3 :: ["White3","Yellow3","Orange3","Green3","Blue3"]
+
     t3IndexNames  :: ["Antigua and Barbuda","Marshall Islands","Mecklenburg-Schwerin","Montenegro","Equatorial Guinea","Russia","Czechoslovakia","Pakistan","Brunswick and Lüneburg","Bosnia and Herzegovina"]
+    t3IndexNames2 :: ["2_Antigua and Barbuda","2_Marshall Islands","2_Mecklenburg-Schwerin","2_Montenegro","2_Equatorial Guinea","2_Russia","2_Czechoslovakia","2_Pakistan","2_Brunswick and Lüneburg","2_Bosnia and Herzegovina"]
+    t3IndexNames3 :: ["3_Antigua and Barbuda","3_Marshall Islands","3_Mecklenburg-Schwerin","3_Montenegro","3_Equatorial Guinea","3_Russia","3_Czechoslovakia","3_Pakistan","3_Brunswick and Lüneburg","3_Bosnia and Herzegovina"]
 
     LoadTableOne2k
     LoadTableTwo10K
