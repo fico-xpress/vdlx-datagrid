@@ -62,9 +62,10 @@ $sorting-icon-right-offset: -4px;
 }
 
 vdlx-datagrid {
-  display: block;
   color: $black;
   user-select: none;
+  display: inline-block;
+  width: 100%;
 
   .tabulator {
     margin-bottom: 0;
@@ -423,6 +424,19 @@ vdlx-datagrid {
           }
         }
       }
+    }
+  }
+
+  .header-toolbar {
+    width: 100%;
+    padding: 0 2px;
+
+    .pull-right {
+      margin-bottom: 6px;
+    }
+
+    .header-toolbar:empty {
+      display: none;
     }
   }
 

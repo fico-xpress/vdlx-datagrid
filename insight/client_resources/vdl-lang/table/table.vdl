@@ -20,7 +20,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<vdl version="4.1">
+<vdl version="4.6">
     <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
 
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
@@ -93,6 +93,26 @@ limitations under the License.
     &lt;vdlx-datagrid-column set=&quot;Factories&quot; heading=&quot;Origin&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column set=&quot;Factories&quot; heading=&quot;Destination&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column entity=&quot;ShippingCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+
+            </vdl-row>
+            <vdl-row>
+                <vdl-column heading="Simple datagrid with positioned index sets" size="6"  class="example-passed">
+                    <vdlx-datagrid id="basic-example-positioned-index-sets">
+                        <vdlx-datagrid-column set="Factories" heading="Origin"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ShippingCosts"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="Factories" heading="Destination"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;vdlx-datagrid id=&quot;basic-example-positioned-index-sets&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot; heading=&quot;Origin&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;ShippingCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot; heading=&quot;Destination&quot;&gt;&lt;/vdlx-datagrid-column&gt;
 &lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
@@ -342,11 +362,52 @@ limitations under the License.
                         <vdlx-datagrid-column entity="FactorySupply" heading="SUPPORT COSTS"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
-                <vdl-column heading="VDL source:" size="6" page-size="5" page-mode="paged" >
+                <vdl-column heading="VDL source:" size="6" page-size="5" page-mode="paged">
                     <code-panel>
-&lt;vdlx-datagrid always-show-selection=&quot;true&quot; page-size=&quot;5&quot; page-mode=&quot;paged&quot; &gt;
+&lt;vdlx-datagrid always-show-selection=&quot;true&quot; page-size=&quot;5&quot; page-mode=&quot;paged&quot;&gt;
     &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot; heading=&quot;SUPPORT COSTS&quot;&gt;&lt;&#x2F;vdlx-datagrid-column&gt;
 &lt;&#x2F;vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Export Button">
+            <vdl-row>
+                <vdl-column size="6">
+                    <p class="lead">Export data as a CSV file.</p>
+                    <p>To display the button set <code>"show-export"</code> to <code>"true"</code>, or use an expression that resolves to <code>"true"</code></p>
+                    <p><code>"export-filename"</code> (optional) will accept an expression and can be used to give the exported file a name.</p>
+                    <vdlx-datagrid show-export="true" export-filename="support_costs" page-size="5" >
+                        <vdlx-datagrid-column entity="FactorySupply" heading="SUPPORT COSTS"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+                <vdl-column heading="VDL source:" size="6" page-size="5" page-mode="paged" >
+                    <code-panel>
+&lt;vdlx-datagrid show-export="true" export-filename="support_costs"&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot; heading=&quot;SUPPORT COSTS&quot;&gt;&lt;&#x2F;vdlx-datagrid-column&gt;
+&lt;&#x2F;vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Default Sorting">
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>To pre-set sorting of the column set <code>"sort-order"</code> to a number.</p>
+                    <p>It is also possible to set the direction of sorting with <code>"sort-direction"</code> attribute (optional). This attribute can be either set to "desc" or "asc".</p>
+                    <vdlx-datagrid >
+                        <vdlx-datagrid-column entity="SupportCosts" sort-order="1" sort-direction="asc"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ServiceLevelAgreements" sort-order="0" sort-direction="desc"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+                <vdl-column heading="VDL source:" size="6" page-size="5" page-mode="paged" >
+                    <code-panel>
+&lt;vdlx-datagrid &gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot; sort-order=&quot;1&quot; sort-direction=&quot;asc&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot; sort-order=&quot;0&quot; sort-direction=&quot;desc&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
             </vdl-row>

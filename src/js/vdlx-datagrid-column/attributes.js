@@ -20,7 +20,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-export var VDGCattributes = [
+export default [
     {
         name: 'entity',
         description:
@@ -188,5 +188,16 @@ export var VDGCattributes = [
                 description: 'params passed from the column definition object'
             }
         ]
+    },
+    {
+        name: 'sort-order',
+        valueType: 'number'
+    },
+    {
+        name: 'sort-direction',
+        defaultValue: 'asc',
+        validation: {
+            allowedValues: ['asc', 'desc']
+        }
     }
 ];

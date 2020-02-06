@@ -2,9 +2,9 @@
 Xpress Insight vdlx-datagrid
 =============================
 
-file vdlx-datagrid/vdlx-datagrid.vdl
+file vdlx-datagrid/vdlx-datagrid-debug.vdl
 ```````````````````````
-vdlx-datagrid Main include file for vdlx-datagrid
+vdlx-datagrid-debug Main include file for vdlx-datagrid
 
 (c) Copyright 2019 Fair Isaac Corporation
 
@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<vdl version="4.1">
-    <script src="vdlx-datagrid/vdlx-datagrid.js"></script>
-    <link rel="stylesheet" href="vdlx-datagrid/vdlx-datagrid.css">
+<vdl version="4.6">
+    <script src="vdlx-datagrid-debug/vdlx-datagrid-debug.js"></script>
+    <link rel="stylesheet" href="vdlx-datagrid-debug/vdlx-datagrid-debug.css">
 </vdl>

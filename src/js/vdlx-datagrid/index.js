@@ -20,14 +20,15 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import VXDAttributes from './attributes';
+import {VDL} from '../insight-globals';
+import attributes from './attributes';
 import transform from './transform';
 import viewModel from './view-model';
 
 VDL('vdlx-datagrid', {
     tag: 'vdlx-datagrid',
-    attributes: VXDAttributes,
+    attributes,
     createViewModel: viewModel,
-    transform: transform,
+    transform,
     modifiesDescendants: false
 });

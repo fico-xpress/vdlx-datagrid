@@ -20,7 +20,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-const dialogs = insightModules.load('dialogs');
+import {insightModules}  from '../insight-globals';
 import each  from 'lodash/each';
 import mapValues from 'lodash/mapValues';
 import max from 'lodash/max';
@@ -37,6 +37,8 @@ import uniqueId from 'lodash/uniqueId';
 import zip from 'lodash/zip';
 import constant from 'lodash/constant';
 import map from 'lodash/map';
+
+const dialogs = insightModules.load('dialogs');
 
 const ADD_REMOVE_TEMPLATE = `
 <div class="add-remove-control">

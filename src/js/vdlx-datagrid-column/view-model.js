@@ -20,9 +20,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import { EDITOR_TYPES } from '../constants';
-
-import omit  from 'lodash/omit';
+import {EDITOR_TYPES} from '../constants';
+import {insightModules} from '../insight-globals';
+import omit from 'lodash/omit';
 import isFunction from 'lodash/isFunction';
 import isNumber from 'lodash/isNumber';
 import size from 'lodash/size';
@@ -31,13 +31,12 @@ import uniqueId from 'lodash/uniqueId';
 import set from 'lodash/set';
 import reduce from 'lodash/reduce';
 
-
 const enums = insightModules.load('enums');
 const validatorFactory = insightModules.load('vdl/vdl-validator-factory');
 const insightGetter = insightModules.load('insight-getter');
 
 const COLUMN_BUILD_DELAY = 50;
-const AUTOCOLUMN_PROP_NAME = 'autotableConfig';
+export const AUTOCOLUMN_PROP_NAME = 'autotableConfig';
 
 export const viewModel = (params, componentInfo) => {
     var indexFilters$ = ko.observable({});
@@ -70,7 +69,9 @@ export const viewModel = (params, componentInfo) => {
                 checkedValue: params.editorCheckedValue,
                 uncheckedValue: params.editorUncheckedValue,
                 id: columnId,
-                bottomCalc: params.bottomCalc
+                bottomCalc: params.bottomCalc,
+                sortOrder: params.sortOrder,
+                sortDirection: params.sortDirection
             };
             if (params.bottomCalc) {
                 props.bottomCalcFormatter = function(data) {
