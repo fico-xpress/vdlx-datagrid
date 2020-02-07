@@ -64,7 +64,7 @@ const getColumnType = attributes => {
  * @param {{ [x: string]: any; }} attributes
  * @param {*} api
  */
-export const transform = (element, attributes, api) => {
+export default (element, attributes, api) => {
     var $element = $(element);
     if (!$element.closest('vdlx-datagrid').length) {
         throw Error('<vdlx-datagrid-column> must be contained within a <vdlx-datagrid> tag.');
@@ -84,9 +84,9 @@ export const transform = (element, attributes, api) => {
 
     var paramsBuilder = api
         .getComponentParamsBuilder(element)
-        .addParam('tableUpdate', '$component.tableUpdate', true)
-        .addParam('tableValidate', '$component.tableValidate', true)
-        .addParam('validate', '$component.validate', true);
+        .addParam('addColumn', '$component.addColumn', true)
+        .addParam('removeColumn', '$component.removeColumn', true)
+        .addParam('tableValidate', '$component.tableValidate', true);
 
     if (columnType === COLUMN_TYPES.SET) {
         var entityName = attributes.set.rawValue;

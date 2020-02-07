@@ -21,106 +21,17 @@
     limitations under the License.
  */
 import Datagrid from './datagrid';
-import { withDeepEquals } from './ko-utils';
+import { withDeepEquals, createMutationObservable, withDeferred } from './ko-utils';
 
-import parseInt  from 'lodash/parseInt';
 import defer from 'lodash/defer';
-import isEmpty from 'lodash/isEmpty';
-import range from 'lodash/range';
-import has from 'lodash/has';
-import omitBy from 'lodash/omitBy';
-import isNumber from 'lodash/isNumber';
-import forEach from 'lodash/forEach';
-import clone from 'lodash/clone';
 import uniqueId from 'lodash/uniqueId';
-import isPlainObject from 'lodash/isPlainObject';
-import cloneDeep from 'lodash/cloneDeep';
-import isFunction from 'lodash/isFunction';
 import get from 'lodash/get';
-import bindKey from 'lodash/bindKey';
-import negate from 'lodash/negate';
-import identity from 'lodash/identity';
-import flow from 'lodash/flow';
-import pickBy from 'lodash/pickBy';
-import isUndefined from 'lodash/isUndefined';
-import isNull from 'lodash/isNull';
-import isNaN from 'lodash/isNaN';
-import sortBy from 'lodash/sortBy';
-import uniq from 'lodash/uniq';
 import map from 'lodash/map';
-import filter from 'lodash/filter';
-import { AUTOCOLUMN_PROP_NAME } from '../vdlx-datagrid-column/view-model';
-import set from 'lodash/set';
-
-const DEFAULT_GRID_PAGE_SIZE = 50;
-
-function parseIntOrKeep(val) {
-    var result = parseInt(val);
-    if (isNaN(result)) {
-        return val;
-    }
-    return result;
-}
-
-function isNullOrUndefined(val) {
-    return isNull(val) || isUndefined(val);
-}
-
-const stripEmpties = obj =>
-  pickBy(obj, flow(identity, negate(isNullOrUndefined)));
-
-const getTableOptions = params => () => {
-    var overrides = stripEmpties({
-        searching: params.showFilter,
-        columnFilter: params.columnFilter
-    });
-
-    var gridOptions = {
-        tableId: params.tableId,
-        addRemoveRow: params.addRemoveRow,
-        selectionAndNavigation: params.selectionNavigation,
-        overrides: overrides,
-        columnFilter: params.columnFilter,
-        onError: bindKey(self, '_wrapAlert'),
-        alwaysShowSelection: params.alwaysShowSelection,
-        gridHeight: params.gridHeight,
-        gridData: params.gridData,
-        paginationSize: params.pageSize || DEFAULT_GRID_PAGE_SIZE,
-        saveState: get(params, 'saveState', true),
-        pageMode: params.pageMode,
-        freezeColumns: params.freezeColumns,
-        showExport: ko.unwrap(params.showExport),
-        exportFilename: ko.unwrap(params.exportFilename)
-    };
-
-    var pageMode = params['pageMode'];
-
-    if (pageMode === 'paged') {
-        gridOptions.pagination = 'local';
-        gridOptions.paginationElement = $('.hidden-footer-toolbar').get(0); // hide the built-in paginator
-    } else if (!pageMode || pageMode === 'none') {
-    }
-
-    if (isFunction(params.rowFilter)) {
-        gridOptions.rowFilter = params.rowFilter;
-    }
-
-    gridOptions = stripEmpties(gridOptions);
-
-    if (!isUndefined(params.modifier)) {
-        if (isFunction(params.modifier)) {
-            // Pass cloned options so they cannot modify the original table options object
-            var modifiedTableOptions = params.modifier(cloneDeep(gridOptions));
-            if (isPlainObject(modifiedTableOptions)) {
-                gridOptions = modifiedTableOptions;
-            }
-        } else {
-            // console.error('vdl-table (' + self.tableId + '): "modifier" attribute must be a function.');
-        }
-    }
-
-    return gridOptions;
-};
+import size from 'lodash/size';
+import omit from 'lodash/omit';
+import { createColumnConfig } from './create-column-config';
+import mapValues from 'lodash/mapValues';
+import createTableOptions from './create-table-options';
 
 /**
  * VDL Extensions callback.
@@ -177,104 +88,44 @@ export default function createViewModel(params, componentInfo) {
     const $footerToolBar = $('<div class="footer-toolbar"/>');
     $element.append($footerToolBar);
 
-    /**
-     * Wrap the options for the
-     */
-    const tableOptions$ = withDeepEquals(ko.pureComputed(getTableOptions(params)));
-    const columnConfig$ = withDeepEquals(ko.observable({}));
+    const columnConfigurations$ = withDeepEquals(withDeferred(ko.observable({})));
 
-    var datagrid = new Datagrid(element, tableOptions$, columnConfig$);
+    const mutation$ = withDeferred(createMutationObservable(element, { childList: true }));
 
-    function buildTable() {
-        /*
-        Collect the column information from the child VDL extensions (vdlx-datagrid-column)
-         */
-        const columnConfigs = $element.find('vdlx-datagrid-column').map(function(idx, element) {
-            return set(clone(element[AUTOCOLUMN_PROP_NAME]), 'index', idx);
-        });
-        if (!columnConfigs.length) {
-            columnConfig$({ columnOptions: [], indicesOptions: {}, calculatedColumnsOptions: [], scenarioList: [] });
-            return;
-        }
+    const columnElements$ = ko.pureComputed(() => {
+        mutation$();
+        return element.getElementsByTagName('vdlx-datagrid-column');
+    });
 
-        var entities = [];
-        var indices = {};
-        var calculatedColumnsOptions = [];
-
-        forEach(columnConfigs, function(configItem) {
-            var scenarioNum = parseIntOrKeep(configItem.scenario || defaultScenario);
-            if (isNumber(scenarioNum)) {
-                if (scenarioNum < 0) {
-                    // reject('Scenario index must be a positive integer.');
-                }
+    const params$ = withDeepEquals(ko.pureComputed(() => mapValues(params, ko.unwrap)));
+    const tableOptions$ = withDeepEquals(ko.pureComputed(() => createTableOptions(params$())));
+    const columnConfig$ = withDeepEquals(
+        ko.pureComputed(() => {
+            if (columnElements$().length !== size(columnConfigurations$())) {
+                return undefined;
             }
-            configItem.scenario = scenarioNum;
-            if (!!configItem.entity) {
-                configItem.name = configItem.entity;
-                delete configItem.entity;
-                entities.push(omitBy(configItem, isNullOrUndefined));
-            } else if (!!configItem.set) {
-                if (!has(indices, [configItem.set])) {
-                    indices[configItem.set] = [];
-                }
-                const indexList = indices[configItem.set];
-                const cleanItem = omitBy(configItem, isNullOrUndefined);
-                const setPosn = configItem.setPosition;
-                if (setPosn == null) {
-                    indexList.push(cleanItem);
-                } else if (indexList[setPosn]) {
-                    // reject('Table column for set "' + configItem.set + '" at position ' + setPosn
-                    //     + ' specified more than once');
-                } else {
-                    indexList[setPosn] = cleanItem;
-                    // if we have increased the length, then need to
-                    // explicitly inserts null/undefined here, or some
-                    // standard algorithms behave oddly. (E.g. _.map
-                    // will count the missing items, but [].map won't)
-                    range(indexList.length).forEach(function(j) {
-                        if (!indexList[j]) {
-                            indexList[j] = null;
-                        }
-                    });
-                }
-            } else if (configItem.render) {
-                calculatedColumnsOptions.push(omitBy(configItem, isNullOrUndefined));
-            } else {
-                // reject('Unknown column type');
-            }
+
+            const columnConfigs = map(columnElements$(), (columnElement, idx) => ({
+                ...columnConfigurations$()[columnElement.columnId],
+                index: idx
+            }));
+
+            return createColumnConfig(columnConfigs, defaultScenario, params);
+        })
+    );
+
+    const datagrid = new Datagrid(element, tableOptions$, columnConfig$);
+
+    vm.addColumn = (columnId, props) => {
+        defer(() => {
+            return columnConfigurations$({ ...columnConfigurations$(), [columnId]: props });
         });
+    };
 
-        var scenarioList = sortBy(
-          uniq(
-            map(
-              filter(entities, function(item) {
-                return !isNullOrUndefined(item);
-              }),
-              function(item) {
-                return ko.unwrap(item.scenario);
-              }
-            )
-          )
-        );
-
-        if (isEmpty(scenarioList) || isEmpty(entities)) {
-            console.debug(
-                'vdl-table (' +
-                    params.tableId +
-                    '): Scenario list or table column configuration is empty, ignoring update'
-            );
-        }
-
-        columnConfig$({
-            columnOptions: entities,
-            indicesOptions: indices,
-            scenarioList: scenarioList,
-            calculatedColumnsOptions: calculatedColumnsOptions
+    vm.removeColumn = columnId => {
+        defer(() => {
+            return columnConfigurations$(omit(columnConfigurations$(), columnId));
         });
-    }
-
-    vm.tableUpdate = () => {
-        defer(() => buildTable());
     };
 
     vm.tableValidate = function() {
@@ -284,8 +135,6 @@ export default function createViewModel(params, componentInfo) {
     vm.dispose = function() {
         datagrid.dispose();
     };
-
-    buildTable();
 
     return vm;
 }
