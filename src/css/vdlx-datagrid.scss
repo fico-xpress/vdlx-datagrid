@@ -463,20 +463,21 @@ vdlx-datagrid {
   }
 
   .insight-table-locked-overlay {
-    $spinner-delay: 2s;
-    animation: show $spinner-delay step-end 0s 1 normal;
-    @keyframes show {
-      0% {
-        transform: scale(0);
-      }
-      100% {
-        transform: scale(1);
+    &.delay-show {
+      animation: show 2s step-end 0s 1 normal;
+      @keyframes show {
+        0% {
+          transform: scale(0);
+        }
+        100% {
+          transform: scale(1);
+        }
       }
     }
 
     .fico-spinner {
       font-size: 40px;
-      animation: spin 2s linear $spinner-delay infinite;
+      animation: spin 2s linear 0s infinite;
       @keyframes spin {
         0% {
           transform: rotate(0deg);
