@@ -69,7 +69,9 @@ export const viewModel = (params, componentInfo) => {
                 checkedValue: params.editorCheckedValue,
                 uncheckedValue: params.editorUncheckedValue,
                 id: columnId,
-                bottomCalc: params.bottomCalc
+                bottomCalc: params.bottomCalc,
+                sortOrder: params.sortOrder,
+                sortDirection: params.sortDirection
             };
             if (params.bottomCalc) {
                 props.bottomCalcFormatter = function(data) {

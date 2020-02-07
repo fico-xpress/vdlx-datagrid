@@ -62,6 +62,8 @@ import noop from 'lodash/noop';
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
 import sortBy from 'lodash/sortBy';
+import isEqual from 'lodash/isEqual';
+import cloneDeep from 'lodash/cloneDeep';
 import constant from "lodash/constant";
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
@@ -202,9 +204,13 @@ class Datagrid {
 
     saveState() {
         if (this.stateManager) {
+            let sorters = map(this.table.getSorters(), sorter => ({dir: sorter.dir, column: sorter.field}));
+            if (isEqual(this.initialSortOrder, sorters)) {
+                sorters = [];
+            }
             const state = {
                 filters: this.table.getHeaderFilters(),
-                sorters: map(this.table.getSorters(), sorter => ({dir: sorter.dir, column: sorter.field}))
+                sorters: sorters
             };
 
             this.stateManager.saveState(state);
@@ -881,6 +887,18 @@ class Datagrid {
         this.indicesColumns = indicesColumns;
 
         table.setColumns(columns);
+        this.initialSortOrder = map(
+            sortBy(
+                filter(columns, column => !isUndefined(column.sortOrder)),
+                'sortOrder'
+            ),
+            column => ({
+                column: column.id,
+                dir: column.sortDirection
+            })
+        );
+
+        this.table.setSort(cloneDeep(this.initialSortOrder));
 
         this.stateManager = this.createStateManager(gridOptions, columns, map(entitiesColumns, 'scenario'));
         this.loadState();

@@ -16,3 +16,5 @@ insight/client_resources/vdlx-datagrid/
 dist/insight/client_resources/**/*.js
 dist/insight/client_resources/**/*.css
 dist/insight/client_resources/**/VERSION.txt
+
+.vscode
