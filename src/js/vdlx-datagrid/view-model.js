@@ -29,7 +29,7 @@ import get from 'lodash/get';
 import map from 'lodash/map';
 import size from 'lodash/size';
 import omit from 'lodash/omit';
-import { createColumnConfig } from './create-column-config';
+import createColumnConfig from './create-column-config';
 import mapValues from 'lodash/mapValues';
 import createTableOptions from './create-table-options';
 
@@ -96,21 +96,27 @@ export default function createViewModel(params, componentInfo) {
         mutation$();
         return element.getElementsByTagName('vdlx-datagrid-column');
     });
+    const columnConfigurationsArray$ = withDeferred(ko.pureComputed(() => {
+        if (columnElements$().length !== size(columnConfigurations$())) {
+            return undefined;
+        }
+
+        return map(columnElements$(), (columnElement, idx) => ({
+            ...columnConfigurations$()[columnElement.columnId],
+            index: idx
+        }));
+    }));
 
     const params$ = withDeepEquals(ko.pureComputed(() => mapValues(params, ko.unwrap)));
     const tableOptions$ = withDeepEquals(ko.pureComputed(() => createTableOptions(params$())));
     const columnConfig$ = withDeepEquals(
         ko.pureComputed(() => {
-            if (columnElements$().length !== size(columnConfigurations$())) {
+            const columnConfigs = columnConfigurationsArray$();
+            if (!columnConfigs) {
                 return undefined;
             }
 
-            const columnConfigs = map(columnElements$(), (columnElement, idx) => ({
-                ...columnConfigurations$()[columnElement.columnId],
-                index: idx
-            }));
-
-            return createColumnConfig(columnConfigs, defaultScenario, params);
+            return createColumnConfig(columnConfigs, defaultScenario, params.tableId);
         })
     );
 

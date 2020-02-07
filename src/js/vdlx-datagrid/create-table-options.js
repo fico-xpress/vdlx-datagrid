@@ -9,7 +9,7 @@ import flow from 'lodash/flow';
 import negate from 'lodash/negate';
 import identity from 'lodash/identity';
 import isNull from 'lodash/isNull';
-import overSome from 'lodash-es/overSome';
+import overSome from 'lodash/overSome';
 
 const DEFAULT_GRID_PAGE_SIZE = 50;
 
