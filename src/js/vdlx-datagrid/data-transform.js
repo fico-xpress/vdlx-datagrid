@@ -168,7 +168,7 @@ const isSparse = (sets, arrays) => {
     return totalPossibleKeys * arrays.length > (totalCountOfArrayValues * Math.log(totalCountOfArrayValues) || 0);
 };
 
-export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions, scenariosData, rowFilter) => {
+export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions, scenariosData, rowFilter, rowIndexGenerator) => {
     var defaultScenario = scenariosData.defaultScenario;
     const indexScenarios = uniq(map(map(columnOptions, 'id'), id => get(scenariosData.scenarios, id, defaultScenario)));
 
@@ -202,7 +202,11 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
         return SelectOptions.generateSelectOptions(schema, indexScenarios, setNamePosnAndOption.name, sets[i]);
     });
 
-    const createRow = values => zipObject(setIds.concat(arrayIds), values);
+    const createRow = values => {
+        let row = zipObject(setIds.concat(arrayIds), values);
+        row.id = rowIndexGenerator();
+        return row;
+    };
 
     if (isEmpty(arrays)) {
         return {

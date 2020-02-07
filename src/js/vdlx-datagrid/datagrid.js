@@ -116,10 +116,13 @@ class Datagrid {
         this.table = this.createTable(options);
         this.tableLock = new DatagridLock(this.table.element);
 
+        let rowIndex = 1;
+        this.getRowIndex = () => rowIndex++;
+
         this.headerToolbar = root.querySelector('.header-toolbar');
         const footerToolbar = root.querySelector('.footer-toolbar');
 
-        this.addRemoveRowControl = this.createAddRemoveRowControl(footerToolbar, this.table, options);
+        this.addRemoveRowControl = this.createAddRemoveRowControl(footerToolbar, options);
         this.paginatorControl = this.createPaginatorControl(footerToolbar, this.table, options);
         this.stateManager = null;
 
@@ -152,7 +155,6 @@ class Datagrid {
 
         this.unloadHandlerId = this.view.addUnloadHandler(this.viewUnloadHandler);
     }
-
 
     buildTable() {
         const columnOptions$ = this.columnOptions$;
@@ -395,17 +397,16 @@ class Datagrid {
 
     /**
      * @param {Element} footerToolbar
-     * @param {*} table
      * @param {*} options
      * @returns
      * @memberof Datagrid
      */
-    createAddRemoveRowControl(footerToolbar, table, options) {
+    createAddRemoveRowControl(footerToolbar, options) {
         if (!options.addRemoveRow) {
             return undefined;
         }
 
-        const addRemoveControl = new AddRemove(table, options.addRemoveRow === 'addrow-autoinc');
+        const addRemoveControl = new AddRemove(this.table, this.getRowIndex, options.addRemoveRow === 'addrow-autoinc');
         addRemoveControl.setEnabled(false);
         addRemoveControl.appendTo(footerToolbar);
 
@@ -837,7 +838,7 @@ class Datagrid {
             return column;
         });
 
-        let columns = sortBy([].concat(indicesColumns, entitiesColumns), (column) => column.index || -1)
+        let columns = sortBy([].concat(indicesColumns, entitiesColumns), (column) => column.index || -1);
 
         let freezeColumns = parseInt(gridOptions.freezeColumns);
         if (freezeColumns && !isNaN(freezeColumns)) {
@@ -856,7 +857,8 @@ class Datagrid {
                 entitiesColumns,
                 setNamePosnsAndOptions,
                 scenariosData,
-                gridOptions.rowFilter
+                gridOptions.rowFilter,
+                this.getRowIndex
             )
         );
 

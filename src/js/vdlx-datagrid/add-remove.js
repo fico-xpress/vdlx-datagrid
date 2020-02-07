@@ -64,11 +64,11 @@ const ADD_REMOVE_TEMPLATE = `
 
 export default class AddRemove {
     /**
-     *
-     * @param {*} table
-     * @param {boolean} autoinc
+     * @param {*} table The Tabulator object
+     * @param {function} rowIndexGenerator Generates a unique row index value for the table
+     * @param {boolean} autoinc Whether to use row indices auto increment mode
      */
-    constructor(table, autoinc) {
+    constructor(table, rowIndexGenerator, autoinc) {
         this.$addRemoveControl = $(ADD_REMOVE_TEMPLATE);
         this.indicesColumns = [];
         this.entitiesColumns = [];
@@ -76,6 +76,7 @@ export default class AddRemove {
         this.data = [];
         this.selectedRow = undefined;
         this.table = table;
+        this.rowIndexGenerator = rowIndexGenerator;
         this.autoinc = autoinc;
         this.defaultScenario = undefined;
     }
@@ -107,6 +108,7 @@ export default class AddRemove {
     }
 
     addNewRowToTable(newRow) {
+        newRow = {id: this.rowIndexGenerator(), ...newRow};
         return this.table
             .addRow(newRow)
             .then(row => {
