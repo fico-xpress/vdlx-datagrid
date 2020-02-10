@@ -2,7 +2,9 @@ const insightModules = {
     load: jest.fn()
 };
 const VDL = jest.fn();
-const insight = {};
+const insight = {
+    isDebugEnabled: jest.fn()
+};
 
 const dataUtilsSpy = jest.fn();
 const createSparseDataSpy = jest.fn();
