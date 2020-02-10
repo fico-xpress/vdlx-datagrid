@@ -112,7 +112,7 @@ class Datagrid {
         this.columnOptions$ = columnOptions$;
         this.componentRoot = root;
         this.view = insight.getView();
-        this.schema = this.view.getProject().getModelSchema();
+        this.schema = this.view.getApp().getModelSchema();
 
         const options = ko.unwrap(gridOptions$);
 

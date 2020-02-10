@@ -108,7 +108,7 @@ export const viewModel = (params, componentInfo) => {
                 if (!params.editorType) {
                     const type = insight
                         .getView()
-                        .getProject()
+                        .getApp()
                         .getModelSchema()
                         .getEntity(params.entity)
                         .getElementType();

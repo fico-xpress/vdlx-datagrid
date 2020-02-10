@@ -195,7 +195,7 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
 
     const schema = insight
         .getView()
-        .getProject()
+        .getApp()
         .getModelSchema();
 
     const allSetValues = map(setNamePosnsAndOptions, (setNamePosnAndOption, i) => {
