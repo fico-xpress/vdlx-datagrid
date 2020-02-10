@@ -266,7 +266,7 @@ class Datagrid {
             resizableColumns: false,
             dataFiltered: saveState,
             dataSorting: () => {
-                this.tableLock && this.tableLock.lock(true);
+                this.tableLock && this.tableLock.lock();
                 sortPromise = new Promise(resolve => {
                     sortPromiseResolve = resolve;
                 });

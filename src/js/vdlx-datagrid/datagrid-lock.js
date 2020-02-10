@@ -35,7 +35,7 @@ const TABLE_LOCKED_OVERLAY_CLASS = 'insight-table-locked-overlay';
 const TABLE_LOCKED_OVERLAY_NON_TRANSPARENT_CLASS = 'non-transparent';
 const FICO_SPINNER_CLASS = 'fico-spinner';
 
-const OVERLAY_CLASSES = [TABLE_LOCKED_OVERLAY_CLASS, TABLE_LOCKED_OVERLAY_NON_TRANSPARENT_CLASS];
+const OVERLAY_CLASSES = [TABLE_LOCKED_OVERLAY_CLASS, TABLE_LOCKED_OVERLAY_NON_TRANSPARENT_CLASS].join(' ');
 
 export class DatagridLock {
     /**
@@ -48,10 +48,9 @@ export class DatagridLock {
     }
 
     /**
-     * @param {boolean} immediate
      * @memberof DatagridLock
      */
-    lock(immediate = false) {
+    lock() {
         if (this.locked) {
             return;
         }
@@ -63,9 +62,7 @@ export class DatagridLock {
             e.preventDefault();
         });
 
-        let overlayClasses = immediate ? OVERLAY_CLASSES : OVERLAY_CLASSES.concat('delay-show');
-
-        var $overlay = $(`<div class="${overlayClasses.join(' ')}"><div class="${FICO_SPINNER_CLASS}"></div></div>`);
+        var $overlay = $(`<div class="${OVERLAY_CLASSES}"><div class="${FICO_SPINNER_CLASS}"></div></div>`);
         $overlay.appendTo(this.$wrapperElement);
     }
 
