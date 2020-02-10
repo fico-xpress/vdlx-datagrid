@@ -414,9 +414,12 @@ limitations under the License.
         </vdl-section>
 
         <vdl-section heading="Calculated Columns">
-            <vdlx-datagrid >
-                <vdlx-datagrid-column entity="SupportCosts" ></vdlx-datagrid-column>
+            <vdlx-datagrid  column-filter="true">
+                <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
                 <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value" editable="true">ServiceLevelAgreements</vdlx-datagrid-column>
+                <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 2" editable="true">ServiceLevelAgreements</vdlx-datagrid-column>
+                <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 3" editable="true">ServiceLevelAgreements</vdlx-datagrid-column>
+                <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 4" editable="true">ServiceLevelAgreements</vdlx-datagrid-column>
             </vdlx-datagrid>
         </vdl-section>
     </vdl-page>

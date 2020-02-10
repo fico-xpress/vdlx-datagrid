@@ -815,14 +815,15 @@ class Datagrid {
 
         const calculatedColumns = map(calculatedColumnsOptions, options => {
             const title = get(options, 'title', options.name);
-            var a = 0;
+
             let column = assign({}, options, {
                 title: escape(String(title)),
                 formatter: cell => options.render(cell.getValue(), 'display', getRowDataForColumns(cell.getData())),
                 name: options.name,
-                field: 'random',
+                field: options.id,
                 elementType: Enums.DataType.STRING
             });
+
             if (gridOptions.columnFilter) {
                 const getHeaderFilterFn = () => {
                     const columnFilter = chooseColumnFilter(column);
