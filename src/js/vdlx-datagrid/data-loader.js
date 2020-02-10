@@ -20,7 +20,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import { onSubscribe, onSubscriptionDispose } from './ko-utils';
+import { onSubscribe, onSubscriptionDispose } from '../ko-utils';
 import fromPairs  from 'lodash/fromPairs';
 import each from 'lodash/each';
 import noop from 'lodash/noop';

@@ -63,7 +63,7 @@ import isArray from 'lodash/isArray';
 import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
-import { withDeferred } from './ko-utils';
+import { withDeferred } from '../ko-utils';
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');

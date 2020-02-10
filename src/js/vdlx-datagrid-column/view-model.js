@@ -28,12 +28,12 @@ import reduce from 'lodash/reduce';
 import noop from 'lodash/noop';
 import mapValues from 'lodash/mapValues';
 import defer from 'lodash/defer';
-import { withDeepEquals, createMutationObservable } from '../vdlx-datagrid/ko-utils';
+import { withDeepEquals, createMutationObservable } from '../ko-utils';
 import { createProps } from './create-column-props';
+import { insightModules } from '../insight-globals';
 
 /** @type {KnockoutStatic} */
-// @ts-ignore
-export const ko = global.ko;
+const ko = insightModules.load('external-libs/knockout');
 
 /** @typedef {{element: HTMLElement}} ComponentInfo */
 

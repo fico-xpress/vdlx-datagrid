@@ -402,7 +402,7 @@ limitations under the License.
                         <vdlx-datagrid-column entity="ServiceLevelAgreements" sort-order="0" sort-direction="desc"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
-                <vdl-column heading="VDL source:" size="6" page-size="5" page-mode="paged" >
+                <vdl-column heading="VDL source:" size="6" >
                     <code-panel>
 &lt;vdlx-datagrid &gt;
     &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot; sort-order=&quot;1&quot; sort-direction=&quot;asc&quot;&gt;&lt;/vdlx-datagrid-column&gt;
@@ -414,13 +414,26 @@ limitations under the License.
         </vdl-section>
 
         <vdl-section heading="Calculated Columns">
-            <vdlx-datagrid  column-filter="true">
-                <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
-                <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value" editable="true">ServiceLevelAgreements</vdlx-datagrid-column>
-                <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 2" editable="true">ServiceLevelAgreements</vdlx-datagrid-column>
-                <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 3" editable="true">ServiceLevelAgreements</vdlx-datagrid-column>
-                <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 4" editable="true">ServiceLevelAgreements</vdlx-datagrid-column>
-            </vdlx-datagrid>
+            <vdl-column size="6">
+                <vdlx-datagrid column-filter="true">
+                    <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
+                    <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value" >ServiceLevelAgreements</vdlx-datagrid-column>
+                    <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 2 + ''" >ServiceLevelAgreements * 2</vdlx-datagrid-column>
+                </vdlx-datagrid>
+            </vdl-column>
+            <vdl-column heading="VDL source:" size="6">
+                    <code-panel>
+&lt;vdlx-datagrid column-filter=&quot;true&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column render=&quot;=scenario.entities.ServiceLevelAgreements([rowData[0]]).value&quot;&gt;
+        ServiceLevelAgreements
+    &lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column render=&quot;=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 2 + ''&quot; &gt;
+        ServiceLevelAgreements * 2
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+            </vdl-column>
         </vdl-section>
     </vdl-page>
 </vdl>

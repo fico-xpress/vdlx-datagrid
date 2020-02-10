@@ -21,7 +21,7 @@
     limitations under the License.
  */
 import Datagrid from './datagrid';
-import { withDeepEquals, createMutationObservable, withDeferred } from './ko-utils';
+import { withDeepEquals, createMutationObservable, withDeferred } from '../ko-utils';
 
 import defer from 'lodash/defer';
 import uniqueId from 'lodash/uniqueId';
