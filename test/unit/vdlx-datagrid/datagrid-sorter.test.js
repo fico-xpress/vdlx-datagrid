@@ -1,0 +1,184 @@
+import {createSorter, createFormattedSorter} from '../../../src/js/vdlx-datagrid/datagrid-sorter';
+import {insightModules} from '../../../src/js/insight-globals';
+
+describe('datagrid-sorter', () => {
+    let tabulatorSortersMock;
+    let entityMock;
+    let enumsMock;
+    let dataUtilsMock;
+
+    beforeEach(() => {
+        enumsMock = insightModules.load('enums');
+        dataUtilsMock = insightModules.load('utils/data-utils');
+        tabulatorSortersMock = {
+            alphanum: 'alphanum-sorter',
+            number: 'number-sorter',
+            boolean: 'boolean-sorter'
+        };
+        entityMock = {
+            getElementType: jest.fn(),
+            getName: jest.fn()
+        };
+    });
+
+    describe('with createSorter', () => {
+        describe('when entity is a number type', () => {
+            beforeEach(() => {
+                entityMock.getElementType.mockReturnValue(enumsMock.DataType.INTEGER);
+                dataUtilsMock.entityTypeIsNumber.mockReturnValue(true);
+            });
+
+            it('returns the number sorter', () => {
+                expect(createSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.number);
+            });
+        });
+
+        describe('when entity is a boolean type', () => {
+            beforeEach(() => {
+                entityMock.getElementType.mockReturnValue(enumsMock.DataType.BOOLEAN);
+                dataUtilsMock.entityTypeIsNumber.mockReturnValue(false);
+            });
+
+            it('returns the number sorter', () => {
+                expect(createSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.boolean);
+            });
+        });
+
+        describe('when entity is a string type', () => {
+            beforeEach(() => {
+                entityMock.getElementType.mockReturnValue(enumsMock.DataType.STRING);
+                dataUtilsMock.entityTypeIsNumber.mockReturnValue(false);
+            });
+
+            it('returns the number sorter', () => {
+                expect(createSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.alphanum);
+            });
+        });
+
+        describe('when entity is a real type', () => {
+            beforeEach(() => {
+                entityMock.getElementType.mockReturnValue(enumsMock.DataType.REAL);
+                dataUtilsMock.entityTypeIsNumber.mockReturnValue(true);
+            });
+
+            it('returns the number sorter', () => {
+                expect(createSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.number);
+            });
+        });
+    });
+
+    describe('with createFormattedSorter', () => {
+        let sortCallback;
+        let formatterMock;
+        let aMock;
+        let bMock;
+        let aRowMock;
+        let bRowMock;
+        let columnMock;
+        let dir;
+        let sorterParams;
+
+        beforeEach(() => {
+            entityMock.getName.mockReturnValue('my-sort-entity-name');
+            formatterMock = jest.fn(cell => `formatted-${cell.getValue()}`);
+            tabulatorSortersMock.alphanum = jest.fn().mockReturnValue('tabulator-sorter-result');
+            sortCallback = createFormattedSorter(entityMock, formatterMock, tabulatorSortersMock);
+            aMock = 10;
+            bMock = 20;
+            aRowMock = {
+                getData: jest.fn().mockReturnValue('aRowMock-result')
+            };
+            bRowMock = {
+                getData: jest.fn().mockReturnValue('bRowMock-result')
+            };
+            columnMock = jest.fn();
+            dir = 'asc';
+            sorterParams = {};
+        });
+
+        describe('when formatter is called with cell values and valid formatter', () => {
+            let result;
+
+            beforeEach(() => {
+                result = sortCallback(aMock, bMock, aRowMock, bRowMock, columnMock, dir, sorterParams);
+            });
+
+            it('should call the formatter function on both cells', () => {
+                expect(formatterMock).toBeCalledWith({
+                    getValue: expect.any(Function),
+                    getData: expect.any(Function)
+                });
+                expect(formatterMock).toBeCalledTimes(2);
+                expect(formatterMock.mock.calls[0][0].getValue()).toBe(aMock);
+                expect(formatterMock.mock.calls[0][0].getData()).toBe('aRowMock-result');
+                expect(formatterMock.mock.calls[1][0].getValue()).toBe(bMock);
+                expect(formatterMock.mock.calls[1][0].getData()).toBe('bRowMock-result');
+            });
+
+            it('should call the alphanum tabulator sorter with expected arguments', () => {
+                expect(tabulatorSortersMock.alphanum).toBeCalledWith(
+                    'formatted-10',
+                    'formatted-20',
+                    aRowMock,
+                    bRowMock,
+                    columnMock,
+                    dir,
+                    sorterParams
+                );
+            });
+
+            it('returns the sorter result value', () => {
+                expect(result).toBe('tabulator-sorter-result');
+            });
+        });
+
+        describe('when called and a tabulator sorter error occurs', () => {
+            let result;
+            let error;
+
+            beforeEach(() => {
+                error = Error('sorter-error');
+                tabulatorSortersMock.alphanum.mockImplementation(() => {
+                    throw error;
+                });
+                sortCallback = createFormattedSorter(entityMock, formatterMock, tabulatorSortersMock);
+                result = sortCallback(aMock, bMock, aRowMock, bRowMock, columnMock, dir, sorterParams);
+            });
+
+            it('returns empty value', function () {
+                expect(result).toBeUndefined();
+            });
+
+            it('outputs an error log message', function () {
+                expect(global.console.error).toBeCalledWith(
+                    expect.stringContaining('my-sort-entity-name. sorter-error'),
+                    error
+                );
+            });
+        });
+
+        describe('when called and a formatter error occurs', () => {
+            let result;
+            let error;
+
+            beforeEach(() => {
+                error = Error('formatter-error');
+                formatterMock.mockImplementation(() => {
+                    throw error;
+                });
+                result = sortCallback(aMock, bMock, aRowMock, bRowMock, columnMock, dir, sorterParams);
+            });
+
+            it('returns empty value', function () {
+                expect(result).toBeUndefined();
+            });
+
+            it('outputs an error log message', function () {
+                expect(global.console.error).toBeCalledWith(
+                    expect.stringContaining('my-sort-entity-name. formatter-error'),
+                    error
+                );
+            });
+        });
+    });
+});

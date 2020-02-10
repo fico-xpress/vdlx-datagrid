@@ -73,7 +73,6 @@ export const createFormattedSorter = (entity, formatter, tabulatorSorters) => {
         };
 
         try {
-            // TODO cache sort values per column?
             return sorter(formatter(aCell), formatter(bCell), aRow, bRow, column, dir, sorterParams);
         } catch (e) {
             console.error(`Error whilst calling cell render function for sorting with sort-by-formatted` +
