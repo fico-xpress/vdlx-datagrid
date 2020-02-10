@@ -822,7 +822,7 @@ class Datagrid {
                 name: options.name,
                 field: options.id,
                 elementType: Enums.DataType.STRING,
-                accessorDownload: (value, rowData) => options.render(value, 'download', getRowDataForColumns(rowData)),
+                accessorDownload: (value, rowData) => options.render(value, 'display', getRowDataForColumns(rowData)),
             });
 
             if (gridOptions.columnFilter) {
