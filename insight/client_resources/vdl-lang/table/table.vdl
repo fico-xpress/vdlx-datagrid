@@ -103,7 +103,7 @@ limitations under the License.
                     <vdlx-datagrid id="basic-example-positioned-index-sets">
                         <vdlx-datagrid-column set="Factories" heading="Origin"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ShippingCosts"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column set="Factories" heading="Destination"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="Factories" heading="Destination"  vdl-if="=scenario.entities.MyBool.value"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
 
@@ -411,6 +411,13 @@ limitations under the License.
                     </code-panel>
                 </vdl-column>
             </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Calculated Columns">
+            <vdlx-datagrid >
+                <vdlx-datagrid-column entity="SupportCosts" ></vdlx-datagrid-column>
+                <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value" editable="true">ServiceLevelAgreements</vdlx-datagrid-column>
+            </vdlx-datagrid>
         </vdl-section>
     </vdl-page>
 </vdl>

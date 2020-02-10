@@ -845,7 +845,7 @@ class Datagrid {
             return column;
         });
 
-        let columns = sortBy([].concat(indicesColumns, entitiesColumns), column => column.index || -1);
+        let columns = sortBy([].concat(indicesColumns, entitiesColumns, calculatedColumns), column => column.index || -1);
 
         let freezeColumns = parseInt(gridOptions.freezeColumns);
         if (freezeColumns && !isNaN(freezeColumns)) {

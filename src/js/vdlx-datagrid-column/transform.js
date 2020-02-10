@@ -252,7 +252,11 @@ export default (element, attributes, api) => {
         if (render.expression.isString) {
             throw Error('Render parameter has to be an expression');
         }
-        paramsBuilder.addParam('render', render.expression.value, true);
+        paramsBuilder.addFunctionOrExpressionParam('render', render.expression.value, [
+            'data',
+            'type',
+            'rowData'
+        ]);
     }
     var bottomCalc = attributes['bottom-calc'];
     if (bottomCalc) {
