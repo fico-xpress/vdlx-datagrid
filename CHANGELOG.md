@@ -8,6 +8,8 @@
 - Index columns can be positioned anywhere in the datagrid. When index column is defined in VDL, its' position in VDL defines its'
   position in datagrid.
 - Default sorting can be set with new `vdlx-datagrid-column` attributes `sort-order` and `sort-direction`.
+- Added the `sort-by-formatted` attribute on `vdlx-datagrid-column` to switch sorting to use the display value. By default column sorting
+  uses the underlying data values when sorting. Note this is likely to reduce performance when enabled of large tables and a user sorts columns.
 
 ## v4.6.1
 
