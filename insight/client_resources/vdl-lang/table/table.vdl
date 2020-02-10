@@ -103,7 +103,7 @@ limitations under the License.
                     <vdlx-datagrid id="basic-example-positioned-index-sets">
                         <vdlx-datagrid-column set="Factories" heading="Origin"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ShippingCosts"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column set="Factories" heading="Destination"  vdl-if="=scenario.entities.MyBool.value"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="Factories" heading="Destination"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
 
