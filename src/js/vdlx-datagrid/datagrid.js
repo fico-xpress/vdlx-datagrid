@@ -821,7 +821,8 @@ class Datagrid {
                 formatter: cell => options.render(cell.getValue(), 'display', getRowDataForColumns(cell.getData())),
                 name: options.name,
                 field: options.id,
-                elementType: Enums.DataType.STRING
+                elementType: Enums.DataType.STRING,
+                accessorDownload: (value, rowData) => options.render(value, 'download', getRowDataForColumns(rowData)),
             });
 
             if (gridOptions.columnFilter) {
