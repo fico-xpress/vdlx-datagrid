@@ -22,8 +22,11 @@
  */
 import {insight} from './insight-globals';
 
-export default function(measurementDescription, measurement) {
-    if (!insight.isDebugEnabled()) {
+const MESSAGE_PREFIX = 'PERF';
+const DEBUG_ENABLED = insight.isDebugEnabled();
+
+export const perf = (measurementDescription, measurement) => {
+    if (!DEBUG_ENABLED) {
         return measurement();
     }
 
@@ -32,7 +35,7 @@ export default function(measurementDescription, measurement) {
     const printEnd = () => {
         const endTime = window.performance.now();
         console.log(
-            `PERF: ${measurementDescription} has finished in: ${Math.round(
+            `${MESSAGE_PREFIX}: ${measurementDescription} has finished in: ${Math.round(
                 endTime - startTime
             ).toLocaleString()} milliseconds`
         );
@@ -47,4 +50,16 @@ export default function(measurementDescription, measurement) {
 
     printEnd();
     return res;
-}
+};
+
+/**
+ * Call a generateMessage function and print the result to the console, only if Insight debug mode is enabled.
+ *
+ * @param {function} generateMessage A function that returns the message string
+ */
+export const perfMessage = generateMessage => {
+    if (!DEBUG_ENABLED) {
+        return;
+    }
+    console.log(`${MESSAGE_PREFIX}: ${generateMessage()}`);
+};

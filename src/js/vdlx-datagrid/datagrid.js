@@ -36,7 +36,7 @@ import {getRowData} from './utils';
 import {EDITOR_TYPES} from '../constants';
 import AddRemove from './add-remove';
 import {chooseColumnFilter} from './grid-filters';
-import perf from '../performance-measurement';
+import {perf, perfMessage} from '../performance-measurement';
 import {createStateManager} from './state-peristence';
 import {DatagridLock} from './datagrid-lock';
 import escape from 'lodash/escape';
@@ -61,6 +61,7 @@ import each from 'lodash/each';
 import noop from 'lodash/noop';
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
+import isObject from 'lodash/isObject';
 import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
@@ -182,7 +183,7 @@ class Datagrid {
                     }
 
                     if (gridOptions && columnOptions && scenariosData) {
-                        return perf('TOTAL:', () =>
+                        return perf('vdlx-datagrid total build time:', () =>
                             this.setColumnsAndData(gridOptions, columnOptions, scenariosData).then(() =>
                                 this.tableLock.unlock()
                             )
@@ -916,12 +917,22 @@ class Datagrid {
                 });
             }
         };
-        return perf('Tabulator.setData():', () =>
+
+        perfMessage(() => {
+            if (isArray(data) && isObject(data[0])) {
+                let columnCount = Object.keys(data[0]).length - 1;
+                let rowCount = data.length;
+                let cellCount = rowCount * columnCount;
+                return `vdlx-datagrid going to render with ${rowCount.toLocaleString()} rows, ${columnCount} columns, ${cellCount.toLocaleString()} cells`;
+            }
+        });
+
+        return perf('Tabulator setData and draw', () =>
             table
                 .setData(data)
                 .then(() => redraw())
-                .catch(err => {
-                    debugger;
+                .catch(e => {
+                    console.error('An error occurred whilst adding data to Tabulator and redrawing', e);
                 })
         );
     }

@@ -20,9 +20,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import {insightModules}  from '../insight-globals';
-import perf from '../performance-measurement';
-import set  from 'lodash/set';
+import {insightModules} from '../insight-globals';
+import {perf} from '../performance-measurement';
+import set from 'lodash/set';
 import isFunction from 'lodash/isFunction';
 import zipObject from 'lodash/zipObject';
 import filter from 'lodash/filter';
@@ -220,7 +220,7 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
         // assume O(nlogn)
         data = createSparseData(arrays, setNamePosnsAndOptions, allColumnIndices, columnOptions, columns);
     } else {
-        data = perf('PERF: dense data', () =>
+        data = perf('dense data', () =>
             createDenseData(
                 sets,
                 arrays,
