@@ -1,0 +1,64 @@
+<!--
+Xpress Insight vdlx-datagrid
+=============================
+
+file examples/sorting.vdl
+```````````````````````
+(c) Copyright 2019 Fair Isaac Corporation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<vdl version="4.6">
+    <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
+    <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+
+    <style>
+        vdl-page vdl-section div.section-body vdl-row vdl-column div.column-body > code-panel {
+            align-self:stretch;
+        }
+    </style>
+
+    <vdl-page>
+        <vdl-section heading="Sort by formatted">
+        </vdl-section>
+
+        <vdl-section heading="Calculated columns sorting">
+        </vdl-section>
+
+        <vdl-section heading="Default Sorting">
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>To pre-set sorting of the column set <code>"sort-order"</code> to a number.</p>
+                    <p>It is also possible to set the direction of sorting with <code>"sort-direction"</code> attribute
+                        (optional). This attribute can be either set to "desc" or "asc".</p>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column entity="SupportCosts" sort-order="1"
+                                              sort-direction="asc"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ServiceLevelAgreements" sort-order="0"
+                                              sort-direction="desc"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+                <vdl-column heading="VDL source:" size="6">
+                    <code-panel>
+                        &lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot; sort-order=&quot;1&quot;
+                          sort-direction=&quot;asc&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot; sort-order=&quot;0&quot;
+                          sort-direction=&quot;desc&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+    </vdl-page>
+</vdl>
