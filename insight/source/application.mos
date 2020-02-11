@@ -37,6 +37,7 @@ model "vdlx-datagrid examples"
     LENGTH = 400
     DATAFOLDER = ""
     DATAFILE = DATAFOLDER + "agency_example_data.txt"
+    TRANSPORT_DATAFILE = DATAFOLDER + "transport.dat"
     MaxPeriods = 15
   end-parameters
 
@@ -269,13 +270,10 @@ model "vdlx-datagrid examples"
     t5Col3:  array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of string
     t5Col4:  array(t5IndexA,t5IndexB,t5IndexC,t5IndexD,t5IndexE,t5IndexF) of integer
 
-
-
     MAT: set of integer
     SITE: set of string
     VEN: set of string
     MAT_NAMES: set of string
-
 
     T= 1..MaxPeriods
     UI_PurchPrice:         array(SITE,VEN,MAT,MAT_NAMES,T) of real
@@ -284,8 +282,12 @@ model "vdlx-datagrid examples"
     UI_IsPurchMatInT:      array(SITE,VEN,MAT,MAT_NAMES,T) of boolean
     UI_OwnProdPerPeriod:   array(SITE,VEN,MAT,MAT_NAMES,T) of boolean
 
+    PERIODS: set of integer
+    CITIES: set of string
+    distance : dynamic array(CITIES, CITIES) of real        ! distance from origin to destination
+    mapCity2Ctry: dynamic array(CITIES) of string           ! mapping from each city to its country
+    amount: array(CITIES,CITIES,PERIODS) of real            ! amount shipped from origin to destination per period;  well, it is an array of mpvar, but let us keep it simple
   end-declarations
-
 
   !First Table
   procedure LoadTableOne2k
@@ -361,8 +363,6 @@ model "vdlx-datagrid examples"
     end-do
   end-procedure
 
-
-
   procedure datainput
     SITE:= {"OneSite","TwoSite","ThreeeSite","FourSite","FiveSite","SixSite","SevenSite"}
     VEN:= {"v_OneSite","v_TwoSite","v_ThreeeSite","v_FourSite","v_FiveSite","v_SixSite","v_SevenSite"}
@@ -413,6 +413,10 @@ model "vdlx-datagrid examples"
     DAYS := {"FRI","SAT","SUN","MON","TUE","WED","THU"}
 
     Factories := {"New York", "Paris", "Peckham"}
+
+    FactoryCapacities("New York") := 1030
+    FactoryCapacities("Paris") := 890
+    FactoryCapacities("Peckham") := 920
 
     StockSizeLabels(0) := "Small"
     StockSizeLabels(1) := "Medium"
@@ -481,6 +485,19 @@ model "vdlx-datagrid examples"
         MIN_AGENT_COMMISSION
         MAX_PERC_AGENCY
     end-initializations
+
+    initializations from TRANSPORT_DATAFILE
+      mapCity2Ctry as 'CITIES'
+      distance as 'DISTANCES'
+      amount as 'AMOUNTS'
+     end-initializations
+
+     !A table to display
+     ! it uses look-up columns in arbitrary order
+     writeln( "Period" +"\t| "+ "Destination" +"\t| "+ "Ctry of dest" + "\t| "+ "Origin" +"\t| "+ "Ctry of orig" +"\t| "+ "Distance" +"\t| "+ "Amount" )
+     forall(p in PERIODS, c1 in CITIES, c2 in CITIES) do
+       writeln( string(p) +"\t| "+ c2 +"\t| "+ mapCity2Ctry(c2) + "\t| "+c1 +"\t| "+ mapCity2Ctry(c1) +"\t| "+ distance(c1,c2) +"\t| "+ amount(c1,c2,p) )
+     end-do
 
     t1IndexNames  :: ["Alpha","Beta","Gamma","Delta"]
     ! initializations from "mmsheet.csv:table1.csv"

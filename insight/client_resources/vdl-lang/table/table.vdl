@@ -365,33 +365,5 @@ limitations under the License.
                 </vdl-column>
             </vdl-row>
         </vdl-section>
-
-        <vdl-section heading="Calculated Columns">
-            <vdl-column size="7">
-                <p class="lead">Generate data columns.</p>
-                <p>You can add columns to a datagrid that are not binding to an Insight array. You must specify a <code>render</code> function
-                    for the column to generate the display, sort and filter data. Calculated columns must be part of an existing datagrid that
-                    has one or more columns bound to an Insight array, this allows the indices to be generated based on those array entities.
-                </p>
-                <vdlx-datagrid column-filter="true">
-                    <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
-                    <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value">ServiceLevelAgreements</vdlx-datagrid-column>
-                    <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 2 + ''">ServiceLevelAgreements * 2</vdlx-datagrid-column>
-                </vdlx-datagrid>
-            </vdl-column>
-            <vdl-column heading="VDL source:" size="5">
-                    <code-panel>
-&lt;vdlx-datagrid column-filter=&quot;true&quot;&gt;
-    &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
-    &lt;vdlx-datagrid-column render=&quot;=scenario.entities.ServiceLevelAgreements([rowData[0]]).value&quot;&gt;
-        ServiceLevelAgreements
-    &lt;/vdlx-datagrid-column&gt;
-    &lt;vdlx-datagrid-column render=&quot;=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 2 + ''&quot; &gt;
-        ServiceLevelAgreements * 2
-    &lt;/vdlx-datagrid-column&gt;
-&lt;/vdlx-datagrid&gt;
-                    </code-panel>
-            </vdl-column>
-        </vdl-section>
     </vdl-page>
 </vdl>
