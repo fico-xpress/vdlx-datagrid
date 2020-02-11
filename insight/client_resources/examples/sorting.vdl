@@ -24,9 +24,121 @@ limitations under the License.
 
     <vdl-page>
         <vdl-section heading="Sort by formatted">
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>You can configure set or entity columns to sort by the formatted value using the <code>"sort-by-formatted"</code>
+                        attribute.
+                        The default is for columns to be sorted by the underlying data value. If a column has any
+                        formatting applied, by a number formatter, custom <code>"render"</code> function or if an
+                        Insight labels array is applied to the column, then this option will configure the column to
+                        sort rows by that formatted data.
+                    </p>
+                    <p>You can use the <code>"render"</code> function to apply custom sorting by returning a different
+                        value when the function is called with <code>type="sort"</code>. In the example below the
+                        "Months of the year" index column is a set of strings, so by default the months would be sorted
+                        alphanumerically by name. The column has <code>sort-by-formatted="true"</code> set and a custom
+                        render function that returns the month's ordinal number when called for sorting. This means the
+                        column will sort the months correctly.</p>
+                    <script>
+                        // This render function returns the ordinal number for months of the year when called
+                        // with the 'sort' type.
+                        var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+                        function MonthsOfYearRender(value, type) {
+                            if (type === 'sort') {
+                                return MONTHS.indexOf(value);
+                            }
+                            return value;
+                        }
+                    </script>
+                    <vdlx-datagrid page-size="15">
+                        <vdlx-datagrid-column set="MonthsOfYear" sort-by-formatted="true"
+                                              render="=MonthsOfYearRender"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="FactorySupply"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+                <vdl-column heading="VDL source:" size="6">
+                    <code-panel>
+&lt;script&gt;
+    // This render function returns the ordinal number for months of the year when called
+    // with the 'sort' type.
+    var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+    function MonthsOfYearRender(value, type) {
+        if (type === 'sort') {
+            return MONTHS.indexOf(value);
+        }
+        return value;
+    }
+&lt;/script&gt;
+&lt;vdlx-datagrid page-size=&quot;15&quot; id=&quot;this-table&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;MonthsOfYear&quot; sort-by-formatted=&quot;true&quot;
+                          render=&quot;=MonthsOfYearRender&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
         </vdl-section>
 
         <vdl-section heading="Calculated columns sorting">
+            <vdl-row>
+                <vdl-column size="7">
+                    <p>Calculated columns will always behave as if <code>"sort-by-formatted"</code> is enabled, as they
+                        do not have
+                        any underlying data. When a calculated column is sorted the <code>"render"</code> callback is
+                        called
+                        for every cell in the column with the <code>type</code> argument set to "sort".</p>
+                    <script>
+                        function format(value, type) {
+                            if (type === 'display') {
+                                return insight.Formatter.formatNumber(value, '#,##0.00');
+                            }
+                            // Sort and filter by the raw number value
+                            return value;
+                        }
+                    </script>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column set="Factories" set-position="0">Origin</vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="Factories" set-position="1">Destination</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ShippingCosts" format="0.0000"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column
+                                render="=format(scenario.entities.FactoryCapacities(rowData[0]).value, type)">
+                            Origin capacity
+                        </vdlx-datagrid-column>
+                        <vdlx-datagrid-column
+                                render="=format(scenario.entities.FactoryCapacities(rowData[1]).value, type)">
+                            Destination capacity
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+                <vdl-column heading="VDL source:" size="5">
+                    <code-panel>
+&lt;script&gt;
+    function format(value, type) {
+        if (type === 'display') {
+            return insight.Formatter.formatNumber(value, '#,##0.00');
+        }
+        // Sort and filter by the raw number value
+        return value;
+    }
+&lt;/script&gt;
+&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot; set-position=&quot;0&quot;&gt;Origin&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot; set-position=&quot;1&quot;&gt;Destination&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;ShippingCosts&quot; format=&quot;0.0000&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column
+            render=&quot;=format(scenario.entities.FactoryCapacities(rowData[0]).value, type)&quot;&gt;
+        Origin capacity
+    &lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column
+            render=&quot;=format(scenario.entities.FactoryCapacities(rowData[1]).value, type)&quot;&gt;
+        Destination capacity
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
         </vdl-section>
 
         <vdl-section heading="Default Sorting">
@@ -46,7 +158,7 @@ limitations under the License.
                 </vdl-column>
                 <vdl-column heading="VDL source:" size="6">
                     <code-panel>
-                        &lt;vdlx-datagrid&gt;
+&lt;vdlx-datagrid&gt;
     &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot; sort-order=&quot;1&quot;
                           sort-direction=&quot;asc&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot; sort-order=&quot;0&quot;
