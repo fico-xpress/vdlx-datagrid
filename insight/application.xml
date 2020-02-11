@@ -19,7 +19,7 @@
             <vdl-view title="Big Data 100k rows" path="big-data/datagrid-bd3.vdl"/>
             <vdl-view title="Big Data 500k rows" path="big-data/datagrid-bd4.vdl"/>
             <vdl-view title="Big Data 1M rows" path="big-data/datagrid-bd5.vdl"/>
-            <vdl-view title="Simulated Arrays (61741 rows)" path="big-data/simulatedArrays.vdl"/>
+            <vdl-view title="Simulated Arrays (61740 rows)" path="big-data/simulatedArrays.vdl"/>
         </view-group>
     </client>
 </model-companion>
