@@ -21,18 +21,18 @@
     limitations under the License.
  */
 import {VDL} from '../insight-globals';
-import IndexFilterAttributes from './attributes';
+import metadata from './metadata';
 import transform from './transform';
 import viewModel from './view-model';
 
 VDL('vdlx-datagrid-index-filter', {
-    tag: 'vdlx-datagrid-index-filter',
-    attributes: IndexFilterAttributes,
+    tag: metadata.tag,
+    attributes: metadata.attributes,
     createViewModel: viewModel,
     transform: transform,
     // Apply errors to the parent vdlx-datagrid
-    errorTargetSelector: function(element) {
+    errorTargetSelector: function (element) {
         return $(element).closest('vdlx-datagrid')[0] || element;
     },
-    requiredParent: ['vdlx-datagrid']
+    requiredParent: metadata.requiredParent
 });

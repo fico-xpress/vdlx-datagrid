@@ -2,10 +2,8 @@
    Xpress Insight vdlx-datagrid
    =============================
 
-   file vdlx-datagrid-column/attributes.js
-   ```````````````````````
-   vdlx-datagrid-column extension.
-
+   file vdlx-datagrid-column/metadata.js
+   `````````````````````````````````````
     (c) Copyright 2019 Fair Isaac Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,17 +18,20 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-export default [
-    {
-        name: 'entity',
-        description:
-            "Name of the array entity to show in this column. Throws an error if the entity doesn't exist or is not an array or set type.",
-        required: false
-    },
-    {
-        name: 'set',
-        description:
-            "Name of the set entity to show in this column. Throws an error if the entity doesn't exist or is not a set type.",
+export default {
+    tag: 'vdlx-datagrid-column',
+    modifiesDescendants: false,
+    attributes: [
+        {
+            name: 'entity',
+            description:
+                "Name of the array entity to show in this column. Throws an error if the entity doesn't exist or is not an array or set type.",
+            required: false
+        },
+        {
+            name: 'set',
+            description:
+                "Name of the set entity to show in this column. Throws an error if the entity doesn't exist or is not a set type.",
         required: false
     },
     {
@@ -196,11 +197,12 @@ export default [
         name: 'sort-order',
         valueType: 'number'
     },
-    {
-        name: 'sort-direction',
-        defaultValue: 'asc',
-        validation: {
-            allowedValues: ['asc', 'desc']
+        {
+            name: 'sort-direction',
+            defaultValue: 'asc',
+            validation: {
+                allowedValues: ['asc', 'desc']
+            }
         }
-    }
-];
+    ]
+};
