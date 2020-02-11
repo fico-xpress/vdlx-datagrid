@@ -7,6 +7,8 @@
 - Save any pending cell edits when the view is unloaded. 
 - Index columns can be positioned anywhere in the datagrid. When index column is defined in VDL, its' position in VDL defines its'
   position in datagrid.
+- Default sorting can be set with new `vdlx-datagrid-column` attributes `sort-order` and `sort-direction`.
+- Calculated columns support with a `render` attribute.
 - Moved test data generation into the model so it can be generated on Scenario load instead of being bundled with the app.
 
 ## v4.6.1

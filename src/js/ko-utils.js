@@ -21,9 +21,13 @@
     limitations under the License.
  */
 
-import isEqual  from 'lodash/isEqual';
+import isEqual from 'lodash/isEqual';
+import { insightModules } from './insight-globals';
 
-export const onSubscribe = (function(f, observable) {
+/** @type {KnockoutStatic} */
+const ko = insightModules.load('external-libs/knockout');
+
+export const onSubscribe = function(f, observable) {
     var subscribe = observable.subscribe;
     observable.subscribe = function() {
         var subscription = subscribe.apply(observable, arguments);
@@ -32,7 +36,7 @@ export const onSubscribe = (function(f, observable) {
     };
 
     return observable;
-})
+};
 
 export function onSubscriptionDispose(f, subscription) {
     var dispose = subscription.dispose;
@@ -45,13 +49,34 @@ export function onSubscriptionDispose(f, subscription) {
     return subscription;
 }
 
-export const withEqualityComparer = (function(f, obs) {
+export const withEqualityComparer = function(f, obs) {
     obs.equalityComparer = f;
     return obs;
-})
+};
 
 /**
  * Sets equalityComparer on the observable
  */
 
 export const withDeepEquals = obs => withEqualityComparer(isEqual, obs);
+
+export const createMutationObservable = (
+    /** @type {HTMLElement} */ elm,
+    /** @type {MutationObserverInit} */ config = { attributes: true, childList: true, subtree: true }
+) => {
+    const tempObservable = ko.observable();
+
+    const observer = new MutationObserver((mutationsList, observer) => {
+        tempObservable(mutationsList);
+    });
+
+    const res = ko.pureComputed(() => tempObservable());
+
+    const awakeSubscription = res.subscribe(() => observer.observe(elm, config), res, 'awake');
+
+    const asleepSubscription = res.subscribe(() => observer.disconnect(), res, 'asleep');
+
+    return res;
+};
+
+export const withDeferred = obs => obs.extend({ deferred: true });
