@@ -25,32 +25,6 @@ limitations under the License.
 
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
-    <style>
-        .test-class {
-            background: rgba(255, 0, 0, .4) !important;
-        }
-
-        .redball {
-            display: block;
-            width: 48px;
-            height: 48px;
-            border-radius: 24px;
-            background-color: orangered;
-        }
-
-        td.editable {
-            border-bottom: 2px dashed #EAEAFF;
-        }
-
-        .red {
-            background-color: rgba(255, 0, 0, 0.22);
-        }
-
-        .green {
-            background-color: rgba(0, 255, 0, 0.22);
-        }
-    </style>
-
     <vdl-page>
 
         <vdl-section heading="Datagrids">
@@ -59,7 +33,7 @@ limitations under the License.
 
         <vdl-section heading="Basic usage">
             <vdl-row>
-                <vdl-column heading="Simple datagrid" size="6" class="example-passed">
+                <vdl-column heading="Simple datagrid" size="6">
                     <vdlx-datagrid id="basic-example-1">
                         <vdlx-datagrid-column set="SupportLevels">Support L.</vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
@@ -79,7 +53,7 @@ limitations under the License.
 
             </vdl-row>
             <vdl-row>
-                <vdl-column heading="Simple datagrid with repeated index sets" size="6"  class="example-passed">
+                <vdl-column heading="Simple datagrid with repeated index sets" size="6">
                     <vdlx-datagrid id="basic-example-2">
                         <vdlx-datagrid-column set="Factories" heading="Origin"></vdlx-datagrid-column>
                         <vdlx-datagrid-column set="Factories" heading="Destination"></vdlx-datagrid-column>
@@ -99,7 +73,7 @@ limitations under the License.
 
             </vdl-row>
             <vdl-row>
-                <vdl-column heading="Simple datagrid with positioned index sets" size="6"  class="example-passed">
+                <vdl-column heading="Simple datagrid with positioned index sets" size="6">
                     <vdlx-datagrid id="basic-example-positioned-index-sets">
                         <vdlx-datagrid-column set="Factories" heading="Origin"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ShippingCosts"></vdlx-datagrid-column>
@@ -136,7 +110,7 @@ limitations under the License.
                 </vdl-column>
             </vdl-row>
             <vdl-row>
-                <vdl-column heading="Datagrid with a CSS class" size="6" class="example-passed">
+                <vdl-column heading="Datagrid with a CSS class" size="6">
                     <vdlx-datagrid class="htable" id="basic-example-3">
                         <vdlx-datagrid-column set="SupportLevels">Support L.</vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
@@ -168,7 +142,7 @@ limitations under the License.
 
         <vdl-section heading="Hiding columns">
             <vdl-row>
-                <vdl-column size="6" heading="Hidden Index Column" class="example-passed">
+                <vdl-column size="6" heading="Hidden Index Column">
                     <p>
                         You can use the <code>vdl-visible</code> attribute on <code>&lt;vdlx-datagrid-column&gt;</code> tags to hide them from display.
                         Any table callbacks that include row data will still include the hidden columns in the row data.
@@ -195,7 +169,7 @@ limitations under the License.
 
 
         <vdl-section heading="Number formatting">
-            <vdl-column size="6" heading="Formatted:" class="example-passed">
+            <vdl-column size="6" heading="Formatted:">
                 <vdlx-datagrid>
                     <vdlx-datagrid-column set="SupportLevels">Support L.</vdlx-datagrid-column>
                     <vdlx-datagrid-column entity="SupportCosts" format="$#,###.00"></vdlx-datagrid-column>
@@ -242,7 +216,7 @@ limitations under the License.
                 }
             </script>
 
-            <vdl-column size="6" heading="Custom renderer" class="example-passed">
+            <vdl-column size="6" heading="Custom renderer">
                 <vdlx-datagrid>
                     <vdlx-datagrid-column render="=italic" entity="SupportCosts" heading="SUPPORT COSTS"></vdlx-datagrid-column>
                     <vdlx-datagrid-column render="=colorize" entity="ServiceLevelAgreements">Agreements</vdlx-datagrid-column>
@@ -293,8 +267,8 @@ limitations under the License.
         </vdl-section>
 
         <vdl-section heading="Pagination">
-            <vdl-column size="6" heading="paged grid" class="example-passed">
-                <vdlx-datagrid page-size="5" page-mode="paged" >
+            <vdl-column size="6" heading="paged grid">
+                <vdlx-datagrid page-size="5" page-mode="paged">
                     <vdlx-datagrid-column entity="FactorySupply" heading="SUPPORT COSTS"></vdlx-datagrid-column>
                 </vdlx-datagrid>
             </vdl-column>
@@ -309,7 +283,7 @@ limitations under the License.
         </vdl-section>
 
         <vdl-section heading="Filtering">
-            <vdl-column heading="Column filters" size="6" class="example-passed">
+            <vdl-column heading="Column filters" size="6">
                 <vdlx-datagrid show-filter="true" column-filter="true">
                     <vdlx-datagrid-column entity="SupportCosts" heading="SUPPORT COSTS"></vdlx-datagrid-column>
                     <vdlx-datagrid-column entity="ServiceLevelAgreements">Agreements Custom Title</vdlx-datagrid-column>
@@ -358,7 +332,7 @@ limitations under the License.
                 <vdl-column size="6">
                     <p class="lead">When <code>"always-show-selection"</code> attribute is set to <code>"true"</code>, tables keep selection visible after it
                         becomes inactive</p>
-                    <vdlx-datagrid always-show-selection="true" page-size="5" page-mode="paged" >
+                    <vdlx-datagrid always-show-selection="true" page-size="5" page-mode="paged">
                         <vdlx-datagrid-column entity="FactorySupply" heading="SUPPORT COSTS"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
@@ -378,11 +352,11 @@ limitations under the License.
                     <p class="lead">Export data as a CSV file.</p>
                     <p>To display the button set <code>"show-export"</code> to <code>"true"</code>, or use an expression that resolves to <code>"true"</code></p>
                     <p><code>"export-filename"</code> (optional) will accept an expression and can be used to give the exported file a name.</p>
-                    <vdlx-datagrid show-export="true" export-filename="support_costs" page-size="5" >
+                    <vdlx-datagrid show-export="true" export-filename="support_costs" page-size="5">
                         <vdlx-datagrid-column entity="FactorySupply" heading="SUPPORT COSTS"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
-                <vdl-column heading="VDL source:" size="6" page-size="5" page-mode="paged" >
+                <vdl-column heading="VDL source:" size="6" page-size="5" page-mode="paged">
                     <code-panel>
 &lt;vdlx-datagrid show-export="true" export-filename="support_costs"&gt;
     &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot; heading=&quot;SUPPORT COSTS&quot;&gt;&lt;&#x2F;vdlx-datagrid-column&gt;
@@ -396,8 +370,8 @@ limitations under the License.
             <vdl-column size="6">
                 <vdlx-datagrid column-filter="true">
                     <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
-                    <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value" >ServiceLevelAgreements</vdlx-datagrid-column>
-                    <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 2 + ''" >ServiceLevelAgreements * 2</vdlx-datagrid-column>
+                    <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value">ServiceLevelAgreements</vdlx-datagrid-column>
+                    <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 2 + ''">ServiceLevelAgreements * 2</vdlx-datagrid-column>
                 </vdlx-datagrid>
             </vdl-column>
             <vdl-column heading="VDL source:" size="6">
