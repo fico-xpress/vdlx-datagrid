@@ -22,8 +22,8 @@
  */
 import { VDL } from '../insight-globals';
 import attributes from './attributes';
-import { transform } from './transform';
-import { viewModel } from './view-model';
+import transform from './transform';
+import viewModel from './view-model';
 /*
     vdlx-datagrid-column
 

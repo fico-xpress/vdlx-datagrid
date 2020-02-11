@@ -1,3 +1,5 @@
+import ko from 'knockout';
+
 const insightModules = {
     load: jest.fn()
 };
@@ -48,6 +50,7 @@ const modules = {
     'vdl/vdl-validator-factory': validatorFactorySpy,
     'dialogs': dialogsSpy,
     'insight-getter': insightGetterSpy,
+    'external-libs/knockout': ko,
     'enums': enumsMock,
     'components/table/create-sparse-data': createSparseDataSpy,
     'components/table/create-dense-data': createDenseDataSpy,
@@ -68,3 +71,12 @@ jest.doMock('../../../src/js/insight-globals', () => {
         insightModules
     }
 });
+
+
+global.MutationObserver = class {
+    constructor(callback) {
+        this.callback = callback;
+        this.disconnect = jest.fn();
+        this.observe = jest.fn();
+    }
+};

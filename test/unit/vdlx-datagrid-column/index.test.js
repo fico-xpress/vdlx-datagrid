@@ -2,8 +2,8 @@ import '../../../src/js/vdlx-datagrid-column';
 
 import { VDL } from '../../../src/js/insight-globals';
 import attributes from '../../../src/js/vdlx-datagrid-column/attributes';
-import { transform } from '../../../src/js/vdlx-datagrid-column/transform';
-import { viewModel } from '../../../src/js/vdlx-datagrid-column/view-model';
+import transform from '../../../src/js/vdlx-datagrid-column/transform';
+import viewModel from '../../../src/js/vdlx-datagrid-column/view-model';
 
 jest.mock('../../../src/js/vdlx-datagrid-column/attributes');
 jest.mock('../../../src/js/vdlx-datagrid-column/transform');
