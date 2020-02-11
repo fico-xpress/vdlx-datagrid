@@ -53,13 +53,12 @@ export const createSorter = (entity, tabulatorSorters) => {
 /**
  * Create a datagrid column sorter that sorts using the formatted data.
  *
- * @param entity The Insight entity
+ * @param {string} columnId The Tabulator column identifier
  * @param {function} formatter The formatter function to generate the cell data
  * @param tabulatorSorters Array of Tabulator sorters
  * @returns {function} The sorter function to use on the column
  */
-export const createFormattedSorter = (entity, formatter, tabulatorSorters) => {
-    const entityName = entity.getName();
+export const createFormattedSorter = (columnId, formatter, tabulatorSorters) => {
     const sorter = tabulatorSorters[DEFAULT_SORTER_REF];
 
     return (a, b, aRow, bRow, column, dir, sorterParams) => {
@@ -76,7 +75,7 @@ export const createFormattedSorter = (entity, formatter, tabulatorSorters) => {
             return sorter(formatter(aCell), formatter(bCell), aRow, bRow, column, dir, sorterParams);
         } catch (e) {
             console.error(`Error whilst calling cell render function for sorting with sort-by-formatted` +
-                ` applied to column bound to ${entityName}. ${e.message}`, e);
         }
+                ` applied to column ${columnId}. ${e.message}`, e);
     };
 };

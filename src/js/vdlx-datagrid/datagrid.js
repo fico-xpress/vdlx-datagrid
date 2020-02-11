@@ -507,7 +507,7 @@ class Datagrid {
                 cssClass: getClass(),
                 formatter: getFormatter(),
                 sorter: options.sortByFormatted
-                    ? createFormattedSorter(displayEntity, getFormatter('sort'), tabulatorSorters)
+                    ? createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters)
                     : createSorter(displayEntity, tabulatorSorters),
                 dataType: entity.getType(),
                 elementType: displayEntity.getElementType(),
@@ -742,7 +742,7 @@ class Datagrid {
                 formatter: getFormatter(),
                 sortByFormatted: entityOptions.sortByFormatted,
                 sorter: entityOptions.sortByFormatted
-                    ? createFormattedSorter(displayEntity, getFormatter('sort'), tabulatorSorters)
+                    ? createFormattedSorter(entityOptions.id, getFormatter('sort'), tabulatorSorters)
                     : createSorter(displayEntity, tabulatorSorters),
                 editor: entityOptions.editorType,
                 editorParams: getEditorParams(),
@@ -854,12 +854,16 @@ class Datagrid {
         const calculatedColumns = map(calculatedColumnsOptions, options => {
             const title = get(options, 'title', options.name);
 
+            const getFormatter = (type = 'display') => cell => options.render(cell.getValue(), type, getRowDataForColumns(cell.getData()));
+
             let column = assign({}, options, {
                 title: escape(String(title)),
-                formatter: cell => options.render(cell.getValue(), 'display', getRowDataForColumns(cell.getData())),
+                formatter: getFormatter(),
                 name: options.name,
                 field: options.id,
                 elementType: Enums.DataType.STRING,
+                sortByFormatted: true,
+                sorter: createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters),
                 accessorDownload: (value, rowData) => options.render(value, 'display', getRowDataForColumns(rowData)),
             });
 

@@ -16,8 +16,7 @@ describe('datagrid-sorter', () => {
             boolean: 'boolean-sorter'
         };
         entityMock = {
-            getElementType: jest.fn(),
-            getName: jest.fn()
+            getElementType: jest.fn()
         };
     });
 
@@ -79,10 +78,9 @@ describe('datagrid-sorter', () => {
         let sorterParams;
 
         beforeEach(() => {
-            entityMock.getName.mockReturnValue('my-sort-entity-name');
             formatterMock = jest.fn(cell => `formatted-${cell.getValue()}`);
             tabulatorSortersMock.alphanum = jest.fn().mockReturnValue('tabulator-sorter-result');
-            sortCallback = createFormattedSorter(entityMock, formatterMock, tabulatorSortersMock);
+            sortCallback = createFormattedSorter('column-id-1', formatterMock, tabulatorSortersMock);
             aMock = 10;
             bMock = 20;
             aRowMock = {
@@ -141,7 +139,7 @@ describe('datagrid-sorter', () => {
                 tabulatorSortersMock.alphanum.mockImplementation(() => {
                     throw error;
                 });
-                sortCallback = createFormattedSorter(entityMock, formatterMock, tabulatorSortersMock);
+                sortCallback = createFormattedSorter('column-id-1', formatterMock, tabulatorSortersMock);
                 result = sortCallback(aMock, bMock, aRowMock, bRowMock, columnMock, dir, sorterParams);
             });
 
@@ -151,7 +149,7 @@ describe('datagrid-sorter', () => {
 
             it('outputs an error log message', function () {
                 expect(global.console.error).toBeCalledWith(
-                    expect.stringContaining('my-sort-entity-name. sorter-error'),
+                    expect.stringContaining('column-id-1. sorter-error'),
                     error
                 );
             });
@@ -175,7 +173,7 @@ describe('datagrid-sorter', () => {
 
             it('outputs an error log message', function () {
                 expect(global.console.error).toBeCalledWith(
-                    expect.stringContaining('my-sort-entity-name. formatter-error'),
+                    expect.stringContaining('column-id-1. formatter-error'),
                     error
                 );
             });
