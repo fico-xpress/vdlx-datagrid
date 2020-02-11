@@ -22,12 +22,6 @@ limitations under the License.
     <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
-    <style>
-        vdl-page vdl-section div.section-body vdl-row vdl-column div.column-body > code-panel {
-            align-self:stretch;
-        }
-    </style>
-
     <vdl-page>
         <vdl-section heading="Sort by formatted">
         </vdl-section>
@@ -41,6 +35,8 @@ limitations under the License.
                     <p>To pre-set sorting of the column set <code>"sort-order"</code> to a number.</p>
                     <p>It is also possible to set the direction of sorting with <code>"sort-direction"</code> attribute
                         (optional). This attribute can be either set to "desc" or "asc".</p>
+                    <p>Note, datagrid stores sorting state between view reloads so if a user has changed the sort order
+                    their changes will be preserved.</p>
                     <vdlx-datagrid>
                         <vdlx-datagrid-column entity="SupportCosts" sort-order="1"
                                               sort-direction="asc"></vdlx-datagrid-column>
