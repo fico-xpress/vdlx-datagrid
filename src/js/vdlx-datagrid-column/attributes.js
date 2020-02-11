@@ -153,7 +153,7 @@ export default [
                 description: 'The type call data requested - this will be "filter", "display", "type" or "sort"'
             },
             {
-                name: 'row',
+                name: 'rowData',
                 type: 'Array.<(string|boolean|number)>',
                 description: 'The values from each cell in the current row'
             }
