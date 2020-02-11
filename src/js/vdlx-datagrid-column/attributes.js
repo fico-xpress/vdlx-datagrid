@@ -75,7 +75,7 @@ export default [
     },
     {
         name: 'sort-by-formatted',
-        description: 'Use formatted values for sorting.',
+        description: 'Use formatted values for sorting. This is always set to enabled for calculated columns.',
         valueType: 'boolean',
         defaultValue: false
     },
