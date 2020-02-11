@@ -22,6 +22,7 @@
  */
 import Tabulator from 'tabulator-tables/dist/js/tabulator';
 import { insightModules, insight } from '../insight-globals';
+import {createSorter, createFormattedSorter} from './datagrid-sorter';
 import dataTransform, {
     getAllColumnIndices,
     getDisplayIndices,
@@ -35,7 +36,7 @@ import { getRowData } from './utils';
 import { EDITOR_TYPES } from '../constants';
 import AddRemove from './add-remove';
 import { chooseColumnFilter } from './grid-filters';
-import perf from '../performance-measurement';
+import {perf, perfMessage} from '../performance-measurement';
 import { createStateManager } from './state-peristence';
 import { DatagridLock } from './datagrid-lock';
 import escape from 'lodash/escape';
@@ -60,9 +61,11 @@ import each from 'lodash/each';
 import noop from 'lodash/noop';
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
+import isObject from 'lodash/isObject';
 import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
+import constant from "lodash/constant";
 import { withDeferred } from '../ko-utils';
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
@@ -111,20 +114,22 @@ class Datagrid {
         this.columnOptions$ = columnOptions$;
         this.componentRoot = root;
         this.view = insight.getView();
-        this.schema = this.view.getProject().getModelSchema();
+        this.schema = this.view.getApp().getModelSchema();
 
         const options = ko.unwrap(gridOptions$);
 
         this.table = this.createTable(options);
+        this.tableLock = new DatagridLock(this.table.element);
+
+        let rowIndex = 1;
+        this.getRowIndex = () => rowIndex++;
 
         this.headerToolbar = root.querySelector('.header-toolbar');
         const footerToolbar = root.querySelector('.footer-toolbar');
 
-        this.addRemoveRowControl = this.createAddRemoveRowControl(footerToolbar, this.table, options);
+        this.addRemoveRowControl = this.createAddRemoveRowControl(footerToolbar, options);
         this.paginatorControl = this.createPaginatorControl(footerToolbar, this.table, options);
         this.stateManager = null;
-
-        this.tableLock = new DatagridLock(this.table.element);
 
         this.buildTable();
         this.update();
@@ -194,7 +199,7 @@ class Datagrid {
                             this.tableLock.lock();
                         }
 
-                        return perf('PERF TOTAL:', () =>
+                        return perf('vdlx-datagrid total build time:', () =>
                             this.setColumnsAndData(gridOptions, columnOptions, scenariosData).then(() =>
                                 this.tableLock.unlock()
                             )
@@ -262,6 +267,9 @@ class Datagrid {
         };
         const saveState = () => this.saveState();
 
+        let sortPromise = Promise.resolve();
+        let sortPromiseResolve = noop;
+
         const tabulatorOptions = {
             pagination: options.pagination,
             paginationSize: options.paginationSize,
@@ -273,7 +281,18 @@ class Datagrid {
             height: '100%',
             resizableColumns: false,
             dataFiltered: saveState,
-            dataSorting: saveState,
+            dataSorting: () => {
+                this.tableLock && this.tableLock.lock();
+                sortPromise = new Promise(resolve => {
+                    sortPromiseResolve = resolve;
+                });
+                perf('datagrid sorting', constant(sortPromise));
+                saveState();
+            },
+            dataSorted: () => {
+                sortPromiseResolve();
+                this.tableLock && this.tableLock.unlock();
+            },
             cellEditing: cell => select(cell.getRow()),
             rowClick: (e, row) => select(row),
             rowSelectionChanged: (data, rows) => this.setSelectedRow(first(rows)),
@@ -402,17 +421,16 @@ class Datagrid {
 
     /**
      * @param {Element} footerToolbar
-     * @param {*} table
      * @param {*} options
      * @returns
      * @memberof Datagrid
      */
-    createAddRemoveRowControl(footerToolbar, table, options) {
+    createAddRemoveRowControl(footerToolbar, options) {
         if (!options.addRemoveRow) {
             return undefined;
         }
 
-        const addRemoveControl = new AddRemove(table, options.addRemoveRow === 'addrow-autoinc');
+        const addRemoveControl = new AddRemove(this.table, this.getRowIndex, options.addRemoveRow === 'addrow-autoinc');
         addRemoveControl.setEnabled(false);
         addRemoveControl.appendTo(footerToolbar);
 
@@ -456,6 +474,8 @@ class Datagrid {
 
         const allScenarios = uniq([scenariosData.defaultScenario].concat(values(scenariosData.scenarios)));
 
+        const tabulatorSorters = this.table.modules.sort.sorters;
+
         const indicesColumns = map(setNamePosnsAndOptions, setNameAndPosn => {
             const { name, options } = setNameAndPosn;
             const entity = schema.getEntity(name);
@@ -470,11 +490,25 @@ class Datagrid {
                 }
                 return classes.join(' ');
             };
+
+            const defaultFormatter = cell => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue());
+
+            const getFormatter = (type = 'display') => {
+                if (options.render) {
+                    return cell =>
+                        options.render(cell.getValue(), type, getRowDataForColumns(cell.getData()));
+                }
+                return defaultFormatter;
+            };
+
             let column = assign({}, setNameAndPosn.options, {
                 title: escape(String(title)),
                 field: options.id,
                 cssClass: getClass(),
-                formatter: cell => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue()),
+                formatter: getFormatter(),
+                sorter: options.sortByFormatted
+                    ? createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters)
+                    : createSorter(displayEntity, tabulatorSorters),
                 dataType: entity.getType(),
                 elementType: displayEntity.getElementType(),
                 labelsEntity: entity.getLabelsEntity(),
@@ -541,17 +575,17 @@ class Datagrid {
 
             const defaultFormatter = cell => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue());
 
-            const getFormatter = () => {
+            const getFormatter = (type = 'display') => {
                 if (entityOptions.render) {
                     return cell =>
-                        entityOptions.render(cell.getValue(), 'display', getRowDataForColumns(cell.getData()));
+                        entityOptions.render(cell.getValue(), type, getRowDataForColumns(cell.getData()));
                 }
 
-                if (entityOptions.editorType === EDITOR_TYPES.checkbox) {
+                if (entityOptions.editorType === EDITOR_TYPES.checkbox && type === 'display') {
                     return checkboxFormatter;
-                } else {
-                    return defaultFormatter;
                 }
+
+                return defaultFormatter;
             };
 
             const checkboxCellClickHandler = (e, cell) => {
@@ -706,6 +740,10 @@ class Datagrid {
                 cssClass: getClasses(),
                 cellClick: getCellClickHandler(),
                 formatter: getFormatter(),
+                sortByFormatted: entityOptions.sortByFormatted,
+                sorter: entityOptions.sortByFormatted
+                    ? createFormattedSorter(entityOptions.id, getFormatter('sort'), tabulatorSorters)
+                    : createSorter(displayEntity, tabulatorSorters),
                 editor: entityOptions.editorType,
                 editorParams: getEditorParams(),
                 cellEditing: getCellEditingHandler(),
@@ -816,12 +854,16 @@ class Datagrid {
         const calculatedColumns = map(calculatedColumnsOptions, options => {
             const title = get(options, 'title', options.name);
 
+            const getFormatter = (type = 'display') => cell => options.render(cell.getValue(), type, getRowDataForColumns(cell.getData()));
+
             let column = assign({}, options, {
                 title: escape(String(title)),
-                formatter: cell => options.render(cell.getValue(), 'display', getRowDataForColumns(cell.getData())),
+                formatter: getFormatter(),
                 name: options.name,
                 field: options.id,
                 elementType: Enums.DataType.STRING,
+                sortByFormatted: true,
+                sorter: createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters),
                 accessorDownload: (value, rowData) => options.render(value, 'display', getRowDataForColumns(rowData)),
             });
 
@@ -859,14 +901,15 @@ class Datagrid {
             });
         }
 
-        const { data, allSetValues } = perf('PERF Data generation:', () =>
+        const { data, allSetValues } = perf('Data generation:', () =>
             dataTransform(
                 allColumnIndices,
                 columns,
                 entitiesColumns,
                 setNamePosnsAndOptions,
                 scenariosData,
-                gridOptions.rowFilter
+                gridOptions.rowFilter,
+                this.getRowIndex
             )
         );
 
@@ -927,13 +970,22 @@ class Datagrid {
 
         this.table.element.style.visibility = 'hidden';
 
-        return perf('PERF Tabulator.setData():', () =>
+        perfMessage(() => {
+            if (isArray(data) && isObject(data[0])) {
+                let columnCount = Object.keys(data[0]).length - 1;
+                let rowCount = data.length;
+                let cellCount = rowCount * columnCount;
+                return `vdlx-datagrid going to render with ${rowCount.toLocaleString()} rows, ${columnCount} columns, ${cellCount.toLocaleString()} cells`;
+            }
+        });
+
+        return perf('Tabulator setData and draw', () =>
             table
                 .setData(data)
                 .then(() => redraw())
                 .then(() => (this.table.element.style.visibility = 'visible'))
-                .catch(err => {
-                    debugger;
+                .catch(e => {
+                    console.error('An error occurred whilst adding data to Tabulator and redrawing', e);
                 })
         );
     }

@@ -26,8 +26,6 @@ limitations under the License.
 
     <vdl-page>
             <vdl-section heading="Data" layout="fluid">
-              <vdl-execute-button mode="INPUT_EXPORT_PURCHASE" caption="Export purchase data" />
-              <P/>
              <vdl-row >
                 <vdl-column>
                   <vdlx-datagrid page-mode="paged" page-mode="paged" page-size="15" show-filter="true" column-filter="true">

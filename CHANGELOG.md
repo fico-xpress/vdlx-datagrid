@@ -10,6 +10,8 @@
 - Default sorting can be set with new `vdlx-datagrid-column` attributes `sort-order` and `sort-direction`.
 - Calculated columns support with a `render` attribute.
 - Moved test data generation into the model so it can be generated on Scenario load instead of being bundled with the app.
+- Added the `sort-by-formatted` attribute on `vdlx-datagrid-column` to switch sorting to use the display value. By default column sorting
+  uses the underlying data values when sorting. Note this is likely to reduce performance when enabled of large tables and a user sorts columns.
 
 ## v4.6.1
 

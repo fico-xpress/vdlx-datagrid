@@ -3,7 +3,7 @@
    =============================
 
    file performance-measurement.js
-   ```````````````````````
+   ```````````````````````````````
    vdlx-datagrid performance measurements.
 
     (c) Copyright 2019 Fair Isaac Corporation
@@ -22,30 +22,44 @@
  */
 import {insight} from './insight-globals';
 
-export default function(measurementDescription, measurement) {
-    const debugEnabled = insight.isDebugEnabled();
-    if (debugEnabled) {
-        const startTime = window.performance.now();
-        const res = measurement();
-        const printEnd = () => {
-            const endTime = window.performance.now();
-            console.info(
-                `${measurementDescription} has finished in: ${Math.round(
-                    endTime - startTime
-                ).toLocaleString()} milliseconds`
-            );
-        };
+const MESSAGE_PREFIX = 'PERF';
+const DEBUG_ENABLED = insight.isDebugEnabled();
 
-        if (res instanceof Promise) {
-            return res.then(value => {
-                printEnd();
-                return value;
-            });
-        }
-
-        printEnd();
-        return res;
+export const perf = (measurementDescription, measurement) => {
+    if (!DEBUG_ENABLED) {
+        return measurement();
     }
 
-    return measurement();
-}
+    const startTime = window.performance.now();
+    const res = measurement();
+    const printEnd = () => {
+        const endTime = window.performance.now();
+        console.log(
+            `${MESSAGE_PREFIX}: ${measurementDescription} has finished in: ${Math.round(
+                endTime - startTime
+            ).toLocaleString()} milliseconds`
+        );
+    };
+
+    if (res instanceof Promise) {
+        return res.then(value => {
+            printEnd();
+            return value;
+        });
+    }
+
+    printEnd();
+    return res;
+};
+
+/**
+ * Call a generateMessage function and print the result to the console, only if Insight debug mode is enabled.
+ *
+ * @param {function} generateMessage A function that returns the message string
+ */
+export const perfMessage = generateMessage => {
+    if (!DEBUG_ENABLED) {
+        return;
+    }
+    console.log(`${MESSAGE_PREFIX}: ${generateMessage()}`);
+};

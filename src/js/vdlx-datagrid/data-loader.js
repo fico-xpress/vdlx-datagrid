@@ -63,7 +63,7 @@ function findScenario(scenarios, identifier) {
 function getAutoTableEntities(columnOptions) {
     var modelSchema = insight
         .getView()
-        .getProject()
+        .getApp()
         .getModelSchema();
 
     let entities = map(columnOptions, 'name');
