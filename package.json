@@ -32,6 +32,8 @@
     "@types/lodash": "^4.14.149",
     "@types/tabulator-tables": "^4.5.2",
     "babel-jest": "^24.9.0",
+    "esm": "^3.2.25",
+    "handlebars": "^4.7.3",
     "jest": "^24.9.0"
   },
   "dependencies": {

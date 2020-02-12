@@ -5,46 +5,38 @@ const path = require('path');
 const fs = require('fs');
 const handlebars = require('handlebars');
 
-
-// TODO find all attribute.js files and loop over them, loading them in
-// TODO change attributes.js structure in all src to include tag-level properties
-// TODO check they match expected structure
-
-let attrFile = path.join(__dirname, '../../src/js/vdlx-datagrid/attributes.js');
-let attrFileCol = path.join(__dirname, '../../src/js/vdlx-datagrid-column/attributes.js');
-
-let extension = require(attrFile).default;
-let extensionCol = require(attrFileCol).default;
-
-let extensions = [
-    {attributes: extension, tag: 'vdlx-datagrid', name: 'vdlx-datagrid'},
-    {attributes: extensionCol, tag: 'vdlx-datagrid-column', name: 'vdlx-datagrid-column'}
-
+const MODULES = [
+    '../../src/js/vdlx-datagrid/metadata.js',
+    '../../src/js/vdlx-datagrid-column/metadata.js',
+    '../../src/js/vdlx-datagrid-index-filter/metadata.js',
+    '../../src/js/vdlx-datagrid-validate/metadata.js'
 ];
 
-
-// var extensions = modules.load('vdl-registry')
-//     .getExtensionMetadata()
-//     .filter(function (extension) {
-//         // Filter out documentation ignored extensions
-//         return !extension.doc || !extension.doc.ignore;
-//     })
-//     .sort(function (a, b) {
-//         // Group by tag/attribute type, then alphanumeric on name
-//         if (a.tag && !b.tag) {
-//             return -1;
-//         }
-//         if (!a.tag && b.tag) {
-//             return 1;
-//         }
-//         return a.name.localeCompare(b.name);
-//     });
+let extensions = MODULES
+    .map(modFile => {
+        let modPath = path.join(__dirname, modFile);
+        return require(modPath).default;
+    })
+    .filter(function (extension) {
+        // Filter out documentation ignored extensions
+        return !extension.doc || !extension.doc.ignore;
+    });
 
 extensions.forEach(function (extension) {
     extension.attributes = extension.attributes
         // Remove attributes that have been marked as doc ignored
         .filter(function (attribute) {
             return !attribute.docIgnore;
+        })
+        .map(function (attribute) {
+            attribute.name = attribute.name.replace(/-/g, '&#8209;');
+            if (attribute.expressionVars) {
+                attribute.expressionVars.forEach(function (expressionVar) {
+                    expressionVar.type = expressionVar.type.replace(/\|/g, '\\|');
+                    return expressionVar;
+                });
+            }
+            return attribute;
         })
         // Required attributes come first
         // Naturally sort attribute names
@@ -66,18 +58,10 @@ extensions.forEach(function (extension) {
         });
 });
 
-
-console.log(extension);
-
 let tags = {extensions: extensions, attributeExtensions: []};
 
-// var attributeExtensions = extensions.filter(function (extension) {
-//     return !extension.tag;
-// });
-
-
 module.exports.vdltagsGenerate = function (extensionLoader, targetPath, jsApiScripts) {
-    var outputFilename = path.join(targetPath, 'vdl-tags.json');
+    var outputFilename = path.join(targetPath, 'vdlx-datagrid-tags.json');
 
     return getVdlTags(extensionLoader, jsApiScripts)
         .then(function (tags) {
@@ -100,14 +84,14 @@ module.exports.vdltagsGenerate = function (extensionLoader, targetPath, jsApiScr
             try {
                 fs.writeFileSync(outputFilename, JSON.stringify(tags, null, 4));
             } catch (e) {
-                console.error('Failed to write out generated HTML file. ' + e);
+                console.error('Failed to write out generated JSON file. ' + e);
             }
 
         });
 };
 
-var outputFilename = path.join(__dirname, 'templates/static/index.html');
-let templateFile = path.join(__dirname, 'templates/index.tmpl.html');
+var outputFilename = path.join(__dirname, 'vdlx-datagrid-reference.md');
+let templateFile = path.join(__dirname, 'templates/vdlx-datagrid-reference.tmpl.md');
 
 var template = handlebars.compile(fs.readFileSync(templateFile, 'utf-8'));
 
@@ -123,21 +107,11 @@ function mapAttributeExpressionProperties(tag) {
     return tag;
 }
 
-var docBaseProps = {
-    documentTitle: 'vdlx-datagrid documentation',
-    introduction: 'TODO - intro text',
-    copyright: '© ' + new Date().getFullYear() + ' Fair Isaac Corporation. All rights reserved.',
-    buildDate: new Date().toISOString().split('T')[0]
-};
-
 tags.extensions = tags.extensions.map(mapAttributeExpressionProperties);
 tags.attributeExtensions = tags.attributeExtensions.map(mapAttributeExpressionProperties);
 
-var docs = Object.assign({}, docBaseProps, tags);
-
 try {
-    fs.writeFileSync(outputFilename, template(docs));
+    fs.writeFileSync(outputFilename, template(tags));
 } catch (e) {
-    console.error('Failed to write out generated HTML file. ' + e);
+    console.error('Failed to write out generated MD file. ' + e);
 }
-

@@ -20,7 +20,7 @@
  */
 export default {
     tag: 'vdlx-datagrid-index-filter',
-    requiredParent: ['vdlx-datagrid'],
+    requiredAncestor: ['vdlx-datagrid-column'],
     attributes: [
         {
             name: 'set',
@@ -30,7 +30,7 @@ export default {
         {
             name: 'set-position',
             description:
-                'Index (zero-based) of occurrence of that index set in the index tuple for the array. Defaults to zero.'
+                'Index (zero-based) of occurrence of that index set in the index tuple for the array. Defaults to __0__.'
         },
         {
             name: 'value',

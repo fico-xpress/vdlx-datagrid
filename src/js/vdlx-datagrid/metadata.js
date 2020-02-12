@@ -43,38 +43,38 @@ export default {
         },
         {
             name: 'page-size',
-            description: 'The number of rows to show per-page in paged mode. Defaults to 50.',
+            description: 'The number of rows to show per-page in paged mode. Defaults to __50__.',
             acceptsExpression: true
         },
         {
             name: 'page-mode',
             description:
-                'By default the grid will show all rows in scrolling mode. Set this attribute to "paged" to enable grid pagination.'
+                'By default the grid will show all rows in scrolling mode. Set this attribute to __paged__ to enable grid pagination.'
         },
         {
             name: 'height',
             acceptsExpression: true,
             description:
-                'Grid height, When page-mode is set to "scrolling" you can set the height of the grid to something other than the default 600'
+                'Grid height, When page-mode is set to __scrolling__ you can set the height of the grid to something other than the default __600__'
         },
         {
             name: 'column-filter',
             description:
-                'Set this to "true" to enable the column filters. This will show a header row with filter inputs for each column.'
+                'Set this to __true__ to enable the column filters. This will show a header row with filter inputs for each column.'
         },
         {
             name: 'add-remove-row',
             description:
                 'Setting this will show the add-remove row buttons at the bottom of the grid. Set to "true" ' +
-                'to prompt for index selection on row add. Set to "addrow-autoinc" will switch the behaviour to allow new ' +
+                'to prompt for index selection on row add. Set to __addrow-autoinc__ will switch the behaviour to allow new ' +
                 'index values to be created, incrementing from the highest value in the set(s).'
         },
         {
             name: 'width',
             description:
                 'Set the grid to a fixed width, in pixels. Accepts an integer value. ' +
-                'If set to the string "custom" then the grid width is calculated by adding up all the widths of the columns in the grid. ' +
-                "If a column doesn't have a width specified then it is given a default value of 100px.",
+                'If set to the string __custom__ then the grid width is calculated by adding up all the widths of the columns in the grid. ' +
+                "If a column doesn't have a width specified then it is given a default value of __100px__.",
             acceptsExpression: false
         },
         {
@@ -85,7 +85,7 @@ export default {
         {
             name: 'always-show-selection',
             description:
-                'Whether to display selection on inactive grids. Set to "true" to keep selection on a grid when it becomes inactive. Defaults to false.',
+                'Whether to display selection on inactive grids. Set to __true__ to keep selection on a grid when it becomes inactive. Defaults to __false__.',
             acceptsExpression: false
         },
         {
@@ -112,9 +112,9 @@ export default {
         {
             name: 'save-state',
             description:
-                'Set this to "false" to disable grid state saving. By default grid state is stored in the ' +
+                'Set this to __false__ to disable grid state saving. By default grid state is stored in the ' +
                 "user's browser session so that user settings (e.g. page, sorting and search) are preserved if grid data " +
-                'is reloaded. Defaults to true.',
+                'is reloaded. Defaults to __true__.',
             acceptsExpression: false,
             required: false
         },
