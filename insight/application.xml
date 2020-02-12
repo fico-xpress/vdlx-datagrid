@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <model-companion xmlns="http://www.fico.com/xpress/optimization-modeler/model-companion" version="3.0">
-
     <client>
-        <view-group title="Main">
-            <vdl-view title="Welcome" path="welcome.vdl" requires-scenarios-loaded="false"/>
-            <vdl-view title="Example One" path="datagrid.vdl"/>
+        <view-group title="vdlx-datagrid">
             <vdl-view title="New Column Features" path="column-new.vdl"/>
-        </view-group>
-        <view-group title="vdlx-datagrid Features">
             <vdl-view title="Basic usage" path="vdl-lang/table/table.vdl"/>
             <vdl-view title="Editable tables" path="vdl-lang/table/table-editable.vdl"/>
             <vdl-view title="Editable tables - Select inputs" path="vdl-lang/table/table-editable-select.vdl"/>
+            <vdl-view title="Calculated columns" path="examples/calculated-columns.vdl"/>
+            <vdl-view title="Sorting" path="examples/sorting.vdl"/>
             <vdl-view title="Range operators" path="vdl-lang/table/table-range-operators.vdl"/>
             <vdl-view title="Multi-scenario" path="vdl-lang/table/table-multi-scenario.vdl"/>
             <vdl-view title="Conditionals" path="vdl-lang/table/table-conditionals.vdl"/>
@@ -20,12 +17,12 @@
             <vdl-view title="Validation" path="vdl-lang/table/table-validation.vdl"/>
         </view-group>
         <view-group title="Big Data">
-            <vdl-view title="Big Data Table 1" path="big-data/datagrid-bd1.vdl"/>
-            <vdl-view title="Big Data Table 2" path="big-data/datagrid-bd2.vdl"/>
-            <vdl-view title="Big Data Table 3" path="big-data/datagrid-bd3.vdl"/>
-            <vdl-view title="Big Data Table 4" path="big-data/datagrid-bd4.vdl"/>
-            <vdl-view title="Big Data Table 5" path="big-data/datagrid-bd5.vdl"/>
+            <vdl-view title="Big Data 2k rows" path="big-data/datagrid-bd1.vdl"/>
+            <vdl-view title="Big Data 10k rows" path="big-data/datagrid-bd2.vdl"/>
+            <vdl-view title="Big Data 100k rows" path="big-data/datagrid-bd3.vdl"/>
+            <vdl-view title="Big Data 500k rows" path="big-data/datagrid-bd4.vdl"/>
+            <vdl-view title="Big Data 1M rows" path="big-data/datagrid-bd5.vdl"/>
+            <vdl-view title="Simulated Arrays (61740 rows)" path="big-data/simulatedArrays.vdl"/>
         </view-group>
     </client>
-
 </model-companion>

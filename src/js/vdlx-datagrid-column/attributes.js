@@ -20,7 +20,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-export var VDGCattributes = [
+export default [
     {
         name: 'entity',
         description:
@@ -75,12 +75,15 @@ export var VDGCattributes = [
     },
     {
         name: 'sort-by-formatted',
-        description: 'Use formatted values for sorting.'
+        description: 'Use formatted values for sorting. This is always set to enabled for calculated columns.',
+        valueType: 'boolean',
+        defaultValue: false
     },
     {
         name: 'filter-by-formatted',
         description:
-            'Use formatted values for filtering. This defaults to false unless the entity has a label in which case the default is true.'
+            'Use formatted values for filtering. This defaults to false unless the entity has a label in which case the default is true.',
+        valueType: 'boolean'
     },
     {
         name: 'editor-type',
@@ -153,7 +156,7 @@ export var VDGCattributes = [
                 description: 'The type call data requested - this will be "filter", "display", "type" or "sort"'
             },
             {
-                name: 'row',
+                name: 'rowData',
                 type: 'Array.<(string|boolean|number)>',
                 description: 'The values from each cell in the current row'
             }
@@ -188,5 +191,16 @@ export var VDGCattributes = [
                 description: 'params passed from the column definition object'
             }
         ]
+    },
+    {
+        name: 'sort-order',
+        valueType: 'number'
+    },
+    {
+        name: 'sort-direction',
+        defaultValue: 'asc',
+        validation: {
+            allowedValues: ['asc', 'desc']
+        }
     }
 ];

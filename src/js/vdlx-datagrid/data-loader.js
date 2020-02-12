@@ -20,7 +20,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import { onSubscribe, onSubscriptionDispose } from './ko-utils';
+import { onSubscribe, onSubscriptionDispose } from '../ko-utils';
 import fromPairs  from 'lodash/fromPairs';
 import each from 'lodash/each';
 import noop from 'lodash/noop';
@@ -63,7 +63,7 @@ function findScenario(scenarios, identifier) {
 function getAutoTableEntities(columnOptions) {
     var modelSchema = insight
         .getView()
-        .getProject()
+        .getApp()
         .getModelSchema();
 
     let entities = map(columnOptions, 'name');
@@ -118,7 +118,7 @@ function withScenarioData(config$) {
 
     const scenarioObserverSubscription$ = ko.pureComputed(function() {
         const config = ko.unwrap(config$);
-        if (!isEmpty(config.scenarioList) && !isEmpty(config.columnOptions)) {
+        if (!isEmpty(config) && !isEmpty(config.scenarioList) && !isEmpty(config.columnOptions)) {
             try {
                 error$(undefined);
                 return insight
