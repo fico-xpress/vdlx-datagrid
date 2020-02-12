@@ -25,7 +25,7 @@ import metadata from './metadata';
 import transform from './transform';
 import viewModel from './view-model';
 
-VDL('vdlx-datagrid-validate', {
+VDL(metadata.tag, {
     tag: metadata.tag,
     attributes: metadata.attributes,
     doc: metadata.doc,

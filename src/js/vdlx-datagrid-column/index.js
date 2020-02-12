@@ -22,8 +22,8 @@
  */
 import {VDL} from '../insight-globals';
 import metadata from './metadata';
-import {transform} from './transform';
-import { viewModel } from './view-model';
+import transform from './transform';
+import viewModel from './view-model';
 /*
     vdlx-datagrid-column
 
@@ -33,7 +33,7 @@ import { viewModel } from './view-model';
     This tag creates config to tell its parent how to populate the datagrid column.
     */
 
-VDL('vdlx-datagrid-column', {
+VDL(metadata.tag, {
     tag: metadata.tag,
     attributes: metadata.attributes,
     // Apply errors to the parent vdlx-datagrid element
