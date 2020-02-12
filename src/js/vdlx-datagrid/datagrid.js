@@ -308,7 +308,7 @@ class Datagrid {
     recalculateHeight(options) {
         if (options.pageMode === 'scrolling') {
             let height;
-            if (this.table.getDataCount() > options.paginationSize) {
+            if (this.table && this.table.getDataCount() > options.paginationSize) {
                 height = options.gridHeight;
                 if (!height) {
                     const row = this.table.getRowFromPosition(0, true);
