@@ -47,7 +47,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/insight/client_resources/vdlx-datagrid.zip
+          asset_path: target/vdlx-datagrid.zip
           asset_name: vdlx-datagrid.zip
           asset_content_type: application/zip
       - name: Upload component debug bundle
@@ -57,16 +57,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/insight/client_resources/vdlx-datagrid-debug.zip
+          asset_path: target/vdlx-datagrid-debug.zip
           asset_name: vdlx-datagrid-debug.zip
           asset_content_type: application/zip
       - name: Upload app
         id: upload-app
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: vdlx-datagrid-examples-app.zip
+          asset_path: target/vdlx-datagrid-examples-app.zip
           asset_name: vdlx-datagrid-examples-app.zip
           asset_content_type: application/zip

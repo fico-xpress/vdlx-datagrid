@@ -11,6 +11,7 @@ const MODULES = [
     '../../src/js/vdlx-datagrid-index-filter/metadata.js',
     '../../src/js/vdlx-datagrid-validate/metadata.js'
 ];
+const TARGET_DIR = path.join(__dirname, '../../target');
 
 let extensions = MODULES
     .map(modFile => {
@@ -90,7 +91,10 @@ module.exports.vdltagsGenerate = function (extensionLoader, targetPath, jsApiScr
         });
 };
 
-var outputFilename = path.join(__dirname, 'vdlx-datagrid-reference.md');
+if (!fs.existsSync(TARGET_DIR)){
+    fs.mkdirSync(TARGET_DIR);
+}
+var outputFilename = path.join(TARGET_DIR, 'vdlx-datagrid-reference.md');
 let templateFile = path.join(__dirname, 'templates/vdlx-datagrid-reference.tmpl.md');
 
 var template = handlebars.compile(fs.readFileSync(templateFile, 'utf-8'));
