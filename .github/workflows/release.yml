@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2.0.0
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v1.4.0
         with:
           node-version: 10.x
       - name: Build
@@ -32,7 +32,7 @@ jobs:
           npm run bundle:app
       - name: Create draft release
         id: create_release
-        uses: actions/create-release@master
+        uses: actions/create-release@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -52,7 +52,7 @@ jobs:
           asset_content_type: application/zip
       - name: Upload component debug bundle
         id: upload-component-debug-bundle
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
