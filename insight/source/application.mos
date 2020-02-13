@@ -286,7 +286,7 @@ model "vdlx-datagrid examples"
     CITIES: set of string
     distance : dynamic array(CITIES, CITIES) of real        ! distance from origin to destination
     mapCity2Ctry: dynamic array(CITIES) of string           ! mapping from each city to its country
-    amount: array(CITIES,CITIES,PERIODS) of real            ! amount shipped from origin to destination per period;  well, it is an array of mpvar, but let us keep it simple
+    amount: dynamic array(CITIES,CITIES,PERIODS) of real            ! amount shipped from origin to destination per period;  well, it is an array of mpvar, but let us keep it simple
   end-declarations
 
   !First Table
