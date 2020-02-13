@@ -606,7 +606,7 @@ class Datagrid {
 
             const getCellDoubleClickHandler = (e, cell) => {
                 if (entityOptions.editorType === EDITOR_TYPES.text) {
-                    if (entityOptions.editable) {
+                    if (entityOptions.editable && !cell.getElement().classList.contains('tabulator-editing')) {
                         cell.edit(true);
                     }
                 }
