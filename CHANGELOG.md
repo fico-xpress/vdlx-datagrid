@@ -12,6 +12,8 @@
 - Moved test data generation into the model so it can be generated on Scenario load instead of being bundled with the app.
 - Added the `sort-by-formatted` attribute on `vdlx-datagrid-column` to switch sorting to use the display value. By default column sorting
   uses the underlying data values when sorting. Note this is likely to reduce performance when enabled of large tables and a user sorts columns.
+- Changes to the organisation of view in the examples app.
+
 
 ## v4.6.1
 
