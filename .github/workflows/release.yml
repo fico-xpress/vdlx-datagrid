@@ -27,7 +27,6 @@ jobs:
           CI: true
       - name: Bundle
         run: |
-          npm run generate-test-data
           npm run bundle:library
           npm run bundle:debug-library
           npm run bundle:app
