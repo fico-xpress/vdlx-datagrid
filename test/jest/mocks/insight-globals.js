@@ -72,11 +72,12 @@ jest.doMock('../../../src/js/insight-globals', () => {
     }
 });
 
-
 global.MutationObserver = class {
     constructor(callback) {
         this.callback = callback;
-        this.disconnect = jest.fn();
-        this.observe = jest.fn();
+        this.disconnect = global.MutationObserver.disconnect;
+        this.observe = global.MutationObserver.observe;
     }
 };
+global.MutationObserver.disconnect = jest.fn();
+global.MutationObserver.observe = jest.fn();
