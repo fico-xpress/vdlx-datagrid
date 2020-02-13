@@ -91,9 +91,6 @@ module.exports.vdltagsGenerate = function (extensionLoader, targetPath, jsApiScr
         });
 };
 
-if (!fs.existsSync(TARGET_DIR)){
-    fs.mkdirSync(TARGET_DIR);
-}
 var outputFilename = path.join(TARGET_DIR, 'vdlx-datagrid-reference.md');
 let templateFile = path.join(__dirname, 'templates/vdlx-datagrid-reference.tmpl.md');
 

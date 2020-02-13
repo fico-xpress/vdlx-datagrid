@@ -18,7 +18,8 @@
     "bundle:library": "npm run create-target-dir && cd dist/insight/client_resources/ && bestzip ../../../target/vdlx-datagrid.zip vdlx-datagrid/",
     "bundle:debug-library": "npm run create-target-dir && cd dist/insight/client_resources/ && bestzip ../../../target/vdlx-datagrid-debug.zip vdlx-datagrid-debug/",
     "bundle:app": "npm run create-target-dir && cd insight && bestzip ../target/vdlx-datagrid-examples-app.zip *",
-    "version-txt": "node ./scripts/create-version-files.js dist/insight/client_resources/vdlx-datagrid/VERSION.txt dist/insight/client_resources/vdlx-datagrid-debug/VERSION.txt"
+    "version-txt": "node ./scripts/create-version-files.js dist/insight/client_resources/vdlx-datagrid/VERSION.txt dist/insight/client_resources/vdlx-datagrid-debug/VERSION.txt",
+    "vdldoc": "npm run create-target-dir && node -r esm scripts/vdldoc/vdldoc-generate.js"
   },
   "keywords": [],
   "author": "",

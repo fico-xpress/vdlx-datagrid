@@ -30,6 +30,7 @@ jobs:
           npm run bundle:library
           npm run bundle:debug-library
           npm run bundle:app
+          npm run vdldoc
       - name: Create draft release
         id: create_release
         uses: actions/create-release@v1.0.1
@@ -70,3 +71,12 @@ jobs:
           asset_path: target/vdlx-datagrid-examples-app.zip
           asset_name: vdlx-datagrid-examples-app.zip
           asset_content_type: application/zip
+      - name: Update VDLDoc reference
+        uses: docker://decathlon/wiki-page-creator-action:2.0.1
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          ACTION_MAIL: timhemming@fico.com
+          ACTION_NAME: timhemming-fico
+          OWNER: fico-xpress
+          REPO_NAME: vdlx-datagrid
+          MD_FOLDER: target
