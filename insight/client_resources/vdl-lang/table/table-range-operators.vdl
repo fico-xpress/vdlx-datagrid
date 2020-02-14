@@ -67,7 +67,9 @@ limitations under the License.
                             <li>&gt;= Greater than or equal to</li>
                             <li>&lt;&gt; Not equal to</li>
                             <li>!= Not equal to</li>
+                            <li>= Exact match</li>
                         </ul>
+                        <p>Exact match is enforced if the query starts with an '=' symbol otherwise it tries to match against any part of the value.</p>
                     </vdl-column>
                 </vdl-row>
             </vdl-section>
