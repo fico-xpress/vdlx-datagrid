@@ -100,7 +100,8 @@ export default {
                 {
                     name: 'rowData',
                     type: 'Array.<(string|boolean|number)>',
-                    description: 'Data for all row cells'
+                    description: 'The values from each cell in the current row. The order of the row data reflects the underlying ' +
+                        'order of the array indices rather than the display order.'
                 },
                 {
                     name: 'indices',

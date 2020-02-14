@@ -124,7 +124,8 @@ export default {
             {
                 name: 'rowData',
                 type: 'Array.<(string|boolean|number)>',
-                description: 'The values from each cell in the current row'
+                description: 'The values from each cell in the current row. The order of the row data reflects the underlying ' +
+                    'order of the array indices rather than the display order.'
             }
         ],
         expressionReturns: {
@@ -160,7 +161,8 @@ export default {
             {
                 name: 'rowData',
                 type: 'Array.<(string|boolean|number)>',
-                description: 'The values from each cell in the current row'
+                description: 'The values from each cell in the current row. The order of the row data reflects the underlying ' +
+                    'order of the array indices rather than the display order.'
             }
         ]
     },

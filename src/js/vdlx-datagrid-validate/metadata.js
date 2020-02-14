@@ -75,9 +75,8 @@ export default {
                 {
                     name: 'rowData',
                     type: '?Array.<(string|boolean|number)>',
-                    description:
-                        'Optional array containing indices and values of the current row.' +
-                        ' Provided when tag is used in combination with vdl-table.'
+                    description: 'The values from each cell in the current row. The order of the row data reflects the underlying ' +
+                        'order of the array indices rather than the display order.'
                 }
             ]
         },
