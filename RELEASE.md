@@ -44,3 +44,25 @@ This will create a draft release on GitHub. Go to [releases](https://github.com/
 open the new draft release. Add release notes to the description.
 
 Once you are happy with the release draft you can **publish** to make it available publicly.
+
+## VDLDoc reference publishing
+
+The VDLDoc reference is generated and published automatically along with the release process. The updated wiki page will automatically
+be published so you should check everything is in order at https://github.com/fico-xpress/vdlx-datagrid/wiki/vdlx-datagrid-reference.
+
+The vdldoc reference publishing is already setup, but this requires a contributor of the project to create a Personal access token
+and add this to the vdlx-datagrid project as a Secret and adding their username and noreply email to the release action configuration. 
+
+### How to update the wiki publishing user
+
+As the user who the wiki page will be published as...
+
+1. Go to your user Settings, Personal access tokens in GitHub - https://github.com/settings/tokens
+1. Generate new token, give it a useful name such as "wiki page creator token"
+1. Give the token all "repo" permissions
+1. Take a temporary (secure) record of the token as you can't see it at a later date
+1. Go to the project Settings page, Secrets section
+1. Add a new secret
+1. Name it: GITHUB_PERSONAL_ACCESS_TOKEN
+1. Paste in the token you generated in your user Settings
+1. Update `ACTION_MAIL` and `ACTION_NAME` in the step "Update VDLDoc reference" in [release.yml](.github/workflows/release.yml)
