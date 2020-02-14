@@ -8,6 +8,7 @@
             <vdl-view title="Calculated columns" path="examples/calculated-columns.vdl"/>
             <vdl-view title="Column Features" path="examples/column-features.vdl"/>
             <vdl-view title="Sorting" path="examples/sorting.vdl"/>
+            <vdl-view title="Range operators" path="vdl-lang/table/table-range-operators.vdl"/>
             <vdl-view title="Conditionals" path="vdl-lang/table/table-conditionals.vdl"/>
             <vdl-view title="Index filtering" path="vdl-lang/table/table-index-filtering.vdl"/>
             <vdl-view title="Row filtering" path="vdl-lang/table/table-row-filtering.vdl"/>
