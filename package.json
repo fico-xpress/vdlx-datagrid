@@ -10,14 +10,16 @@
     "watch": "cross-env NODE_ENV=development parcel watch --no-source-maps -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --no-hmr src/js/index.js",
     "copy-production-to-app": "copyfiles -f \"dist/insight/client_resources/vdlx-datagrid/*\" insight/client_resources/vdlx-datagrid",
     "prebuild": "npm run clean",
-    "clean": "rimraf dist/insight/client_resources/**/*.js dist/insight/client_resources/**/*.css dist/insight/client_resources/**/VERSION.txt insight/client_resources/vdlx-datagrid dist/insight/client_resources/*.zip insight/model_resources/*.csv *.zip",
+    "create-target-dir": "mkdirp target",
+    "clean": "rimraf dist/insight/client_resources/**/*.js dist/insight/client_resources/**/*.css dist/insight/client_resources/**/VERSION.txt insight/client_resources/vdlx-datagrid dist/insight/client_resources/*.zip insight/model_resources/*.csv target",
     "build": "npm run version-txt && parcel build --no-cache --no-source-maps -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js src/js/index.js",
     "postbuild": "npm run copy-production-to-app",
     "build:debug": "cross-env NODE_ENV=development npm run version-txt && parcel build --no-cache --no-minify --no-source-maps -d dist/insight/client_resources/vdlx-datagrid-debug -o vdlx-datagrid-debug.js src/js/index.js",
-    "bundle:library": "cd dist/insight/client_resources/ && bestzip vdlx-datagrid.zip vdlx-datagrid/",
-    "bundle:debug-library": "cd dist/insight/client_resources/ && bestzip vdlx-datagrid-debug.zip vdlx-datagrid-debug/",
-    "bundle:app": "cd insight && bestzip ../vdlx-datagrid-examples-app.zip *",
-    "version-txt": "node ./scripts/create-version-files.js dist/insight/client_resources/vdlx-datagrid/VERSION.txt dist/insight/client_resources/vdlx-datagrid-debug/VERSION.txt"
+    "bundle:library": "npm run create-target-dir && cd dist/insight/client_resources/ && bestzip ../../../target/vdlx-datagrid.zip vdlx-datagrid/",
+    "bundle:debug-library": "npm run create-target-dir && cd dist/insight/client_resources/ && bestzip ../../../target/vdlx-datagrid-debug.zip vdlx-datagrid-debug/",
+    "bundle:app": "npm run create-target-dir && cd insight && bestzip ../target/vdlx-datagrid-examples-app.zip *",
+    "version-txt": "node ./scripts/create-version-files.js dist/insight/client_resources/vdlx-datagrid/VERSION.txt dist/insight/client_resources/vdlx-datagrid-debug/VERSION.txt",
+    "vdldoc": "npm run create-target-dir && node -r esm scripts/vdldoc/vdldoc-generate.js"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +34,8 @@
     "@types/lodash": "^4.14.149",
     "@types/tabulator-tables": "^4.5.2",
     "babel-jest": "^24.9.0",
+    "esm": "^3.2.25",
+    "handlebars": "^4.7.3",
     "jest": "^24.9.0"
   },
   "dependencies": {
@@ -43,6 +47,7 @@
     "csv-stringify": "^4.3.1",
     "knockout": "^3.5.1",
     "lodash-es": "^4.17.15",
+    "mkdirp": "^1.0.3",
     "parcel-bundler": "^1.12.4",
     "parcel-plugin-wrapper": "^0.2.2",
     "postcss-modules": "^1.5.0",

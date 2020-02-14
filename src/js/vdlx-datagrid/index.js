@@ -21,14 +21,14 @@
     limitations under the License.
  */
 import {VDL} from '../insight-globals';
-import attributes from './attributes';
+import metadata from './metadata';
 import transform from './transform';
 import viewModel from './view-model';
 
-VDL('vdlx-datagrid', {
-    tag: 'vdlx-datagrid',
-    attributes,
+VDL(metadata.tag, {
+    tag: metadata.tag,
+    attributes: metadata.attributes,
     createViewModel: viewModel,
     transform,
-    modifiesDescendants: false
+    modifiesDescendants: metadata.modifiesDescendants
 });

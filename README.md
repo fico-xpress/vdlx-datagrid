@@ -3,7 +3,9 @@
 # VDLX-DATAGRID
 
 A drop-in alternative for the `vdl-table` component in a FICO Xpress Insight VDL view.
-`vdlx-datagrid` provides a tabular visualisation, similar to `vdl-table`, but allows for much larger datasets to be displayed while trading off a few features in `vdl-table`. 
+`vdlx-datagrid` provides a tabular visualisation, similar to `vdl-table`, but allows for much larger datasets to be displayed while trading off a few features in `vdl-table`.
+
+For a list of available tags and attributes for the vdlx-datagrid component see [vdlx-datagrid-reference](https://github.com/fico-xpress/vdlx-datagrid/wiki/vdlx-datagrid-reference)
 
 ## How to use vdlx-datagrid in your Insight app
 

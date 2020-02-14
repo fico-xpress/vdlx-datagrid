@@ -2,6 +2,7 @@
 .idea/
 archive/
 coverage/
+target/
 build.sh
 **/.DS_Store
 **/.c9

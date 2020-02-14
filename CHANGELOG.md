@@ -14,6 +14,7 @@
   uses the underlying data values when sorting. Note this is likely to reduce performance when enabled of large tables and a user sorts columns.
 - Changes to the organisation of view in the examples app.
 - Range operators for column filters.
+- Published vdldoc reference to the project wiki as part of the release build.
 
 
 ## v4.6.1

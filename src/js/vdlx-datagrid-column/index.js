@@ -20,8 +20,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import { VDL } from '../insight-globals';
-import attributes from './attributes';
+import {VDL} from '../insight-globals';
+import metadata from './metadata';
 import transform from './transform';
 import viewModel from './view-model';
 /*
@@ -33,21 +33,17 @@ import viewModel from './view-model';
     This tag creates config to tell its parent how to populate the datagrid column.
     */
 
-VDL('vdlx-datagrid-column', {
-    tag: 'vdlx-datagrid-column',
-    attributes: attributes,
+VDL(metadata.tag, {
+    tag: metadata.tag,
+    attributes: metadata.attributes,
     // Apply errors to the parent vdlx-datagrid element
-    errorTargetSelector: function(element) {
+    errorTargetSelector: function (element) {
         // error is displayed on autotable, or if there isn't one, the parent
         // will have to do as as default
         return $(element).closest('vdlx-datagrid')[0] || element;
     },
-
     template: '<vdl-contents></vdl-contents>',
-
-    modifiesDescendants: false,
-
+    modifiesDescendants: metadata.modifiesDescendants,
     createViewModel: viewModel,
-
     transform: transform
 });
