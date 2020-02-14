@@ -39,7 +39,7 @@ Each release includes an Insight app containing examples of how to use `vdlx-dat
 
 See [CHANGELOG](./CHANGELOG.md) for a list of changes in each version.
 
-## Features comparison between `vdl-table` and `vdlx-datgrid`.
+## Features comparison between `vdl-table` and `vdlx-datagrid`.
 
 ### Features in `vdl-table` that are not currently included in `vdlx-datagrid`.
 
