@@ -13,6 +13,7 @@
 - Added the `sort-by-formatted` attribute on `vdlx-datagrid-column` to switch sorting to use the display value. By default column sorting
   uses the underlying data values when sorting. Note this is likely to reduce performance when enabled of large tables and a user sorts columns.
 - Changes to the organisation of view in the examples app.
+- Range operators for column filters.
 
 
 ## v4.6.1
