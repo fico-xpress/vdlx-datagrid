@@ -604,6 +604,14 @@ class Datagrid {
                 return undefined;
             };
 
+            const getCellDoubleClickHandler = (e, cell) => {
+                if (entityOptions.editorType === EDITOR_TYPES.text) {
+                    if (entityOptions.editable && !cell.getElement().classList.contains('tabulator-editing')) {
+                        cell.edit(true);
+                    }
+                }
+            };
+
             const getEditorParams = () => {
                 if (entityOptions.editorType === EDITOR_TYPES.select) {
                     let getOptions;
@@ -739,6 +747,7 @@ class Datagrid {
                 field: entityOptions.id,
                 cssClass: getClasses(),
                 cellClick: getCellClickHandler(),
+                cellDblClick : getCellDoubleClickHandler,
                 formatter: getFormatter(),
                 sortByFormatted: entityOptions.sortByFormatted,
                 sorter: entityOptions.sortByFormatted

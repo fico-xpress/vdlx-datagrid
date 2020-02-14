@@ -2,19 +2,19 @@
 <model-companion xmlns="http://www.fico.com/xpress/optimization-modeler/model-companion" version="3.0">
     <client>
         <view-group title="vdlx-datagrid">
-            <vdl-view title="New Column Features" path="column-new.vdl"/>
             <vdl-view title="Basic usage" path="vdl-lang/table/table.vdl"/>
             <vdl-view title="Editable tables" path="vdl-lang/table/table-editable.vdl"/>
             <vdl-view title="Editable tables - Select inputs" path="vdl-lang/table/table-editable-select.vdl"/>
             <vdl-view title="Calculated columns" path="examples/calculated-columns.vdl"/>
+            <vdl-view title="Column Features" path="examples/column-features.vdl"/>
             <vdl-view title="Sorting" path="examples/sorting.vdl"/>
             <vdl-view title="Range operators" path="vdl-lang/table/table-range-operators.vdl"/>
-            <vdl-view title="Multi-scenario" path="vdl-lang/table/table-multi-scenario.vdl"/>
             <vdl-view title="Conditionals" path="vdl-lang/table/table-conditionals.vdl"/>
             <vdl-view title="Index filtering" path="vdl-lang/table/table-index-filtering.vdl"/>
             <vdl-view title="Row filtering" path="vdl-lang/table/table-row-filtering.vdl"/>
-            <vdl-view title="Error handling" path="vdl-lang/table/table-errors.vdl"/>
             <vdl-view title="Validation" path="vdl-lang/table/table-validation.vdl"/>
+            <vdl-view title="Multi-scenario" path="vdl-lang/table/table-multi-scenario.vdl"/>
+            <vdl-view title="Error handling" path="vdl-lang/table/table-errors.vdl"/>
         </view-group>
         <view-group title="Big Data">
             <vdl-view title="Big Data 2k rows" path="big-data/datagrid-bd1.vdl"/>
