@@ -47,21 +47,6 @@ let _filterFloat = value => {
     return NaN;
 };
 
-let _getFormatter = columnConfig => {
-    if (columnConfig.format) {
-        return columnConfig.format;
-    } else {
-        switch (columnConfig.elementType) {
-            case Enums.DataType.INTEGER:
-                return insight.Formatter.format.integer;
-            case Enums.DataType.REAL:
-            case Enums.DataType.CONSTRAINT:
-            case Enums.DataType.DECISION_VARIABLE:
-                return insight.Formatter.format.decimal;
-        }
-    }
-};
-
 let _exactCompareAsString = (searchData, data) => {
     return searchData.toLowerCase() === data.toLowerCase();
 };
@@ -122,7 +107,7 @@ let filter = (column, searchText, formattedCellValue, rowData, params) => {
         cellValue = rowData[column.id];
     }
     const firstChar = searchText.substring(0, 1);
-    var exactColumnSearch = firstChar === EQUALS_OPERATOR;
+    let exactColumnSearch = firstChar === EQUALS_OPERATOR;
     if (exactColumnSearch) {
         return _exactMatchCell(searchText.substring(1), String(cellValue), column);
     }
@@ -132,36 +117,24 @@ let filter = (column, searchText, formattedCellValue, rowData, params) => {
         let operator;
         if (firstChar === LESS_THAN_OPERATOR) {
             if(secondChar === EQUALS_OPERATOR) { // '<='
-                // var searchValue = parseFloat(searchText.substr(2));
-                // return cellValue <= searchValue;
                 operator_length = 2;
                 operator = LTEQ;
             } else if(secondChar === GREATER_THAN_OPERATOR) { // '<>'
-                // var searchValue = parseFloat(searchText.substr(2));
-                // return cellValue !== searchValue;
                 operator_length = 2;
                 operator = NEQ;
             } else { // '<'
-                // var searchValue = parseFloat(searchText.substr(1));
-                // return cellValue < searchValue;
                 operator_length = 1;
                 operator = LT;
             }
         } else if (firstChar === GREATER_THAN_OPERATOR) {
             if(secondChar === EQUALS_OPERATOR) { // '>='
-                // var searchValue = parseFloat(searchText.substr(2));
-                // return cellValue >= searchValue;
                 operator_length = 2;
                 operator = GTEQ;
             } else { // '>'
-                // var searchValue = parseFloat(searchText.substr(1));
-                // return cellValue > searchValue;
                 operator_length = 1;
                 operator = GT;
             }
         } else if (firstChar === NOT_OPERATOR && secondChar === EQUALS_OPERATOR) { // '!='
-            // var searchValue = parseFloat(searchText.substr(2));
-            // return cellValue !== searchValue;
             operator_length = 2;
             operator = NEQ;
         }
