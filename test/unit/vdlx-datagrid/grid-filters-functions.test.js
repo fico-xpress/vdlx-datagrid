@@ -4,7 +4,6 @@ import {Enums} from '../../../src/js/vdlx-datagrid/grid-filters';
 
 describe('grid filters functions', () => {
     let exactCompareAsNumber = TESTING_ONLY._exactCompareAsNumber;
-    let exactCompareAsNumberRounded = TESTING_ONLY._exactCompareAsNumberRounded;
     let filterFloat = TESTING_ONLY._filterFloat;
 
     beforeEach(() => {
@@ -62,23 +61,6 @@ describe('grid filters functions', () => {
                 expect(exactCompareAsNumber(searchData, cellData)).toBeTruthy();
             })
         });
-
-    });
-
-    describe('test exact rounded number comparison', () => {
-
-        let numbers = [
-            [1.58, 1.58, {format: '#0.##'}],
-            [1.6, 1.58, {format: '##.#'}],
-            [1.5, 1.49, {elementType: Enums.DataType.REAL}]
-        ];
-        numbers.forEach(([searchData, cellData, column]) => {
-            it(`${searchData} matches ${cellData} when formatted`, () => {
-                let result = exactCompareAsNumberRounded(searchData, cellData, column);
-                expect(result)
-                    .toBeTruthy();
-            });
-        })
 
     });
 
