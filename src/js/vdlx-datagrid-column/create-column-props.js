@@ -8,7 +8,7 @@ const enums = insightModules.load('enums');
 const validatorFactory = insightModules.load('vdl/vdl-validator-factory');
 const insightGetter = insightModules.load('insight-getter');
 
-export const createProps = (columnId, params, filters, element) => {
+export const createProps = (columnId, params, filters, remoteFilters, element) => {
     var props = {
         scenario: params.scenario,
         title: params.heading,
@@ -93,6 +93,7 @@ export const createProps = (columnId, params, filters, element) => {
     }
     if (size(filters)) {
         props.filters = filters;
+        props.remoteFilters = remoteFilters;
     }
     if (props.entity) {
         var getValidationFn = function(indices) {
