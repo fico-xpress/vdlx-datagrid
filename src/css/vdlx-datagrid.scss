@@ -62,9 +62,11 @@ $sorting-icon-right-offset: -4px;
 }
 
 vdlx-datagrid {
-  display: block;
   color: $black;
   user-select: none;
+  display: inline-block;
+  width: 100%;
+  position: relative;
 
   .tabulator {
     margin-bottom: 0;
@@ -426,6 +428,19 @@ vdlx-datagrid {
     }
   }
 
+  .header-toolbar {
+    width: 100%;
+    padding: 0 2px;
+
+    .pull-right {
+      margin-bottom: 6px;
+    }
+
+    .header-toolbar:empty {
+      display: none;
+    }
+  }
+
   .footer-toolbar {
     width: 100%;
     background-color: lightblue;
@@ -449,20 +464,19 @@ vdlx-datagrid {
   }
 
   .insight-table-locked-overlay {
-    $spinner-delay: 2s;
-    animation: show $spinner-delay step-end 0s 1 normal;
+    animation: show 2s step-end 0s 1 normal;
     @keyframes show {
       0% {
-        transform: scale(0);
+        opacity: 0;
       }
       100% {
-        transform: scale(1);
+        opacity: 1;
       }
     }
 
     .fico-spinner {
       font-size: 40px;
-      animation: spin 2s linear $spinner-delay infinite;
+      animation: spin 2s linear 0s infinite;
       @keyframes spin {
         0% {
           transform: rotate(0deg);

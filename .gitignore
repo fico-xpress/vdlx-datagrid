@@ -1,6 +1,8 @@
 .DS_Store
 .idea/
 archive/
+coverage/
+target/
 build.sh
 **/.DS_Store
 **/.c9
@@ -11,7 +13,9 @@ insight/model_resources/*.csv
 screenshots
 .cache
 
-insight/client_resources/vdlx-datagrid/vdlx-datagrid.js.map
-insight/client_resources/vdlx-datagrid/vdlx-datagrid.css.map
-dist/insight/client_resources/vdlx-datagrid/vdlx-datagrid.js.map
-dist/insight/client_resources/vdlx-datagrid/vdlx-datagrid.css.map
+insight/client_resources/vdlx-datagrid/
+dist/insight/client_resources/**/*.js
+dist/insight/client_resources/**/*.css
+dist/insight/client_resources/**/VERSION.txt
+
+.vscode

@@ -1,20 +1,18 @@
-import {onSubscribe} from '../../src/js/vdlx-datagrid/ko-utils';
 
-describe('ko-utils::onSubscribe', () => {
+import { createMutationObservable } from '../../src/js/ko-utils';
 
-    test('onSubscribe notifies when Knockout subscribes to an observable.', () => {
+describe('ko-utils', () => {
+    it('create mutation observable', () => {
+        const mutationObservable = createMutationObservable('element', { childList: true });
 
-        const START_VALUE = 3;
-        const OBSERVABLE = ko.observable(START_VALUE);
+        expect(MutationObserver.observe).not.toHaveBeenCalled();
+        expect(MutationObserver.disconnect).not.toHaveBeenCalled();
+        
+        const subscription = mutationObservable.subscribe(() => {});
+        expect(MutationObserver.observe).toHaveBeenCalledWith('element', { childList: true });
 
-        const doIt = jest.fn();
+        subscription.dispose();
+        expect(MutationObserver.disconnect).toHaveBeenCalled();
 
-        const thing = onSubscribe(doIt, OBSERVABLE);
-
-        const subscription = OBSERVABLE.subscribe(function () { });
-
-        expect(thing).toEqual(OBSERVABLE);
-        expect(doIt).toHaveBeenCalledWith(subscription);
     });
-
 });

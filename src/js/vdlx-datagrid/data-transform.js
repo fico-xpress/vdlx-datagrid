@@ -20,8 +20,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import perf from '../performance-measurement';
-import set  from 'lodash/set';
+import {insightModules} from '../insight-globals';
+import {perf} from '../performance-measurement';
+import set from 'lodash/set';
 import isFunction from 'lodash/isFunction';
 import zipObject from 'lodash/zipObject';
 import filter from 'lodash/filter';
@@ -167,7 +168,7 @@ const isSparse = (sets, arrays) => {
     return totalPossibleKeys * arrays.length > (totalCountOfArrayValues * Math.log(totalCountOfArrayValues) || 0);
 };
 
-export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions, scenariosData, rowFilter) => {
+export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions, scenariosData, rowFilter, rowIndexGenerator) => {
     var defaultScenario = scenariosData.defaultScenario;
     const indexScenarios = uniq(map(map(columnOptions, 'id'), id => get(scenariosData.scenarios, id, defaultScenario)));
 
@@ -194,14 +195,18 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
 
     const schema = insight
         .getView()
-        .getProject()
+        .getApp()
         .getModelSchema();
 
     const allSetValues = map(setNamePosnsAndOptions, (setNamePosnAndOption, i) => {
         return SelectOptions.generateSelectOptions(schema, indexScenarios, setNamePosnAndOption.name, sets[i]);
     });
 
-    const createRow = values => zipObject(setIds.concat(arrayIds), values);
+    const createRow = values => {
+        let row = zipObject(setIds.concat(arrayIds), values);
+        row.id = rowIndexGenerator();
+        return row;
+    };
 
     if (isEmpty(arrays)) {
         return {
@@ -215,7 +220,7 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
         // assume O(nlogn)
         data = createSparseData(arrays, setNamePosnsAndOptions, allColumnIndices, columnOptions, columns);
     } else {
-        data = perf('PERF: dense data', () =>
+        data = perf('dense data', () =>
             createDenseData(
                 sets,
                 arrays,

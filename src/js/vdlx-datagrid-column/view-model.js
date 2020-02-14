@@ -20,34 +20,38 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import { EDITOR_TYPES } from '../constants';
-
-import omit  from 'lodash/omit';
-import isFunction from 'lodash/isFunction';
-import isNumber from 'lodash/isNumber';
+import omit from 'lodash/omit';
 import size from 'lodash/size';
-import throttle from 'lodash/throttle';
 import uniqueId from 'lodash/uniqueId';
 import set from 'lodash/set';
 import reduce from 'lodash/reduce';
 import filter from 'lodash/filter';
+import noop from 'lodash/noop';
+import mapValues from 'lodash/mapValues';
+import defer from 'lodash/defer';
+import { withDeepEquals, createMutationObservable } from '../ko-utils';
+import { createProps } from './create-column-props';
+import { insightModules } from '../insight-globals';
 
+/** @type {KnockoutStatic} */
+const ko = insightModules.load('external-libs/knockout');
 
-const enums = insightModules.load('enums');
-const validatorFactory = insightModules.load('vdl/vdl-validator-factory');
-const insightGetter = insightModules.load('insight-getter');
+/** @typedef {{element: HTMLElement}} ComponentInfo */
 
-const COLUMN_BUILD_DELAY = 50;
-const AUTOCOLUMN_PROP_NAME = 'autotableConfig';
+export default (params, /** @type {ComponentInfo} */ componentInfo) => {
+    const mutation$ = createMutationObservable(componentInfo.element, { childList: true });
 
-export const viewModel = (params, componentInfo) => {
-    var indexFilters$ = ko.observable({});
-    var filters$ = ko.pureComputed(function() {
+    const indexFilterTagsCount$ = ko.pureComputed(() => {
+        mutation$();
+        return componentInfo.element.getElementsByTagName('vdlx-datagrid-index-filter').length;
+    });
+
+    const indexFilters$ = withDeepEquals(ko.observable({}));
+
+    const filters$ = ko.pureComputed(() => {
         return reduce(
             indexFilters$(),
-            function(memo, filterProps) {
-                return set(memo, [filterProps.setName, filterProps.setPosition], filterProps.value);
-            },
+            (memo, filterProps) => set(memo, [filterProps.setName, filterProps.setPosition], filterProps.value),
             {}
         );
     });
@@ -64,159 +68,58 @@ export const viewModel = (params, componentInfo) => {
       )
     );
 
+    const columnReady$ = ko.pureComputed(() => indexFilterTagsCount$() === size(indexFilters$()));
+
     const columnId = uniqueId('datagrid-column');
-    var buildColumn = throttle(
-        function(done) {
-            console.log('vdlx-datagrid update column');
-            var columnReady =
-                $(componentInfo.element).find('vdlx-datagrid-index-filter').length === size(indexFilters$());
-            var props = {
-                scenario: ko.unwrap(params.scenario),
-                title: ko.unwrap(params.heading),
-                width: ko.unwrap(params.width),
-                editable: ('' + ko.unwrap(params.editable)).toLowerCase() === 'true',
-                visible: !(('' + ko.unwrap(params.visible)).toLowerCase() === 'false'),
-                style: params.style,
-                sortByFormatted: params.sortByFormatted,
-                filterByFormatted: params.filterByFormatted,
-                editorOptionsSet: params.editorOptionsSet,
-                selectNull: params.editorOptionsIncludeEmpty,
-                checkedValue: params.editorCheckedValue,
-                uncheckedValue: params.editorUncheckedValue,
-                id: columnId,
-                bottomCalc: params.bottomCalc
-            };
-            if (params.bottomCalc) {
-                props.bottomCalcFormatter = function(data) {
-                    var val = data.getValue();
-                    if (isNumber(val)) {
-                        return insightGetter().Formatter.formatNumber(val, params.format);
-                    }
-                    return val;
-                };
+    componentInfo.element.columnId = columnId;
+
+    const props$ = withDeepEquals(
+        ko.pureComputed(() => {
+            const columnReady = ko.unwrap(columnReady$);
+            if (!columnReady) {
+                return undefined;
             }
-            if (params.editorOptions) {
-                props.editorOptions = function() {
-                    // Return an empty list of options if value is undefined
-                    return params.editorOptions.apply(null, arguments) || [];
-                };
-            }
-            if (isFunction(params.render)) {
-                props.render = params.render;
-            }
-            if (params.format) {
-                props.render = (data, type) => {
-                    var formatCell =
-                        type === 'display' ||
-                        (type === 'filter' && params.filterByFormatted) ||
-                        (type === 'sort' && params.sortByFormatted);
-                    return formatCell ? insightGetter().Formatter.formatNumber(data, params.format) : data;
-                };
-                props.format = params.format;
-            } else {
-                props.format = null;
-            }
-            if (!!params.entity) {
-                props.entity = params.entity;
-                if (!params.editorType) {
-                    const type = insight
-                        .getView()
-                        .getProject()
-                        .getModelSchema()
-                        .getEntity(params.entity)
-                        .getElementType();
-                    switch (type) {
-                        case enums.DataType.BOOLEAN:
-                            props.editorType = EDITOR_TYPES.checkbox;
-                            break;
-                        default:
-                            props.editorType = EDITOR_TYPES.text;
-                            break;
-                    }
-                    // Then overridden by the presence of input options
-                    if (typeof props.checkedValue !== 'undefined' && typeof props.uncheckedValue !== 'undefined') {
-                        props.editorType = EDITOR_TYPES.checkbox;
-                    }
-                    if (props.editorOptions || props.editorOptionsSet) {
-                        props.editorType = EDITOR_TYPES.select;
-                    }
-                } else {
-                    props.editorType = EDITOR_TYPES[params.editorType];
-                }
-            } else if (!!params.set) {
-                props.set = params.set;
-            }
-            if (params.setPosition != null) {
-                props.setPosition = params.setPosition;
-            }
-            if (size(filters$())) {
-                props.filters = filters$();
-                props.remoteFilters = remoteFilters$();
-            }
-            if (props.entity) {
-                var getValidationFn = function(indices) {
-                    var validationProperties = validatorFactory.getValidationProperties({
-                        entity: props.entity,
-                        indices: indices
-                    });
-                    var customValidators = validatorFactory.getCustomValidators(
-                        validationProperties,
-                        componentInfo.element
-                    );
-                    return validatorFactory.createFromValidators(customValidators);
-                };
-                var validationObservable = ko.observable().extend({
-                    functionObservable: {
-                        onDependenciesChange: function() {
-                            params.tableValidate();
-                        },
-                        read: function(indices, value, rowData) {
-                            return getValidationFn(indices)(value, rowData);
-                        },
-                        disposeWhenDependenciesChange: false
-                    }
-                });
-                props.editorValidate = function(newValue, rowData, keys) {
-                    validationObservable(keys, newValue, rowData);
-                    return validationObservable.peek();
-                };
-            }
-            if (columnReady) {
-                componentInfo.element[AUTOCOLUMN_PROP_NAME] = props;
-                isFunction(params.tableUpdate) && params.tableUpdate();
-            }
-            if (isFunction(done)) {
-                done();
-            }
-        },
-        COLUMN_BUILD_DELAY,
-        { leading: false }
+            const filters = ko.unwrap(filters$);
+            const remoteFilters = ko.unwrap(remoteFilters$);
+            const props = createProps(columnId, mapValues(params, ko.unwrap), filters, remoteFilters, componentInfo.element);
+            return props;
+        })
     );
-    var paramsWatcher = ko.computed(function() {
-        var constructedParams = {
-            scenario: ko.unwrap(params.scenario),
-            title: ko.unwrap(params.heading),
-            width: ko.unwrap(params.width),
-            editable: ko.unwrap(params.editable),
-            visible: ko.unwrap(params.visible)
-        };
-        buildColumn();
-        return constructedParams;
-    });
+
+    const subscription = ko
+        .pureComputed(() => {
+            const props = props$();
+            if (props) {
+                params.addColumn(columnId, props);
+            } else {
+                params.removeColumn(columnId);
+            }
+        })
+        .subscribe(noop);
+
     return {
-        columnUpdate: buildColumn,
-        validate: buildColumn,
         dispose: function() {
-            paramsWatcher.dispose();
-            isFunction(params.tableUpdate) && params.tableUpdate();
+            subscription.dispose();
+            params.removeColumn(columnId);
         },
+
         filterUpdate: function(filterId, filterProperties) {
-            indexFilters$(set(indexFilters$(), filterId, filterProperties));
-            buildColumn();
+            defer(() => {
+                indexFilters$({
+                    ...indexFilters$(),
+                    [filterId]: filterProperties
+                });
+            });
         },
+
         filterRemove: function(filterId) {
-            indexFilters$(omit(indexFilters$(), filterId));
-            buildColumn();
+            defer(() => {
+                return indexFilters$(omit(indexFilters$(), filterId));
+            });
+        },
+
+        validate: () => {
+            params.tableValidate();
         }
     };
 };

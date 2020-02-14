@@ -21,7 +21,8 @@
     limitations under the License.
  */
 
-import map  from 'lodash/map';
+import map from 'lodash/map';
+import defer from "lodash/defer";
 
 const LOCK_EVENT_NAMESPACE = '.insight-table-lock';
 const events = map(
@@ -29,7 +30,6 @@ const events = map(
     eventName => eventName + LOCK_EVENT_NAMESPACE
 ).join(' ');
 const WRAPPER_SELECTOR = 'vdlx-datagrid';
-const DEFAULT_MESSAGE = 'The table is currently locked';
 const TABLE_LOCKED_CLASS = 'insight-table-locked';
 const TABLE_LOCKED_OVERLAY_CLASS = 'insight-table-locked-overlay';
 const TABLE_LOCKED_OVERLAY_NON_TRANSPARENT_CLASS = 'non-transparent';
@@ -45,29 +45,25 @@ export class DatagridLock {
     constructor(element) {
         this.locked = false;
         this.$wrapperElement = $(element).closest(WRAPPER_SELECTOR);
-        this.overlayDeferred = null;
     }
 
     /**
-     * @param {String} message
      * @memberof DatagridLock
      */
-    lock(message = DEFAULT_MESSAGE) {
+    lock() {
         if (this.locked) {
             return;
         }
 
         this.locked = true;
 
-        this.$wrapperElement.addClass(TABLE_LOCKED_CLASS).on(events, function(e) {
+        this.$wrapperElement.addClass(TABLE_LOCKED_CLASS).on(events, function (e) {
             e.stopImmediatePropagation();
             e.preventDefault();
         });
 
         var $overlay = $(`<div class="${OVERLAY_CLASSES}"><div class="${FICO_SPINNER_CLASS}"></div></div>`);
         $overlay.appendTo(this.$wrapperElement);
-
-        this.overlayDeferred = null;
     }
 
     unlock() {
@@ -75,17 +71,15 @@ export class DatagridLock {
             return;
         }
 
-        this.$wrapperElement
-            .off(LOCK_EVENT_NAMESPACE)
-            .removeClass(TABLE_LOCKED_CLASS)
-            .children(`.${TABLE_LOCKED_OVERLAY_CLASS}`)
-            .remove();
-
-        if (this.overlayDeferred) {
-            clearTimeout(this.overlayDeferred);
-        }
-
-        this.locked = false;
+        // Defer to give datagrid chance to complete other tasks
+        defer(() => {
+            this.$wrapperElement
+                .off(LOCK_EVENT_NAMESPACE)
+                .removeClass(TABLE_LOCKED_CLASS)
+                .children(`.${TABLE_LOCKED_OVERLAY_CLASS}`)
+                .remove();
+            this.locked = false;
+        });
     }
 
     isLocked() {

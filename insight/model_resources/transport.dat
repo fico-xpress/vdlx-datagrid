@@ -1,0 +1,21 @@
+! Data file for 'transport.mos'
+CITIES: [ (Birmingham) "UK" (Berlin) "GER" (Marseille) "FR" ]
+
+                     ! [amount]
+AMOUNTS: [ (Birmingham  Marseille  1)   [3000]
+           (Berlin      Marseille  1)   [4000]
+           (Marseille   Berlin     1)   [2000]
+           (Berlin      Birmingham 1)   [2100]
+           (Birmingham  Marseille  2)   [5000]
+           (Berlin      Marseille  2)   [7010]
+           (Berlin      Birmingham 2)   [9100]
+          ]
+
+                                    ! [DIST]
+DISTANCES: [ (Birmingham   Marseille)    [500 ]
+             (Birmingham   Berlin)       [400 ]
+             (Berlin       Birmingham)   [380 ]
+             (Berlin       Marseille)    [450 ]
+             (Marseille    Birmingham)   [999 ]
+             (Marseille    Berlin)       [450 ]
+           ]

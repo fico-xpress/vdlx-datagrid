@@ -1,0 +1,204 @@
+<!--
+Xpress Insight vdlx-datagrid
+=============================
+
+file vdl-lang/table/table.vdl
+```````````````````````
+vdlx-datagrid Basic usage
+
+(c) Copyright 2019 Fair Isaac Corporation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<vdl version="4.6">
+    <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
+
+    <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+
+    <style>
+        .test-class {
+            background: rgba(255, 0, 0, .4) !important;
+        }
+
+        .redball {
+            display: block;
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background-color: orangered;
+        }
+
+        td.editable {
+            border-bottom: 2px dashed #EAEAFF;
+        }
+
+        .red {
+            background-color: rgba(255, 0, 0, 0.22);
+        }
+
+        .green {
+            background-color: rgba(0, 255, 0, 0.22);
+        }
+    </style>
+
+    <vdl-page>
+
+        <vdl-section heading="Datagrids">
+            <vdl-section>
+                <vdl-row>
+                    <vdl-column size="12">
+                        <p class="lead">This page shows datagrid range operators</p>
+                        <p>Range operators are typed into a column filter in order to filter down a range of values.</p>
+                        <h4>Operators available</h4>
+                        <ul>
+                            <li>&lt; Less than</li>
+                            <li>&lt;= Less than or equal to</li>
+                            <li>&gt; Greater than</li>
+                            <li>&gt;= Greater than or equal to</li>
+                            <li>&lt;&gt; Not equal to</li>
+                            <li>!= Not equal to</li>
+                            <li>= Exact match</li>
+                        </ul>
+                        <p>Exact match is enforced if the query starts with an '=' symbol otherwise it tries to match against any part of the value.</p>
+                    </vdl-column>
+                </vdl-row>
+            </vdl-section>
+            </p>
+        </vdl-section>
+
+        <vdl-section heading="Basic usage">
+            <vdl-row>
+                <vdl-column size="12" heading="Default formatting">
+                    <p>Basic example with default formatting. Up to 4 decimal places. Thousands separated by commas.</p>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column heading="Simple datagrid" size="6">
+                    <vdlx-datagrid id="basic-example-1" column-filter="true">
+                        <vdlx-datagrid-column set="SupportLevels">Support L.</vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="SupportCosts" editable="true"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ServiceLevelAgreements" editable="true"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+                        <pre>&lt;vdlx-datagrid id=&quot;basic-example-1&quot; column-filter=&quot;true&quot;&gt;
+    &lt;vdlx-datagrid-column
+        set=&quot;SupportLevels&quot;&gt;Support L.&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column
+        entity=&quot;SupportCosts&quot;
+        editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column
+        entity=&quot;ServiceLevelAgreements&quot;
+        editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</pre>
+                    </code-panel>
+                </vdl-column>
+
+            </vdl-row>
+            <vdl-row>
+                <vdl-column heading="Simple datagrid with repeated index sets" size="6">
+                    <p>SImilat to Basic usage but with a repeated index set.</p>
+                    <vdlx-datagrid id="basic-example-2" column-filter="true">
+                        <vdlx-datagrid-column set="Factories" heading="Origin"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="Factories" heading="Destination"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ShippingCosts"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+                        <pre>&lt;vdlx-datagrid id=&quot;basic-example-2&quot; column-filter=&quot;true&quot;&gt;
+    &lt;vdlx-datagrid-column
+        set=&quot;Factories&quot;
+        heading=&quot;Origin&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column
+        set=&quot;Factories&quot;
+        heading=&quot;Destination&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column
+        entity=&quot;ShippingCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</pre>
+                    </code-panel>
+                </vdl-column>
+
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Number formatting">
+            <vdl-column size="6" heading="Formatted">
+                <p>This example has a 'format' string applied to the column 'ShippingCosts'.</p>
+                <vdlx-datagrid column-filter="true">
+                    <vdlx-datagrid-column entity="ShippingCosts" format="$#.0#"></vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="ShippingCosts">ShippingCostsF</vdlx-datagrid-column>
+<!--                    <vdlx-datagrid-column entity="SupportCosts" format="$#,###.00"></vdlx-datagrid-column>-->
+<!--                    <vdlx-datagrid-column entity="ServiceLevelAgreements"></vdlx-datagrid-column>-->
+                </vdlx-datagrid>
+            </vdl-column>
+
+            <vdl-column size="6" heading="VDL source">
+                <code-panel>
+                    <pre>&lt;vdlx-datagrid column-filter=&quot;true&quot;&gt;
+    &lt;vdlx-datagrid-column
+        set=&quot;SupportLevels&quot;&gt;Support L.&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column
+        entity=&quot;SupportCosts&quot;
+        format=&quot;$#,###.00&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column
+        entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</pre>
+                </code-panel>
+            </vdl-column>
+
+        </vdl-section>
+
+        <vdl-section heading="Filtering">
+            <vdl-column heading="Column filters" size="6" class="example-passed">
+                <vdlx-datagrid show-filter="true" column-filter="true">
+                    <vdlx-datagrid-column entity="SupportCosts" heading="SUPPORT COSTS"></vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="ServiceLevelAgreements">Agreements Custom Title</vdlx-datagrid-column>
+                </vdlx-datagrid>
+            </vdl-column>
+
+            <vdl-column heading="VDL source:" size="6">
+                <code-panel><pre>&lt;vdlx-datagrid show-filter=&quot;true&quot; column-filter=&quot;true&quot;&gt;
+    &lt;vdlx-datagrid-column
+        entity=&quot;SupportCosts&quot;
+        heading=&quot;SUPPORT COSTS&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column
+        entity=&quot;ServiceLevelAgreements&quot;
+    &gt;Agreements Custom Title&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</pre>
+                </code-panel>
+            </vdl-column>
+        </vdl-section>
+
+        <vdl-section heading="Editable">
+            <vdl-column heading="Column filters" size="6" class="example-passed">
+                <vdlx-datagrid show-filter="true" column-filter="true">
+                    <vdlx-datagrid-column entity="SupportCosts" heading="SUPPORT COSTS" editable="true"></vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="ServiceLevelAgreements" editable="truew">Agreements Custom Title</vdlx-datagrid-column>
+                </vdlx-datagrid>
+            </vdl-column>
+
+            <vdl-column heading="VDL source:" size="6">
+                <code-panel><pre>&lt;vdlx-datagrid show-filter=&quot;true&quot; column-filter=&quot;true&quot;&gt;
+                    &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot; heading=&quot;SUPPORT COSTS&quot; editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+                    &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot; editable=&quot;truew&quot;&gt;Agreements Custom Title&lt;/vdlx-datagrid-column&gt;
+                &lt;/vdlx-datagrid&gt;</pre>
+                </code-panel>
+            </vdl-column>
+        </vdl-section>
+
+    </vdl-page>
+</vdl>
