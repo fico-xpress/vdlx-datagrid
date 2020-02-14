@@ -74,7 +74,7 @@ jobs:
       - name: Update VDLDoc reference
         uses: docker://decathlon/wiki-page-creator-action:2.0.1
         env:
-          GH_PAT: ${{ secrets.GH_PAT }}
+          GH_PAT: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
           ACTION_MAIL: 13833731+timhemming-fico@users.noreply.github.com
           ACTION_NAME: timhemming-fico
           OWNER: fico-xpress
