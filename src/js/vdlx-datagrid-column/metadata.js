@@ -198,14 +198,18 @@ export default {
     },
     {
         name: 'sort-order',
-        valueType: 'number'
+        valueType: 'number',
+        description: 'Sets the column to be sorted by default, provide a number from 0. With multiple sorted columns the ' +
+            'number provides the order in which sorting should be applied to the columns, so the highest number will result in ' +
+            'the column having sorting applied last.'
     },
         {
             name: 'sort-direction',
             defaultValue: 'asc',
             validation: {
                 allowedValues: ['asc', 'desc']
-            }
+            },
+            description: 'The direction the column data should be sorted in.'
         }
     ]
 };
