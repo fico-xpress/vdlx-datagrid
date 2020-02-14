@@ -1,5 +1,9 @@
 # vdlx-datagrid changelog
 
+## v4.6.3
+
+
+
 ## v4.6.2
 
 - Export data as CSV: New vdlx-datagrid attributes `show-export` and `export-filename` that display a datagrid header 
@@ -15,7 +19,6 @@
 - Changes to the organisation of view in the examples app.
 - Range operators for column filters.
 - Published vdldoc reference to the project wiki as part of the release build.
-
 
 ## v4.6.1
 

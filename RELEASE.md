@@ -24,6 +24,8 @@ open the new draft release. Add release notes to the description.
 
 Once you are happy with the release draft you can **publish** to make it available publicly.
 
+After release, tick up the version number in [package.json](package.json) and add a new version section to [CHANGELOG.md](CHANGELOG.md).
+
 ## Creating a patch release of an older version
 
 This is generally done if some fix or feature needs to go into a previous release that is compatible with an older version of VDL.
