@@ -19,7 +19,6 @@ jobs:
         run: |
           npm ci
           npm run build
-          npm run build:debug
       - name: Test
         run: |
           npm run test:coverage
@@ -28,7 +27,6 @@ jobs:
       - name: Bundle
         run: |
           npm run bundle:library
-          npm run bundle:debug-library
           npm run bundle:app
           npm run vdldoc
       - name: Create draft release
@@ -50,16 +48,6 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: target/vdlx-datagrid.zip
           asset_name: vdlx-datagrid.zip
-          asset_content_type: application/zip
-      - name: Upload component debug bundle
-        id: upload-component-debug-bundle
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: target/vdlx-datagrid-debug.zip
-          asset_name: vdlx-datagrid-debug.zip
           asset_content_type: application/zip
       - name: Upload app
         id: upload-app
