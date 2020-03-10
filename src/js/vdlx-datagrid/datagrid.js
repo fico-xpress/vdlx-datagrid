@@ -22,7 +22,7 @@
  */
 import Tabulator from 'tabulator-tables/dist/js/tabulator';
 import { insightModules, insight } from '../insight-globals';
-import {createSorter, createFormattedSorter} from './datagrid-sorter';
+import {getSorter, getSetSorter, createFormattedSorter} from './datagrid-sorter';
 import dataTransform, {
     getAllColumnIndices,
     getDisplayIndices,
@@ -508,7 +508,7 @@ class Datagrid {
                 formatter: getFormatter(),
                 sorter: options.sortByFormatted
                     ? createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters)
-                    : createSorter(displayEntity, tabulatorSorters),
+                    : getSetSorter(entity),
                 dataType: entity.getType(),
                 elementType: displayEntity.getElementType(),
                 labelsEntity: entity.getLabelsEntity(),
@@ -752,7 +752,7 @@ class Datagrid {
                 sortByFormatted: entityOptions.sortByFormatted,
                 sorter: entityOptions.sortByFormatted
                     ? createFormattedSorter(entityOptions.id, getFormatter('sort'), tabulatorSorters)
-                    : createSorter(displayEntity, tabulatorSorters),
+                    : getSorter(entity, tabulatorSorters),
                 editor: entityOptions.editorType,
                 editorParams: getEditorParams(),
                 cellEditing: getCellEditingHandler(),

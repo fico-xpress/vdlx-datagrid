@@ -1,4 +1,8 @@
-import {createSorter, createFormattedSorter} from '../../../src/js/vdlx-datagrid/datagrid-sorter';
+import {
+    getSorter,
+    createFormattedSorter,
+    getSetSorter
+} from '../../../src/js/vdlx-datagrid/datagrid-sorter';
 import {insightModules} from '../../../src/js/insight-globals';
 
 describe('datagrid-sorter', () => {
@@ -6,21 +10,42 @@ describe('datagrid-sorter', () => {
     let entityMock;
     let enumsMock;
     let dataUtilsMock;
+    let setSorterMock;
 
     beforeEach(() => {
         enumsMock = insightModules.load('enums');
         dataUtilsMock = insightModules.load('utils/data-utils');
+        setSorterMock = insightModules.load('data/set-sorter');
         tabulatorSortersMock = {
             alphanum: 'alphanum-sorter',
             number: 'number-sorter',
             boolean: 'boolean-sorter'
         };
         entityMock = {
+            getName: jest.fn(),
             getElementType: jest.fn()
         };
     });
 
-    describe('with createSorter', () => {
+    describe('with getSetSorter', () => {
+        let discoveredComparator;
+
+        beforeEach(() => {
+            entityMock.getName.mockReturnValue('MY_SET');
+            discoveredComparator = jest.fn();
+            setSorterMock.getComparator.mockReturnValue(discoveredComparator);
+        });
+
+        it('returns the set sorter from the JS API', () => {
+            expect(getSetSorter(entityMock)).toBe(discoveredComparator);
+        });
+
+        it('calls getComparator with ignoreDirection', () => {
+            expect(setSorterMock.getComparator).toBeCalledWith('MY_SET', true);
+        });
+    });
+
+    describe('with getSorter', () => {
         describe('when entity is a number type', () => {
             beforeEach(() => {
                 entityMock.getElementType.mockReturnValue(enumsMock.DataType.INTEGER);
@@ -28,7 +53,7 @@ describe('datagrid-sorter', () => {
             });
 
             it('returns the number sorter', () => {
-                expect(createSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.number);
+                expect(getSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.number);
             });
         });
 
@@ -39,7 +64,7 @@ describe('datagrid-sorter', () => {
             });
 
             it('returns the number sorter', () => {
-                expect(createSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.boolean);
+                expect(getSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.boolean);
             });
         });
 
@@ -50,7 +75,7 @@ describe('datagrid-sorter', () => {
             });
 
             it('returns the number sorter', () => {
-                expect(createSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.alphanum);
+                expect(getSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.alphanum);
             });
         });
 
@@ -61,7 +86,7 @@ describe('datagrid-sorter', () => {
             });
 
             it('returns the number sorter', () => {
-                expect(createSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.number);
+                expect(getSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.number);
             });
         });
     });

@@ -14,6 +14,11 @@ const dataUtilsSpy = {
 const createSparseDataSpy = jest.fn();
 const createDenseDataSpy = jest.fn();
 const autotableSelectOptionsSpy = jest.fn();
+const setSorterSpy = {
+    getComparator: jest.fn(),
+    callSetSorter: jest.fn(),
+    getInsightArraySortedKeys: jest.fn()
+};
 const dialogsSpy = jest.fn().mockReturnValue({
     alert: jest.fn()
 });
@@ -54,7 +59,8 @@ const modules = {
     'enums': enumsMock,
     'components/table/create-sparse-data': createSparseDataSpy,
     'components/table/create-dense-data': createDenseDataSpy,
-    'components/autotable-select-options': autotableSelectOptionsSpy
+    'components/autotable-select-options': autotableSelectOptionsSpy,
+    'data/set-sorter': setSorterSpy
 };
 
 insightModules.load.mockImplementation((name) => {
