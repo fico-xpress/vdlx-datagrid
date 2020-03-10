@@ -1,7 +1,9 @@
 # vdlx-datagrid changelog
 
-## v4.6.3
+## v4.7.0
 
+- Updated to VDL 4.7 compatibility.
+- Index columns are automatically sorted using corresponding `vdl-set-sorter` or the default set sorter for the index column data type.
 
 
 ## v4.6.2
