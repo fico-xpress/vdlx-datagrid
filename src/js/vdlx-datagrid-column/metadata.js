@@ -91,7 +91,8 @@ export default {
         name: 'disable-set-sorting',
         description: 'When applied to an index column, this will prevent set sorting from being applied to the column. Default ' +
             'table sorting will be used instead. It will also exclude this column from the default list of sorted columns. ' +
-            'This option is provided to reduce the sorting overhead where performance is being affected.',
+            'This option is provided to reduce the sorting overhead where performance is being affected. Set the value to "true" to disable ' +
+            'set sorting for this datagrid column.',
         valueType: 'boolean',
         defaultValue: false
     },
