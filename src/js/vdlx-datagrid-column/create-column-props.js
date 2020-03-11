@@ -18,6 +18,7 @@ export const createProps = (columnId, params, filters, element) => {
         style: params.style,
         sortByFormatted: params.sortByFormatted,
         filterByFormatted: params.filterByFormatted,
+        disableSetSorting: params.disableSetSorting,
         editorOptionsSet: params.editorOptionsSet,
         selectNull: params.editorOptionsIncludeEmpty,
         checkedValue: params.editorCheckedValue,

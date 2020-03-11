@@ -88,6 +88,14 @@ export default {
         valueType: 'boolean'
     },
     {
+        name: 'disable-set-sorting',
+        description: 'When applied to an index column, this will prevent set sorting from being applied to the column. Default ' +
+            'table sorting will be used instead. It will also exclude this column from the default list of sorted columns. ' +
+            'This option is provided to reduce the sorting overhead where performance is being affected.',
+        valueType: 'boolean',
+        defaultValue: false
+    },
+    {
         name: 'editor-type',
         description:
             'The editor type to use, in edit mode, for cells in this column. If not specified then it ' +

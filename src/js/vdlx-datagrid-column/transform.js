@@ -239,6 +239,10 @@ export default (element, attributes, api) => {
     if (sortByFormatted && sortByFormatted.rawValue === 'true') {
         paramsBuilder.addParam('sortByFormatted', true);
     }
+    var disableSetSorting = attributes['disable-set-sorting'];
+    if (disableSetSorting && disableSetSorting.rawValue === 'true') {
+        paramsBuilder.addParam('disableSetSorting', true);
+    }
     var filterByFormatted = attributes['filter-by-formatted'];
     if (filterByFormatted) {
         if (filterByFormatted.rawValue === 'true') {
