@@ -199,7 +199,7 @@ export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions
         .getModelSchema();
 
     const allSetValues = map(setNamePosnsAndOptions, (setNamePosnAndOption, i) => {
-        return SelectOptions.generateSelectOptions(schema, indexScenarios, setNamePosnAndOption.name, sets[i]);
+        return SelectOptions.generateSelectOptions(schema, indexScenarios, setNamePosnAndOption.name, sets[i], _.get(setNamePosnAndOption, 'options.sortByFormatted'));
     });
 
     const createRow = values => {
