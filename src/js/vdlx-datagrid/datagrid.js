@@ -22,7 +22,7 @@
  */
 import Tabulator from 'tabulator-tables/dist/js/tabulator';
 import { insightModules, insight } from '../insight-globals';
-import {createSorter, createFormattedSorter} from './datagrid-sorter';
+import {getSorter, getSetSorter, createFormattedSorter} from './datagrid-sorter';
 import dataTransform, {
     getAllColumnIndices,
     getDisplayIndices,
@@ -66,7 +66,8 @@ import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
 import constant from "lodash/constant";
-import { withDeferred } from '../ko-utils';
+import {withDeferred} from '../ko-utils';
+import reverse from "lodash/reverse";
 
 const SelectOptions = insightModules.load('components/autotable-select-options');
 const DataUtils = insightModules.load('utils/data-utils');
@@ -508,7 +509,9 @@ class Datagrid {
                 formatter: getFormatter(),
                 sorter: options.sortByFormatted
                     ? createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters)
-                    : createSorter(displayEntity, tabulatorSorters),
+                    : options.disableSetSorting
+                        ? getSorter(entity, tabulatorSorters)
+                        : getSetSorter(entity),
                 dataType: entity.getType(),
                 elementType: displayEntity.getElementType(),
                 labelsEntity: entity.getLabelsEntity(),
@@ -752,7 +755,7 @@ class Datagrid {
                 sortByFormatted: entityOptions.sortByFormatted,
                 sorter: entityOptions.sortByFormatted
                     ? createFormattedSorter(entityOptions.id, getFormatter('sort'), tabulatorSorters)
-                    : createSorter(displayEntity, tabulatorSorters),
+                    : getSorter(entity, tabulatorSorters),
                 editor: entityOptions.editorType,
                 editorParams: getEditorParams(),
                 cellEditing: getCellEditingHandler(),
@@ -954,6 +957,19 @@ class Datagrid {
                 dir: column.sortDirection
             })
         );
+
+        if (isEmpty(this.initialSortOrder)) {
+            console.debug('No initial column sort order. Going to apply sort order onto index columns, except where disable-set-sorting is specified.');
+            this.initialSortOrder = reverse(
+                map(
+                    filter(columns, c => c.dataType === Enums.DataType.SET && !c.disableSetSorting),
+                    column => ({
+                        column: column.id,
+                        dir: 'asc'
+                    })
+                )
+            );
+        }
 
         this.table.setSort(cloneDeep(this.initialSortOrder));
 

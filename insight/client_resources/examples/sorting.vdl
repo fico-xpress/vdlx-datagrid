@@ -23,58 +23,88 @@ limitations under the License.
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
     <vdl-page>
-        <vdl-section heading="Sort by formatted">
+        <vdl-section heading="Default index sorting">
+            <vdl-row>
+                <vdl-column>
+                    <p>
+                        By default the index columns of a <code>vdlx-datagrid</code> will be sorted in ascending order.
+                        They will also have any <code>vdl-set-sorters</code> automatically applied to them. This can be
+                        disabled per <code>vdlx-datagrid-column</code> by setting
+                        <code>disable-set-sorting="true"</code>.
+                    </p>
+                    <p>
+                        In the example below the Factories will be sorted using the registered custom comparator that
+                        defines the order of the catagories. "Months of the year" will be sorted using the built-in
+                        "months" sorter as configured.
+                    </p>
+                </vdl-column>
+            </vdl-row>
             <vdl-row>
                 <vdl-column size="6">
-                    <p>You can configure set or entity columns to sort by the formatted value using the <code>"sort-by-formatted"</code>
-                        attribute.
-                        The default is for columns to be sorted by the underlying data value. If a column has any
-                        formatting applied, by a number formatter, custom <code>"render"</code> function or if an
-                        Insight labels array is applied to the column, then this option will configure the column to
-                        sort rows by that formatted data.
-                    </p>
-                    <p>You can use the <code>"render"</code> function to apply custom sorting by returning a different
-                        value when the function is called with <code>type="sort"</code>. In the example below the
-                        "Months of the year" index column is a set of strings, so by default the months would be sorted
-                        alphanumerically by name. The column has <code>sort-by-formatted="true"</code> set and a custom
-                        render function that returns the month's ordinal number when called for sorting. This means the
-                        column will sort the months correctly.</p>
-                    <script>
-                        // This render function returns the ordinal number for months of the year when called
-                        // with the 'sort' type.
-                        var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                    <vdl-set-sorter set="Factories" comparator="=['Peckham', 'New York', 'Paris']"></vdl-set-sorter>
+                    <vdl-set-sorter set="MonthsOfYear" comparator="months"></vdl-set-sorter>
 
-                        function MonthsOfYearRender(value, type) {
-                            if (type === 'sort') {
-                                return MONTHS.indexOf(value);
-                            }
-                            return value;
-                        }
-                    </script>
-                    <vdlx-datagrid page-size="15">
-                        <vdlx-datagrid-column set="MonthsOfYear" sort-by-formatted="true"
-                                              render="=MonthsOfYearRender"></vdlx-datagrid-column>
+                    <vdlx-datagrid page-size="10">
                         <vdlx-datagrid-column entity="FactorySupply"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column heading="VDL source:" size="6">
                     <code-panel>
-&lt;script&gt;
-    // This render function returns the ordinal number for months of the year when called
-    // with the 'sort' type.
-    var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+&lt;vdl-set-sorter set=&quot;Factories&quot; comparator=&quot;=['Peckham', 'New York', 'Paris']&quot;&gt;&lt;/vdl-set-sorter&gt;
+&lt;vdl-set-sorter set=&quot;MonthsOfYear&quot; comparator=&quot;months&quot;&gt;&lt;/vdl-set-sorter&gt;
 
-    function MonthsOfYearRender(value, type) {
+&lt;vdlx-datagrid page-size=&quot;10&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Custom sorting of column data">
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>
+                        You can modify the sort order of data within any column by setting <code>sort-by-formatted="true"</code>
+                        on the <code>vdlx-datagrid-column</code> and providing a custom <code>render</code> expression
+                        or function that handles <code>type === 'sort'</code>.
+                    </p>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
+                    <script>
+                        var SUPPORT_LEVEL_NAMES = ['Bronze', 'Silver', 'Gold'];
+
+                        function supportLevelNamesSort(value, type) {
+                            if (type === 'sort') {
+                                return SUPPORT_LEVEL_NAMES.indexOf(value);
+                            }
+                            return value;
+                        }
+                    </script>
+                    <vdlx-datagrid save-state="false">
+                        <vdlx-datagrid-column entity="SupportLevelNames" sort-by-formatted="true"
+                                              render="=supportLevelNamesSort"
+                                              sort-order="0" sort-direction="desc"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+                <vdl-column heading="VDL source:" size="6">
+                    <code-panel>
+&lt;script&gt;
+    var SUPPORT_LEVEL_NAMES = ['Bronze', 'Silver', 'Gold'];
+
+    function supportLevelNamesSort(value, type) {
         if (type === 'sort') {
-            return MONTHS.indexOf(value);
+            return SUPPORT_LEVEL_NAMES.indexOf(value);
         }
         return value;
     }
 &lt;/script&gt;
-&lt;vdlx-datagrid page-size=&quot;15&quot; id=&quot;this-table&quot;&gt;
-    &lt;vdlx-datagrid-column set=&quot;MonthsOfYear&quot; sort-by-formatted=&quot;true&quot;
-                          render=&quot;=MonthsOfYearRender&quot;&gt;&lt;/vdlx-datagrid-column&gt;
-    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;vdlx-datagrid save-state=&quot;false&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportLevelNames&quot; sort-by-formatted=&quot;true&quot;
+                          render=&quot;=supportLevelNamesSort&quot;
+                          sort-order=&quot;0&quot; sort-direction=&quot;desc&quot;&gt;&lt;/vdlx-datagrid-column&gt;
 &lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
@@ -141,15 +171,17 @@ limitations under the License.
             </vdl-row>
         </vdl-section>
 
-        <vdl-section heading="Default Sorting">
+        <vdl-section heading="Column sort order">
             <vdl-row>
                 <vdl-column size="6">
-                    <p>To pre-set sorting of the column set <code>"sort-order"</code> to a number.</p>
+                    <p>By default the index columns will be sorted within a <code>vdlx-datagrid</code>. To override the
+                        column sort order set the <code>sort-order</code> to a number.</p>
                     <p>It is also possible to set the direction of sorting with <code>"sort-direction"</code> attribute
                         (optional). This attribute can be either set to "desc" or "asc".</p>
                     <p>Note, datagrid stores sorting state between view reloads so if a user has changed the sort order
-                    their changes will be preserved.</p>
-                    <vdlx-datagrid>
+                        their changes will be preserved. You can prevent this by setting <code>save-state="false"</code>
+                        on <code>vdlx-datagrid</code></p>
+                    <vdlx-datagrid save-state="false">
                         <vdlx-datagrid-column entity="SupportCosts" sort-order="1"
                                               sort-direction="asc"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ServiceLevelAgreements" sort-order="0"

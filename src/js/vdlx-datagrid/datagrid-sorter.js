@@ -23,19 +23,20 @@
 import constant from "lodash/constant";
 import {insightModules} from '../insight-globals';
 
-const DataUtils = insightModules.load('utils/data-utils');
 const enums = insightModules.load('enums');
+const DataUtils = insightModules.load('utils/data-utils');
+const setSorter = insightModules.load('data/set-sorter');
 
 const DEFAULT_SORTER_REF = 'alphanum';
 
 /**
- * Create a datagrid column sorter based on the entity type that is bound. Sort by underlying value.
+ * Get the datagrid column sorter based on the entity type that is bound. Sort by underlying value.
  *
  * @param entity The Insight entity
  * @param tabulatorSorters Array of Tabulator sorters
- * @returns {function} The sorter function to use on the column
+ * @returns {function} The comparator function to use on the column
  */
-export const createSorter = (entity, tabulatorSorters) => {
+export const getSorter = (entity, tabulatorSorters) => {
     const elementType = entity.getElementType();
     const isNumberEntity = DataUtils.entityTypeIsNumber(entity);
 
@@ -51,12 +52,22 @@ export const createSorter = (entity, tabulatorSorters) => {
 };
 
 /**
+ * Get the set sorter for a datagrid index column. Sort by underlying value.
+ *
+ * @param entity The Insight entity
+ * @returns {function} The comparator function to use on the column
+ */
+export const getSetSorter = (entity) => {
+    return setSorter.getComparator(entity.getName(), true);
+};
+
+/**
  * Create a datagrid column sorter that sorts using the formatted data.
  *
  * @param {string} columnId The Tabulator column identifier
  * @param {function} formatter The formatter function to generate the cell data
  * @param tabulatorSorters Array of Tabulator sorters
- * @returns {function} The sorter function to use on the column
+ * @returns {function} The comparator function to use on the column
  */
 export const createFormattedSorter = (columnId, formatter, tabulatorSorters) => {
     const sorter = tabulatorSorters[DEFAULT_SORTER_REF];
