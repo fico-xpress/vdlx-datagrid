@@ -2,17 +2,20 @@
 
 # VDLX-DATAGRID
 
-A drop-in alternative for the `vdl-table` component in a FICO Xpress Insight VDL view.
 `vdlx-datagrid` provides a tabular visualisation, similar to `vdl-table`, but allows for much larger datasets to be displayed while trading off a few features in `vdl-table`.
 
+## What is vdlx-datagrid
+An easily implemented third-party alternative for the `vdl-table` component in a FICO Xpress Insight VDL view.
+
+## Features available in vdlx-datagrid
 For a list of available tags and attributes for the vdlx-datagrid component see [vdlx-datagrid-reference](https://github.com/fico-xpress/vdlx-datagrid/wiki/vdlx-datagrid-reference)
 
 ## How to use vdlx-datagrid in your Insight app
 
-Download a release version of `vdx-datagrid` from [releases](https://github.com/fico-xpress/vdlx-datagrid/releases).
-Choose a release where the first two numbers of the version match the version of VDL you are developing against.
+Download the appropriate release version of `vdx-datagrid` from [releases](https://github.com/fico-xpress/vdlx-datagrid/releases) - 
+The first two digits of the vdlx-datagrid release version number must match the version of VDL you are using to develop. For example, if you are developing for VDL 4.6.X, download vdlx-datagrid version 4.6.X.
 
-Download the `vdlx-datagrid.zip` release bundle. Unzip the library into your `client_resources`, then include into your views as follows:
+Unzip the `vdlx-datagrid.zip` release bundle into your Xpress Workbench `client_resources` folder. You can then add vdlx-datagrid in your views via the code editor-vdlx-datagrid is not available in the VDL Designer palette:
 
 ```html
 <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
@@ -30,7 +33,7 @@ Download the `vdlx-datagrid.zip` release bundle. Unzip the library into your `cl
 
 ## The vdl-datagrid examples app
 
-Each release includes an Insight app containing examples of how to use `vdlx-datagrid` features.
+Each release includes an Xpress Insight app containing examples of how to use `vdlx-datagrid` features.
 
 - Download `vdlx-datagrid-examples-app.zip` from one of the [releases](https://github.com/fico-xpress/vdlx-datagrid/releases).
 - Upload the App zip to Xpress Insight
@@ -41,27 +44,27 @@ See [CHANGELOG](./CHANGELOG.md) for a list of changes in each version.
 
 ## Features comparison between `vdl-table` and `vdlx-datagrid`.
 
-### Features in `vdl-table` that are not currently included in `vdlx-datagrid`.
+__Note:__ There are some features shared between `vdl-table` and `vdlx-datagrid` that are implemented differently. _Always test any code ported between the two._ 
+
+### Features available in `vdl-table` that are not included in `vdlx-datagrid` 4.6.x.
 
 * Block and column selection
 * Copy and Paste data
 * Global search
 
-### Unique features in `vdlx-datagrid`
+### Features unique to `vdlx-datagrid`
 
 * Support for larger datasets
 * Scrollable table support
 
-__Note:__ There are some features shared between `vdl-table` and `vdlx-datagrid` that are implemented differently. _Always test code ported between the two._ 
-
 ## Building from source
 
-This will only be needed for developing the `vdlx-datagrid` extension. Refer to the 'Usage' section above for using this tag in your own views. 
+This information is only required if you are developing the `vdlx-datagrid` extension. See the 'Usage' section above for more on using this tag in your views. 
 
 1. `npm install`
 1. `npm run build`
 
-To watch the src and rebuild on changes run: `npm run watch`
+To watch the src and rebuild on changes, run: `npm run watch`
 
 ## Building a release
 
