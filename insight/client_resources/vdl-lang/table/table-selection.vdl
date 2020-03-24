@@ -1,0 +1,130 @@
+<!--
+Xpress Insight vdlx-datagrid
+=============================
+
+file vdl-lang/table/table-selection.vdl
+```````````````````````
+vdlx-datagrid Datagrid row selection
+
+(c) Copyright 2019 Fair Isaac Corporation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<vdl version="4.7">
+    <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
+    <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+
+    <vdl-page>
+        <vdl-section heading="Table Row Selection - Filter Tables">
+            <vdl-row>
+                <vdl-column size="12">
+                    <p class="lead">Row selection events get fired when a row is selected by the user.
+                        These events can trigger VDL actions that can be used to filter another table, for example.</p>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="12">
+                    <code-panel><pre>
+&lt;vdl-var name=&quot;childFilteredTableIndex&quot; value=&quot;=[]&quot;&gt;&lt;/vdl-var&gt;
+&lt;vdl-var name=&quot;selectedFactoryMonth&quot; value=&quot;=[]&quot;&gt;&lt;/vdl-var&gt;
+
+&lt;vdl-action-group name=&quot;handleSelectionChanged&quot;&gt;
+    &lt;vdl-action-set-var var=&quot;childFilteredTableIndex&quot; value=&quot;=value ? value.activeCell.rowData : []&quot;&gt;&lt;/vdl-action-set-var&gt;
+&lt;/vdl-action-group&gt;
+
+&lt;vdl-action-group name=&quot;handleSelectionRemoved&quot;&gt;
+    &lt;vdl-action-set-var var=&quot;childFilteredTableIndex&quot; value=&quot;=[]&quot;&gt;&lt;/vdl-action-set-var&gt;
+&lt;/vdl-action-group&gt;
+
+&lt;vdlx-datagrid id=&quot;master-table&quot;
+               save-state=&quot;false&quot;
+               always-show-selection=&quot;true&quot;
+               vdl-event=&quot;'selection-changed':actions.handleSelectionChanged, 'selection-removed':actions.handleSelectionRemoved&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;StockSizeValues&quot; vdl-visible=&quot;=false&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;StockSizeLabels&quot;&gt;Stock Size&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+
+&lt;vdlx-datagrid id=&quot;child-table&quot;
+               vdl-if=&quot;=vars.childFilteredTableIndex.length !== 0&quot;
+               row-filter=&quot;=rowData[3] === vars.childFilteredTableIndex[0]&quot;
+               vdl-event=&quot;'selection-changed':actions.handleFactoryRowSelect, 'selection-removed':actions.handleFactoryRowRemove&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;StockSizes&quot; vdl-visible=&quot;=false&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+&lt;div vdl-if=&quot;=vars.childFilteredTableIndex.length === 0&quot;&gt;
+    &lt;span vdl-text=&quot;Select a row in this Master table to show a filtered table here.&quot;&gt;&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;vdl-column vdl-if=&quot;=vars.selectedFactoryMonth.length !== 0&quot;&gt;
+    &lt;p class=&quot;lead&quot; vdl-text=&quot;='Selected Factory: ' + vars.selectedFactoryMonth[0]&quot;&gt;&lt;/p&gt;
+    &lt;p class=&quot;lead&quot; vdl-text=&quot;='Selected Month: ' + vars.selectedFactoryMonth[1]&quot;&gt;&lt;/p&gt;
+    &lt;p class=&quot;lead&quot; vdl-text=&quot;='Stock Size: ' + scenario.entities.StockSizeLabels(vars.childFilteredTableIndex[0]).value&quot;&gt;&lt;/p&gt;
+&lt;/vdl-column&gt;
+                </pre>
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="2">
+                    <vdl-var name="childFilteredTableIndex" value="=[]"></vdl-var>
+                    <vdl-var name="selectedFactoryMonth" value="=[]"></vdl-var>
+
+                    <vdl-action-group name="handleSelectionChanged">
+                        <vdl-action-set-var var="childFilteredTableIndex"
+                                            value="=value ? value.activeCell.rowData : []"></vdl-action-set-var>
+                    </vdl-action-group>
+
+                    <vdl-action-group name="handleSelectionRemoved">
+                        <vdl-action-set-var var="childFilteredTableIndex" value="=[]"></vdl-action-set-var>
+                    </vdl-action-group>
+
+                    <vdl-action-group name="handleFactoryRowSelect">
+                        <vdl-action-set-var var="selectedFactoryMonth"
+                                            value="=value ? value.activeCell.rowData : []"></vdl-action-set-var>
+                    </vdl-action-group>
+
+                    <vdl-action-group name="handleFactoryRowRemove">
+                        <vdl-action-set-var var="selectedFactoryMonth" value="=[]"></vdl-action-set-var>
+                    </vdl-action-group>
+
+                    <vdlx-datagrid id="master-table"
+                                   save-state="false"
+                                   always-show-selection="true"
+                                   vdl-event="'selection-changed':actions.handleSelectionChanged, 'selection-removed':actions.handleSelectionRemoved">
+                        <vdlx-datagrid-column set="StockSizeValues" vdl-visible="=false"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="StockSizeLabels">Stock Size</vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+
+                <vdl-column size="5" heading="Child table" style="height: 500px;">
+                    <vdlx-datagrid id="child-table"
+                                   vdl-if="=vars.childFilteredTableIndex.length !== 0"
+                                   row-filter="=rowData[3] === vars.childFilteredTableIndex[0]"
+                                   vdl-event="'selection-changed':actions.handleFactoryRowSelect, 'selection-removed':actions.handleFactoryRowRemove">
+                        <vdlx-datagrid-column entity="FactorySupply"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="StockSizes" vdl-visible="=false"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                    <div vdl-if="=vars.childFilteredTableIndex.length === 0">
+                        <span vdl-text="Select a row in this Master table to show a filtered table here."></span>
+                    </div>
+                </vdl-column>
+
+                <vdl-column vdl-if="=vars.selectedFactoryMonth.length !== 0">
+                    <p class="lead" vdl-text="='Selected Factory: ' + vars.selectedFactoryMonth[0]"></p>
+                    <p class="lead" vdl-text="='Selected Month: ' + vars.selectedFactoryMonth[1]"></p>
+                    <p class="lead" vdl-text="='Stock Size: ' + scenario.entities.StockSizeLabels(vars.childFilteredTableIndex[0]).value"></p>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+    </vdl-page>
+</vdl>

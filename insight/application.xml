@@ -12,6 +12,7 @@
             <vdl-view title="Conditionals" path="vdl-lang/table/table-conditionals.vdl"/>
             <vdl-view title="Index filtering" path="vdl-lang/table/table-index-filtering.vdl"/>
             <vdl-view title="Row filtering" path="vdl-lang/table/table-row-filtering.vdl"/>
+            <vdl-view title="Table selection" path="vdl-lang/table/table-selection.vdl"/>
             <vdl-view title="Validation" path="vdl-lang/table/table-validation.vdl"/>
             <vdl-view title="Multi-scenario" path="vdl-lang/table/table-multi-scenario.vdl"/>
             <vdl-view title="Error handling" path="vdl-lang/table/table-errors.vdl"/>
