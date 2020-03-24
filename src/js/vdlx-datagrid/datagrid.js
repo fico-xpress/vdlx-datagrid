@@ -213,11 +213,13 @@ class Datagrid {
     }
 
     update() {
-        this.validate();
-        this.updatePaginator();
-        this.recalculateHeight(ko.unwrap(this.gridOptions$));
-        this.recalculateWidth();
-        this.exportControl = this.updateExportControl(this.table, this.headerToolbar, ko.unwrap(this.gridOptions$));
+        defer(() => {
+            this.validate();
+            this.updatePaginator();
+            this.recalculateHeight(ko.unwrap(this.gridOptions$));
+            this.recalculateWidth();
+            this.exportControl = this.updateExportControl(this.table, this.headerToolbar, ko.unwrap(this.gridOptions$));
+        });
     }
 
     saveState() {
