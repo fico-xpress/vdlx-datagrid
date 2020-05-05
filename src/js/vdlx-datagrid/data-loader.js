@@ -31,9 +31,9 @@ import identity from 'lodash/identity';
 import filter from 'lodash/filter';
 import flatten from 'lodash/flatten';
 import map from 'lodash/map';
-import forEach from 'lodash/forEach';
-import pick from 'lodash/pick';
 import size from 'lodash/size';
+import reduce from 'lodash/reduce';
+import intersection from 'lodash/intersection';
 
 function findScenario(scenarios, identifier) {
     var result = null;
@@ -98,8 +98,27 @@ function getScenarios(config, scenarios) {
         )
     );
 
-    return { defaultScenario: defaultScenario, scenarios: columnsAndScenarios};
+    return { defaultScenario: defaultScenario, scenarios: columnsAndScenarios };
 }
+
+const DataUtils = insightModules.load('utils/data-utils');
+
+const withFilter = (modelSchema, observer, filters, entity) => {
+    const indexSets = modelSchema.getEntity(entity).getIndexSets();
+    const filtersForEntity = intersection(map(filters, 'setName'), indexSets);
+
+    if (size(filtersForEntity)) {
+        observer.filter(entity, () => reduce(
+            DataUtils.getFilterPositionsAndValues(filters, DataUtils.getSetNamesAndPosns(indexSets)),
+            (memo, filter) => {
+                memo[filter.index] = [].concat(filter.value);
+                return memo;
+            },
+            {}
+        ));
+    }
+    return observer;
+};
 
 /**
  *
@@ -107,6 +126,7 @@ function getScenarios(config, scenarios) {
  * @returns {{data: KnockoutObservable<{defaultScenario: Scenario, scenarios: Scenario[]}>, errors: KnockoutObservable}}
  */
 function withScenarioData(config$, filters$) {
+    const view = insight.getView();
     let hasSubscription = false;
     const scenarios$ = ko.observable([]);
 
@@ -125,28 +145,24 @@ function withScenarioData(config$, filters$) {
         const config = ko.unwrap(config$);
         const filters = ko.unwrap(filters$);
 
-        var modelSchema = insight.getView().getApp().getModelSchema();
+        var modelSchema = view.getApp().getModelSchema();
 
-        if (!isEmpty(config) && !isEmpty(config.scenarioList) && !isEmpty(config.columnOptions)) {
+        if (!isEmpty(config) && !isEmpty(config.scenarioList) && !isEmpty(config.columnOptions) && filters) {
             try {
                 error$(undefined);
-                var entities = getAutoTableEntities(config.columnOptions);
-                var observer = insight.getView().withScenarios(config.scenarioList).withEntities(entities);
+                const entities = getAutoTableEntities(config.columnOptions);
+                let observer = view.withScenarios(config.scenarioList).withEntities(entities);
+                observer = reduce(
+                    uniq(map(config.columnOptions, 'name')),
+                    (observer, entity) => withFilter(modelSchema, observer, filters, entity),
+                    observer
+                );
 
-                forEach(entities, (entity) => {
-                    const indexSets = modelSchema.getEntity(entity).getIndexSets();
-                    var filtersForEntity = pick(filters, indexSets);
-                    if (size(filtersForEntity)) {
-                        observer.filter(entity, () => filtersForEntity);
-                    }
+                return observer.notify(function (scenarios) {
+                    scenarios$(scenarios);
                 });
-
-                return observer
-                    .notify(function (scenarios) {
-                        scenarios$(scenarios);
-                    })
             } catch (err) {
-                debugger
+                debugger;
                 error$(err);
                 return {
                     dispose: noop,
@@ -158,7 +174,7 @@ function withScenarioData(config$, filters$) {
 
     const scenarioObserverSubscription$ = ko.pureComputed(function () {
         var scenarioObserver = ko.unwrap(scenarioObserver$);
-        return scenarioObserver.start();
+        return scenarioObserver && scenarioObserver.start();
     });
 
     return {
@@ -167,10 +183,14 @@ function withScenarioData(config$, filters$) {
 
             if (!hasSubscription) {
                 subscriptions = [
-                    scenarioObserver$.subscribe(oldScenarioObserver => {
-                        const subscription = scenarioObserverSubscription$();
-                        subscription && subscription.dispose();
-                    }, null, 'beforeChange'),
+                    scenarioObserver$.subscribe(
+                        () => {
+                            const subscription = scenarioObserverSubscription$();
+                            subscription && subscription.dispose();
+                        },
+                        null,
+                        'beforeChange'
+                    ),
                     scenarioObserverSubscription$.subscribe(noop),
                 ];
                 hasSubscription = true;
@@ -179,8 +199,8 @@ function withScenarioData(config$, filters$) {
             onSubscriptionDispose(function () {
                 hasSubscription = !!scenarioData$.getSubscriptionsCount();
                 if (!hasSubscription) {
-                    const scenarioObserver = scenarioObserverSubscription$();
-                    scenarioObserver && scenarioObserver.dispose();
+                    const scenarioObserverSubscription = scenarioObserverSubscription$();
+                    scenarioObserverSubscription && scenarioObserverSubscription.dispose();
                     each(subscriptions, (sub) => sub.dispose());
                 }
             }, subscription);

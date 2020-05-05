@@ -110,11 +110,7 @@ export default function createViewModel(params, componentInfo) {
         if (indexFilterElementsCount$() !== size(globalIndexFilters$())) {
             return undefined;
         }
-        return reduce(
-            globalIndexFilters$(),
-            (memo, filterProps) => set(memo, [filterProps.setName, filterProps.setPosition], filterProps.value),
-            {}
-        );
+        return globalIndexFilters$();
     });
 
     const columnConfigurationsArray$ = withDeferred(
