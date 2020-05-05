@@ -104,7 +104,7 @@ class Datagrid {
      * @param {*} gridOptions$
      * @param {*} columnOptions$
      */
-    constructor(root, gridOptions$, columnOptions$) {
+    constructor(root, gridOptions$, columnOptions$, filters$) {
         /** @type {Array<KnockoutSubscription>} */
         this.subscriptions = [];
 
@@ -113,6 +113,8 @@ class Datagrid {
 
         this.gridOptions$ = gridOptions$;
         this.columnOptions$ = columnOptions$;
+        this.filters$ = filters$;
+
         this.componentRoot = root;
         this.view = insight.getView();
         this.schema = this.view.getApp().getModelSchema();
@@ -165,7 +167,8 @@ class Datagrid {
     buildTable() {
         const columnOptions$ = this.columnOptions$;
         const gridOptions$ = this.gridOptions$;
-        const { data: scenariosData$, errors: errors$ } = withScenarioData(columnOptions$);
+        const filters$ = this.filters$;
+        const { data: scenariosData$, errors: errors$ } = withScenarioData(columnOptions$, filters$);
 
         const allOptions$ = withDeferred(
             ko.pureComputed(() => {
@@ -214,11 +217,14 @@ class Datagrid {
 
     update() {
         defer(() => {
+            const gridOptions = ko.unwrap(this.gridOptions$);
             this.validate();
             this.updatePaginator();
-            this.recalculateHeight(ko.unwrap(this.gridOptions$));
             this.recalculateWidth();
-            this.exportControl = this.updateExportControl(this.table, this.headerToolbar, ko.unwrap(this.gridOptions$));
+            if (gridOptions) {
+                this.recalculateHeight(gridOptions);
+                this.exportControl = this.updateExportControl(this.table, this.headerToolbar, gridOptions);
+            }
         });
     }
 

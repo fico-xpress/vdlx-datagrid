@@ -20,7 +20,7 @@
  */
 export default {
     tag: 'vdlx-datagrid-index-filter',
-    requiredAncestor: ['vdlx-datagrid-column'],
+    requiredAncestor: ['vdlx-datagrid', 'vdlx-datagrid-column'],
     attributes: [
         {
             name: 'set',
