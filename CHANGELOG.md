@@ -1,4 +1,7 @@
 # vdlx-datagrid changelog
+## v4.6.3
+
+- Fix an issue where table with large number of indices was locking up the view.
 
 ## v4.6.2
 
