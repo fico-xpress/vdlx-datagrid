@@ -20,7 +20,6 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import './data-store-fix';
 import '../css/vdlx-datagrid.scss';
 import 'tabulator-tables/dist/css/bootstrap/tabulator_bootstrap.css';
 
