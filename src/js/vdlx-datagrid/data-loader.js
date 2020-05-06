@@ -162,7 +162,6 @@ function withScenarioData(config$, filters$) {
                     scenarios$(scenarios);
                 });
             } catch (err) {
-                debugger;
                 error$(err);
                 return {
                     dispose: noop,
