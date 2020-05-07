@@ -1,0 +1,67 @@
+<vdl version="4.7">
+    <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
+    <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+    <vdl-page>
+        <vdl-section heading="Remote index filtering">
+            <p class="lead">
+                Table data can be filtered by indices on the server. To enable this, define index filters at the
+                <code>vdlx-datagrid</code> level
+            </p>
+        </vdl-section>
+
+        <vdl-section heading="Examples">
+            <vdl-row>
+                <vdl-column size="6" heading="Global index filtering">
+                    <p>
+                        <code>vdlx-datagrid-index-filter</code> can be defined at the <code>vdlx-datagrid</code> level.
+                        All of the index filters defined there are applied on the server, which prevents the client from
+                        loading large datasets.
+                    </p>
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-index-filter set="Factories" value="Paris">
+                        </vdlx-datagrid-index-filter>
+                        <vdlx-datagrid-column entity="FactoryDemand" editable="=scenario.entities.MyBool.value"
+                            heading="Factory demand in Paris">
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+                <vdl-column size="6"></vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6" heading="Multiple values to filter by">
+                    <p>
+                        Global index filter accepts an array of values to filter by. This is useful when it is necessary
+                        to limit the amount of data loaded from the server, yet there is a need to load more than just
+                        one index value.
+                    </p>
+                    <vdl-var name="destinations" value="=['New York', 'Paris']"></vdl-var>
+
+                    <vdl-action-group name="setFilterA">
+                        <vdl-action-set-var var="destinations"></vdl-action-set-var>
+                    </vdl-action-group>
+
+                    <vdl-form>
+                        <vdl-field options-set="Factories" multiple="true" options-include-empty="true"
+                            value="=vars.destinations" vdl-event="change: actions.setFilterA">
+                        </vdl-field>
+                    </vdl-form>
+
+                    <vdlx-datagrid vdl-if="=vars.destinations.length > 0">
+                        <vdlx-datagrid-index-filter set="Factories" set-position="1" value="=vars.destinations">
+                        </vdlx-datagrid-index-filter>
+                        <vdlx-datagrid-column set="Factories" heading="Origin"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="Factories" heading="Destination"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ShippingCosts" heading="='ShippingCosts ' + destination"
+                            vdl-repeat="=destination in vars.destinations">
+                            <vdlx-datagrid-index-filter set="Factories" set-position="1" value="=destination">
+                            </vdlx-datagrid-index-filter>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+                <vdl-column size="6">
+
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+    </vdl-page>
+</vdl>
