@@ -6,6 +6,10 @@
 - Index columns are automatically sorted using corresponding `vdl-set-sorter` or the default set sorter for the index column data type.
 - Default sorting with set sorters can be disabled per index column using the new `vdlx-datagrid-column` attribute `disable-set-sorting`.
 
+## v4.6.3
+
+- Fix an issue where table with large number of indices was locking up the view.
+
 ## v4.6.2
 
 - Export data as CSV: New vdlx-datagrid attributes `show-export` and `export-filename` that display a datagrid header 

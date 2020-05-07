@@ -165,7 +165,7 @@ const isSparse = (sets, arrays) => {
         0
     );
 
-    return totalPossibleKeys * arrays.length > (totalCountOfArrayValues * Math.log(totalCountOfArrayValues) || 0);
+    return totalPossibleKeys * arrays.length >= (totalCountOfArrayValues * Math.log(totalCountOfArrayValues) || 0);
 };
 
 export default (allColumnIndices, columns, columnOptions, setNamePosnsAndOptions, scenariosData, rowFilter, rowIndexGenerator) => {
