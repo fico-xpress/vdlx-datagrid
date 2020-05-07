@@ -168,7 +168,7 @@ class Datagrid {
         const allOptions$ = withDeferred(
             ko.pureComputed(() => {
                 if (!gridOptions$() || !columnOptions$() || !scenariosData$()) {
-                    return undefined;
+                    return allOptions$.peek();
                 }
                 return {
                     gridOptions: gridOptions$(),
@@ -188,7 +188,7 @@ class Datagrid {
                     }
                 })
                 .subscribe(noop),
-            withDeferred(
+            (
                 ko.pureComputed(() => {
                     const allOptions = allOptions$();
                     if (allOptions) {
