@@ -26,6 +26,5 @@
             <vdl-view title="Big Data 1M rows" path="big-data/datagrid-bd5.vdl" />
             <vdl-view title="Simulated Arrays (61740 rows)" path="big-data/simulatedArrays.vdl" />
         </view-group>
-        <client-resources-local-path>/Users/denissdetkovs/dev/git/vdlx-datagrid/insight/client_resources</client-resources-local-path>
     </client>
 </model-companion>
