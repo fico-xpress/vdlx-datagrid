@@ -20,7 +20,12 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import { onSubscribe, onSubscriptionDispose, withDeepEquals } from '../ko-utils';
+import {
+    onSubscribe,
+    onSubscriptionDispose,
+    withDeepEquals,
+    withEquals,
+} from '../ko-utils';
 import fromPairs from 'lodash/fromPairs';
 import each from 'lodash/each';
 import noop from 'lodash/noop';
@@ -34,34 +39,17 @@ import map from 'lodash/map';
 import size from 'lodash/size';
 import reduce from 'lodash/reduce';
 import intersection from 'lodash/intersection';
-import { get } from 'lodash-es';
+import find from 'lodash/find';
+import { insightModules } from '../insight-globals';
 
 function findScenario(scenarios, identifier) {
-    var result = null;
-
-    // Find scenario by ID.
-    scenarios.some(function (currentScenario) {
-        if (currentScenario.getId() === identifier) {
-            result = currentScenario;
-            return true;
-        }
-        return false;
-    });
+    const result = find(scenarios, (scenario) => scenario.getId() === identifier);
 
     if (result) {
         return result;
     }
 
-    // Find by position.
-    scenarios.some(function (currentScenario) {
-        if (currentScenario.getSelectionIndex() === identifier) {
-            result = currentScenario;
-            return true;
-        }
-        return false;
-    });
-
-    return result;
+    return find(scenarios, (scenario) => scenario.getSelectionIndex() === identifier);
 }
 
 function getAutoTableEntities(columnOptions) {
@@ -133,26 +121,30 @@ function withScenarioData(config$, filters$) {
     let hasSubscription = false;
     const scenarios$ = ko.observable([]);
 
-    const configForScenarioData$ = withDeepEquals(ko.pureComputed(() => {
-        const config = config$();
-        return {
-            scenario: config.scenario,
-            columnOptions: map(config.columnOptions, (options) => ({
-                id: options.id,
-                scenario: options.scenario,
-            })),
-        };
-    }));
+    const configForScenarioData$ = withDeepEquals(
+        ko.pureComputed(() => {
+            const config = config$();
+            return {
+                scenario: config.scenario,
+                columnOptions: map(config.columnOptions, (options) => ({
+                    id: options.id,
+                    scenario: options.scenario,
+                })),
+            };
+        })
+    );
 
-    const scenarioData$ = ko.pureComputed(() => {
-        const config = ko.unwrap(configForScenarioData$);
-        const scenarios = ko.unwrap(scenarios$);
-        if (isEmpty(config) || isEmpty(scenarios)) {
-            return scenarioData$.peek();
-        }
+    const scenarioData$ = withEquals(
+        ko.pureComputed(() => {
+            const config = ko.unwrap(configForScenarioData$);
+            const scenarios = ko.unwrap(scenarios$);
+            if (isEmpty(config) || isEmpty(scenarios)) {
+                return scenarioData$.peek();
+            }
 
-        return getScenarios(config, scenarios);
-    });
+            return getScenarios(config, scenarios);
+        })
+    );
 
     const error$ = ko.observable();
 
@@ -163,32 +155,30 @@ function withScenarioData(config$, filters$) {
         })
     );
 
-    const columnOptions$ = withDeepEquals(
+    const autotableEntities$ = withDeepEquals(
         ko.pureComputed(() => {
             const config = config$();
-            return (
-                map(config.columnOptions, (options) => ({
-                    name: options.name,
-                    editorOptionsSet: options.editorOptionsSet,
-                })) || columnOptions$.peek()
-            );
+            if (!config.columnOptions) {
+                return autotableEntities$.peek();
+            }
+            return getAutoTableEntities(config.columnOptions);
         })
     );
 
     const scenarioObserver$ = ko.pureComputed(() => {
         const scenarioList = ko.unwrap(scenarioList$);
-        const columnOptions = ko.unwrap(columnOptions$);
+        const entities = ko.unwrap(autotableEntities$);
         const filters = ko.unwrap(filters$);
 
         const modelSchema = view.getApp().getModelSchema();
+        scenarios$([]);
 
-        if (!isEmpty(scenarioList) && !isEmpty(columnOptions) && filters) {
+        if (!isEmpty(scenarioList) && !isEmpty(entities) && filters) {
             try {
                 error$(undefined);
-                const entities = getAutoTableEntities(columnOptions);
                 let observer = view.withScenarios(scenarioList).withEntities(entities);
                 observer = reduce(
-                    uniq(map(columnOptions, 'name')),
+                    entities,
                     (observer, entity) => withFilter(modelSchema, observer, filters, entity),
                     observer
                 );

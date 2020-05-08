@@ -27,7 +27,6 @@ import set from 'lodash/set';
 import reduce from 'lodash/reduce';
 import noop from 'lodash/noop';
 import mapValues from 'lodash/mapValues';
-import defer from 'lodash/defer';
 import { withDeepEquals, createMutationObservable, withDeferred } from '../ko-utils';
 import { createProps } from './create-column-props';
 import { insightModules } from '../insight-globals';
@@ -47,31 +46,35 @@ export default (params, /** @type {ComponentInfo} */ componentInfo) => {
 
     const indexFilters$ = ko.observable({});
 
-    const filters$ = withDeepEquals(ko.pureComputed(() => {
-        if (indexFilterTagsCount$() !== size(indexFilters$())) {
-            return filters$.peek();
-        }
+    const filters$ = withDeepEquals(
+        ko.pureComputed(() => {
+            if (indexFilterTagsCount$() !== size(indexFilters$())) {
+                return filters$.peek();
+            }
 
-        return reduce(
-            indexFilters$(),
-            (memo, filterProps) => set(memo, [filterProps.setName, filterProps.setPosition], filterProps.value),
-            {}
-        );
-    }));
+            return reduce(
+                indexFilters$(),
+                (memo, filterProps) => set(memo, [filterProps.setName, filterProps.setPosition], filterProps.value),
+                {}
+            );
+        })
+    );
 
     const columnId = uniqueId('datagrid-column');
     componentInfo.element.columnId = columnId;
 
-    const props$ = withDeferred(withDeepEquals(
-        ko.pureComputed(() => {
-            const unwrappedParams =mapValues(params, ko.unwrap);
-            const filters = ko.unwrap(filters$);
-            if(!filters) {
-                return props$.peek();
-            }
-            return createProps(columnId, unwrappedParams, filters, componentInfo.element);
-        })
-    ));
+    const props$ = withDeferred(
+        withDeepEquals(
+            ko.pureComputed(() => {
+                const unwrappedParams = mapValues(params, ko.unwrap);
+                const filters = ko.unwrap(filters$);
+                if (!filters) {
+                    return props$.peek();
+                }
+                return createProps(columnId, unwrappedParams, filters, componentInfo.element);
+            })
+        )
+    );
 
     const subscription = ko
         .pureComputed(() => {
@@ -85,24 +88,24 @@ export default (params, /** @type {ComponentInfo} */ componentInfo) => {
         .subscribe(noop);
 
     return {
-        dispose: function() {
+        dispose: function () {
             subscription.dispose();
             params.removeColumn(columnId);
         },
 
-        filterUpdate: function(filterId, filterProperties) {
+        filterUpdate: function (filterId, filterProperties) {
             indexFilters$({
                 ...indexFilters$.peek(),
-                [filterId]: filterProperties
+                [filterId]: filterProperties,
             });
         },
 
-        filterRemove: function(filterId) {
+        filterRemove: function (filterId) {
             return indexFilters$(omit(indexFilters$.peek(), filterId));
         },
 
         validate: () => {
             params.tableValidate();
-        }
+        },
     };
 };
