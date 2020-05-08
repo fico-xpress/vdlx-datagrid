@@ -23,7 +23,6 @@
 import Datagrid from './datagrid';
 import { withDeepEquals, createMutationObservable, withDeferred } from '../ko-utils';
 
-import defer from 'lodash/defer';
 import uniqueId from 'lodash/uniqueId';
 import get from 'lodash/get';
 import map from 'lodash/map';
@@ -32,10 +31,8 @@ import omit from 'lodash/omit';
 import createColumnConfig from './create-column-config';
 import mapValues from 'lodash/mapValues';
 import createTableOptions from './create-table-options';
-import reduce from 'lodash/reduce';
-import set from 'lodash/set';
 import filter from 'lodash/filter';
-import toLower from 'lodash-es/toLower';
+import toLower from 'lodash/toLower';
 
 /**
  * VDL Extensions callback.
@@ -90,11 +87,11 @@ export default function createViewModel(params, componentInfo) {
     const $footerToolBar = $('<div class="footer-toolbar"/>');
     $element.append($footerToolBar);
 
-    const columnConfigurations$ = withDeepEquals((ko.observable({})));
+    const columnConfigurations$ = withDeepEquals(ko.observable({}));
 
-    const globalIndexFilters$ = withDeepEquals((ko.observable({})));
+    const globalIndexFilters$ = withDeepEquals(ko.observable({}));
 
-    const mutation$ = (createMutationObservable(element, { childList: true }));
+    const mutation$ = createMutationObservable(element, { childList: true });
 
     const columnElements$ = ko.pureComputed(() => {
         mutation$();
@@ -103,7 +100,7 @@ export default function createViewModel(params, componentInfo) {
 
     const indexFilterElementsCount$ = ko.pureComputed(() => {
         mutation$();
-        return filter(element.children, child => toLower(child.tagName) === 'vdlx-datagrid-index-filter').length;
+        return filter(element.children, (child) => toLower(child.tagName) === 'vdlx-datagrid-index-filter').length;
     });
 
     const filters$ = ko.pureComputed(() => {
@@ -113,18 +110,16 @@ export default function createViewModel(params, componentInfo) {
         return globalIndexFilters$();
     });
 
-    const columnConfigurationsArray$ = (
-        ko.pureComputed(() => {
-            if (columnElements$().length !== size(columnConfigurations$())) {
-                return columnConfigurationsArray$.peek();
-            }
+    const columnConfigurationsArray$ = ko.pureComputed(() => {
+        if (columnElements$().length !== size(columnConfigurations$())) {
+            return columnConfigurationsArray$.peek();
+        }
 
-            return map(columnElements$(), (columnElement, idx) => ({
-                ...columnConfigurations$()[columnElement.columnId],
-                index: idx,
-            }));
-        })
-    );
+        return map(columnElements$(), (columnElement, idx) => ({
+            ...columnConfigurations$()[columnElement.columnId],
+            index: idx,
+        }));
+    });
 
     const params$ = withDeepEquals(ko.pureComputed(() => mapValues(params, ko.unwrap)));
     const tableOptions$ = withDeepEquals(ko.pureComputed(() => createTableOptions(params$())));

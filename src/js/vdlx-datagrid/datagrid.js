@@ -37,7 +37,7 @@ import { EDITOR_TYPES } from '../constants';
 import AddRemove from './add-remove';
 import { chooseColumnFilter } from './grid-filters';
 import { perf, perfMessage } from '../performance-measurement';
-import { createStateManager } from './state-peristence';
+import { createStateManager } from './state-persistence';
 import { DatagridLock } from './datagrid-lock';
 import escape from 'lodash/escape';
 import delay from 'lodash/delay';

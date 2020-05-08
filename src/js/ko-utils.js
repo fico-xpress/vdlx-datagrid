@@ -25,7 +25,6 @@ import isEqual from 'lodash/isEqual';
 import eq from 'lodash/eq';
 import { insightModules } from './insight-globals';
 
-/** @type {KnockoutStatic} */
 const ko = insightModules.load('external-libs/knockout');
 
 export const onSubscribe = function (f, observable) {
