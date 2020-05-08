@@ -32,7 +32,6 @@ import { withDeepEquals, createMutationObservable } from '../ko-utils';
 import { createProps } from './create-column-props';
 import { insightModules } from '../insight-globals';
 
-/** @type {KnockoutStatic} */
 const ko = insightModules.load('external-libs/knockout');
 
 /** @typedef {{element: HTMLElement}} ComponentInfo */
