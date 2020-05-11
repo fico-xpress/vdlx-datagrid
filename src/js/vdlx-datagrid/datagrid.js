@@ -67,6 +67,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import constant from 'lodash/constant';
 import reverse from 'lodash/reverse';
 import { dialogs, dataUtils, SelectOptions, enums, ko, insightGetter } from '../insight-modules';
+import { withDeferred } from '../ko-utils';
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
