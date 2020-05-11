@@ -3,19 +3,13 @@ import {
     createFormattedSorter,
     getSetSorter
 } from '../../../src/js/vdlx-datagrid/datagrid-sorter';
-import {insightModules} from '../../../src/js/insight-globals';
+import { enums, dataUtils, setSorter } from '../../../src/js/insight-modules';
 
 describe('datagrid-sorter', () => {
     let tabulatorSortersMock;
     let entityMock;
-    let enumsMock;
-    let dataUtilsMock;
-    let setSorterMock;
 
     beforeEach(() => {
-        enumsMock = insightModules.load('enums');
-        dataUtilsMock = insightModules.load('utils/data-utils');
-        setSorterMock = insightModules.load('data/set-sorter');
         tabulatorSortersMock = {
             alphanum: 'alphanum-sorter',
             number: 'number-sorter',
@@ -33,7 +27,7 @@ describe('datagrid-sorter', () => {
         beforeEach(() => {
             entityMock.getName.mockReturnValue('MY_SET');
             discoveredComparator = jest.fn();
-            setSorterMock.getComparator.mockReturnValue(discoveredComparator);
+            setSorter.getComparator.mockReturnValue(discoveredComparator);
         });
 
         it('returns the set sorter from the JS API', () => {
@@ -41,15 +35,15 @@ describe('datagrid-sorter', () => {
         });
 
         it('calls getComparator with ignoreDirection', () => {
-            expect(setSorterMock.getComparator).toBeCalledWith('MY_SET', true);
+            expect(setSorter.getComparator).toBeCalledWith('MY_SET', true);
         });
     });
 
     describe('with getSorter', () => {
         describe('when entity is a number type', () => {
             beforeEach(() => {
-                entityMock.getElementType.mockReturnValue(enumsMock.DataType.INTEGER);
-                dataUtilsMock.entityTypeIsNumber.mockReturnValue(true);
+                entityMock.getElementType.mockReturnValue(enums.DataType.INTEGER);
+                dataUtils.entityTypeIsNumber.mockReturnValue(true);
             });
 
             it('returns the number sorter', () => {
@@ -59,8 +53,8 @@ describe('datagrid-sorter', () => {
 
         describe('when entity is a boolean type', () => {
             beforeEach(() => {
-                entityMock.getElementType.mockReturnValue(enumsMock.DataType.BOOLEAN);
-                dataUtilsMock.entityTypeIsNumber.mockReturnValue(false);
+                entityMock.getElementType.mockReturnValue(enums.DataType.BOOLEAN);
+                dataUtils.entityTypeIsNumber.mockReturnValue(false);
             });
 
             it('returns the number sorter', () => {
@@ -70,8 +64,8 @@ describe('datagrid-sorter', () => {
 
         describe('when entity is a string type', () => {
             beforeEach(() => {
-                entityMock.getElementType.mockReturnValue(enumsMock.DataType.STRING);
-                dataUtilsMock.entityTypeIsNumber.mockReturnValue(false);
+                entityMock.getElementType.mockReturnValue(enums.DataType.STRING);
+                dataUtils.entityTypeIsNumber.mockReturnValue(false);
             });
 
             it('returns the number sorter', () => {
@@ -81,8 +75,8 @@ describe('datagrid-sorter', () => {
 
         describe('when entity is a real type', () => {
             beforeEach(() => {
-                entityMock.getElementType.mockReturnValue(enumsMock.DataType.REAL);
-                dataUtilsMock.entityTypeIsNumber.mockReturnValue(true);
+                entityMock.getElementType.mockReturnValue(enums.DataType.REAL);
+                dataUtils.entityTypeIsNumber.mockReturnValue(true);
             });
 
             it('returns the number sorter', () => {
