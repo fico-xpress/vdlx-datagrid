@@ -40,7 +40,7 @@ import size from 'lodash/size';
 import reduce from 'lodash/reduce';
 import intersection from 'lodash/intersection';
 import find from 'lodash/find';
-import { insightModules } from '../insight-globals';
+import { ko, dataUtils, insightGetter } from '../insight-modules';
 
 function findScenario(scenarios, identifier) {
     const result = find(scenarios, (scenario) => scenario.getId() === identifier);
@@ -53,7 +53,7 @@ function findScenario(scenarios, identifier) {
 }
 
 function getAutoTableEntities(columnOptions) {
-    var modelSchema = insight.getView().getApp().getModelSchema();
+    var modelSchema = insightGetter().getView().getApp().getModelSchema();
 
     let entities = map(columnOptions, 'name');
     // and index sets
@@ -90,8 +90,6 @@ function getScenarios(config, scenarios) {
     return { defaultScenario: defaultScenario, scenarios: columnsAndScenarios };
 }
 
-const DataUtils = insightModules.load('utils/data-utils');
-
 const withFilter = (modelSchema, observer, filters, entity) => {
     const indexSets = modelSchema.getEntity(entity).getIndexSets();
     const filtersForEntity = intersection(map(filters, 'setName'), indexSets);
@@ -99,7 +97,7 @@ const withFilter = (modelSchema, observer, filters, entity) => {
     if (size(filtersForEntity)) {
         observer.filter(entity, () =>
             reduce(
-                DataUtils.getFilterPositionsAndValues(filters, DataUtils.getSetNamesAndPosns(indexSets)),
+                dataUtils.getFilterPositionsAndValues(filters, dataUtils.getSetNamesAndPosns(indexSets)),
                 (memo, filter) => {
                     memo[filter.index] = [].concat(filter.value);
                     return memo;
@@ -117,7 +115,7 @@ const withFilter = (modelSchema, observer, filters, entity) => {
  * @returns {{data: KnockoutObservable<{defaultScenario: Scenario, scenarios: Scenario[]}>, errors: KnockoutObservable}}
  */
 function withScenarioData(config$, filters$) {
-    const view = insight.getView();
+    const view = insightGetter().getView();
     let hasSubscription = false;
     const scenarios$ = ko.observable([]);
 

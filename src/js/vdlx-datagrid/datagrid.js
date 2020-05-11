@@ -21,7 +21,6 @@
     limitations under the License.
  */
 import Tabulator from 'tabulator-tables/dist/js/tabulator';
-import { insightModules, insight } from '../insight-globals';
 import { getSorter, getSetSorter, createFormattedSorter } from './datagrid-sorter';
 import dataTransform, {
     getAllColumnIndices,
@@ -69,11 +68,7 @@ import constant from 'lodash/constant';
 import { withEquals } from '../ko-utils';
 import reverse from 'lodash/reverse';
 import keys from 'lodash/keys';
-
-const SelectOptions = insightModules.load('components/autotable-select-options');
-const DataUtils = insightModules.load('utils/data-utils');
-const dialogs = insightModules.load('dialogs');
-const Enums = insightModules.load('enums');
+import { dialogs, dataUtils, SelectOptions, enums, ko, insightGetter } from '../insight-modules';
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
@@ -117,7 +112,7 @@ class Datagrid {
         this.filters$ = filters$;
 
         this.componentRoot = root;
-        this.view = insight.getView();
+        this.view = insightGetter().getView();
         this.schema = this.view.getApp().getModelSchema();
 
         const options = ko.unwrap(gridOptions$);
@@ -493,7 +488,7 @@ class Datagrid {
             const { name, options } = setNameAndPosn;
             const entity = schema.getEntity(name);
             const displayEntity = resolveDisplayEntity(schema, entity);
-            const isNumberEntity = DataUtils.entityTypeIsNumber(displayEntity);
+            const isNumberEntity = dataUtils.entityTypeIsNumber(displayEntity);
 
             const title = get(options, 'title', entity.getAbbreviation() || name);
             const getClass = () => {
@@ -557,7 +552,7 @@ class Datagrid {
         const entitiesColumns = map(entitiesOptions, (entityOptions, columnNumber) => {
             const entity = schema.getEntity(entityOptions.name);
             const displayEntity = resolveDisplayEntity(schema, entity);
-            const isNumberEntity = DataUtils.entityTypeIsNumber(displayEntity);
+            const isNumberEntity = dataUtils.entityTypeIsNumber(displayEntity);
 
             const columnScenario = get(scenariosData.scenarios, entityOptions.id, scenariosData.defaultScenario);
 
@@ -664,7 +659,7 @@ class Datagrid {
                 const keys = getRowKey(data);
 
                 // Perform entity validation first
-                let result = insight.validation.EntityValidator.checkValue(entity, newValue, undefined, keys);
+                let result = insightGetter().validation.EntityValidator.checkValue(entity, newValue, undefined, keys);
 
                 if (result.isValid && typeof entityOptions.editorValidate === 'function') {
                     result = entityOptions.editorValidate.call(this, newValue, getRowDataForColumns(data), keys);
@@ -878,7 +873,7 @@ class Datagrid {
                 formatter: getFormatter(),
                 name: options.name,
                 field: options.id,
-                elementType: Enums.DataType.STRING,
+                elementType: enums.DataType.STRING,
                 sortByFormatted: true,
                 sorter: createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters),
                 accessorDownload: (value, rowData) => options.render(value, 'display', getRowDataForColumns(rowData)),
@@ -972,7 +967,7 @@ class Datagrid {
             );
             this.initialSortOrder = reverse(
                 map(
-                    filter(columns, (c) => c.dataType === Enums.DataType.SET && !c.disableSetSorting),
+                    filter(columns, (c) => c.dataType === enums.DataType.SET && !c.disableSetSorting),
                     (column) => ({
                         column: column.id,
                         dir: 'asc',

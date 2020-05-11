@@ -1,6 +1,4 @@
-import {insight} from "../../../src/js/insight-globals";
 import {TESTING_ONLY} from '../../../src/js/vdlx-datagrid/grid-filters';
-import {Enums} from '../../../src/js/vdlx-datagrid/grid-filters';
 
 describe('grid filters functions', () => {
     let exactCompareAsNumber = TESTING_ONLY._exactCompareAsNumber;

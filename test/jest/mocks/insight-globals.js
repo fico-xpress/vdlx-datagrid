@@ -78,6 +78,14 @@ jest.doMock('../../../src/js/insight-globals', () => {
     }
 });
 
+jest.doMock('../../../src/js/insight-modules', () => {
+    return {
+        insightGetter: insightGetterSpy,
+        ko: ko,
+        
+    }
+});
+
 global.MutationObserver = class {
     constructor(callback) {
         this.callback = callback;

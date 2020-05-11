@@ -21,9 +21,8 @@
     limitations under the License.
  */
 import isFunction  from 'lodash/isFunction';
-import {insightModules} from '../insight-globals'
+import { validatorRegistry } from '../insight-modules';
 
-const validatorRegistry = insightModules.load('vdl-validator-registry');
 
 export default function(params, componentInfo) {
     var fieldElement = $(componentInfo.element).parents('vdlx-datagrid-column')[0];
