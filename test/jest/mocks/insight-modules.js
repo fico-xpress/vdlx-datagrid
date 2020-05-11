@@ -30,8 +30,11 @@ const enumsMock = {
     },
 };
 
+/** @type {DataUtils} */
 const dataUtilsSpy = {
     entityTypeIsNumber: jest.fn().mockReturnValue(false),
+    getFilterPositionsAndValues: jest.fn(),
+    getSetNamesAndPosns: jest.fn()
 };
 
 const vdlValidatorRegistrySpy = jest.fn();

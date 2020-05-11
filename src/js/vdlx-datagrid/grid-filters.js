@@ -1,5 +1,4 @@
 import partial from 'lodash/partial';
-import {insight} from '../insight-globals';
 
 /*
    Xpress Insight vdlx-datagrid

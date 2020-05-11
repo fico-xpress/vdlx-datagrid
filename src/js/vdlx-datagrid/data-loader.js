@@ -90,6 +90,13 @@ function getScenarios(config, scenarios) {
     return { defaultScenario: defaultScenario, scenarios: columnsAndScenarios };
 }
 
+/**
+ * Adds an index filter to the Scenario Observer
+ * @param {*} modelSchema 
+ * @param {*} observer 
+ * @param {*} filters 
+ * @param {string} entity 
+ */
 const withFilter = (modelSchema, observer, filters, entity) => {
     const indexSets = modelSchema.getEntity(entity).getIndexSets();
     const filtersForEntity = intersection(map(filters, 'setName'), indexSets);
