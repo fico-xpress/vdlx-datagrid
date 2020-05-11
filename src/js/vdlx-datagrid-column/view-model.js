@@ -30,9 +30,7 @@ import mapValues from 'lodash/mapValues';
 import defer from 'lodash/defer';
 import { withDeepEquals, createMutationObservable } from '../ko-utils';
 import { createProps } from './create-column-props';
-import { insightModules } from '../insight-globals';
-
-const ko = insightModules.load('external-libs/knockout');
+import { ko } from '../insight-modules';
 
 /** @typedef {{element: HTMLElement}} ComponentInfo */
 

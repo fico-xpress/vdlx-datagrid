@@ -1,7 +1,5 @@
 import {chooseColumnFilter} from '../../../src/js/vdlx-datagrid/grid-filters';
 import {Enums} from '../../../src/js/vdlx-datagrid/grid-filters';
-import {insight} from "../../../src/js/insight-globals";
-import {getRowData} from "../../../src/js/vdlx-datagrid/utils";
 
 /*
 Rules for grid filters
@@ -22,6 +20,7 @@ Range Operator Match - starts with > >= < <= <> !=
 describe('vdlx-datagrid grid-filters', () => {
 
     beforeEach(() => {
+        jest.mock('../')
 
         insight.Formatter = {
             formatNumber: (d, fmt) => {

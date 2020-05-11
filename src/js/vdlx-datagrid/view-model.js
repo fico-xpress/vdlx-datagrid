@@ -21,7 +21,7 @@
     limitations under the License.
  */
 import Datagrid from './datagrid';
-import { withDeepEquals, createMutationObservable, withDeferred } from '../ko-utils';
+import { withDeepEquals, createMutationObservable, withEquals } from '../ko-utils';
 
 import uniqueId from 'lodash/uniqueId';
 import get from 'lodash/get';
@@ -103,12 +103,12 @@ export default function createViewModel(params, componentInfo) {
         return filter(element.children, (child) => toLower(child.tagName) === 'vdlx-datagrid-index-filter').length;
     });
 
-    const filters$ = ko.pureComputed(() => {
+    const filters$ = withEquals(ko.pureComputed(() => {
         if (indexFilterElementsCount$() !== size(globalIndexFilters$())) {
             return undefined;
         }
         return globalIndexFilters$();
-    });
+    }));
 
     const columnConfigurationsArray$ = ko.pureComputed(() => {
         if (columnElements$().length !== size(columnConfigurations$())) {

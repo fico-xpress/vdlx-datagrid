@@ -20,12 +20,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import { insightModules } from '../insight-globals';
 import has from 'lodash/has';
 import find from 'lodash/find';
 import get from 'lodash/get';
-
-const DataUtils = insightModules.load('utils/data-utils');
+import { dataUtils } from '../insight-modules';
 
 export default (element, attributes, api) => {
     var $element = $(element);
@@ -62,7 +60,7 @@ export default (element, attributes, api) => {
         if (!indexSetNames) {
             throw Error('Entity "' + entityName + '" must be an array.');
         }
-        const indexSetNameAndPosns = DataUtils.getSetNamesAndPosns(indexSetNames);
+        const indexSetNameAndPosns = dataUtils.getSetNamesAndPosns(indexSetNames);
 
         if (!find(indexSetNameAndPosns, { name: setName, position: setPosition })) {
             if (has(attributes, 'set-position')) {

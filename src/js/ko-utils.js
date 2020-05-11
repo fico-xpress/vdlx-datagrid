@@ -22,9 +22,7 @@
  */
 
 import isEqual from 'lodash/isEqual';
-import { insightModules } from './insight-globals';
-
-const ko = insightModules.load('external-libs/knockout');
+import { ko } from './insight-modules';
 
 export const onSubscribe = function(f, observable) {
     var subscribe = observable.subscribe;
