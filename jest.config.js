@@ -1,7 +1,6 @@
 module.exports = {
     setupFilesAfterEnv: [
-        "./test/jest/mocks/insight-globals.js",
-        "./test/jest/mocks/console-globals.js"
+        './test/jest/mocks/index.js'
     ],
     coverageReporters: process.env.CI ? ['text'] : ['text', 'lcov'],
 };
