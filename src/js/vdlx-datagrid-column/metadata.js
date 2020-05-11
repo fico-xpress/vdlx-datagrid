@@ -50,7 +50,8 @@ export default {
     {
         name: 'editable',
         description: 'Whether the cells within this column are editable.',
-        acceptsExpression: true
+        acceptsExpression: true,
+        valueType: 'boolean'
     },
     {
         name: 'vdl-visible',
