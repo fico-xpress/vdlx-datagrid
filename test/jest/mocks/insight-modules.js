@@ -1,7 +1,39 @@
+import { DataUtils } from '../../../src/types';
 import ko from 'knockout';
+import { memoize } from 'lodash';
+
+export const getEntityMock = memoize((name) => ({
+    getIndexSets: jest.fn(),
+    getLabelsEntity: jest.fn(),
+}));
+
+const modelSchemaMock = {
+    getEntity: jest.fn().mockImplementation(getEntityMock),
+};
+
+const appMock = {
+    getModelSchema: jest.fn().mockReturnValue(modelSchemaMock),
+};
+
+const scenarioObserverSubscriptionMock = {
+    dispose: jest.fn(),
+};
+
+export const scenarioObserverMock = {
+    withEntities: jest.fn().mockReturnThis(),
+    filter: jest.fn().mockReturnThis(),
+    notify: jest.fn().mockReturnThis(),
+    start: jest.fn().mockReturnValue(scenarioObserverSubscriptionMock),
+};
+
+const viewMock = {
+    getApp: jest.fn().mockReturnValue(appMock),
+    withScenarios: jest.fn().mockReturnValue(scenarioObserverMock),
+};
 
 const insightMock = {
     isDebugEnabled: jest.fn(),
+    getView: jest.fn().mockReturnValue(viewMock),
 };
 
 const insightGetterSpy = jest.fn().mockReturnValue(insightMock);
@@ -34,7 +66,7 @@ const enumsMock = {
 const dataUtilsSpy = {
     entityTypeIsNumber: jest.fn().mockReturnValue(false),
     getFilterPositionsAndValues: jest.fn(),
-    getSetNamesAndPosns: jest.fn()
+    getSetNamesAndPosns: jest.fn(),
 };
 
 const vdlValidatorRegistrySpy = jest.fn();
