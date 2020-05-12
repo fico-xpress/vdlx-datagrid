@@ -22,12 +22,12 @@ export default {
     tag: 'vdlx-datagrid',
     modifiesDescendants: false,
     doc: {
-        description: 'Render a table of related array entities. The array entities for each column are defined as child ' +
-            '<code>&lt;vdlx-datagrid-column&gt;</code> elements. The common index sets are automatically detected. ' +
-            'The table will emit the following events on user interaction: <ul>' +
-            '<li><code>selection-changed</code> - Triggered whenever the selection is changed, e.g. when user creates new selection. This event is triggered on the vdlx-datagrid element. Event handler also receives context of the selection, which includes selection cell list, active cell and selection type.</li>' +
-            '<li><code>selection-removed</code> - Triggered whenever the selection is destroyed, e.g. when sorting and filtering. This event is triggered on the vdlx-datagrid element.</li>' +
-            '</ul>See the JavaScript API Documentation, Table section for more details on the events.',
+        description: `Render a table of related array entities. The array entities for each column are defined as child
+            <code>&lt;vdlx-datagrid-column&gt;</code> elements. The common index sets are automatically detected.
+            The table will emit the following events on user interaction: <ul>
+            <li><code>selection-changed</code> - Triggered whenever the selection is changed, e.g. when user creates new selection. This event is triggered on the vdlx-datagrid element. Event handler also receives context of the selection, which includes selection cell list, active cell and selection type.</li>
+            <li><code>selection-removed</code> - Triggered whenever the selection is destroyed, e.g. when sorting and filtering. This event is triggered on the vdlx-datagrid element.</li>
+            </ul>See the JavaScript API Documentation, Table section for more details on the events.`,
         descriptionAsHtml: true,
         example: `<vdl-var name="selectedRowData" value="=[]"></vdl-var>
 
@@ -60,38 +60,40 @@ export default {
         },
         {
             name: 'page-size',
-            description: 'The number of rows to show per-page in paged mode. Defaults to __50__.',
-            acceptsExpression: true
+            description: 'The number of rows to show per-page in paged mode.',
+            acceptsExpression: true,
+            defaultValue: '50'
         },
         {
             name: 'page-mode',
             description:
-                'By default the grid will show all rows in scrolling mode. Set this attribute to __paged__ to enable grid pagination.'
+                'By default the grid will show all rows in scrolling mode. Set this attribute to <em>paged</em> to enable grid pagination.'
         },
         {
             name: 'height',
             acceptsExpression: true,
             description:
-                'Grid height, When page-mode is set to __scrolling__ you can set the height of the grid to something other than the default __600__'
+                'Grid height, When page-mode is set to <em>scrolling</em> you can set the height of the grid to something other than the default.',
+            defaultValue: '600'
         },
         {
             name: 'column-filter',
             description:
-                'Set this to __true__ to enable the column filters. This will show a header row with filter inputs for each column.'
+                'Set this to <em>true</em> to enable the column filters. This will show a header row with filter inputs for each column.'
         },
         {
             name: 'add-remove-row',
             description:
                 'Setting this will show the add-remove row buttons at the bottom of the grid. Set to "true" ' +
-                'to prompt for index selection on row add. Set to __addrow-autoinc__ will switch the behaviour to allow new ' +
+                'to prompt for index selection on row add. Set to <em>addrow-autoinc</em> will switch the behaviour to allow new ' +
                 'index values to be created, incrementing from the highest value in the set(s).'
         },
         {
             name: 'width',
             description:
                 'Set the grid to a fixed width, in pixels. Accepts an integer value. ' +
-                'If set to the string __custom__ then the grid width is calculated by adding up all the widths of the columns in the grid. ' +
-                "If a column doesn't have a width specified then it is given a default value of __100px__.",
+                'If set to the string <em>custom</em> then the grid width is calculated by adding up all the widths of the columns in the grid. ' +
+                "If a column doesn't have a width specified then it is given a default value of <em>100px</em>.",
             acceptsExpression: false
         },
         {
@@ -102,13 +104,14 @@ export default {
         {
             name: 'always-show-selection',
             description:
-                'Whether to display selection on inactive grids. Set to __true__ to keep selection on a grid when it becomes inactive. Defaults to __false__.',
-            acceptsExpression: false
+                'Whether to display selection on inactive grids. Set to <em>true</em> to keep selection on a grid when it becomes inactive.',
+            acceptsExpression: false,
+            defaultValue: false
         },
         {
             name: 'row-filter',
             description:
-                'Expression to be used for filtering the rows of a <vdl-datagrid>. This must be an expression and ' +
+                'Expression to be used for filtering the rows of a &lt;vdl-datagrid&gt;. This must be an expression and ' +
                 'should resolve to either a function or a boolean value. If a function it will be executed when grid updates. ' +
                 'The function will have the following signature (rowData, indices) and should return a boolean.',
             acceptsExpression: true,
@@ -130,11 +133,12 @@ export default {
         {
             name: 'save-state',
             description:
-                'Set this to __false__ to disable grid state saving. By default grid state is stored in the ' +
+                'Set this to <em>false</em> to disable grid state saving. By default grid state is stored in the ' +
                 "user's browser session so that user settings (e.g. page, sorting and search) are preserved if grid data " +
-                'is reloaded. Defaults to __true__.',
+                'is reloaded.',
             acceptsExpression: false,
-            required: false
+            required: false,
+            defaultValue: true
         },
         {
             name: 'grid-data',

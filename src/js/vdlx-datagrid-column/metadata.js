@@ -38,7 +38,7 @@ export default {
     {
         name: 'set-position',
         description:
-            'Index (zero-based) of occurrence of that index set in the index tuple for the array.' +
+            'Index (zero-based) of occurrence of that index set in the index tuple for the array. ' +
             'Defaults to next available position.'
     },
     {
@@ -62,7 +62,7 @@ export default {
         name: 'heading',
         description:
             'A custom header for this column, will default to be the entity alias. ' +
-            'Alternatively, you can set the title as the text contents of the <vdlx-datagrid-column> element.',
+            'Alternatively, you can set the title as the text contents of the &lt;vdlx-datagrid-column&gt; element.',
         acceptsExpression: true
     },
     {
@@ -85,7 +85,7 @@ export default {
     {
         name: 'filter-by-formatted',
         description:
-            'Use formatted values for filtering. This defaults to false unless the entity has a label in which case the default is __true__.',
+            'Use formatted values for filtering. This defaults to false unless the entity has a label in which case the default is <em>true</em>.',
         valueType: 'boolean'
     },
     {
@@ -101,7 +101,7 @@ export default {
         name: 'editor-type',
         description:
             'The editor type to use, in edit mode, for cells in this column. If not specified then it ' +
-            'will be autodetected based on entity type. Possible values: __checkbox__, __select__, __text__'
+            'will be autodetected based on entity type. Possible values: <em>checkbox</em>, <em>select</em>, <em>text</em>.'
     },
     {
         name: 'editor-checked-value',
@@ -115,14 +115,14 @@ export default {
         name: 'editor-options-set',
         description:
             'Name of a set entity to use for select options. This will display labels if a labels entity ' +
-            'is defined against this set. This will automatically set the `editor-type` to be __select__.'
+            'is defined against this set. This will automatically set the <em>editor-type</em> to be <em>select</em>.'
     },
     {
         name: 'editor-options',
         description:
             'An expression that results in one of the follow to be used as the select options: an array ' +
             'of values, an object of property to value or an array of objects containing key and value properties. ' +
-            'This will automatically set the `editor-type` to be __select__.',
+            'This will automatically set the <em>editor-type</em> to be <em>select</em>.',
         acceptsExpression: true,
         expressionVars: [
             {
@@ -141,14 +141,15 @@ export default {
         expressionReturns: {
             type: 'Array.<*>|Object.<string, string>|Array.<{key: string, value: *}>',
             description:
-                'An array of values, an object of property to value or an array of objects containing key and value properties'
+                'An array of values, an object of property to value or an array of objects containing key and value properties.'
         }
     },
     {
         name: 'editor-options-include-empty',
         description:
             'Allow array elements to be removed using the select input. Setting this to true will add ' +
-            'a blank item to the top of the select list. Defaults to __false__.'
+            'a blank item to the top of the select list.',
+        defaultValue: false
     },
     {
         name: 'render',
@@ -166,7 +167,7 @@ export default {
             {
                 name: 'type',
                 type: 'string',
-                description: 'The type call data requested - this will be __filter__, __display__ or __sort__'
+                description: 'The type call data requested - this will be <em>filter</em>, <em>display</em> or <em>sort</em>.'
             },
             {
                 name: 'rowData',

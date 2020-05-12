@@ -30,7 +30,8 @@ export default {
         {
             name: 'set-position',
             description:
-                'Index (zero-based) of occurrence of that index set in the index tuple for the array. Defaults to __0__.'
+                'Index (zero-based) of occurrence of that index set in the index tuple for the array.',
+            defaultValue: '0'
         },
         {
             name: 'value',
