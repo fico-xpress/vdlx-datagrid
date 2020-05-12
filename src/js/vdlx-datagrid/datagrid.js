@@ -211,7 +211,7 @@ class Datagrid {
     }
 
     update() {
-        defer(() => {
+        if (this.table) {
             const gridOptions = ko.unwrap(this.gridOptions$);
             this.validate();
             this.updatePaginator();
@@ -220,7 +220,7 @@ class Datagrid {
                 this.recalculateHeight(gridOptions);
                 this.exportControl = this.updateExportControl(this.table, this.headerToolbar, gridOptions);
             }
-        });
+        }
     }
 
     saveState() {
