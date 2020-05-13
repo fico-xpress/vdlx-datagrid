@@ -12,7 +12,7 @@ const MODULES = [
     '../../src/js/vdlx-datagrid-index-filter/metadata.js',
     '../../src/js/vdlx-datagrid-validate/metadata.js'
 ];
-const TARGET_DIR = path.join(__dirname, '../../site');
+const TARGET_DIR = path.join(__dirname, '../../docs');
 
 let extensions = MODULES
     .map(modFile => {
