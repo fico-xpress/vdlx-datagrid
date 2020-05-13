@@ -20,7 +20,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import {VDL} from '../insight-globals';
+import { VDL } from '../insight-globals';
 import metadata from './metadata';
 import transform from './transform';
 import viewModel from './view-model';

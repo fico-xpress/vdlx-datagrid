@@ -1,0 +1,149 @@
+<vdl version="4.7">
+    <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
+    <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+    <vdl-page>
+        <vdl-section heading="Server-side index filtering">
+            <vdl-row>
+                <vdl-column size="10">
+                    <p class="lead">
+                        Table data can be filtered by indices on the server using single or multiple filter values. This
+                        can be used to reduce the amount of data that is requested from the server and processed by
+                        <code>vdlx-datagrid</code>, as a result performance can be improved where the data size for the arrays
+                        is very large.
+                    </p>
+                    <p class="lead">
+                        To enable this, define index filters at the <code>vdlx-datagrid</code> level.
+                    </p>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Single index filter">
+            <vdl-row>
+                <vdl-column size="10" style="min-height: 470px;">
+                    <p>
+                        In this example <code>vdlx-datagrid-index-filter</code> is defined at the <code>vdlx-datagrid</code> level.
+                        All of the index filters at this level are applied on the server, which prevents the client from
+                        loading large datasets. Filtering one index set results in this table going from 100,000 rows
+                        of data to 10,000 rows. It also reduces the transfer size of the table data from 340kB to about 36kB.
+                    </p>
+                    <p>
+                        The table is only show once the user selects a value to filter the <code>t3IndexA</code> by. When filtering at
+                        the <code>vdlx-datagrid</code> level the filtered index columns will still be show in the table by
+                        default. In this example the filtered index column is hidden using <code>vdl-visible="=false"</code>.
+                    </p>
+
+                    <vdl-var name="singleFilter" value=""></vdl-var>
+                    <vdl-action-group name="updateSingleFilter">
+                        <vdl-action-set-var var="singleFilter"></vdl-action-set-var>
+                    </vdl-action-group>
+
+                    <vdl-form>
+                        <vdl-field label="Choose filter value"
+                                   label-size="3"
+                                   size="3"
+                                   options-set="t3IndexA"
+                                   options-include-empty="true"
+                                   vdl-event="change: actions.updateSingleFilter"></vdl-field>
+                    </vdl-form>
+
+                    <vdlx-datagrid vdl-if="=vars.singleFilter" height="250">
+                        <vdlx-datagrid-index-filter set="t3IndexA" value="=vars.singleFilter"></vdlx-datagrid-index-filter>
+                        <vdlx-datagrid-column set="t3IndexA" vdl-visible="=false"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="t3Col1"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="t3Col3"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+                <vdl-column size="10" heading="Source code">
+                    <code-panel>
+&lt;vdl-var name=&quot;singleFilter&quot; value=&quot;&quot;&gt;&lt;/vdl-var&gt;
+&lt;vdl-action-group name=&quot;updateSingleFilter&quot;&gt;
+    &lt;vdl-action-set-var var=&quot;singleFilter&quot;&gt;&lt;/vdl-action-set-var&gt;
+&lt;/vdl-action-group&gt;
+
+&lt;vdl-form&gt;
+    &lt;vdl-field label=&quot;Choose filter value&quot;
+               label-size=&quot;3&quot;
+               size=&quot;3&quot;
+               options-set=&quot;t3IndexA&quot;
+               options-include-empty=&quot;true&quot;
+               vdl-event=&quot;change: actions.updateSingleFilter&quot;&gt;&lt;/vdl-field&gt;
+&lt;/vdl-form&gt;
+
+&lt;vdlx-datagrid vdl-if=&quot;=vars.singleFilter&quot; height=&quot;400&quot;&gt;
+    &lt;vdlx-datagrid-index-filter set=&quot;t3IndexA&quot; value=&quot;=vars.singleFilter&quot;&gt;&lt;/vdlx-datagrid-index-filter&gt;
+    &lt;vdlx-datagrid-column set=&quot;t3IndexA&quot; vdl-visible=&quot;=false&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;t3Col1&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;t3Col3&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Multiple filter values">
+            <vdl-row>
+                <vdl-column size="10" style="min-height: 340px;">
+                    <p>
+                        The <code>vdlx-datagrid</code> level index filter can accept multiple values, in which case it will
+                        request array data from the server to include all rows that include any of the specified values
+                        for that index set. This will increase the amount of data requested from the server and processed by
+                        the table for each value you specify in the filter.
+                    </p>
+                    <p>
+                        This example also shows how you can split the filter values for a particular index set and use a
+                        <code>vdl-repeat</code> to create a column for each, using a column-level index filter to target
+                        that index set value.
+                    </p>
+
+                    <vdl-var name="multiFilter" value=""></vdl-var>
+                    <vdl-action-group name="updateMultiFilter">
+                        <vdl-action-set-var var="multiFilter"></vdl-action-set-var>
+                    </vdl-action-group>
+
+                    <vdl-form>
+                        <vdl-field label="Choose months"
+                                   label-size="3"
+                                   size="5"
+                                   options-set="MonthsOfYear"
+                                   options-include-empty="true"
+                                   multiple="true"
+                                   vdl-event="change: actions.updateMultiFilter"></vdl-field>
+                    </vdl-form>
+
+                    <vdlx-datagrid vdl-if="=vars.multiFilter.length > 0">
+                        <vdlx-datagrid-index-filter set="MonthsOfYear" value="=vars.multiFilter"></vdlx-datagrid-index-filter>
+                        <vdlx-datagrid-column entity="FactorySupply" heading="='Supply (' + i + ')'" vdl-repeat="=i in vars.multiFilter">
+                            <vdlx-datagrid-index-filter set="MonthsOfYear" value="=i"></vdlx-datagrid-index-filter>
+                        </vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+                <vdl-column size="10" heading="Source code">
+                    <code-panel>
+&lt;vdl-var name=&quot;multiFilter&quot; value=&quot;&quot;&gt;&lt;/vdl-var&gt;
+&lt;vdl-action-group name=&quot;updateMultiFilter&quot;&gt;
+    &lt;vdl-action-set-var var=&quot;multiFilter&quot;&gt;&lt;/vdl-action-set-var&gt;
+&lt;/vdl-action-group&gt;
+
+&lt;vdl-form&gt;
+    &lt;vdl-field label=&quot;Choose months&quot;
+               label-size=&quot;3&quot;
+               size=&quot;5&quot;
+               options-set=&quot;MonthsOfYear&quot;
+               options-include-empty=&quot;true&quot;
+               multiple=&quot;true&quot;
+               vdl-event=&quot;change: actions.updateMultiFilter&quot;&gt;&lt;/vdl-field&gt;
+&lt;/vdl-form&gt;
+
+&lt;vdlx-datagrid vdl-if=&quot;=vars.multiFilter.length &gt; 0&quot;&gt;
+    &lt;vdlx-datagrid-index-filter set=&quot;MonthsOfYear&quot; value=&quot;=vars.multiFilter&quot;&gt;&lt;/vdlx-datagrid-index-filter&gt;
+    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot; heading=&quot;='Supply (' + i + ')'&quot; vdl-repeat=&quot;=i in vars.multiFilter&quot;&gt;
+        &lt;vdlx-datagrid-index-filter set=&quot;MonthsOfYear&quot; value=&quot;=i&quot;&gt;&lt;/vdlx-datagrid-index-filter&gt;
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+    </vdl-page>
+</vdl>

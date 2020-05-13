@@ -21,7 +21,7 @@
     limitations under the License.
  */
 import { onSubscribe, onSubscriptionDispose } from '../ko-utils';
-import fromPairs  from 'lodash/fromPairs';
+import fromPairs from 'lodash/fromPairs';
 import each from 'lodash/each';
 import noop from 'lodash/noop';
 import isEmpty from 'lodash/isEmpty';
@@ -31,12 +31,17 @@ import identity from 'lodash/identity';
 import filter from 'lodash/filter';
 import flatten from 'lodash/flatten';
 import map from 'lodash/map';
+import size from 'lodash/size';
+import reduce from 'lodash/reduce';
+import intersection from 'lodash/intersection';
+import { ko, dataUtils, insightGetter } from '../insight-modules';
+import { IndexFilter } from '../../types';
 
 function findScenario(scenarios, identifier) {
     var result = null;
 
     // Find scenario by ID.
-    scenarios.some(function(currentScenario) {
+    scenarios.some(function (currentScenario) {
         if (currentScenario.getId() === identifier) {
             result = currentScenario;
             return true;
@@ -49,7 +54,7 @@ function findScenario(scenarios, identifier) {
     }
 
     // Find by position.
-    scenarios.some(function(currentScenario) {
+    scenarios.some(function (currentScenario) {
         if (currentScenario.getSelectionIndex() === identifier) {
             result = currentScenario;
             return true;
@@ -61,21 +66,23 @@ function findScenario(scenarios, identifier) {
 }
 
 function getAutoTableEntities(columnOptions) {
-    var modelSchema = insight
-        .getView()
-        .getApp()
-        .getModelSchema();
+    var modelSchema = insightGetter().getView().getApp().getModelSchema();
 
     let entities = map(columnOptions, 'name');
     // and index sets
-    entities = entities.concat(flatten(map(entities, entity => modelSchema.getEntity(entity).getIndexSets())));
+    entities = entities.concat(flatten(map(entities, (entity) => modelSchema.getEntity(entity).getIndexSets())));
 
     // Also add entities from editor options set.
     entities = entities.concat(filter(map(columnOptions, 'editorOptionsSet'), identity));
 
     entities = uniq(entities);
 
-    return entities.concat(filter(map(entities, entity => modelSchema.getEntity(entity).getLabelsEntity()), identity));
+    return entities.concat(
+        filter(
+            map(entities, (entity) => modelSchema.getEntity(entity).getLabelsEntity()),
+            identity
+        )
+    );
 }
 
 function getScenarios(config, scenarios) {
@@ -85,9 +92,9 @@ function getScenarios(config, scenarios) {
     // Bind a scenario per column - single table.
     const columnsAndScenarios = fromPairs(
         filter(
-            map(config.columnOptions, currentColumn => [
+            map(config.columnOptions, (currentColumn) => [
                 currentColumn.id,
-                findScenario(scenarios, currentColumn.scenario)
+                findScenario(scenarios, currentColumn.scenario),
             ]),
             ([columnId, scenario]) => !!scenario
         )
@@ -97,11 +104,39 @@ function getScenarios(config, scenarios) {
 }
 
 /**
+ * Adds an index filter to the Scenario Observer
+ * @param {*} modelSchema
+ * @param {*} observer
+ * @param {*} filters
+ * @param {string} entity
+ */
+const withFilter = (modelSchema, observer, filters, entity) => {
+    const indexSets = modelSchema.getEntity(entity).getIndexSets();
+    const filtersForEntity = intersection(map(filters, 'setName'), indexSets);
+
+    if (size(filtersForEntity)) {
+        observer.filter(entity, () =>
+            reduce(
+                dataUtils.getFilterPositionsAndValues(filters, dataUtils.getSetNamesAndPosns(indexSets)),
+                (memo, filter) => {
+                    memo[filter.index] = [].concat(filter.value);
+                    return memo;
+                },
+                {}
+            )
+        );
+    }
+    return observer;
+};
+
+/**
  *
- * @param {*} config$
+ * @param {KnockoutObservable<*>} config$
+ * @param {KnockoutObservable<IndexFilter[]>} filters$
  * @returns {{data: KnockoutObservable<{defaultScenario: Scenario, scenarios: Scenario[]}>, errors: KnockoutObservable}}
  */
-function withScenarioData(config$) {
+const getScenarioData = (config$, filters$) => {
+    const view = insightGetter().getView();
     let hasSubscription = false;
     const scenarios$ = ko.observable([]);
 
@@ -116,58 +151,71 @@ function withScenarioData(config$) {
     });
     const error$ = ko.observable();
 
-    const scenarioObserverSubscription$ = ko.pureComputed(function() {
+    const scenarioObserver$ = ko.pureComputed(() => {
         const config = ko.unwrap(config$);
-        if (!isEmpty(config) && !isEmpty(config.scenarioList) && !isEmpty(config.columnOptions)) {
+        const filters = ko.unwrap(filters$);
+
+        var modelSchema = view.getApp().getModelSchema();
+
+        if (!isEmpty(config) && !isEmpty(config.scenarioList) && !isEmpty(config.columnOptions) && filters) {
             try {
                 error$(undefined);
-                return insight
-                    .getView()
-                    .withScenarios(config.scenarioList)
-                    .withEntities(getAutoTableEntities(config.columnOptions))
-                    .notify(function(scenarios) {
-                        scenarios$(scenarios);
-                    })
-                    .start();
+                const entities = getAutoTableEntities(config.columnOptions);
+                let observer = view.withScenarios(config.scenarioList).withEntities(entities);
+                observer = reduce(
+                    uniq(map(config.columnOptions, 'name')),
+                    (observer, entity) => withFilter(modelSchema, observer, filters, entity),
+                    observer
+                );
+
+                return observer.notify(function (scenarios) {
+                    scenarios$(scenarios);
+                });
             } catch (err) {
                 error$(err);
                 return {
-                    dispose: noop
+                    dispose: noop,
                 };
             }
         }
         return undefined;
     });
 
+    const scenarioObserverSubscription$ = ko.pureComputed(function () {
+        var scenarioObserver = ko.unwrap(scenarioObserver$);
+        return scenarioObserver && scenarioObserver.start();
+    });
+
     return {
-        data: onSubscribe(function(subscription) {
+        data: onSubscribe(function (subscription) {
             let subscriptions = [];
 
             if (!hasSubscription) {
                 subscriptions = [
-                    scenarioObserverSubscription$.subscribe(noop),
-                    scenarioObserverSubscription$.subscribe(
-                        function(oldScenarioObserver) {
-                            oldScenarioObserver && oldScenarioObserver.dispose();
+                    scenarioObserver$.subscribe(
+                        () => {
+                            const subscription = scenarioObserverSubscription$();
+                            subscription && subscription.dispose();
                         },
                         null,
                         'beforeChange'
-                    )
+                    ),
+                    scenarioObserverSubscription$.subscribe(noop),
                 ];
                 hasSubscription = true;
             }
 
-            onSubscriptionDispose(function() {
+            onSubscriptionDispose(function () {
                 hasSubscription = !!scenarioData$.getSubscriptionsCount();
                 if (!hasSubscription) {
-                    const scenarioObserver = scenarioObserverSubscription$();
-                    scenarioObserver && scenarioObserver.dispose();
-                    each(subscriptions, sub => sub.dispose());
+                    const scenarioObserverSubscription = scenarioObserverSubscription$();
+                    scenarioObserverSubscription && scenarioObserverSubscription.dispose();
+                    each(subscriptions, (sub) => sub.dispose());
                 }
             }, subscription);
         }, scenarioData$),
-        errors: error$
+        errors: error$,
     };
-}
+};
 
-export default withScenarioData;
+export default getScenarioData;

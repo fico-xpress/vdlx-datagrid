@@ -20,60 +20,66 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import {insightModules}  from '../insight-globals';
-import has  from 'lodash/has';
+import has from 'lodash/has';
 import find from 'lodash/find';
 import get from 'lodash/get';
-
-const DataUtils = insightModules.load('utils/data-utils');
+import { dataUtils } from '../insight-modules';
 
 export default (element, attributes, api) => {
     var $element = $(element);
-    var entityName = $element.closest('[entity]').attr('entity');
+    var column = $element.closest('vdlx-datagrid-column').get(0);
+    var table = $element.closest('vdlx-datagrid').get(0);
+    const paramsBuilder = api.getComponentParamsBuilder(element);
+    const setName = attributes['set'].rawValue;
 
-    if (!entityName) {
-        throw Error(
-            '<vdlx-datagrid-index-filter> must be contained within a <vdlx-datagrid-column> that defines an "entity".'
-        );
+    const setEntity = api.getModelEntityByName(setName);
+    if (!setEntity) {
+        throw Error('Entity "' + setName + '" not found in the model. Cannot set index filter.');
     }
-    const parentArray = api.getModelEntityByName(entityName);
-    if (!parentArray) {
-        throw Error('Entity "' + entityName + '" does not exist in the model schema.');
-    }
-    const indexSetNames = parentArray.getIndexSets();
-    if (!indexSetNames) {
-        throw Error('Entity "' + entityName + '" must be an array.');
-    }
-    const indexSetNameAndPosns = DataUtils.getSetNamesAndPosns(indexSetNames);
 
-    var setName = attributes['set'].rawValue;
-    var setPosition = get(attributes, ['set-position', 'rawValue'], 0);
+    let setPosition = get(attributes, ['set-position', 'rawValue'], 0);
     if (!/^\d+$/.test(setPosition)) {
         throw Error('Invalid set-position: ' + setPosition);
     } else {
         setPosition = +setPosition;
     }
 
-    var setEntity = api.getModelEntityByName(setName);
-    if (!setEntity) {
-        throw Error('Entity "' + setName + '" not found in the model. Cannot set index filter.');
-    }
-    if (!find(indexSetNameAndPosns, { name: setName, position: setPosition })) {
-        if (has(attributes, 'set-position')) {
+    if (column) {
+        var entityName = $element.closest('[entity]').attr('entity');
+
+        if (!entityName) {
             throw Error(
-                'Invalid index set name/position combination ("' +
-                    setName +
-                    '",' +
-                    setPosition +
-                    ') for array ' +
-                    entityName
+                '<vdlx-datagrid-index-filter> must be contained within a <vdlx-datagrid-column> that defines an "entity".'
             );
-        } else {
-            throw Error('Invalid index set "' + setName + '" for array ' + entityName);
         }
+        const parentArray = api.getModelEntityByName(entityName);
+        if (!parentArray) {
+            throw Error('Entity "' + entityName + '" does not exist in the model schema.');
+        }
+        const indexSetNames = parentArray.getIndexSets();
+        if (!indexSetNames) {
+            throw Error('Entity "' + entityName + '" must be an array.');
+        }
+        const indexSetNameAndPosns = dataUtils.getSetNamesAndPosns(indexSetNames);
+
+        if (!find(indexSetNameAndPosns, { name: setName, position: setPosition })) {
+            if (has(attributes, 'set-position')) {
+                throw Error(
+                    'Invalid index set name/position combination ("' +
+                        setName +
+                        '",' +
+                        setPosition +
+                        ') for array ' +
+                        entityName
+                );
+            } else {
+                throw Error('Invalid index set "' + setName + '" for array ' + entityName);
+            }
+        }
+    } else if (table) {
     }
 
-    api.getComponentParamsBuilder(element)
+    paramsBuilder
         .addParam('setName', setName)
         .addParam('setPosition', setPosition)
         .addRawOrExpressionParam('value', attributes.value)

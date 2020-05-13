@@ -21,8 +21,7 @@
     limitations under the License.
  */
 import Tabulator from 'tabulator-tables/dist/js/tabulator';
-import { insightModules, insight } from '../insight-globals';
-import {getSorter, getSetSorter, createFormattedSorter} from './datagrid-sorter';
+import { getSorter, getSetSorter, createFormattedSorter } from './datagrid-sorter';
 import dataTransform, {
     getAllColumnIndices,
     getDisplayIndices,
@@ -36,8 +35,8 @@ import { getRowData } from './utils';
 import { EDITOR_TYPES } from '../constants';
 import AddRemove from './add-remove';
 import { chooseColumnFilter } from './grid-filters';
-import {perf, perfMessage} from '../performance-measurement';
-import { createStateManager } from './state-peristence';
+import { perf, perfMessage } from '../performance-measurement';
+import { createStateManager } from './state-persistence';
 import { DatagridLock } from './datagrid-lock';
 import escape from 'lodash/escape';
 import delay from 'lodash/delay';
@@ -65,14 +64,10 @@ import isObject from 'lodash/isObject';
 import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
-import constant from "lodash/constant";
-import {withDeferred} from '../ko-utils';
-import reverse from "lodash/reverse";
-
-const SelectOptions = insightModules.load('components/autotable-select-options');
-const DataUtils = insightModules.load('utils/data-utils');
-const dialogs = insightModules.load('dialogs');
-const Enums = insightModules.load('enums');
+import constant from 'lodash/constant';
+import reverse from 'lodash/reverse';
+import { dialogs, dataUtils, SelectOptions, enums, ko, insightGetter } from '../insight-modules';
+import { withDeferred } from '../ko-utils';
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
@@ -104,7 +99,7 @@ class Datagrid {
      * @param {*} gridOptions$
      * @param {*} columnOptions$
      */
-    constructor(root, gridOptions$, columnOptions$) {
+    constructor(root, gridOptions$, columnOptions$, filters$) {
         /** @type {Array<KnockoutSubscription>} */
         this.subscriptions = [];
 
@@ -113,8 +108,10 @@ class Datagrid {
 
         this.gridOptions$ = gridOptions$;
         this.columnOptions$ = columnOptions$;
+        this.filters$ = filters$;
+
         this.componentRoot = root;
-        this.view = insight.getView();
+        this.view = insightGetter().getView();
         this.schema = this.view.getApp().getModelSchema();
 
         const options = ko.unwrap(gridOptions$);
@@ -165,12 +162,13 @@ class Datagrid {
     buildTable() {
         const columnOptions$ = this.columnOptions$;
         const gridOptions$ = this.gridOptions$;
-        const { data: scenariosData$, errors: errors$ } = withScenarioData(columnOptions$);
+        const filters$ = this.filters$;
+        const { data: scenariosData$, errors: errors$ } = withScenarioData(columnOptions$, filters$);
 
         const allOptions$ = withDeferred(
             ko.pureComputed(() => {
                 if (!gridOptions$() || !columnOptions$() || !scenariosData$()) {
-                    return undefined;
+                    return allOptions$.peek();
                 }
                 return {
                     gridOptions: gridOptions$(),
@@ -190,7 +188,7 @@ class Datagrid {
                     }
                 })
                 .subscribe(noop),
-            withDeferred(
+            (
                 ko.pureComputed(() => {
                     const allOptions = allOptions$();
                     if (allOptions) {
@@ -213,13 +211,16 @@ class Datagrid {
     }
 
     update() {
-        defer(() => {
+        if (this.table) {
+            const gridOptions = ko.unwrap(this.gridOptions$);
             this.validate();
             this.updatePaginator();
-            this.recalculateHeight(ko.unwrap(this.gridOptions$));
             this.recalculateWidth();
-            this.exportControl = this.updateExportControl(this.table, this.headerToolbar, ko.unwrap(this.gridOptions$));
-        });
+            if (gridOptions) {
+                this.recalculateHeight(gridOptions);
+                this.exportControl = this.updateExportControl(this.table, this.headerToolbar, gridOptions);
+            }
+        }
     }
 
     saveState() {
@@ -483,7 +484,7 @@ class Datagrid {
             const { name, options } = setNameAndPosn;
             const entity = schema.getEntity(name);
             const displayEntity = resolveDisplayEntity(schema, entity);
-            const isNumberEntity = DataUtils.entityTypeIsNumber(displayEntity);
+            const isNumberEntity = dataUtils.entityTypeIsNumber(displayEntity);
 
             const title = get(options, 'title', entity.getAbbreviation() || name);
             const getClass = () => {
@@ -548,7 +549,7 @@ class Datagrid {
         const entitiesColumns = map(entitiesOptions, (entityOptions, columnNumber) => {
             const entity = schema.getEntity(entityOptions.name);
             const displayEntity = resolveDisplayEntity(schema, entity);
-            const isNumberEntity = DataUtils.entityTypeIsNumber(displayEntity);
+            const isNumberEntity = dataUtils.entityTypeIsNumber(displayEntity);
 
             const columnScenario = get(scenariosData.scenarios, entityOptions.id, scenariosData.defaultScenario);
 
@@ -662,7 +663,7 @@ class Datagrid {
                 const keys = getRowKey(data);
 
                 // Perform entity validation first
-                let result = insight.validation.EntityValidator.checkValue(entity, newValue, undefined, keys);
+                let result = insightGetter().validation.EntityValidator.checkValue(entity, newValue, undefined, keys);
 
                 if (result.isValid && typeof entityOptions.editorValidate === 'function') {
                     result = entityOptions.editorValidate.call(this, newValue, getRowDataForColumns(data), keys);
@@ -875,7 +876,7 @@ class Datagrid {
                 formatter: getFormatter(),
                 name: options.name,
                 field: options.id,
-                elementType: Enums.DataType.STRING,
+                elementType: enums.DataType.STRING,
                 sortByFormatted: true,
                 sorter: createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters),
                 accessorDownload: (value, rowData) => options.render(value, 'display', getRowDataForColumns(rowData)),
@@ -964,8 +965,8 @@ class Datagrid {
             console.debug('No initial column sort order. Going to apply sort order onto index columns, except where disable-set-sorting is specified.');
             this.initialSortOrder = reverse(
                 map(
-                    filter(columns, c => c.dataType === Enums.DataType.SET && !c.disableSetSorting),
-                    column => ({
+                    filter(columns, (c) => c.dataType === enums.DataType.SET && !c.disableSetSorting),
+                    (column) => ({
                         column: column.id,
                         dir: 'asc'
                     })

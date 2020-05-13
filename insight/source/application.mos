@@ -422,7 +422,7 @@ model "vdlx-datagrid examples"
     StockSizeLabels(1) := "Medium"
     StockSizeLabels(2) := "Large"
 
-    Customers := {"Nike", "Adidas", "Puma"}
+    Customers := {"Acme", "Wonka", "Wayne Enterprises"}
 
     forall (f in Factories) do
       forall (m in MonthsOfYear) do

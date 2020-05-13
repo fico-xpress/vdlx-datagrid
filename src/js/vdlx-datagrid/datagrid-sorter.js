@@ -21,11 +21,7 @@
  */
 
 import constant from "lodash/constant";
-import {insightModules} from '../insight-globals';
-
-const enums = insightModules.load('enums');
-const DataUtils = insightModules.load('utils/data-utils');
-const setSorter = insightModules.load('data/set-sorter');
+import { dataUtils, enums, setSorter } from "../insight-modules";
 
 const DEFAULT_SORTER_REF = 'alphanum';
 
@@ -38,7 +34,7 @@ const DEFAULT_SORTER_REF = 'alphanum';
  */
 export const getSorter = (entity, tabulatorSorters) => {
     const elementType = entity.getElementType();
-    const isNumberEntity = DataUtils.entityTypeIsNumber(entity);
+    const isNumberEntity = dataUtils.entityTypeIsNumber(entity);
 
     let sorterRef = DEFAULT_SORTER_REF;
     if (isNumberEntity) {
