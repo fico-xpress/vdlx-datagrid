@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>vdlx-datagrid reference</title>
+
+    <!--[if IE]>
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE"/><![endif]-->
+
+    <link rel='stylesheet'
+          href="http://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,500,500italic,700,700italic">
+    <link rel="icon" type="image/ico" href="css/images/favicon.ico">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/fico-style.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/highlight-github.css">
+
+    <style>
+        #main-bar-inner {
+            margin-right: 28px;
+        }
+        .details {
+            padding-left: 15px;
+            padding-top: 15px;
+            overflow-y: scroll;
+            position: absolute;
+            top: 60px;
+            left: 230px;
+            bottom: 0;
+            right: 0;
+        }
+
+        .vdl-extension-detail {
+            margin-right: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .sidebar {
+            width: 230px;
+            position: fixed;
+            height: 100%;
+            overflow: auto;
+        }
+
+        .sidebar li > a:hover, .sidebar li > a:focus, .sidebar .sub-nav li:hover {
+            text-decoration: none;
+            border-left: 5px solid #737270;
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 72px;
+            left: 0;
+            padding: 0 10px;
+            font-size: 11px;
+        }
+
+        .build-date {
+            padding: 0 15px 5px 28px;
+            font-size: 11px;
+        }
+
+        .nav-side-divider {
+            width: 100%;
+        }
+
+        .attributes-table th {
+            white-space: nowrap;
+        }
+
+        td.accepts-expression-column {
+            width: 110px;
+        }
+
+        td.required-column {
+            width: 50px;
+        }
+
+        .hljs {
+            background-color: #f5f5f5;
+        }
+
+        .product-sub-title {
+            font-size: 16px;
+            line-height: 26px;
+            color: white;
+            font-weight: 500;
+            clear: left;
+            padding-top: 5px;
+        }
+
+        .attribute-vars-table {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .cell-nowrap {
+            white-space: nowrap;
+        }
+
+        .required-parent-list {
+            margin-top: 5px;
+        }
+
+        .required-parent-list li {
+            list-style: none;
+        }
+
+        table.attributes-table th {
+            min-width: 140px;
+        }
+
+        pre code {
+            white-space: pre;
+        }
+
+        .product-title {
+            float: left;
+        }
+
+        .product-version {
+            float: right;
+        }
+    </style>
+
+    <script src="js/highlight.pack.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
+</head>
+<body>
+<div id="main-bar" class="compact-header">
+    <div id="main-bar-inner">
+        <div id="product-name" class="pull-left">FICO<sup>&reg;</sup> Xpress Insight</div>
+        <div class="product-sub-title">
+            <div class="product-title">vdlx-datagrid reference</div>
+            <div class="product-version">version 4.7.0</div>
+        </div>
+    </div>
+    <div id="main-nav">
+        <ul class="nav nav-pills pull-left">
+        </ul>
+        <div id="right-options" class="pull-right">
+        </div>
+    </div>
+</div>
+
+<div class="sidebar">
+    <ul class="list-group">
+        <li><a href="#introduction">Getting Started</a></li>
+
+        <li class="nav-side-divider"></li>
+        <li class="header">Tags</li>
+        <li><a href="#vdlx-datagrid">vdlx-datagrid</a></li>
+        <li><a href="#vdlx-datagrid-column">vdlx-datagrid-column</a></li>
+        <li><a href="#vdlx-datagrid-index-filter">vdlx-datagrid-index-filter</a></li>
+        <li><a href="#vdlx-datagrid-validate">vdlx-datagrid-validate</a></li>
+
+    </ul>
+    <div class="copyright">
+        © 2020 Fair Isaac Corporation. All rights reserved.
+    </div>
+</div>
+
+<div class="details">
+    <div class="vdl-extension-detail" id="introduction">
+        <p>
+            <code>vdlx-datagrid</code> provides a way to bind model entities to a table element within VDL views. It offers
+            much improved performance for larger data sets compared with <code>vdl-table</code>.
+        </p>
+
+        <p>Download the appropriate release version of <code>vdx-datagrid</code> from the GitHub webiste.
+            The first two digits of the vdlx-datagrid release version number must match the version of VDL you are
+            using to develop. For example, if you are developing for VDL 4.6, download vdlx-datagrid version 4.6.x.
+        </p>
+
+        <p>
+            Unzip the <code>vdlx-datagrid.zip</code> release bundle into your Xpress Workbench <code>client_resources</code>
+            folder. You can then add vdlx-datagrid in your views via the code editor-vdlx-datagrid is not available in the VDL Designer palette:
+            <pre><code>&lt;vdl-include src=&quot;vdlx-datagrid/vdlx-datagrid.vdl&quot;&gt;&lt;/vdl-include&gt;</code></pre>
+        </p>
+
+        <p>
+            <code>vdlx-datagrid</code> is mostly a drop-in replacement for <code>vdl-table</code> and can generally be
+            used by renaming code examples:
+            <pre><code>&lt;vdlx-datagrid id=&quot;basic-example-1&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;SupportLevels&quot;&gt;Support L.&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code></pre>
+        </p>
+    </div>
+
+    <div class="vdl-extension-detail" id="vdlx-datagrid">
+        <h2>vdlx-datagrid</h2>
+        <p>
+            Render a table of related array entities. The array entities for each column are defined as child
+            <code>&lt;vdlx-datagrid-column&gt;</code> elements. The common index sets are automatically detected.
+            The table will emit the following events on user interaction: <ul>
+            <li><code>selection-changed</code> - Triggered whenever the selection is changed, e.g. when user creates new selection. This event is triggered on the vdlx-datagrid element. Event handler also receives context of the selection, which includes selection cell list, active cell and selection type.</li>
+            <li><code>selection-removed</code> - Triggered whenever the selection is destroyed, e.g. when sorting and filtering. This event is triggered on the vdlx-datagrid element.</li>
+            </ul>See the JavaScript API Documentation, Table section for more details on the events.
+        </p>
+
+
+
+
+        <h3>Example</h3>
+        <div>
+            <pre><code>&lt;vdl-var name&#x3D;&quot;selectedRowData&quot; value&#x3D;&quot;&#x3D;[]&quot;&gt;&lt;/vdl-var&gt;
+
+&lt;vdl-action-group name&#x3D;&quot;handleSelectionChanged&quot;&gt;
+    &lt;vdl-action-set-var var&#x3D;&quot;selectedRowData&quot; value&#x3D;&quot;&#x3D;value ? value.activeCell.rowData : []&quot;&gt;&lt;/vdl-action-set-var&gt;
+&lt;/vdl-action-group&gt;
+
+&lt;vdl-action-group name&#x3D;&quot;handleSelectionRemoved&quot;&gt;
+    &lt;vdl-action-set-var var&#x3D;&quot;selectedRowData&quot; value&#x3D;&quot;&#x3D;[]&quot;&gt;&lt;/vdl-action-set-var&gt;
+&lt;/vdl-action-group&gt;
+
+&lt;vdlx-datagrid vdl-event&#x3D;&quot;&#x27;selection-changed&#x27;:handleSelectionChanged, &#x27;selection-removed&#x27;:handleSelectionRemoved&quot;&gt;
+    &lt;vdlx-datagrid-column entity&#x3D;&quot;MY_ARRAY_1&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity&#x3D;&quot;MY_ARRAY_2&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code></pre>
+        </div>
+
+        <h3>Attributes</h3>
+        <table class="table table-hover table-condensed attributes-table">
+            <tbody>
+            <tr>
+                <th>
+                    add-remove-row
+                </th>
+                <td>
+                    Setting this will show the add-remove row buttons at the bottom of the grid. Set to "true" to prompt for index selection on row add. Set to <em>addrow-autoinc</em> will switch the behaviour to allow new index values to be created, incrementing from the highest value in the set(s).
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    always-show-selection
+                </th>
+                <td>
+                    Whether to display selection on inactive grids. Set to <em>true</em> to keep selection on a grid when it becomes inactive.
+
+                    <div>
+                        <span><strong>Default value</strong>: "false"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    class
+                </th>
+                <td>
+                    Space-separated list of the classes of the element.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    column-filter
+                </th>
+                <td>
+                    Set this to <em>true</em> to enable the column filters. This will show a header row with filter inputs for each column.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    export-filename
+                </th>
+                <td>
+                    The name of the file exported from the table. A file extension will be assigned.
+
+                    <div>
+                        <span><strong>Default value</strong>: "data"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    freeze-columns
+                </th>
+                <td>
+                    The number of columns to freeze in the table starting from the left hand column.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    grid-data
+                </th>
+                <td>
+                    
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    height
+                </th>
+                <td>
+                    Grid height, When page-mode is set to <em>scrolling</em> you can set the height of the grid to something other than the default.
+
+                    <div>
+                        <span><strong>Default value</strong>: "600"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    id
+                </th>
+                <td>
+                    Specify an element id for the grid. Useful if you later want to target the grid using a selector. If not given then an id will be generated.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    page-mode
+                </th>
+                <td>
+                    By default the grid will show all rows in scrolling mode. Set this attribute to <em>paged</em> to enable grid pagination.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    page-size
+                </th>
+                <td>
+                    The number of rows to show per-page in paged mode.
+
+                    <div>
+                        <span><strong>Default value</strong>: "50"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    row-filter
+                </th>
+                <td>
+                    Expression to be used for filtering the rows of a &lt;vdl-datagrid&gt;. This must be an expression and should resolve to either a function or a boolean value. If a function it will be executed when grid updates. The function will have the following signature (rowData, indices) and should return a boolean.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                    <table class="table table-condensed table-bordered attribute-vars-table">
+                        <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>rowData</td>
+                            <td>
+                                The values from each cell in the current row. The order of the row data reflects the underlying order of the array indices rather than the display order.
+                                <div><code>Array.&lt;(string|boolean|number)&gt;</code></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>indices</td>
+                            <td>
+                                Data for the index columns of the row
+                                <div><code>Array.&lt;(string|boolean|number)&gt;</code></div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    save-state
+                </th>
+                <td>
+                    Set this to <em>false</em> to disable grid state saving. By default grid state is stored in the user's browser session so that user settings (e.g. page, sorting and search) are preserved if grid data is reloaded.
+
+                    <div>
+                        <span><strong>Default value</strong>: "true"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    scenario
+                </th>
+                <td>
+                    The default scenario to use for fetching data in the grid. This can be overridden per column but the default will be used when a column does not specify a particular scenario and the index sets will be fetched from the default scenario.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    show-export
+                </th>
+                <td>
+                    Set this to true to display an export to CSV button.
+
+                    <div>
+                        <span><strong>Default value</strong>: "false"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    width
+                </th>
+                <td>
+                    Set the grid to a fixed width, in pixels. Accepts an integer value. If set to the string <em>custom</em> then the grid width is calculated by adding up all the widths of the columns in the grid. If a column doesn't have a width specified then it is given a default value of <em>100px</em>.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+
+        <div class="pull-left">
+            <a href="#introduction">Back to top</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="vdl-extension-detail" id="vdlx-datagrid-column">
+        <h2>vdlx-datagrid-column</h2>
+
+
+
+        <h3>Required ancestor element</h3>
+        <ul class="required-parent-list">
+            <li><a href="#vdlx-datagrid">&lt;vdlx-datagrid&gt;</a></li>
+        </ul>
+
+
+        <h3>Attributes</h3>
+        <table class="table table-hover table-condensed attributes-table">
+            <tbody>
+            <tr>
+                <th>
+                    bottom-calc
+                </th>
+                <td>
+                    Specify a built-in calculation, one of avg, max, min, sum, concat or count to show that calculated value, alternatively provide a custom function, as a dynamic expression.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                    <table class="table table-condensed table-bordered attribute-vars-table">
+                        <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>values</td>
+                            <td>
+                                Array of column values
+                                <div><code>(string|boolean|number)</code></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>data</td>
+                            <td>
+                                All table data
+                                <div><code>string</code></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>calcParams</td>
+                            <td>
+                                params passed from the column definition object
+                                <div><code>Array.&lt;(string|boolean|number)&gt;</code></div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    class
+                </th>
+                <td>
+                    CSS classes to add to the table column cells. You can provide multiple classes separated by spaces.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    disable-set-sorting
+                </th>
+                <td>
+                    When applied to an index column, this will prevent set sorting from being applied to the column. Default table sorting will be used instead. It will also exclude this column from the default list of sorted columns. This option is provided to reduce the sorting overhead where performance is being affected. Set the value to "true" to disable set sorting for this datagrid column.
+
+                    <div>
+                        <span><strong>Default value</strong>: "false"</span>
+                    </div>
+
+                    <div>
+                        <span><strong>type</strong>: <code>boolean</code></span>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    editable
+                </th>
+                <td>
+                    Whether the cells within this column are editable.
+
+                    <div>
+                    </div>
+
+                    <div>
+                        <span><strong>type</strong>: <code>boolean</code></span>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    editor-checked-value
+                </th>
+                <td>
+                    The value to set the cell data to if input type is checkbox and it is checked.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    editor-options
+                </th>
+                <td>
+                    An expression that results in one of the follow to be used as the select options: an array of values, an object of property to value or an array of objects containing key and value properties. This will automatically set the <em>editor-type</em> to be <em>select</em>.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                    <table class="table table-condensed table-bordered attribute-vars-table">
+                        <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>value</td>
+                            <td>
+                                The value of the cell. Its data type will match that of the array elements in this column.
+                                <div><code>(string|boolean|number)</code></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>rowData</td>
+                            <td>
+                                The values from each cell in the current row. The order of the row data reflects the underlying order of the array indices rather than the display order.
+                                <div><code>Array.&lt;(string|boolean|number)&gt;</code></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th colspan="2">Returns</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                An array of values, an object of property to value or an array of objects containing key and value properties.
+                                <div><code>Array.&lt;*&gt;|Object.&lt;string, string&gt;|Array.&lt;{key: string, value: *}&gt;</code></div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    editor-options-include-empty
+                </th>
+                <td>
+                    Allow array elements to be removed using the select input. Setting this to true will add a blank item to the top of the select list.
+
+                    <div>
+                        <span><strong>Default value</strong>: "false"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    editor-options-set
+                </th>
+                <td>
+                    Name of a set entity to use for select options. This will display labels if a labels entity is defined against this set. This will automatically set the <em>editor-type</em> to be <em>select</em>.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    editor-type
+                </th>
+                <td>
+                    The editor type to use, in edit mode, for cells in this column. If not specified then it will be autodetected based on entity type. Possible values: <em>checkbox</em>, <em>select</em>, <em>text</em>.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    editor-unchecked-value
+                </th>
+                <td>
+                    The value to set the cell data to if input type is checkbox and it is not checked.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    entity
+                </th>
+                <td>
+                    Name of the array entity to show in this column. Throws an error if the entity doesn't exist or is not an array or set type.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    filter-by-formatted
+                </th>
+                <td>
+                    Use formatted values for filtering. This defaults to false unless the entity has a label in which case the default is <em>true</em>.
+
+                    <div>
+                    </div>
+
+                    <div>
+                        <span><strong>type</strong>: <code>boolean</code></span>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    format
+                </th>
+                <td>
+                    Specify a number formatting string. Only applicable to array elements of type integer, real, decision variable and constraint. The formatting syntax is explained in the Xpress Insight Developer Guide.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    heading
+                </th>
+                <td>
+                    A custom header for this column, will default to be the entity alias. Alternatively, you can set the title as the text contents of the &lt;vdlx-datagrid-column&gt; element.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    render
+                </th>
+                <td>
+                    Reference to a custom cell renderer. Overrides any default entity rendering. This will be used to generate the cell value for rendering, filtering and sorting. It must be an expression and resolves as a function, this function should return a string.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                    <table class="table table-condensed table-bordered attribute-vars-table">
+                        <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>data</td>
+                            <td>
+                                The value of the cell being rendered. Its data type will match that of the array elements in this column.
+                                <div><code>(string|boolean|number)</code></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>type</td>
+                            <td>
+                                The type call data requested - this will be &lt;em&gt;filter&lt;/em&gt;, &lt;em&gt;display&lt;/em&gt; or &lt;em&gt;sort&lt;/em&gt;.
+                                <div><code>string</code></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>rowData</td>
+                            <td>
+                                The values from each cell in the current row. The order of the row data reflects the underlying order of the array indices rather than the display order.
+                                <div><code>Array.&lt;(string|boolean|number)&gt;</code></div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    scenario
+                </th>
+                <td>
+                    The scenario id/index for this column. Not allowed on index column (when specifying a set entity)
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    set
+                </th>
+                <td>
+                    Name of the set entity to show in this column. Throws an error if the entity doesn't exist or is not a set type.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    set-position
+                </th>
+                <td>
+                    Index (zero-based) of occurrence of that index set in the index tuple for the array. Defaults to next available position.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    sort-by-formatted
+                </th>
+                <td>
+                    Use formatted values for sorting. This is always set to enabled for calculated columns.
+
+                    <div>
+                        <span><strong>Default value</strong>: "false"</span>
+                    </div>
+
+                    <div>
+                        <span><strong>type</strong>: <code>boolean</code></span>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    sort-direction
+                </th>
+                <td>
+                    The direction the column data should be sorted in.
+
+                    <div>
+                        <span><strong>Default value</strong>: "asc"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    sort-order
+                </th>
+                <td>
+                    Sets the column to be sorted by default, provide a number from 0. With multiple sorted columns the number provides the order in which sorting should be applied to the columns, so the highest number will result in the column having sorting applied last.
+
+                    <div>
+                    </div>
+
+                    <div>
+                        <span><strong>type</strong>: <code>number</code></span>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    width
+                </th>
+                <td>
+                    The width, in pixels, to set the column.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+
+        <div class="pull-left">
+            <a href="#introduction">Back to top</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="vdl-extension-detail" id="vdlx-datagrid-index-filter">
+        <h2>vdlx-datagrid-index-filter</h2>
+        <p>
+            <p>This tag can be used at either the <code>vdlx-datagrid</code> level or the <code>vdlx-datagrid-column</code>
+            level.</p>
+            
+            <p>When used at the <code>vdlx-datagrid-column</code> level, it can only accept a single value and will filter 
+            the specified index set for the array entity associated with that column. Note that it will not reduce the amount 
+            of data fetched from the server when used at the column level.</p>
+            
+            <p>When used at the <code>vdlx-datagrid</code> level, it can accept one or more values and will filter the specified 
+            index set for all arrays in the table. This will request the filtered data from the server, so reduce the amount
+            of data that is fetched from the server and processed by the table, resulting in improved performance. The filtered 
+            index set will still be shown as a column in the table, so you will need to use <code>vdl-visible="=false"</code>
+            to hide this if necessary.</p>
+        </p>
+
+
+
+        <h3>Required ancestor element</h3>
+        <ul class="required-parent-list">
+            <li><a href="#vdlx-datagrid">&lt;vdlx-datagrid&gt;</a></li>
+            <li><a href="#vdlx-datagrid-column">&lt;vdlx-datagrid-column&gt;</a></li>
+        </ul>
+
+        <h3>Example</h3>
+        <div>
+            <pre><code>&lt;!-- Example of an index filter on a column --&gt;
+&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column entity&#x3D;&quot;FactoryDemand&quot; heading&#x3D;&quot;&#x3D;&#x27;Factory Demand (&#x27; + vars.filterValue + &#x27;)&#x27;&quot;&gt;
+        &lt;vdlx-datagrid-index-filter set&#x3D;&quot;Factories&quot; value&#x3D;&quot;&#x3D;vars.filterValue&quot;&gt;&lt;/vdlx-datagrid-index-filter&gt;
+    &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+
+&lt;!-- Example of a server-side index filter on an entire table --&gt;
+&lt;vdlx-datagrid vdl-if&#x3D;&quot;&#x3D;vars.multiFilter.length &gt; 0&quot;&gt;
+    &lt;vdlx-datagrid-index-filter set&#x3D;&quot;MonthsOfYear&quot; value&#x3D;&quot;&#x3D;vars.multiFilter&quot;&gt;&lt;/vdlx-datagrid-index-filter&gt;
+    &lt;vdlx-datagrid-column entity&#x3D;&quot;FactorySupply&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code></pre>
+        </div>
+
+        <h3>Attributes</h3>
+        <table class="table table-hover table-condensed attributes-table">
+            <tbody>
+            <tr>
+                <th>
+                    set
+                </th>
+                <td>
+                    Name of the set entity to filter out of the indices for the column.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+                        <span class="label label-danger">required</span>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    value
+                </th>
+                <td>
+                    Single value to fix the indices to. If used at the <code>vdlx-datagrid</code> level, the value will accept multiple values in the form of an array or a vdl-var
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+                        <span class="label label-danger">required</span>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    set-position
+                </th>
+                <td>
+                    Index (zero-based) of occurrence of that index set in the index tuple for the array.
+
+                    <div>
+                        <span><strong>Default value</strong>: "0"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+
+        <div class="pull-left">
+            <a href="#introduction">Back to top</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="vdl-extension-detail" id="vdlx-datagrid-validate">
+        <h2>vdlx-datagrid-validate</h2>
+        <p>
+            
+            Add a validation rule to a <code>&lt;vdlx-datagrid-column&gt;</code> element.
+             You can declare multiple <code>&lt;vdl-validate&gt;</code> rules within a
+             <code>&lt;vdlx-datagrid-column&gt;</code> and they will all be applied. Each rule can specify whether the field is allowed to save data if that rule
+             fails (this is soft validation). The <em>pass</em> attribute defines the expression that is called every time the field or autocolumn
+             changes. The expression is automatically given the variables: <code>entityName</code>, <code>value</code>, <code>indices</code> 
+             and <code>rowData</code> (if used with <code>vdlx-datagrid</code>). <code>entityName</code> is the
+             name of the entity bound to the field, <code>value</code> is the current value being input, <code>indices</code> is an array of indices
+             if the field is bound to an array element and rowData is an array containing indices and values of the current row.
+        </p>
+
+
+        <h3>Required parent element</h3>
+        <ul class="required-parent-list">
+            <li><a href="#vdlx-datagrid-column">&lt;vdlx-datagrid-column&gt;</a></li>
+        </ul>
+
+
+        <h3>Example</h3>
+        <div>
+            <pre><code>&lt;vdlx-datagrid&gt;
+  &lt;vdlx-datagrid-column entity&#x3D;&quot;FactoryDemand&quot;&gt;
+    &lt;vdl-validate pass&#x3D;&quot;&#x3D;value &gt;&#x3D; scenario.entities.SupportLevel.value&quot;
+                  allow-save&#x3D;&quot;&#x3D;scenario.entities.CanSave.value&quot;&gt;
+      FactoryDemand should be greater than or equal to SupportLevel
+    &lt;/vdl-validate&gt;
+  &lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code></pre>
+        </div>
+
+        <h3>Attributes</h3>
+        <table class="table table-hover table-condensed attributes-table">
+            <tbody>
+            <tr>
+                <th>
+                    pass
+                </th>
+                <td>
+                    
+                Expression to used for validating the value of a &lt;vdl-field&gt; or &lt;vdl-table-column&gt;. This must be an expression and
+                should resolve to either a function or a boolean value. If a function it will be executed on each change to the <em>vdl-field</em> 
+                or <em>vdl-table-column</em> and also when a save is attempted. The function will have the following signature (entityName, value, key) 
+                and should return a boolean.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+                        <span class="label label-danger">required</span>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                    <table class="table table-condensed table-bordered attribute-vars-table">
+                        <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>entityName</td>
+                            <td>
+                                Name of the entity being validated
+                                <div><code>string</code></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>value</td>
+                            <td>
+                                Value to be validated. The data type depends on the user input binding
+                                <div><code>(string|boolean|number)</code></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>indices</td>
+                            <td>
+                                Optional array indices provided when binding to an array element
+                                <div><code>?Array.&lt;(string|boolean|number)&gt;</code></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>rowData</td>
+                            <td>
+                                The values from each cell in the current row. The order of the row data reflects the underlying order of the array indices rather than the display order.
+                                <div><code>?Array.&lt;(string|boolean|number)&gt;</code></div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    allow-save
+                </th>
+                <td>
+                    If set to true this will allow a field to be saved even though it is marked as invalid.
+
+                    <div>
+                        <span><strong>Default value</strong>: "false"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h3>Element contents</h3>
+        <p>
+            <span class="label label-default">Text content only</span>
+        </p>
+        <p>Text content of the element is used as the message to display when attempting to save and validation fails</p>
+
+        <div class="pull-left">
+            <a href="#introduction">Back to top</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+</body>
+</html>
