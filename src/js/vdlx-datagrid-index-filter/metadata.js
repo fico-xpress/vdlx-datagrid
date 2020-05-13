@@ -33,20 +33,19 @@ export default {
             of data that is fetched from the server and processed by the table, resulting in improved performance. The filtered 
             index set will still be shown as a column in the table, so you will need to use <code>vdl-visible="=false"</code>
             to hide this if necessary.</p>`,
-        example: `
-&lt;!-- Example of an index filter on a column --&gt;
-&lt;vdlx-datagrid&gt;
-    &lt;vdlx-datagrid-column entity=&quot;FactoryDemand&quot; heading=&quot;='Factory Demand (' + vars.filterValue + ')'&quot;&gt;
-        &lt;vdlx-datagrid-index-filter set=&quot;Factories&quot; value=&quot;=vars.filterValue&quot;&gt;&lt;/vdlx-datagrid-index-filter&gt;
-    &lt;/vdlx-datagrid-column&gt;
-&lt;/vdlx-datagrid&gt;
+        descriptionAsHtml: true,
+        example: `<!-- Example of an index filter on a column -->
+<vdlx-datagrid>
+    <vdlx-datagrid-column entity="FactoryDemand" heading="='Factory Demand (' + vars.filterValue + ')'">
+        <vdlx-datagrid-index-filter set="Factories" value="=vars.filterValue"></vdlx-datagrid-index-filter>
+    </vdlx-datagrid-column>
+</vdlx-datagrid>
 
-&lt;!-- Example of a server-side index filter on an entire table --&gt;
-&lt;vdlx-datagrid vdl-if=&quot;=vars.multiFilter.length &gt; 0&quot;&gt;
-    &lt;vdlx-datagrid-index-filter set=&quot;MonthsOfYear&quot; value=&quot;=vars.multiFilter&quot;&gt;&lt;/vdlx-datagrid-index-filter&gt;
-    &lt;vdlx-datagrid-column entity=&quot;FactorySupply&quot;&gt;&lt;/vdlx-datagrid-column&gt;
-&lt;/vdlx-datagrid&gt;
-        `
+<!-- Example of a server-side index filter on an entire table -->
+<vdlx-datagrid vdl-if="=vars.multiFilter.length > 0">
+    <vdlx-datagrid-index-filter set="MonthsOfYear" value="=vars.multiFilter"></vdlx-datagrid-index-filter>
+    <vdlx-datagrid-column entity="FactorySupply"></vdlx-datagrid-column>
+</vdlx-datagrid>`
     },
     requiredAncestor: ['vdlx-datagrid', 'vdlx-datagrid-column'],
     attributes: [

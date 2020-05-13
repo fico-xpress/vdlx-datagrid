@@ -21,8 +21,8 @@
             margin-right: 28px;
         }
         .details {
-            margin-left: 15px;
-            margin-top: 15px;
+            padding-left: 15px;
+            padding-top: 15px;
             overflow-y: scroll;
             position: absolute;
             top: 60px;
@@ -226,9 +226,17 @@
 
         {{#if requiredParent}}
         <h3>Required parent element</h3>
-        <div>Must be contained within one of the following elements:</div>
         <ul class="required-parent-list">
             {{#each requiredParent}}
+            <li><a href="#{{this}}">&lt;{{this}}&gt;</a></li>
+            {{/each}}
+        </ul>
+        {{/if}}
+
+        {{#if requiredAncestor}}
+        <h3>Required ancestor element</h3>
+        <ul class="required-parent-list">
+            {{#each requiredAncestor}}
             <li><a href="#{{this}}">&lt;{{this}}&gt;</a></li>
             {{/each}}
         </ul>
@@ -336,7 +344,7 @@
         {{/if}}
 
         <div class="pull-left">
-            <a href="#">Back to top</a>
+            <a href="#introduction">Back to top</a>
         </div>
         <div class="clearfix"></div>
     </div>
