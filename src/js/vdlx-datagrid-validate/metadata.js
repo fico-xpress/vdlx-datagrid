@@ -24,14 +24,16 @@ export default {
     tag: 'vdlx-datagrid-validate',
     requiredParent: ['vdlx-datagrid-column'],
     doc: {
-        description:
-            'Add a validation rule to a `<vdlx-datagrid-column>` element.' +
-            ' You can declare multiple `<vdl-validate>` rules within a' +
-            ' `<vdlx-datagrid-column>` and they will all be applied. Each rule can specify whether the field is allowed to save data if that rule' +
-            ' fails (this is soft validation). The `pass` attribute defines the expression that is called every time the field or autocolumn' +
-            ' changes. The expression is automatically given the variables: `entityName`, `value`, `indices` and `rowData` (if used with `vdlx-datagrid`). `entityName` is the' +
-            ' name of the entity bound to the field, `value` is the current value being input, `indices` is an array of indices' +
-            ' if the field is bound to an array element and rowData is an array containing indices and values of the current row.',
+        description: `
+            Add a validation rule to a <code>&lt;vdlx-datagrid-column&gt;</code> element.
+             You can declare multiple <code>&lt;vdl-validate&gt;</code> rules within a
+             <code>&lt;vdlx-datagrid-column&gt;</code> and they will all be applied. Each rule can specify whether the field is allowed to save data if that rule
+             fails (this is soft validation). The <em>pass</em> attribute defines the expression that is called every time the field or autocolumn
+             changes. The expression is automatically given the variables: <code>entityName</code>, <code>value</code>, <code>indices</code> 
+             and <code>rowData</code> (if used with <code>vdlx-datagrid</code>). <code>entityName</code> is the
+             name of the entity bound to the field, <code>value</code> is the current value being input, <code>indices</code> is an array of indices
+             if the field is bound to an array element and rowData is an array containing indices and values of the current row.`,
+        descriptionAsHtml: true,
         elementContents: {
             description:
                 'Text content of the element is used as the message to display when attempting to save and validation fails'
@@ -50,10 +52,11 @@ export default {
     attributes: [
         {
             name: 'pass',
-            description:
-                'Expression to used for validating the value of a `<vdl-field>` or `<vdl-table-column>`. This must be an expression and ' +
-                'should resolve to either a function or a boolean value. If a function it will be executed on each change to the `vdl-field` or `vdl-table-column` ' +
-                'and also when a save is attempted. The function will have the following signature (entityName, value, key) and should return a boolean.',
+            description: `
+                Expression to used for validating the value of a &lt;vdl-field&gt; or &lt;vdl-table-column&gt;. This must be an expression and
+                should resolve to either a function or a boolean value. If a function it will be executed on each change to the <em>vdl-field</em> 
+                or <em>vdl-table-column</em> and also when a save is attempted. The function will have the following signature (entityName, value, key) 
+                and should return a boolean.`,
             acceptsExpression: true,
             required: true,
             expressionVars: [
@@ -83,8 +86,9 @@ export default {
         {
             name: 'allow-save',
             description:
-                'If set to true this will allow a field to be saved even though it is marked as invalid. Defaults to __false__.',
-            acceptsExpression: true
+                'If set to true this will allow a field to be saved even though it is marked as invalid.',
+            acceptsExpression: true,
+            defaultValue: false
         }
     ]
 };
