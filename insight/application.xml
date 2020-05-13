@@ -11,7 +11,7 @@
             <vdl-view title="Range operators" path="vdl-lang/table/table-range-operators.vdl" />
             <vdl-view title="Conditionals" path="vdl-lang/table/table-conditionals.vdl" />
             <vdl-view title="Index filtering" path="vdl-lang/table/table-index-filtering.vdl" />
-            <vdl-view title="Global index filtering" path="table-global-index-filtering.vdl" />
+            <vdl-view title="Server-side index filtering" path="server-side-index-filtering.vdl" />
             <vdl-view title="Row filtering" path="vdl-lang/table/table-row-filtering.vdl" />
             <vdl-view title="Table selection" path="vdl-lang/table/table-selection.vdl" />
             <vdl-view title="Validation" path="vdl-lang/table/table-validation.vdl" />
