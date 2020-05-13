@@ -21,7 +21,8 @@
     limitations under the License.
  */
 import Datagrid from './datagrid';
-import { withDeepEquals, createMutationObservable, withDeferred } from '../ko-utils';
+import { withDeepEquals, createMutationObservable, withDeferred, withEquals } from '../ko-utils';
+import { ko, $ } from '../insight-modules';
 
 import uniqueId from 'lodash/uniqueId';
 import get from 'lodash/get';
@@ -90,7 +91,7 @@ export default function createViewModel(params, componentInfo) {
 
     const columnConfigurations$ = withDeepEquals(withDeferred(ko.observable({})));
 
-    const globalIndexFilters$ = withDeepEquals(withDeferred(ko.observable({})));
+    const tableIndexFilters$ = withDeepEquals(withDeferred(ko.observable({})));
 
     const mutation$ = withDeferred(createMutationObservable(element, { childList: true }));
 
@@ -104,11 +105,11 @@ export default function createViewModel(params, componentInfo) {
         return filter(element.children, (child) => toLower(child.tagName) === 'vdlx-datagrid-index-filter').length;
     });
 
-    const filters$ = (ko.pureComputed(() => {
-        if (indexFilterElementsCount$() !== size(globalIndexFilters$())) {
-            return undefined;
+    const filters$ = withEquals(ko.pureComputed(() => {
+        if (indexFilterElementsCount$() !== size(tableIndexFilters$())) {
+            return filters$.peek();
         }
-        return globalIndexFilters$();
+        return tableIndexFilters$();
     }));
 
     const columnConfigurationsArray$ = ko.pureComputed(() => {
@@ -159,8 +160,8 @@ export default function createViewModel(params, componentInfo) {
 
     vm.filterUpdate = function (filterId, filterProperties) {
         defer(() => {
-            globalIndexFilters$({
-                ...globalIndexFilters$(),
+            tableIndexFilters$({
+                ...tableIndexFilters$(),
                 [filterId]: filterProperties,
             });
         });
@@ -168,7 +169,7 @@ export default function createViewModel(params, componentInfo) {
 
     vm.filterRemove = function (filterId) {
         defer(() => {
-            return globalIndexFilters$(omit(globalIndexFilters$(), filterId));
+            return tableIndexFilters$(omit(tableIndexFilters$(), filterId));
         });
     };
 

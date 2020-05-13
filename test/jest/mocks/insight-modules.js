@@ -1,6 +1,7 @@
 import { DataUtils } from '../../../src/types';
 import ko from 'knockout';
 import { memoize } from 'lodash';
+import $ from 'jquery';
 
 export const getEntityMock = memoize((name) => ({
     getIndexSets: jest.fn(),
@@ -80,6 +81,7 @@ const dialogsSpy = jest.fn().mockReturnValue({
 jest.doMock('../../../src/js/insight-modules', () => ({
     insightGetter: insightGetterSpy,
     ko: ko,
+    $: $,
     enums: enumsMock,
     dataUtils: dataUtilsSpy,
     vdlValidatorRegistry: vdlValidatorRegistrySpy,

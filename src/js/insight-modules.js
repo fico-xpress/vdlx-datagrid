@@ -1,6 +1,7 @@
 import { insightModules } from './insight-globals';
 
 export const ko = insightModules.load('external-libs/knockout');
+export const $ = insightModules.load('external-libs/jquery');
 export const dialogs = insightModules.load('dialogs');
 export const dataUtils = insightModules.load('utils/data-utils');
 export const createSparseData = insightModules.load('components/table/create-sparse-data');

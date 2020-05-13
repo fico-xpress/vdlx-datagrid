@@ -18,10 +18,11 @@ export type DataUtils = {
     getFilterPositionsAndValues(filters: any, indexSetsAndPositions: SetNameAndPosition[]): FilterPositionAndValue[];
     getSetNamesAndPosns(indexSets: string[]): SetNameAndPosition[];
     entityTypeIsNumber(entity: any): boolean;
-}
+};
 
-export type InsightModules =  {
+export type InsightModules = {
     load(mod: 'external-libs/knockout'): KnockoutStatic;
+    load(mod: 'external-libs/jquery'): JQueryStatic;
     load(mod: 'utils/data-utils'): DataUtils;
     load(mod: 'vdl-validator-registry'): any;
     load(mod: 'vdl/vdl-validator-factory'): any;
@@ -33,4 +34,4 @@ export type InsightModules =  {
     load(mod: 'components/autotable-select-options'): any;
     load(mod: 'data/set-sorter'): any;
     load(mod: string): any;
-}
+};
