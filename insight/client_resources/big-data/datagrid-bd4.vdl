@@ -25,19 +25,28 @@ limitations under the License.
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
     <vdl-page>
-        <vdl-section>
+        <vdl-section heading="Big Data 500k rows">
+            <vdl-row>
+                <vdl-column size="9">
+                    <p>
+                        In this example there are 500k rows of data against 4 arrays. The index set columns have got sorting
+                        disabled using the <code>disable-set-sorting</code> attribute. This is to prevent performance issues
+                        with such large data volumes.
+                    </p>
+                </vdl-column>
+            </vdl-row>
             <vdl-row>
                 <vdl-column size="12">
                     <!--
                     t4IndexA,t4IndexB,t4IndexC,t4IndexD,t4IndexE,t4IndexF,t4Col1,t4Col2,t4Col3,t4Col4
                     -->
                     <vdlx-datagrid id="big-data-4">
-                        <vdlx-datagrid-column set="t4IndexA"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column set="t4IndexB"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column set="t4IndexC"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column set="t4IndexD"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column set="t4IndexE"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column set="t4IndexF"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t4IndexA" disable-set-sorting="true"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t4IndexB" disable-set-sorting="true"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t4IndexC" disable-set-sorting="true"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t4IndexD" disable-set-sorting="true"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t4IndexE" disable-set-sorting="true"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t4IndexF" disable-set-sorting="true"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="t4Col1"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="t4Col2"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="t4Col3"></vdlx-datagrid-column>

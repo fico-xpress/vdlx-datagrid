@@ -46,7 +46,7 @@ export default function(params) {
         return {
             setName: params.setName,
             setPosition: params.setPosition,
-            value: ko.unwrap(params.value).toString()
+            value: ko.unwrap(params.value)
         };
     });
 

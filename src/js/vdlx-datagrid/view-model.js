@@ -21,9 +21,9 @@
     limitations under the License.
  */
 import Datagrid from './datagrid';
-import { withDeepEquals, createMutationObservable, withDeferred } from '../ko-utils';
+import { withDeepEquals, createMutationObservable, withDeferred, withEquals } from '../ko-utils';
+import { ko, $ } from '../insight-modules';
 
-import defer from 'lodash/defer';
 import uniqueId from 'lodash/uniqueId';
 import get from 'lodash/get';
 import map from 'lodash/map';
@@ -32,6 +32,9 @@ import omit from 'lodash/omit';
 import createColumnConfig from './create-column-config';
 import mapValues from 'lodash/mapValues';
 import createTableOptions from './create-table-options';
+import filter from 'lodash/filter';
+import toLower from 'lodash/toLower';
+import defer from 'lodash/defer';
 
 /**
  * VDL Extensions callback.
@@ -67,9 +70,7 @@ export default function createViewModel(params, componentInfo) {
     $element.append($tableDiv);
 
     if (!!params.class) {
-        $(element)
-            .find('.vdlx-datagrid')
-            .addClass(params.class);
+        $(element).find('.vdlx-datagrid').addClass(params.class);
     }
 
     // Create the header bar for the export button
@@ -90,22 +91,37 @@ export default function createViewModel(params, componentInfo) {
 
     const columnConfigurations$ = withDeepEquals(withDeferred(ko.observable({})));
 
+    const tableIndexFilters$ = withDeepEquals(withDeferred(ko.observable({})));
+
     const mutation$ = withDeferred(createMutationObservable(element, { childList: true }));
 
     const columnElements$ = ko.pureComputed(() => {
         mutation$();
         return element.getElementsByTagName('vdlx-datagrid-column');
     });
-    const columnConfigurationsArray$ = withDeferred(ko.pureComputed(() => {
+
+    const indexFilterElementsCount$ = ko.pureComputed(() => {
+        mutation$();
+        return filter(element.children, (child) => toLower(child.tagName) === 'vdlx-datagrid-index-filter').length;
+    });
+
+    const filters$ = withEquals(ko.pureComputed(() => {
+        if (indexFilterElementsCount$() !== size(tableIndexFilters$())) {
+            return filters$.peek();
+        }
+        return tableIndexFilters$();
+    }));
+
+    const columnConfigurationsArray$ = ko.pureComputed(() => {
         if (columnElements$().length !== size(columnConfigurations$())) {
             return undefined;
         }
 
         return map(columnElements$(), (columnElement, idx) => ({
             ...columnConfigurations$()[columnElement.columnId],
-            index: idx
+            index: idx,
         }));
-    }));
+    });
 
     const params$ = withDeepEquals(ko.pureComputed(() => mapValues(params, ko.unwrap)));
     const tableOptions$ = withDeepEquals(ko.pureComputed(() => createTableOptions(params$())));
@@ -120,7 +136,7 @@ export default function createViewModel(params, componentInfo) {
         })
     );
 
-    const datagrid = new Datagrid(element, tableOptions$, columnConfig$);
+    const datagrid = new Datagrid(element, tableOptions$, columnConfig$, filters$);
 
     vm.addColumn = (columnId, props) => {
         defer(() => {
@@ -128,18 +144,33 @@ export default function createViewModel(params, componentInfo) {
         });
     };
 
-    vm.removeColumn = columnId => {
+    vm.removeColumn = (columnId) => {
         defer(() => {
             return columnConfigurations$(omit(columnConfigurations$(), columnId));
         });
     };
 
-    vm.tableValidate = function() {
+    vm.tableValidate = function () {
         datagrid.validate();
     };
 
-    vm.dispose = function() {
+    vm.dispose = function () {
         datagrid.dispose();
+    };
+
+    vm.filterUpdate = function (filterId, filterProperties) {
+        defer(() => {
+            tableIndexFilters$({
+                ...tableIndexFilters$(),
+                [filterId]: filterProperties,
+            });
+        });
+    };
+
+    vm.filterRemove = function (filterId) {
+        defer(() => {
+            return tableIndexFilters$(omit(tableIndexFilters$(), filterId));
+        });
     };
 
     return vm;

@@ -22,16 +22,13 @@
  */
 
 
-import {insightModules}  from '../insight-globals';
 import includes  from 'lodash/includes';
 import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
 
 import metadata from './metadata';
 import {withDefaultValue, getAttributeMetadata, validateAllowedValues} from '../transform-utils';
-
-const DataUtils = insightModules.load('utils/data-utils');
-const enums = insightModules.load('enums');
+import { enums, dataUtils } from '../insight-modules';
 
 const COLUMN_TYPES = {
     ENTITY: 'ENTITY',
@@ -283,7 +280,7 @@ export default (element, attributes, api) => {
             throw Error('"format" and "render" attributes can not be defined together');
         }
 
-        if (!DataUtils.entityTypeIsNumber(entity)) {
+        if (!dataUtils.entityTypeIsNumber(entity)) {
             throw Error(
                 'Entity ' + entityName + ' with element type ' + entity.getElementType() + ' cannot be formatted'
             );

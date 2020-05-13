@@ -20,7 +20,6 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import {insightModules} from '../insight-globals';
 import {perf} from '../performance-measurement';
 import set from 'lodash/set';
 import isFunction from 'lodash/isFunction';
@@ -35,11 +34,7 @@ import map from 'lodash/map';
 import keys from 'lodash/keys';
 import pickBy from 'lodash/pickBy';
 import flatMap from 'lodash/flatMap';
-
-const DataUtils = insightModules.load('utils/data-utils');
-const createSparseData = insightModules.load('components/table/create-sparse-data');
-const createDenseData = insightModules.load('components/table/create-dense-data');
-const SelectOptions = insightModules.load('components/autotable-select-options');
+import { dataUtils, SelectOptions, createSparseData, createDenseData } from '../insight-modules';
 
 export const getAllColumnIndices = (schema, columnOptions) => {
     return map(columnOptions, function(option) {
@@ -47,7 +42,7 @@ export const getAllColumnIndices = (schema, columnOptions) => {
     });
 }
 
-const getIndexPosns = DataUtils.getIndexPosns;
+const getIndexPosns = dataUtils.getIndexPosns;
 
 /**
  * @typedef {{name: string, position: number}} SetNameAndPosition
@@ -64,7 +59,7 @@ export const getDisplayIndices = (columnIndices, columnOptions) => {
         const setPosns = getIndexPosns(indices);
         indices.forEach(function(setName, i) {
             const setPosn = setPosns[i];
-            if (DataUtils.getFilterValue(options.filters, setName, setPosn) == null) {
+            if (dataUtils.getFilterValue(options.filters, setName, setPosn) == null) {
                 // i.e. if there is no filter, then this index is to be used
                 const key = { name: setName, position: setPosn },
                     keyJson = JSON.stringify(key);
@@ -94,7 +89,7 @@ export const generateCompositeKey = function(setValues, setNameAndPosns, arrayIn
     return arrayIndices.map(function(setName, i) {
         const setPosn = setPosns[i];
         const setIndex = findIndex(setNameAndPosns, { name: setName, position: setPosn });
-        const filterValue = DataUtils.getFilterValue(arrayOptions.filters, setName, setPosn);
+        const filterValue = dataUtils.getFilterValue(arrayOptions.filters, setName, setPosn);
         if (setIndex !== -1) {
             return setValues[setIndex];
         } else if (filterValue != null) {
@@ -130,7 +125,7 @@ export const createGenerateCompositeKey = setNameAndPosns => {
             if (setIndex !== undefined) {
                 result.push(setValues[setIndex]);
             } else {
-                const filterValue = DataUtils.getFilterValue(arrayOptions.filters, setName, setPosn);
+                const filterValue = dataUtils.getFilterValue(arrayOptions.filters, setName, setPosn);
                 if (filterValue != null) {
                     result.push(filterValue);
                 } else {

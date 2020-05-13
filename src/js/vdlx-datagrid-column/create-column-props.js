@@ -1,12 +1,9 @@
-import { insightModules } from '../insight-globals';
 import { EDITOR_TYPES } from '../constants';
 import isFunction from 'lodash/isFunction';
 import isNumber from 'lodash/isNumber';
 import size from 'lodash/size';
+import { insightGetter, enums, validatorFactory } from '../insight-modules';
 
-const enums = insightModules.load('enums');
-const validatorFactory = insightModules.load('vdl/vdl-validator-factory');
-const insightGetter = insightModules.load('insight-getter');
 
 export const createProps = (columnId, params, filters, element) => {
     var props = {
