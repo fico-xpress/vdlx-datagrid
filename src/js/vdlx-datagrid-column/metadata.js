@@ -44,7 +44,8 @@ export default {
     {
         name: 'scenario',
         description:
-            'The scenario id/index for this column. Not allowed on index column (when specifying a set entity)',
+            'The scenario id/index for this column. Not allowed on index column (when specifying a set entity). ' +
+            'This attribute will not affect the scenario variable in the render expression.',
         acceptsExpression: true
     },
     {

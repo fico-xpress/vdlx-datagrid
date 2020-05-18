@@ -55,7 +55,8 @@ export default {
             name: 'scenario',
             description:
                 'The default scenario to use for fetching data in the grid. This can be overridden per column but the default ' +
-                'will be used when a column does not specify a particular scenario and the index sets will be fetched from the default scenario.',
+                'will be used when a column does not specify a particular scenario and the index sets will be fetched from the default scenario. ' +
+                'This attribute will not affect the scenario variable in any render expression on the datagrid columns.',
             acceptsExpression: true
         },
         {
