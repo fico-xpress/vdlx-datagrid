@@ -66,9 +66,9 @@ import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
 import constant from 'lodash/constant';
 import { withEquals } from '../ko-utils';
-import reverse from 'lodash/reverse';
 import keys from 'lodash/keys';
 import { dialogs, dataUtils, SelectOptions, enums, ko, insightGetter } from '../insight-modules';
+import reverse from 'lodash/reverse';
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
@@ -192,8 +192,8 @@ class Datagrid {
                     }
                 })
                 .subscribe(noop),
-            ko
-                .pureComputed(() => {
+            
+                ko.pureComputed(() => {
                     const allOptions = allOptions$();
                     if (allOptions) {
                         const { gridOptions, columnOptions, scenariosData } = allOptions;

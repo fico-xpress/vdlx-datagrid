@@ -1,10 +1,20 @@
 # vdlx-datagrid changelog
 
+## v4.7.1
+
+
 ## v4.7.0
 
 - Updated to VDL 4.7 compatibility.
+- The `vdlx-datagrid-index-filter` component can be used at the `vdlx-datagrid` level to provide pre-filtering of index sets
+  for the entire table. When using index filters at the table level, all arrays in the table that are indexed by these sets
+  will be filtered on the server-side, reducing the data transferred from the server and processed by datagrid.
 - Index columns are automatically sorted using corresponding `vdl-set-sorter` or the default set sorter for the index column data type.
 - Default sorting with set sorters can be disabled per index column using the new `vdlx-datagrid-column` attribute `disable-set-sorting`.
+
+## v4.6.3
+
+- Fix an issue where table with large number of indices was locking up the view.
 
 ## v4.6.2
 

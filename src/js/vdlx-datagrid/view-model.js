@@ -22,6 +22,7 @@
  */
 import Datagrid from './datagrid';
 import { withDeepEquals, createMutationObservable, withEquals } from '../ko-utils';
+import { ko, $ } from '../insight-modules';
 
 import uniqueId from 'lodash/uniqueId';
 import get from 'lodash/get';
@@ -89,7 +90,7 @@ export default function createViewModel(params, componentInfo) {
 
     const columnConfigurations$ = withDeepEquals(ko.observable({}));
 
-    const globalIndexFilters$ = withDeepEquals(ko.observable({}));
+    const tableIndexFilters$ = withDeepEquals(ko.observable({}));
 
     const mutation$ = createMutationObservable(element, { childList: true });
 
@@ -104,10 +105,10 @@ export default function createViewModel(params, componentInfo) {
     });
 
     const filters$ = withEquals(ko.pureComputed(() => {
-        if (indexFilterElementsCount$() !== size(globalIndexFilters$())) {
+        if (indexFilterElementsCount$() !== size(tableIndexFilters$())) {
             return filters$.peek();
         }
-        return globalIndexFilters$();
+        return tableIndexFilters$();
     }));
 
     const columnConfigurationsArray$ = ko.pureComputed(() => {
@@ -153,14 +154,14 @@ export default function createViewModel(params, componentInfo) {
     };
 
     vm.filterUpdate = function (filterId, filterProperties) {
-        globalIndexFilters$({
-            ...globalIndexFilters$.peek(),
+        tableIndexFilters$({
+            ...tableIndexFilters$.peek(),
             [filterId]: filterProperties,
         });
     };
 
     vm.filterRemove = function (filterId) {
-        return globalIndexFilters$(omit(globalIndexFilters$.peek(), filterId));
+        return tableIndexFilters$(omit(tableIndexFilters$.peek(), filterId));
     };
 
     return vm;

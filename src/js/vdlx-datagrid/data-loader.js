@@ -41,6 +41,7 @@ import reduce from 'lodash/reduce';
 import intersection from 'lodash/intersection';
 import find from 'lodash/find';
 import { ko, dataUtils, insightGetter } from '../insight-modules';
+import { IndexFilter } from '../../types';
 
 function findScenario(scenarios, identifier) {
     const result = find(scenarios, (scenario) => scenario.getId() === identifier);
@@ -92,10 +93,10 @@ function getScenarios(config, scenarios) {
 
 /**
  * Adds an index filter to the Scenario Observer
- * @param {*} modelSchema 
- * @param {*} observer 
- * @param {*} filters 
- * @param {string} entity 
+ * @param {*} modelSchema
+ * @param {*} observer
+ * @param {*} filters
+ * @param {string} entity
  */
 const withFilter = (modelSchema, observer, filters, entity) => {
     const indexSets = modelSchema.getEntity(entity).getIndexSets();
@@ -118,10 +119,11 @@ const withFilter = (modelSchema, observer, filters, entity) => {
 
 /**
  *
- * @param {*} config$
+ * @param {KnockoutObservable<*>} config$
+ * @param {KnockoutObservable<IndexFilter[]>} filters$
  * @returns {{data: KnockoutObservable<{defaultScenario: Scenario, scenarios: Scenario[]}>, errors: KnockoutObservable}}
  */
-function withScenarioData(config$, filters$) {
+const getScenarioData = (config$, filters$) => {
     const view = insightGetter().getView();
     let hasSubscription = false;
     const scenarios$ = ko.observable([]);
@@ -236,6 +238,6 @@ function withScenarioData(config$, filters$) {
         }, scenarioData$),
         errors: error$,
     };
-}
+};
 
-export default withScenarioData;
+export default getScenarioData;

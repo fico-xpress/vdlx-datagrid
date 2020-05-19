@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{documentTitle}}</title>
+
+    <!--[if IE]>
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE"/><![endif]-->
+
+    <link rel='stylesheet'
+          href="http://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,500,500italic,700,700italic">
+    <link rel="icon" type="image/ico" href="css/images/favicon.ico">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/fico-style.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/highlight-github.css">
+
+    <style>
+        #main-bar-inner {
+            margin-right: 28px;
+        }
+        .details {
+            padding-left: 15px;
+            padding-top: 15px;
+            overflow-y: scroll;
+            position: absolute;
+            top: 60px;
+            left: 230px;
+            bottom: 0;
+            right: 0;
+        }
+
+        .vdl-extension-detail {
+            margin-right: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .sidebar {
+            width: 230px;
+            position: fixed;
+            height: 100%;
+            overflow: auto;
+        }
+
+        .sidebar li > a:hover, .sidebar li > a:focus, .sidebar .sub-nav li:hover {
+            text-decoration: none;
+            border-left: 5px solid #737270;
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 72px;
+            left: 0;
+            padding: 0 10px;
+            font-size: 11px;
+        }
+
+        .build-date {
+            padding: 0 15px 5px 28px;
+            font-size: 11px;
+        }
+
+        .nav-side-divider {
+            width: 100%;
+        }
+
+        .attributes-table th {
+            white-space: nowrap;
+        }
+
+        td.accepts-expression-column {
+            width: 110px;
+        }
+
+        td.required-column {
+            width: 50px;
+        }
+
+        .hljs {
+            background-color: #f5f5f5;
+        }
+
+        .product-sub-title {
+            font-size: 16px;
+            line-height: 26px;
+            color: white;
+            font-weight: 500;
+            clear: left;
+            padding-top: 5px;
+        }
+
+        .attribute-vars-table {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .cell-nowrap {
+            white-space: nowrap;
+        }
+
+        .required-parent-list {
+            margin-top: 5px;
+        }
+
+        .required-parent-list li {
+            list-style: none;
+        }
+
+        table.attributes-table th {
+            min-width: 140px;
+        }
+
+        pre code {
+            white-space: pre;
+        }
+
+        .product-title {
+            float: left;
+        }
+
+        .product-version {
+            float: right;
+        }
+    </style>
+
+    <script src="js/highlight.pack.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
+</head>
+<body>
+<div id="main-bar" class="compact-header">
+    <div id="main-bar-inner">
+        <div id="product-name" class="pull-left">FICO<sup>&reg;</sup> Xpress Insight</div>
+        <div class="product-sub-title">
+            <div class="product-title">{{documentTitle}}</div>
+            <div class="product-version">version {{projectVersion}}</div>
+        </div>
+    </div>
+    <div id="main-nav">
+        <ul class="nav nav-pills pull-left">
+        </ul>
+        <div id="right-options" class="pull-right">
+        </div>
+    </div>
+</div>
+
+<div class="sidebar">
+    <ul class="list-group">
+        <li><a href="#introduction">Getting Started</a></li>
+
+        <li class="nav-side-divider"></li>
+        <li class="header">Tags</li>
+        {{#each extensions}}
+        {{#if tag}}
+        <li><a href="#{{tag}}">{{tag}}</a></li>
+        {{/if}}
+        {{/each}}
+
+        {{#if attributeExtensions.length}}
+        <li class="nav-side-divider"></li>
+        <li class="header">Attributes</li>
+        {{/if}}
+        {{#each attributeExtensions}}
+        <li><a href="#{{name}}">{{name}}</a></li>
+        {{/each}}
+    </ul>
+    <div class="copyright">
+        {{copyright}}
+    </div>
+</div>
+
+<div class="details">
+    <div class="vdl-extension-detail" id="introduction">
+        <p>
+            <code>vdlx-datagrid</code> provides a way to bind model entities to a table element within VDL views. It offers
+            much improved performance for larger data sets compared with <code>vdl-table</code>.
+        </p>
+
+        <p>Download the appropriate release version of <code>vdx-datagrid</code> from the GitHub webiste.
+            The first two digits of the vdlx-datagrid release version number must match the version of VDL you are
+            using to develop. For example, if you are developing for VDL 4.6, download vdlx-datagrid version 4.6.x.
+        </p>
+
+        <p>
+            Unzip the <code>vdlx-datagrid.zip</code> release bundle into your Xpress Workbench <code>client_resources</code>
+            folder. You can then add vdlx-datagrid in your views via the code editor-vdlx-datagrid is not available in the VDL Designer palette:
+            <pre><code>&lt;vdl-include src=&quot;vdlx-datagrid/vdlx-datagrid.vdl&quot;&gt;&lt;/vdl-include&gt;</code></pre>
+        </p>
+
+        <p>
+            <code>vdlx-datagrid</code> is mostly a drop-in replacement for <code>vdl-table</code> and can generally be
+            used by renaming code examples:
+            <pre><code>&lt;vdlx-datagrid id=&quot;basic-example-1&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;SupportLevels&quot;&gt;Support L.&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;</code></pre>
+        </p>
+    </div>
+
+    {{#each extensions}}
+    <div class="vdl-extension-detail" id="{{tag}}">
+        <h2>{{tag}}</h2>
+        {{#if doc.description}}
+        <p>
+            {{#if doc.descriptionAsHtml}}
+            {{{doc.description}}}
+            {{else}}
+            {{doc.description}}
+            {{/if}}
+        </p>
+        {{/if}}
+
+        {{#if doc.deprecated.since}}
+        <p>
+            <span class="label label-danger">Deprecated since version {{doc.deprecated.since}}</span>
+        </p>
+
+        {{#if doc.deprecated.description}}
+        <p>{{{doc.deprecated.description}}}</p>
+        {{/if}}
+        {{/if}}
+
+        {{#if requiredParent}}
+        <h3>Required parent element</h3>
+        <ul class="required-parent-list">
+            {{#each requiredParent}}
+            <li><a href="#{{this}}">&lt;{{this}}&gt;</a></li>
+            {{/each}}
+        </ul>
+        {{/if}}
+
+        {{#if requiredAncestor}}
+        <h3>Required ancestor element</h3>
+        <ul class="required-parent-list">
+            {{#each requiredAncestor}}
+            <li><a href="#{{this}}">&lt;{{this}}&gt;</a></li>
+            {{/each}}
+        </ul>
+        {{/if}}
+
+        {{#if doc.example}}
+        <h3>Example</h3>
+        <div>
+            <pre><code>{{doc.example}}</code></pre>
+        </div>
+        {{/if}}
+
+        {{#if attributes.length}}
+        <h3>Attributes</h3>
+        <table class="table table-hover table-condensed attributes-table">
+            <tbody>
+            {{#each attributes}}
+            <tr>
+                <th>
+                    {{#if name}}
+                    {{name}}
+                    {{else}}
+                    {{this}}
+                    {{/if}}
+                </th>
+                <td>
+                    {{{description}}}
+
+                    <div>
+                        {{#if defaultValue}}
+                        <span><strong>Default value</strong>: "{{defaultValue}}"</span>
+                        {{/if}}
+                    </div>
+
+                    <div>
+                        {{#if valueType}}
+                        <span><strong>type</strong>: <code>{{valueType}}</code></span>
+                        {{/if}}
+                    </div>
+
+                    <div>
+                        {{#if required}}
+                        <span class="label label-danger">required</span>
+                        {{/if}}
+
+                        {{#if requiresExpression}}
+                        <span class="label label-primary">requires expression</span>
+                        {{else if acceptsExpression}}
+                        <span class="label label-primary">accepts expression</span>
+                        {{/if}}
+                    </div>
+
+                    {{#if expressionVars}}
+                    <table class="table table-condensed table-bordered attribute-vars-table">
+                        <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#each expressionVars}}
+                        <tr>
+                            <td>{{name}}</td>
+                            <td>
+                                {{description}}
+                                <div><code>{{type}}</code></div>
+                            </td>
+                        </tr>
+                        {{/each}}
+                        {{#if expressionReturns}}
+                        <tr>
+                            <th colspan="2">Returns</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                {{expressionReturns.description}}
+                                <div><code>{{expressionReturns.type}}</code></div>
+                            </td>
+                        </tr>
+                        {{/if}}
+                        </tbody>
+                    </table>
+                    {{/if}}
+                </td>
+            </tr>
+            {{/each}}
+            </tbody>
+        </table>
+        {{/if}}
+
+        {{#if doc.elementContents}}
+        <h3>Element contents</h3>
+        <p>
+            {{#if doc.elementContents.acceptsMarkup}}
+            <span class="label label-primary">Markup allowed</span>
+            {{else}}
+            <span class="label label-default">Text content only</span>
+            {{/if}}
+        </p>
+        {{#if doc.elementContents.description}}
+        <p>{{doc.elementContents.description}}</p>
+        {{/if}}
+        {{/if}}
+
+        <div class="pull-left">
+            <a href="#introduction">Back to top</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    {{/each}}
+</div>
+</body>
+</html>

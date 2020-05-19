@@ -4,6 +4,7 @@
 const path = require('path');
 const fs = require('fs');
 const handlebars = require('handlebars');
+const {version} = require('../../package.json');
 
 const MODULES = [
     '../../src/js/vdlx-datagrid/metadata.js',
@@ -11,7 +12,7 @@ const MODULES = [
     '../../src/js/vdlx-datagrid-index-filter/metadata.js',
     '../../src/js/vdlx-datagrid-validate/metadata.js'
 ];
-const TARGET_DIR = path.join(__dirname, '../../target');
+const TARGET_DIR = path.join(__dirname, '../../docs');
 
 let extensions = MODULES
     .map(modFile => {
@@ -28,16 +29,6 @@ extensions.forEach(function (extension) {
         // Remove attributes that have been marked as doc ignored
         .filter(function (attribute) {
             return !attribute.docIgnore;
-        })
-        .map(function (attribute) {
-            attribute.name = attribute.name.replace(/-/g, '&#8209;');
-            if (attribute.expressionVars) {
-                attribute.expressionVars.forEach(function (expressionVar) {
-                    expressionVar.type = expressionVar.type.replace(/\|/g, '\\|');
-                    return expressionVar;
-                });
-            }
-            return attribute;
         })
         // Required attributes come first
         // Naturally sort attribute names
@@ -59,7 +50,13 @@ extensions.forEach(function (extension) {
         });
 });
 
-let tags = {extensions: extensions, attributeExtensions: []};
+let tags = {
+    extensions: extensions,
+    attributeExtensions: [],
+    documentTitle: 'vdlx-datagrid reference',
+    copyright: '© ' + new Date().getFullYear() + ' Fair Isaac Corporation. All rights reserved.',
+    projectVersion: version
+};
 
 module.exports.vdltagsGenerate = function (extensionLoader, targetPath, jsApiScripts) {
     var outputFilename = path.join(targetPath, 'vdlx-datagrid-tags.json');
@@ -91,13 +88,16 @@ module.exports.vdltagsGenerate = function (extensionLoader, targetPath, jsApiScr
         });
 };
 
-var outputFilename = path.join(TARGET_DIR, 'vdlx-datagrid-reference.md');
-let templateFile = path.join(__dirname, 'templates/vdlx-datagrid-reference.tmpl.md');
+var outputFilename = path.join(TARGET_DIR, 'vdlx-datagrid-reference.html');
+let templateFile = path.join(__dirname, 'templates/vdlx-datagrid-reference.tmpl.html');
 
 var template = handlebars.compile(fs.readFileSync(templateFile, 'utf-8'));
 
 function mapAttributeExpressionProperties(tag) {
     tag.attributes = tag.attributes.map(function (attribute) {
+        if (attribute.defaultValue !== undefined) {
+            attribute.defaultValue = String(attribute.defaultValue);
+        }
         if (attribute.expression === 'all') {
             attribute.acceptsExpression = true;
         } else if (attribute.expression === 'dynamic') {

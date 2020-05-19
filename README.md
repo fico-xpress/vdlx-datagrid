@@ -8,7 +8,7 @@
 An easily implemented third-party alternative for the `vdl-table` component in a FICO Xpress Insight VDL view.
 
 ## Features available in vdlx-datagrid
-For a list of available tags and attributes for the vdlx-datagrid component see [vdlx-datagrid-reference](https://github.com/fico-xpress/vdlx-datagrid/wiki/vdlx-datagrid-reference)
+For a list of available tags and attributes for the vdlx-datagrid component see [vdlx-datagrid-reference](https://fico-xpress.github.io/vdlx-datagrid/vdlx-datagrid-reference)
 
 ## How to use vdlx-datagrid in your Insight app
 

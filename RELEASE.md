@@ -49,13 +49,16 @@ Once you are happy with the release draft you can **publish** to make it availab
 
 ## VDLDoc reference publishing
 
-The VDLDoc reference is generated and published automatically along with the release process. The updated wiki page will automatically
-be published so you should check everything is in order at https://github.com/fico-xpress/vdlx-datagrid/wiki/vdlx-datagrid-reference.
+The VDLDoc for a release should be generated as follows:
 
-The vdldoc reference publishing is already setup, but this requires a contributor of the project to create a Personal access token
-and add this to the vdlx-datagrid project as a Secret and adding their username and noreply email to the release action configuration. 
+1. From your local machine, checkout master and pull changes from origin
+1. Run: `npn run vdldoc`
+1. Check the generated file `docs/vdlx-datagrid-reference.html` and commit if it all looks good
+1. Push the change to origin
+1. Check on the GitHub site that it has deployed the change: https://github.com/fico-xpress/vdlx-datagrid/deployments
+1. Check the published page: https://fico-xpress.github.io/vdlx-datagrid/vdlx-datagrid-reference
 
-### How to update the wiki publishing user
+### How to update the wiki publishing user (No longer needed as the wiki is disabled)
 
 As the user who the wiki page will be published as...
 

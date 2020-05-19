@@ -22,10 +22,10 @@
  */
 
 import isEqual from 'lodash/isEqual';
-import eq from 'lodash/eq';
 import { ko } from './insight-modules';
+import eq from 'lodash/eq';
 
-export const onSubscribe = function (f, observable) {
+export const onSubscribe = function(f, observable) {
     var subscribe = observable.subscribe;
     observable.subscribe = function () {
         var subscription = subscribe.apply(observable, arguments);
@@ -56,8 +56,8 @@ export const withEqualityComparer = function (f, obs) {
  * Sets equalityComparer on the observable
  */
 
-export const withDeepEquals = (obs) => withEqualityComparer(isEqual, obs);
-export const withEquals = (obs) => withEqualityComparer(eq, obs);
+export const withDeepEquals = obs => withEqualityComparer(isEqual, obs);
+export const withEquals = obs => withEqualityComparer(eq, obs);
 
 export const createMutationObservable = (
     /** @type {HTMLElement} */ elm,
