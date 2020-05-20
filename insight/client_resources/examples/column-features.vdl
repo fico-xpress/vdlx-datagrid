@@ -77,10 +77,16 @@ limitations under the License.
 
         <vdl-section heading="Column classes">
             <vdl-row>
-                <vdl-column size="6">
+                <vdl-column>
                     <p>This example shows how you can add classes to <code>vdlx-datagrid-column</code> and use an expression
-                        to change the classes dynamically.</p>
-
+                        to set the classes dynamically. The expression should return to a string that is a list of the classes
+                        to apply to the cells in that column and should be space-separated. The index column in this example has
+                        custom classes defined as a string.
+                    </p>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
                     <vdl-var name="selectedClasses" value="column-background-1 column-text-1"></vdl-var>
                     <vdl-action-group name="setSelectedClasses">
                         <vdl-action-set-var var="selectedClasses"></vdl-action-set-var>
@@ -94,13 +100,14 @@ limitations under the License.
                     </vdl-form>
 
                     <vdlx-datagrid>
+                        <vdlx-datagrid-column set="SupportLevels" class="column-background-1 column-text-1"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="SupportCosts" class="=vars.selectedClasses"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="ServiceLevelAgreements"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
             </vdl-row>
             <vdl-row>
-                <vdl-column size="12" heading="VDL source:">
+                <vdl-column heading="VDL source:">
                     <code-panel>
 &lt;style&gt;
     .tabulator-cell.column-background-1 {
@@ -133,6 +140,7 @@ limitations under the License.
 &lt;/vdl-form&gt;
 
 &lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column set=&quot;SupportLevels&quot; class=&quot;column-background-1 column-text-1&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot; class=&quot;=vars.selectedClasses&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdlx-datagrid-column&gt;
 &lt;/vdlx-datagrid&gt;
@@ -143,8 +151,12 @@ limitations under the License.
 
         <vdl-section heading="Column calculations and formatting">
             <vdl-row>
-                <vdl-column size="6" heading="Column calculation format">
-                    <p>The bottom-calc attrinbute takes it's format from the column. In this case FactoryCustomerAgreements is set to '0.0000'</p>
+                <vdl-column>
+                    <p>The bottom-calc attribute takes it's format from the column. In this case FactoryCustomerAgreements is set to '0.0000'.</p>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
                     <vdlx-datagrid page-size="20" column-filter="true">
                         <vdlx-datagrid-column set="Factories" bottom-calc="=_.constant('Total')"></vdlx-datagrid-column>
                         <vdlx-datagrid-column format="0.0000" entity="FactoryCustomerAgreements" bottom-calc="sum"></vdlx-datagrid-column>
@@ -152,7 +164,7 @@ limitations under the License.
                 </vdl-column>
             </vdl-row>
             <vdl-row>
-                <vdl-column size="12" heading="VDL source:">
+                <vdl-column heading="VDL source:">
                     <code-panel>
 &lt;vdlx-datagrid page-size=&quot;20&quot; column-filter=&quot;true&quot;&gt;
     &lt;vdlx-datagrid-column set=&quot;Factories&quot; bottom-calc=&quot;=_.constant('Total')&quot;&gt;&lt;/vdlx-datagrid-column&gt;
@@ -165,10 +177,13 @@ limitations under the License.
 
         <vdl-section heading="Column freeze">
             <vdl-row>
-                <vdl-column size="6" heading="Column Freeze and Calculation">
+                <vdl-column>
                     <p>This example shows the big data 1 datagrid with the new column freeze and calculations features.</p>
                     <p>The bottom-calc attribute either accepts a dynamic expression or one of the built in calculations avg, max, min, sum, concat or count.</p>
-
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="6">
                     <vdlx-datagrid id="big-data-1" column-filter="true" freeze-columns="2" page-size="20">
                         <vdlx-datagrid-column set="t1IndexA" bottom-calc="=_.constant('total')"></vdlx-datagrid-column><!-- An inline function that returns a string -->
                         <vdlx-datagrid-column set="t1IndexB" bottom-calc="=standardDeviation"></vdlx-datagrid-column><!-- a reference to the function defined in the script tag above -->
@@ -185,7 +200,7 @@ limitations under the License.
                 </vdl-column>
             </vdl-row>
             <vdl-row>
-                <vdl-column size="12" heading="VDL source:">
+                <vdl-column heading="VDL source:">
                     <code-panel>
 &lt;script&gt;
     /**
