@@ -487,8 +487,11 @@ class Datagrid {
             const isNumberEntity = dataUtils.entityTypeIsNumber(displayEntity);
 
             const title = get(options, 'title', entity.getAbbreviation() || name);
-            const getClass = () => {
+            const getClasses = () => {
                 let classes = ['index'];
+                if(options.style) {
+                    classes = classes.concat(options.style.trim().split(' '))
+                }
                 if (isNumberEntity) {
                     classes = classes.concat('numeric');
                 }
@@ -508,7 +511,7 @@ class Datagrid {
             let column = assign({}, setNameAndPosn.options, {
                 title: escape(String(title)),
                 field: options.id,
-                cssClass: getClass(),
+                cssClass: getClasses(),
                 formatter: getFormatter(),
                 sorter: options.sortByFormatted
                     ? createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters)
