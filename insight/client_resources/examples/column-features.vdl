@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <vdl version="4.7">
-
+    <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
     <script>
@@ -55,9 +55,93 @@ limitations under the License.
         }
     </script>
 
+    <style>
+        .tabulator-cell.column-background-1 {
+            background-color: #FFB81C;
+        }
+
+        .tabulator-cell.column-text-1 {
+            color: #212121;
+        }
+
+        .tabulator-cell.column-background-2 {
+            background-color: #F2F2F2;
+        }
+
+        .tabulator-cell.column-text-2 {
+            color: #00629B;
+        }
+    </style>
+
     <vdl-page>
 
-        <vdl-section heading="Small table - column calculations and formatting">
+        <vdl-section heading="Column classes">
+            <vdl-row>
+                <vdl-column size="6">
+                    <p>This example shows how you can add classes to <code>vdlx-datagrid-column</code> and use an expression
+                        to change the classes dynamically.</p>
+
+                    <vdl-var name="selectedClasses" value="column-background-1 column-text-1"></vdl-var>
+                    <vdl-action-group name="setSelectedClasses">
+                        <vdl-action-set-var var="selectedClasses"></vdl-action-set-var>
+                    </vdl-action-group>
+                    <vdl-form>
+                        <vdl-field vdl-event="change: actions.setSelectedClasses"
+                                   label="Choose a style"
+                                   label-size="3"
+                                   size="3"
+                                   options="={'column-background-1 column-text-1': 'Style 1', 'column-background-2 column-text-2': 'Style 2'}"></vdl-field>
+                    </vdl-form>
+
+                    <vdlx-datagrid>
+                        <vdlx-datagrid-column entity="SupportCosts" class="=vars.selectedClasses"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="ServiceLevelAgreements"></vdlx-datagrid-column>
+                    </vdlx-datagrid>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="12" heading="VDL source:">
+                    <code-panel>
+&lt;style&gt;
+    .tabulator-cell.column-background-1 {
+        background-color: #FFB81C;
+    }
+
+    .tabulator-cell.column-text-1 {
+        color: #212121;
+    }
+
+    .tabulator-cell.column-background-2 {
+        background-color: #F2F2F2;
+    }
+
+    .tabulator-cell.column-text-2 {
+        color: #00629B;
+    }
+&lt;/style&gt;
+
+&lt;vdl-var name=&quot;selectedClasses&quot; value=&quot;column-background-1 column-text-1&quot;&gt;&lt;/vdl-var&gt;
+&lt;vdl-action-group name=&quot;setSelectedClasses&quot;&gt;
+    &lt;vdl-action-set-var var=&quot;selectedClasses&quot;&gt;&lt;/vdl-action-set-var&gt;
+&lt;/vdl-action-group&gt;
+&lt;vdl-form&gt;
+    &lt;vdl-field vdl-event=&quot;change: actions.setSelectedClasses&quot;
+               label=&quot;Choose a style&quot;
+               label-size=&quot;3&quot;
+               size=&quot;3&quot;
+               options=&quot;={'column-background-1 column-text-1': 'Style 1', 'column-background-2 column-text-2': 'Style 2'}&quot;&gt;&lt;/vdl-field&gt;
+&lt;/vdl-form&gt;
+
+&lt;vdlx-datagrid&gt;
+    &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot; class=&quot;=vars.selectedClasses&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+        <vdl-section heading="Column calculations and formatting">
             <vdl-row>
                 <vdl-column size="6" heading="Column calculation format">
                     <p>The bottom-calc attrinbute takes it's format from the column. In this case FactoryCustomerAgreements is set to '0.0000'</p>
@@ -66,11 +150,20 @@ limitations under the License.
                         <vdlx-datagrid-column format="0.0000" entity="FactoryCustomerAgreements" bottom-calc="sum"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
-
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="12" heading="VDL source:">
+                    <code-panel>
+&lt;vdlx-datagrid page-size=&quot;20&quot; column-filter=&quot;true&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;Factories&quot; bottom-calc=&quot;=_.constant('Total')&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column format=&quot;0.0000&quot; entity=&quot;FactoryCustomerAgreements&quot; bottom-calc=&quot;sum&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
             </vdl-row>
         </vdl-section>
 
-        <vdl-section heading="Large table - column freeze">
+        <vdl-section heading="Column freeze">
             <vdl-row>
                 <vdl-column size="6" heading="Column Freeze and Calculation">
                     <p>This example shows the big data 1 datagrid with the new column freeze and calculations features.</p>
@@ -91,7 +184,56 @@ limitations under the License.
                     </vdlx-datagrid>
                 </vdl-column>
             </vdl-row>
-        </vdl-section>
+            <vdl-row>
+                <vdl-column size="12" heading="VDL source:">
+                    <code-panel>
+&lt;script&gt;
+    /**
+     * Calculate the standard deviation of an array of numbers.
+     * @param {Array&lt;number&gt;} values
+     * @returns {number}
+     */
+    function standardDeviation(values){
+        var avg = average(values);
 
+        var squareDiffs = values.map(function(value){
+            var diff = value - avg;
+            var sqrDiff = diff * diff;
+            return sqrDiff;
+        });
+
+        var avgSquareDiff = average(squareDiffs);
+
+        var stdDev = Math.sqrt(avgSquareDiff);
+        return stdDev;
+    }
+
+    function average(data){
+        var sum = data.reduce(function(sum, value){
+            return sum + value;
+        }, 0);
+
+        var avg = sum / data.length;
+        return avg;
+    }
+&lt;/script&gt;
+
+&lt;vdlx-datagrid id=&quot;big-data-1&quot; column-filter=&quot;true&quot; freeze-columns=&quot;2&quot; page-size=&quot;20&quot;&gt;
+    &lt;vdlx-datagrid-column set=&quot;t1IndexA&quot; bottom-calc=&quot;=_.constant('total')&quot;&gt;&lt;/vdlx-datagrid-column&gt;&lt;!-- An inline function that returns a string --&gt;
+    &lt;vdlx-datagrid-column set=&quot;t1IndexB&quot; bottom-calc=&quot;=standardDeviation&quot;&gt;&lt;/vdlx-datagrid-column&gt;&lt;!-- a reference to the function defined in the script tag above --&gt;
+    &lt;vdlx-datagrid-column set=&quot;t1IndexC&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column set=&quot;t1IndexD&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column set=&quot;t1IndexE&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;t1Col1&quot; bottom-calc=&quot;count&quot;&gt;&lt;/vdlx-datagrid-column&gt;&lt;!-- built in 'count' calculation --&gt;
+    &lt;vdlx-datagrid-column entity=&quot;t1Col2&quot; bottom-calc=&quot;avg&quot;&gt;&lt;/vdlx-datagrid-column&gt;&lt;!-- built in 'average' calculation --&gt;
+    &lt;vdlx-datagrid-column entity=&quot;t1Col3&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;t1Col4&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;t1Col5&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;t1Col6&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
     </vdl-page>
 </vdl>
