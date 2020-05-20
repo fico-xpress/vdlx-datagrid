@@ -738,7 +738,7 @@ class Datagrid {
             };
 
             const getClasses = () => {
-                let classes = [];
+                let classes = entityOptions.style ? entityOptions.style.trim().split(' ') : [];
                 if (isNumberEntity) {
                     classes = classes.concat('numeric');
                 }
