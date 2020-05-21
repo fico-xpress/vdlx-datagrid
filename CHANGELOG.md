@@ -2,6 +2,8 @@
 
 ## v4.7.1
 
+- Fix for cell validation after validation expression change
+
 
 ## v4.7.0
 
