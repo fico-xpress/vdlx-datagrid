@@ -192,8 +192,9 @@ class Datagrid {
                     }
                 })
                 .subscribe(noop),
-            
-                ko.pureComputed(() => {
+
+            ko
+                .pureComputed(() => {
                     const allOptions = allOptions$();
                     if (allOptions) {
                         const { gridOptions, columnOptions, scenariosData } = allOptions;
