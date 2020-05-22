@@ -3,6 +3,8 @@ import ko from 'knockout';
 import { memoize } from 'lodash';
 import $ from 'jquery';
 
+type Mockify<T> = { [P in keyof T]: T[P] extends (...L)=> infer K ? jest.Mock<K, Parameters<T[P]>> : T[P] };
+
 export const getEntityMock = memoize((name) => ({
     getIndexSets: jest.fn(),
     getLabelsEntity: jest.fn(),
@@ -63,12 +65,18 @@ const enumsMock = {
     },
 };
 
-/** @type {DataUtils} */
-const dataUtilsSpy = {
+
+export const dataUtilsSpy: Mockify<DataUtils> = {
     entityTypeIsNumber: jest.fn().mockReturnValue(false),
     getFilterPositionsAndValues: jest.fn(),
     getSetNamesAndPosns: jest.fn(),
 };
+
+export const setSorterSpy = {
+        getComparator: jest.fn(),
+        callSetSorter: jest.fn(),
+        getInsightArraySortedKeys: jest.fn(),
+}
 
 const vdlValidatorRegistrySpy = jest.fn();
 
@@ -90,9 +98,5 @@ jest.doMock('../../../src/js/insight-modules', () => ({
     createSparseData: jest.fn(),
     createDenseData: jest.fn(),
     autotableSelectOptions: jest.fn(),
-    setSorter: {
-        getComparator: jest.fn(),
-        callSetSorter: jest.fn(),
-        getInsightArraySortedKeys: jest.fn(),
-    },
+    setSorter: setSorterSpy,
 }));

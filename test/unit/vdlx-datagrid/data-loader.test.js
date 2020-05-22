@@ -1,12 +1,12 @@
 import getScenarioData from '../../../src/js/vdlx-datagrid/data-loader';
-import { scenarioObserverMock, getEntityMock } from '../../jest/mocks/insight-modules';
+import { scenarioObserverMock, getEntityMock, dataUtilsSpy } from '../../jest/mocks/insight-modules';
 import ko from 'knockout';
 
 describe('data loader', () => {
-    beforeEach(() => {});
 
     describe('index filtering', () => {
         it('adds filters', (done) => {
+            dataUtilsSpy.getFilterPositionsAndValues.mockReturnValue([{ index: 0, value: ['value'] }]);
             const entity = 'entity';
             const index = 'index';
             getEntityMock(entity).getIndexSets.mockReturnValue([index]);
@@ -25,7 +25,8 @@ describe('data loader', () => {
             const scenarioData = getScenarioData(config, filters);
             scenarioData.data.subscribe(() => {
                 expect(scenarioObserverMock.filter).toHaveBeenCalledWith(entity, expect.any(Function));
-                scenarioObserverMock.filter.mock.calls[0][1]();
+                const filter = scenarioObserverMock.filter.mock.calls[0][1]();
+                expect(filter).toEqual({ 0: ['value'] });
                 done();
             });
             const notifyCallback = scenarioObserverMock.notify.mock.calls[0][0];
