@@ -3,8 +3,6 @@ import ko from 'knockout';
 import { memoize } from 'lodash';
 import $ from 'jquery';
 
-type Mockify<T> = { [P in keyof T]: T[P] extends (...L)=> infer K ? jest.Mock<K, Parameters<T[P]>> : T[P] };
-
 export const getEntityMock = memoize((name) => ({
     getIndexSets: jest.fn(),
     getLabelsEntity: jest.fn(),
@@ -65,18 +63,17 @@ const enumsMock = {
     },
 };
 
-
-export const dataUtilsSpy: Mockify<DataUtils> = {
+export const dataUtilsSpy: jest.Mocked<DataUtils> = {
     entityTypeIsNumber: jest.fn().mockReturnValue(false),
     getFilterPositionsAndValues: jest.fn(),
     getSetNamesAndPosns: jest.fn(),
 };
 
 export const setSorterSpy = {
-        getComparator: jest.fn(),
-        callSetSorter: jest.fn(),
-        getInsightArraySortedKeys: jest.fn(),
-}
+    getComparator: jest.fn(),
+    callSetSorter: jest.fn(),
+    getInsightArraySortedKeys: jest.fn(),
+};
 
 const vdlValidatorRegistrySpy = jest.fn();
 

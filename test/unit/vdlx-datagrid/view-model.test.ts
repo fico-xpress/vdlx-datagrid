@@ -1,8 +1,10 @@
 import createViewModel from '../../../src/js/vdlx-datagrid/view-model';
-import Datagrid from '../../../src/js/vdlx-datagrid/datagrid';
+import Datagrid  from '../../../src/js/vdlx-datagrid/datagrid';
 import { createMutationObservable } from '../../../src/js/ko-utils';
 import ko from 'knockout';
 import noop from 'lodash/noop';
+
+const DatagridMock  = Datagrid as jest.MockedClass<typeof Datagrid>;
 
 jest.mock('../../../src/js/vdlx-datagrid/datagrid');
 jest.mock('../../../src/js/ko-utils', () => {
@@ -25,12 +27,12 @@ describe('vdlx-datagrid view mode', () => {
     let filters$;
     let mutationObservable;
     beforeEach(() => {
-        Datagrid.mockClear();
+        DatagridMock.mockClear();
         rootElement = document.createElement('div');
         mutationObservable = ko.observable();
         createMutationObservable.mockReturnValue(mutationObservable);
         viewModel = createViewModel({}, { element: rootElement });
-        [element, tableOptions$, columnConfig$, filters$] = Datagrid.mock.calls[0];
+        [element, tableOptions$, columnConfig$, filters$] = DatagridMock.mock.calls[0];
     });
 
     describe('index filtering', () => {
