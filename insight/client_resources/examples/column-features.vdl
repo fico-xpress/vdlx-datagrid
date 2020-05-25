@@ -87,7 +87,7 @@ limitations under the License.
             </vdl-row>
             <vdl-row>
                 <vdl-column size="6">
-                    <vdl-var name="selectedClasses" value="column-background-1 column-text-1"></vdl-var>
+                    <vdl-var name="selectedClasses" value=""></vdl-var>
                     <vdl-action-group name="setSelectedClasses">
                         <vdl-action-set-var var="selectedClasses"></vdl-action-set-var>
                     </vdl-action-group>
@@ -96,6 +96,7 @@ limitations under the License.
                                    label="Choose a style"
                                    label-size="3"
                                    size="3"
+                                   options-include-empty="true"
                                    options="={'column-background-1 column-text-1': 'Style 1', 'column-background-2 column-text-2': 'Style 2'}"></vdl-field>
                     </vdl-form>
 
@@ -127,7 +128,7 @@ limitations under the License.
     }
 &lt;/style&gt;
 
-&lt;vdl-var name=&quot;selectedClasses&quot; value=&quot;column-background-1 column-text-1&quot;&gt;&lt;/vdl-var&gt;
+&lt;vdl-var name=&quot;selectedClasses&quot; value=&quot;&quot;&gt;&lt;/vdl-var&gt;
 &lt;vdl-action-group name=&quot;setSelectedClasses&quot;&gt;
     &lt;vdl-action-set-var var=&quot;selectedClasses&quot;&gt;&lt;/vdl-action-set-var&gt;
 &lt;/vdl-action-group&gt;
@@ -136,6 +137,7 @@ limitations under the License.
                label=&quot;Choose a style&quot;
                label-size=&quot;3&quot;
                size=&quot;3&quot;
+               options-include-empty=&quot;true&quot;
                options=&quot;={'column-background-1 column-text-1': 'Style 1', 'column-background-2 column-text-2': 'Style 2'}&quot;&gt;&lt;/vdl-field&gt;
 &lt;/vdl-form&gt;
 
