@@ -881,6 +881,7 @@ class Datagrid {
                 formatter: getFormatter(),
                 name: options.name,
                 field: options.id,
+                cssClass: getCssClasses(options, false),
                 elementType: enums.DataType.STRING,
                 sortByFormatted: true,
                 sorter: createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters),
