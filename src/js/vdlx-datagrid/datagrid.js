@@ -515,6 +515,7 @@ class Datagrid {
                     : options.disableSetSorting
                         ? getSorter(entity, tabulatorSorters)
                         : getSetSorter(entity),
+                filterByFormatted: options.filterByFormatted,
                 dataType: entity.getType(),
                 elementType: displayEntity.getElementType(),
                 labelsEntity: entity.getLabelsEntity(),
@@ -756,6 +757,7 @@ class Datagrid {
                 cellDblClick : getCellDoubleClickHandler,
                 formatter: getFormatter(),
                 sortByFormatted: entityOptions.sortByFormatted,
+                filterByFormatted: entityOptions.filterByFormatted,
                 sorter: entityOptions.sortByFormatted
                     ? createFormattedSorter(entityOptions.id, getFormatter('sort'), tabulatorSorters)
                     : getSorter(entity, tabulatorSorters),
@@ -878,6 +880,7 @@ class Datagrid {
                 field: options.id,
                 elementType: enums.DataType.STRING,
                 sortByFormatted: true,
+                filterByFormatted: true,
                 sorter: createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters),
                 accessorDownload: (value, rowData) => options.render(value, 'display', getRowDataForColumns(rowData)),
             });

@@ -100,7 +100,7 @@ const NEQ = (a,b) => a !== b;
 
 let filter = (column, searchText, formattedCellValue, rowData, params) => {
     let cellValue;
-    if(!!column.labelsEntity) {
+    if(!!column.labelsEntity || column.filterByFormatted) {
         cellValue = formattedCellValue;
     } else {
         cellValue = rowData[column.id];
