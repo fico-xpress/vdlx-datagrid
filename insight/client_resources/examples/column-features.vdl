@@ -56,19 +56,19 @@ limitations under the License.
     </script>
 
     <style>
-        .tabulator-cell.column-background-1 {
+        .column-background-1 {
             background-color: #FFB81C;
         }
 
-        .tabulator-cell.column-text-1 {
+        .column-text-1 {
             color: #212121;
         }
 
-        .tabulator-cell.column-background-2 {
+        .column-background-2 {
             background-color: #F2F2F2;
         }
 
-        .tabulator-cell.column-text-2 {
+        .column-text-2 {
             color: #00629B;
         }
     </style>
