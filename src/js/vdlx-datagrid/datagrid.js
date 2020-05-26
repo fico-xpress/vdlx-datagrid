@@ -109,7 +109,7 @@ export const getCssClasses = (columnOptions, isNumeric, isIndex = false) => {
         classes.push('select-editor');
     }
     if (columnOptions.style) {
-        classes = classes.concat(columnOptions.style.trim().split(/\s+/));
+        classes = classes.concat(String(columnOptions.style).trim().split(/\s+/));
     }
     return classes.join(' ');
 };

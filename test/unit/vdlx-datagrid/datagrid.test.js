@@ -1,7 +1,7 @@
 import {getCssClasses} from '../../../src/js/vdlx-datagrid/datagrid';
 import {EDITOR_TYPES} from '../../../src/js/constants';
 
-describe.only('datagrid getCssClasses', () => {
+describe('datagrid getCssClasses', () => {
     let result;
 
     describe('when called with index column', function () {
@@ -69,6 +69,20 @@ describe.only('datagrid getCssClasses', () => {
 
         it('custom classes should be at the end of the list', function () {
             expect(result.endsWith('my-class-2 and-another-2')).toBeTruthy();
+        });
+    });
+
+    describe('when column style resolves to a number', function () {
+        beforeEach(function () {
+            result = getCssClasses(
+                {
+                    style: 123
+                },
+                false);
+        });
+
+        it('should handle the number and use it as the class name', function () {
+            expect(result).toEqual('123');
         });
     });
 });
