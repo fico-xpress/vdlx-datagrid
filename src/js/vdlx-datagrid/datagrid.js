@@ -415,7 +415,7 @@ class Datagrid {
         }
 
         if (options.showExport) {
-            const rowCount = table.getDataCount(true);
+            const rowCount = table.getDataCount('active');
             return exportCsv(table, headerToolbar, {
                 enabled: rowCount > 0,
                 filename: options.exportFilename
