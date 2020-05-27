@@ -2,6 +2,8 @@
 
 ## v4.7.1
 
+- Fixed column filtering on calculated columns
+
 
 ## v4.7.0
 
