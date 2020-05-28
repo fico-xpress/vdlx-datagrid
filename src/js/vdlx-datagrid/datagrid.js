@@ -713,7 +713,7 @@ class Datagrid {
                 return undefined;
             };
 
-            const cellEdited = (cell) => {
+            const cellEdited = async (cell) => {
                 $(cell.getElement()).off('keyup');
                 const oldValue = isUndefined(cell.getOldValue()) ? '' : cell.getOldValue();
                 const value = cell.getValue();
@@ -740,6 +740,11 @@ class Datagrid {
                                 // TODO: message saying
                                 // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
                             });
+                        }
+
+                        if (calculatedColumnsOptions.length > 0) {
+                            await this.savingPromise;
+                            return redraw();
                         }
                     }
                 }
