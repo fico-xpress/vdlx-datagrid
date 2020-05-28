@@ -30,8 +30,7 @@ const DEFAULT_FILENAME = 'data';
  *
  * @param {Tabulator} table The datagrid
  * @param {Element} container The table header element
- * @param {boolean} enabled Whether the button is enabled
- * @param {string} filename
+ * @param {{enabled: boolean, filename: string}} props Export props
  */
 export default (table, container, {enabled = false, filename = DEFAULT_FILENAME}) => {
     filename = trim(filename);
