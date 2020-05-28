@@ -3,7 +3,8 @@ import isFunction from 'lodash/isFunction';
 import isNumber from 'lodash/isNumber';
 import size from 'lodash/size';
 import { insightGetter, enums, validatorFactory } from '../insight-modules';
-
+import defer from 'lodash/defer';
+import throttle from 'lodash/throttle';
 
 export const createProps = (columnId, params, filters, element) => {
     var props = {
@@ -23,10 +24,10 @@ export const createProps = (columnId, params, filters, element) => {
         id: columnId,
         bottomCalc: params.bottomCalc,
         sortOrder: params.sortOrder,
-        sortDirection: params.sortDirection
+        sortDirection: params.sortDirection,
     };
     if (params.bottomCalc) {
-        props.bottomCalcFormatter = function(data) {
+        props.bottomCalcFormatter = function (data) {
             var val = data.getValue();
             if (isNumber(val)) {
                 return insightGetter().Formatter.formatNumber(val, params.format);
@@ -35,7 +36,7 @@ export const createProps = (columnId, params, filters, element) => {
         };
     }
     if (params.editorOptions) {
-        props.editorOptions = function() {
+        props.editorOptions = function () {
             // Return an empty list of options if value is undefined
             return params.editorOptions.apply(null, arguments) || [];
         };
@@ -93,26 +94,22 @@ export const createProps = (columnId, params, filters, element) => {
         props.filters = filters;
     }
     if (props.entity) {
-        var getValidationFn = function(indices) {
+        var getValidationFn = function (indices) {
             var validationProperties = validatorFactory.getValidationProperties({
                 entity: props.entity,
-                indices: indices
+                indices: indices,
             });
             var customValidators = validatorFactory.getCustomValidators(validationProperties, element);
             return validatorFactory.createFromValidators(customValidators);
         };
         var validationObservable = ko.observable().extend({
             functionObservable: {
-                onDependenciesChange: function() {
-                    params.tableValidate();
-                },
-                read: function(indices, value, rowData) {
-                    return getValidationFn(indices)(value, rowData);
-                },
-                disposeWhenDependenciesChange: false
-            }
+                onDependenciesChange: throttle(() => defer(() => params.tableValidate())),
+                read: (indices, value, rowData) => getValidationFn(indices)(value, rowData),
+                disposeWhenDependenciesChange: false,
+            },
         });
-        props.editorValidate = function(newValue, rowData, keys) {
+        props.editorValidate = function (newValue, rowData, keys) {
             // @ts-ignore
             validationObservable(keys, newValue, rowData);
             return validationObservable.peek();
