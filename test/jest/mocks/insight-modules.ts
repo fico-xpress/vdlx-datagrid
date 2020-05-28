@@ -63,11 +63,16 @@ const enumsMock = {
     },
 };
 
-/** @type {DataUtils} */
-const dataUtilsSpy = {
+export const dataUtilsSpy: jest.Mocked<DataUtils> = {
     entityTypeIsNumber: jest.fn().mockReturnValue(false),
     getFilterPositionsAndValues: jest.fn(),
     getSetNamesAndPosns: jest.fn(),
+};
+
+export const setSorterSpy = {
+    getComparator: jest.fn(),
+    callSetSorter: jest.fn(),
+    getInsightArraySortedKeys: jest.fn(),
 };
 
 const vdlValidatorRegistrySpy = jest.fn();
@@ -90,9 +95,5 @@ jest.doMock('../../../src/js/insight-modules', () => ({
     createSparseData: jest.fn(),
     createDenseData: jest.fn(),
     autotableSelectOptions: jest.fn(),
-    setSorter: {
-        getComparator: jest.fn(),
-        callSetSorter: jest.fn(),
-        getInsightArraySortedKeys: jest.fn(),
-    },
+    setSorter: setSorterSpy,
 }));

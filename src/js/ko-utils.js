@@ -27,7 +27,7 @@ import eq from 'lodash/eq';
 
 export const onSubscribe = function(f, observable) {
     var subscribe = observable.subscribe;
-    observable.subscribe = function() {
+    observable.subscribe = function () {
         var subscription = subscribe.apply(observable, arguments);
         f(subscription);
         return subscription;
@@ -39,7 +39,7 @@ export const onSubscribe = function(f, observable) {
 export function onSubscriptionDispose(f, subscription) {
     var dispose = subscription.dispose;
 
-    subscription.dispose = function() {
+    subscription.dispose = function () {
         dispose.apply(subscription, arguments);
         f();
     };
@@ -47,7 +47,7 @@ export function onSubscriptionDispose(f, subscription) {
     return subscription;
 }
 
-export const withEqualityComparer = function(f, obs) {
+export const withEqualityComparer = function (f, obs) {
     obs.equalityComparer = f;
     return obs;
 };
@@ -78,4 +78,4 @@ export const createMutationObservable = (
     return res;
 };
 
-export const withDeferred = obs => obs.extend({ deferred: true });
+export const withDeferred = (obs) => obs.extend({ deferred: true });

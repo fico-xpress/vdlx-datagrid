@@ -21,7 +21,7 @@
     limitations under the License.
  */
 import Datagrid from './datagrid';
-import { withDeepEquals, createMutationObservable, withDeferred, withEquals } from '../ko-utils';
+import { withDeepEquals, createMutationObservable, withEquals } from '../ko-utils';
 import { ko, $ } from '../insight-modules';
 
 import uniqueId from 'lodash/uniqueId';
@@ -34,7 +34,6 @@ import mapValues from 'lodash/mapValues';
 import createTableOptions from './create-table-options';
 import filter from 'lodash/filter';
 import toLower from 'lodash/toLower';
-import defer from 'lodash/defer';
 
 /**
  * VDL Extensions callback.
@@ -89,11 +88,11 @@ export default function createViewModel(params, componentInfo) {
     const $footerToolBar = $('<div class="footer-toolbar"/>');
     $element.append($footerToolBar);
 
-    const columnConfigurations$ = withDeepEquals(withDeferred(ko.observable({})));
+    const columnConfigurations$ = withDeepEquals(ko.observable({}));
 
-    const tableIndexFilters$ = withDeepEquals(withDeferred(ko.observable({})));
+    const tableIndexFilters$ = withDeepEquals(ko.observable({}));
 
-    const mutation$ = withDeferred(createMutationObservable(element, { childList: true }));
+    const mutation$ = createMutationObservable(element, { childList: true });
 
     const columnElements$ = ko.pureComputed(() => {
         mutation$();
@@ -114,7 +113,7 @@ export default function createViewModel(params, componentInfo) {
 
     const columnConfigurationsArray$ = ko.pureComputed(() => {
         if (columnElements$().length !== size(columnConfigurations$())) {
-            return undefined;
+            return columnConfigurationsArray$.peek();
         }
 
         return map(columnElements$(), (columnElement, idx) => ({
@@ -129,7 +128,7 @@ export default function createViewModel(params, componentInfo) {
         ko.pureComputed(() => {
             const columnConfigs = columnConfigurationsArray$();
             if (!columnConfigs) {
-                return undefined;
+                return columnConfig$.peek();
             }
 
             return createColumnConfig(columnConfigs, defaultScenario, params.tableId);
@@ -139,15 +138,11 @@ export default function createViewModel(params, componentInfo) {
     const datagrid = new Datagrid(element, tableOptions$, columnConfig$, filters$);
 
     vm.addColumn = (columnId, props) => {
-        defer(() => {
-            return columnConfigurations$({ ...columnConfigurations$(), [columnId]: props });
-        });
+        return columnConfigurations$({ ...columnConfigurations$.peek(), [columnId]: props });
     };
 
     vm.removeColumn = (columnId) => {
-        defer(() => {
-            return columnConfigurations$(omit(columnConfigurations$(), columnId));
-        });
+        return columnConfigurations$(omit(columnConfigurations$.peek(), columnId));
     };
 
     vm.tableValidate = function () {
@@ -159,18 +154,14 @@ export default function createViewModel(params, componentInfo) {
     };
 
     vm.filterUpdate = function (filterId, filterProperties) {
-        defer(() => {
-            tableIndexFilters$({
-                ...tableIndexFilters$(),
-                [filterId]: filterProperties,
-            });
+        tableIndexFilters$({
+            ...tableIndexFilters$.peek(),
+            [filterId]: filterProperties,
         });
     };
 
     vm.filterRemove = function (filterId) {
-        defer(() => {
-            return tableIndexFilters$(omit(tableIndexFilters$(), filterId));
-        });
+        return tableIndexFilters$(omit(tableIndexFilters$.peek(), filterId));
     };
 
     return vm;

@@ -4,6 +4,8 @@ import { createMutationObservable } from '../../../src/js/ko-utils';
 import ko from 'knockout';
 import noop from 'lodash/noop';
 
+const DatagridMock = Datagrid as jest.MockedClass<typeof Datagrid>;
+
 jest.mock('../../../src/js/vdlx-datagrid/datagrid');
 jest.mock('../../../src/js/ko-utils', () => {
     const actualUtils = jest.requireActual('../../../src/js/ko-utils');
@@ -25,12 +27,12 @@ describe('vdlx-datagrid view mode', () => {
     let filters$;
     let mutationObservable;
     beforeEach(() => {
-        Datagrid.mockClear();
+        DatagridMock.mockClear();
         rootElement = document.createElement('div');
         mutationObservable = ko.observable();
         createMutationObservable.mockReturnValue(mutationObservable);
         viewModel = createViewModel({}, { element: rootElement });
-        [element, tableOptions$, columnConfig$, filters$] = Datagrid.mock.calls[0];
+        [element, tableOptions$, columnConfig$, filters$] = DatagridMock.mock.calls[0];
     });
 
     describe('index filtering', () => {
@@ -38,24 +40,18 @@ describe('vdlx-datagrid view mode', () => {
             expect(filters$()).toEqual({});
         });
 
-        it(`ignores updates when there's a mismatch between filters and tags`, (done) => {
+        it(`ignores updates when there's a mismatch between filters and tags`, () => {
             expect(filters$()).toEqual({});
             viewModel.filterUpdate('filterId', 'filter-properties');
-            setTimeout(() => {
-                expect(filters$()).toEqual({});
-                done();
-            });
+            expect(filters$()).toEqual({});
         });
 
-        it(`ignores updates when there's a mismatch between filters and tags`, (done) => {
+        it(`ignores updates when there's a mismatch between filters and tags`, () => {
             expect(filters$()).toEqual({});
             viewModel.filterUpdate('filterId', 'filter-properties');
-            setTimeout(() => {
-                expect(filters$()).toEqual({});
-                done();
-            });
+            expect(filters$()).toEqual({});
         });
-        it('adds a filter', (done) => {
+        it('adds a filter', () => {
             expect(filters$()).toEqual({});
             const newIndexFilterElm = document.createElement('vdlx-datagrid-index-filter');
             rootElement.appendChild(newIndexFilterElm);
@@ -63,14 +59,11 @@ describe('vdlx-datagrid view mode', () => {
             const subscription = filters$.subscribe(noop);
             mutationObservable(1);
             viewModel.filterUpdate('filterId', 'filter-properties');
-            setTimeout(() => {
-                expect(filters$()).toEqual({ filterId: 'filter-properties' });
-                subscription.dispose();
-                done();
-            }, 2);
+            expect(filters$()).toEqual({ filterId: 'filter-properties' });
+            subscription.dispose();
         });
 
-        it('adds a filter', (done) => {
+        it('adds a filter', () => {
             expect(filters$()).toEqual({});
             const newIndexFilterElm = document.createElement('vdlx-datagrid-index-filter');
             rootElement.appendChild(newIndexFilterElm);
@@ -78,15 +71,10 @@ describe('vdlx-datagrid view mode', () => {
             const subscription = filters$.subscribe(noop);
             mutationObservable(1);
             viewModel.filterUpdate('filterId', 'filter-properties');
-            setTimeout(() => {
-                expect(filters$()).toEqual({ filterId: 'filter-properties' });
-                setTimeout(() => {
-                    viewModel.filterRemove('filterId');
-                    expect(filters$()).toEqual({ filterId: 'filter-properties' });
-                    subscription.dispose();
-                    done();
-                }, 2);
-            }, 2);
+            expect(filters$()).toEqual({ filterId: 'filter-properties' });
+            viewModel.filterRemove('filterId');
+            expect(filters$()).toEqual({ filterId: 'filter-properties' });
+            subscription.dispose();
         });
     });
 });
