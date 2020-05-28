@@ -26,7 +26,7 @@ import dataTransform, {
     getAllColumnIndices,
     getDisplayIndices,
     getPartialExposedKey,
-    generateCompositeKey
+    generateCompositeKey,
 } from './data-transform';
 import withScenarioData from './data-loader';
 import exportCsv from './export-csv';
@@ -47,7 +47,6 @@ import isUndefined from 'lodash/isUndefined';
 import identity from 'lodash/identity';
 import flow from 'lodash/flow';
 import flowRight from 'lodash/flowRight';
-import assign from 'lodash/assign';
 import values from 'lodash/values';
 import uniq from 'lodash/uniq';
 import get from 'lodash/get';
@@ -72,7 +71,7 @@ import { withDeferred } from '../ko-utils';
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
 
-const addSelectNull = items => {
+const addSelectNull = (items) => {
     if (isArray(items)) {
         // add empty option to the start of the list
         return [{ key: undefined, value: '' }].concat(items);
@@ -156,7 +155,7 @@ class Datagrid {
         this.buildTable();
         this.update();
 
-        const mouseDownListener = e => {
+        const mouseDownListener = (e) => {
             if (!root.contains(e.target)) {
                 if (!isEmpty(this.table.getSelectedRows()) && !options.alwaysShowSelection) {
                     this.table.modules.selectRow.deselectRows();
@@ -169,15 +168,15 @@ class Datagrid {
             {
                 dispose: () => {
                     document.removeEventListener('mousedown', mouseDownListener);
-                }
-            }
+                },
+            },
         ]);
 
         this.unloadHandlerId = null;
         this.savingPromise = Promise.resolve();
 
         this.viewUnloadHandler = () => {
-            return Promise.resolve(this.savingPromise).catch(err => dialogs.toast(err.message, dialogs.level.ERROR));
+            return Promise.resolve(this.savingPromise).catch((err) => dialogs.toast(err.message, dialogs.level.ERROR));
         };
 
         this.unloadHandlerId = this.view.addUnloadHandler(this.viewUnloadHandler);
@@ -197,7 +196,7 @@ class Datagrid {
                 return {
                     gridOptions: gridOptions$(),
                     columnOptions: columnOptions$(),
-                    scenariosData: scenariosData$()
+                    scenariosData: scenariosData$(),
                 };
             })
         );
@@ -212,8 +211,8 @@ class Datagrid {
                     }
                 })
                 .subscribe(noop),
-            (
-                ko.pureComputed(() => {
+            ko
+                .pureComputed(() => {
                     const allOptions = allOptions$();
                     if (allOptions) {
                         const { gridOptions, columnOptions, scenariosData } = allOptions;
@@ -230,7 +229,7 @@ class Datagrid {
                     }
                     return undefined;
                 })
-            ).subscribe(noop)
+                .subscribe(noop),
         ]);
     }
 
@@ -249,13 +248,13 @@ class Datagrid {
 
     saveState() {
         if (this.stateManager) {
-            let sorters = map(this.table.getSorters(), sorter => ({ dir: sorter.dir, column: sorter.field }));
+            let sorters = map(this.table.getSorters(), (sorter) => ({ dir: sorter.dir, column: sorter.field }));
             if (isEqual(this.initialSortOrder, sorters)) {
                 sorters = [];
             }
             const state = {
                 filters: this.table.getHeaderFilters(),
-                sorters: sorters
+                sorters: sorters,
             };
 
             this.stateManager.saveState(state);
@@ -269,7 +268,7 @@ class Datagrid {
                 !isEmpty(state.sorters) && this.table.setSort(state.sorters);
                 if (!isEmpty(state.filters)) {
                     this.table.clearHeaderFilter();
-                    each(state.filters, filter => {
+                    each(state.filters, (filter) => {
                         const column = this.table.getColumn(filter.field);
                         if (!column) {
                             return;
@@ -283,10 +282,10 @@ class Datagrid {
     }
 
     createTable(options) {
-        const select = row => {
+        const select = (row) => {
             each(
-                filter(this.table.getSelectedRows(), selectedRow => selectedRow.getPosition() !== row.getPosition()),
-                selectedRow => selectedRow.deselect()
+                filter(this.table.getSelectedRows(), (selectedRow) => selectedRow.getPosition() !== row.getPosition()),
+                (selectedRow) => selectedRow.deselect()
             );
 
             if (!row.isSelected()) {
@@ -311,7 +310,7 @@ class Datagrid {
             dataFiltered: saveState,
             dataSorting: () => {
                 this.tableLock && this.tableLock.lock();
-                sortPromise = new Promise(resolve => {
+                sortPromise = new Promise((resolve) => {
                     sortPromiseResolve = resolve;
                 });
                 perf('datagrid sorting', constant(sortPromise));
@@ -321,11 +320,11 @@ class Datagrid {
                 sortPromiseResolve();
                 this.tableLock && this.tableLock.unlock();
             },
-            cellEditing: cell => select(cell.getRow()),
+            cellEditing: (cell) => select(cell.getRow()),
             rowClick: (e, row) => select(row),
             rowSelectionChanged: (data, rows) => this.setSelectedRow(first(rows)),
             renderComplete: () => this.update(),
-            invalidOptionWarnings: false
+            invalidOptionWarnings: false,
         };
 
         const table = new Tabulator(`#${options.tableId}`, tabulatorOptions);
@@ -366,12 +365,12 @@ class Datagrid {
 
         if (columnsWidth < tableWidth || inRange(columnsWidth, tableOffsetWidth - 2, tableOffsetWidth + 2)) {
             const columns = filter(
-                reject(this.table.getColumns(), column => !!column.getDefinition().width),
-                column => column.getVisibility()
+                reject(this.table.getColumns(), (column) => !!column.getDefinition().width),
+                (column) => column.getVisibility()
             );
             const toAddPx = (tableWidth - columnsWidth) / columns.length;
 
-            each(columns, column => column._column.setWidthActual(column._column.getWidth() + toAddPx));
+            each(columns, (column) => column._column.setWidthActual(column._column.getWidth() + toAddPx));
         }
     }
 
@@ -386,13 +385,13 @@ class Datagrid {
 
         if (row) {
             const rowPosition = row.getPosition();
-            const rowData = map(row.getCells(), cell => cell.getValue());
+            const rowData = map(row.getCells(), (cell) => cell.getValue());
 
             const getCell = (cell, cellIndex) => ({
                 rowData: rowData,
                 value: cell.getValue(),
                 element: cell.getElement(),
-                displayPosition: { row: rowPosition, column: cellIndex }
+                displayPosition: { row: rowPosition, column: cellIndex },
             });
 
             const cells = map(row.getCells(), getCell);
@@ -400,7 +399,7 @@ class Datagrid {
             $(this.table.element).trigger(SELECTION_CHANGED_EVENT, {
                 selection: cells,
                 activeCell: first(cells),
-                selectionType: 'ROW'
+                selectionType: 'ROW',
             });
         } else {
             $(this.table.element).trigger(SELECTION_REMOVED_EVENT);
@@ -442,7 +441,7 @@ class Datagrid {
             const rowCount = table.getDataCount('active');
             return exportCsv(table, headerToolbar, {
                 enabled: rowCount > 0,
-                filename: options.exportFilename
+                filename: options.exportFilename,
             });
         }
     }
@@ -493,35 +492,35 @@ class Datagrid {
 
         const setNameAndPosns = getDisplayIndices(allColumnIndices, entitiesOptions);
 
-        const setNamePosnsAndOptions = map(setNameAndPosns, setNameAndPosn => ({
+        const setNamePosnsAndOptions = map(setNameAndPosns, (setNameAndPosn) => ({
             ...setNameAndPosn,
             options: get(indicesOptions, `${setNameAndPosn.name}.${setNameAndPosn.position}`, {
-                id: `${setNameAndPosn.name}_${setNameAndPosn.position}`
-            })
+                id: `${setNameAndPosn.name}_${setNameAndPosn.position}`,
+            }),
         }));
 
         const allScenarios = uniq([scenariosData.defaultScenario].concat(values(scenariosData.scenarios)));
 
         const tabulatorSorters = this.table.modules.sort.sorters;
 
-        const indicesColumns = map(setNamePosnsAndOptions, setNameAndPosn => {
+        const indicesColumns = map(setNamePosnsAndOptions, (setNameAndPosn) => {
             const { name, options } = setNameAndPosn;
             const entity = schema.getEntity(name);
             const displayEntity = resolveDisplayEntity(schema, entity);
             const isNumberEntity = dataUtils.entityTypeIsNumber(displayEntity);
 
             const title = get(options, 'title', entity.getAbbreviation() || name);
-            const defaultFormatter = cell => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue());
+            const defaultFormatter = (cell) => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue());
 
             const getFormatter = (type = 'display') => {
                 if (options.render) {
-                    return cell =>
-                        options.render(cell.getValue(), type, getRowDataForColumns(cell.getData()));
+                    return (cell) => options.render(cell.getValue(), type, getRowDataForColumns(cell.getData()));
                 }
                 return defaultFormatter;
             };
 
-            let column = assign({}, setNameAndPosn.options, {
+            let column = {
+                ...setNameAndPosn.options,
                 title: escape(String(title)),
                 field: options.id,
                 cssClass: getCssClasses(options, isNumberEntity, true),
@@ -529,13 +528,14 @@ class Datagrid {
                 sorter: options.sortByFormatted
                     ? createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters)
                     : options.disableSetSorting
-                        ? getSorter(entity, tabulatorSorters)
-                        : getSetSorter(entity),
+                    ? getSorter(entity, tabulatorSorters)
+                    : getSetSorter(entity),
+                filterByFormatted: options.filterByFormatted,
                 dataType: entity.getType(),
                 elementType: displayEntity.getElementType(),
                 labelsEntity: entity.getLabelsEntity(),
-                name: name
-            });
+                name: name,
+            };
 
             if (gridOptions.columnFilter) {
                 const getHeaderFilterFn = () => {
@@ -549,11 +549,12 @@ class Datagrid {
                     return undefined;
                 };
 
-                column = assign(column, {
+                column = {
+                    ...column,
                     headerFilterPlaceholder: 'No filter',
                     headerFilter: !!gridOptions.columnFilter,
-                    headerFilterFunc: getHeaderFilterFn()
-                });
+                    headerFilterFunc: getHeaderFilterFn(),
+                };
             }
             return column;
         });
@@ -569,38 +570,31 @@ class Datagrid {
 
             const columnScenario = get(scenariosData.scenarios, entityOptions.id, scenariosData.defaultScenario);
 
-            const setArrayElement = change =>
-                columnScenario
-                    .modify()
-                    .setArrayElement(entityOptions.name, change)
-                    .commit();
-            const removeArrayElement = rowKey =>
-                columnScenario
-                    .modify()
-                    .removeFromArray(entityOptions.name, rowKey)
-                    .commit();
+            const setArrayElement = (change) =>
+                columnScenario.modify().setArrayElement(entityOptions.name, change).commit();
+            const removeArrayElement = (rowKey) =>
+                columnScenario.modify().removeFromArray(entityOptions.name, rowKey).commit();
 
-            const getRowKey = flowRight(rowData => {
+            const getRowKey = flowRight((rowData) => {
                 const tableKeys = getPartialExposedKey(setNameAndPosns, rowData);
                 return generateCompositeKey(tableKeys, setNameAndPosns, allColumnIndices[columnNumber], entityOptions);
             }, getRowDataForColumns);
 
             const saveValue = (rowData, value) => setArrayElement({ key: getRowKey(rowData), value: value });
-            const removeValue = rowData => removeArrayElement(getRowKey(rowData));
+            const removeValue = (rowData) => removeArrayElement(getRowKey(rowData));
 
-            const checkboxFormatter = cell => {
+            const checkboxFormatter = (cell) => {
                 const checked =
                     String(cell.getValue()) === String(get(entityOptions, 'checkedValue', true)) ? 'checked' : '';
                 const disabled = entityOptions.editable ? '' : 'disabled';
                 return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
             };
 
-            const defaultFormatter = cell => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue());
+            const defaultFormatter = (cell) => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue());
 
             const getFormatter = (type = 'display') => {
                 if (entityOptions.render) {
-                    return cell =>
-                        entityOptions.render(cell.getValue(), type, getRowDataForColumns(cell.getData()));
+                    return (cell) => entityOptions.render(cell.getValue(), type, getRowDataForColumns(cell.getData()));
                 }
 
                 if (entityOptions.editorType === EDITOR_TYPES.checkbox && type === 'display') {
@@ -651,7 +645,7 @@ class Datagrid {
                     } else if (entityOptions.editorOptions) {
                         getOptions = flow(
                             entityOptions.editorOptions,
-                            options => SelectOptions.generateSelectOptionsFromValues(options, isNumberEntity),
+                            (options) => SelectOptions.generateSelectOptionsFromValues(options, isNumberEntity),
                             entityOptions.selectNull ? addSelectNull : identity
                         );
                     }
@@ -663,12 +657,12 @@ class Datagrid {
                         return undefined;
                     };
 
-                    return cell => ({
+                    return (cell) => ({
                         listItemFormatter: getListItemFormatter(),
-                        values: map(getOptions(cell.getValue(), getRowKey(cell.getData())), option => ({
+                        values: map(getOptions(cell.getValue(), getRowKey(cell.getData())), (option) => ({
                             value: option.key,
-                            label: option.value
-                        }))
+                            label: option.value,
+                        })),
                     });
                 }
                 return undefined;
@@ -705,9 +699,9 @@ class Datagrid {
 
             const getCellEditingHandler = () => {
                 if (entityOptions.editorType !== EDITOR_TYPES.select) {
-                    return cell => {
+                    return (cell) => {
                         const element = cell.getElement();
-                        $(element).on('keyup', evt => {
+                        $(element).on('keyup', (evt) => {
                             validateAndStyle(cell, evt.target.value);
                         });
                     };
@@ -715,7 +709,7 @@ class Datagrid {
                 return undefined;
             };
 
-            const cellEdited = cell => {
+            const cellEdited = (cell) => {
                 $(cell.getElement()).off('keyup');
                 const oldValue = isUndefined(cell.getOldValue()) ? '' : cell.getOldValue();
                 const value = cell.getValue();
@@ -731,13 +725,13 @@ class Datagrid {
                 } else {
                     if (value !== oldValue) {
                         if (isUndefined(value) || value === '') {
-                            this.savingPromise = removeValue(cell.getData()).catch(err => {
+                            this.savingPromise = removeValue(cell.getData()).catch((err) => {
                                 cell.restoreOldValue();
                                 // TODO: message saying
                                 // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
                             });
                         } else {
-                            this.savingPromise = saveValue(cell.getData(), value).catch(err => {
+                            this.savingPromise = saveValue(cell.getData(), value).catch((err) => {
                                 cell.restoreOldValue();
                                 // TODO: message saying
                                 // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
@@ -747,20 +741,22 @@ class Datagrid {
                 }
             };
 
-            const cellEditCancelled = cell => {
+            const cellEditCancelled = (cell) => {
                 $(cell.getElement()).off('keyup');
                 const value = cell.getValue();
                 const validationResult = validateAndStyle(cell, value);
             };
 
-            let column = assign({}, entityOptions, {
+            let column = {
+                ...entityOptions,
                 title: escape(String(title)),
                 field: entityOptions.id,
                 cssClass: getCssClasses(entityOptions, isNumberEntity),
                 cellClick: getCellClickHandler(),
-                cellDblClick : getCellDoubleClickHandler,
+                cellDblClick: getCellDoubleClickHandler,
                 formatter: getFormatter(),
                 sortByFormatted: entityOptions.sortByFormatted,
+                filterByFormatted: entityOptions.filterByFormatted,
                 sorter: entityOptions.sortByFormatted
                     ? createFormattedSorter(entityOptions.id, getFormatter('sort'), tabulatorSorters)
                     : getSorter(entity, tabulatorSorters),
@@ -773,8 +769,8 @@ class Datagrid {
                 elementType: displayEntity.getElementType(),
                 scenario: columnScenario,
                 getRowKey: getRowKey,
-                validate: validateAndStyle
-            });
+                validate: validateAndStyle,
+            };
 
             if (gridOptions.columnFilter) {
                 const getHeaderFilter = () => {
@@ -791,8 +787,8 @@ class Datagrid {
                             values: [
                                 { value: undefined, label: 'No Filter' },
                                 { value: String(checkedValue), label: 'Checked' },
-                                { value: String(uncheckedValue), label: 'Unchecked' }
-                            ]
+                                { value: String(uncheckedValue), label: 'Unchecked' },
+                            ],
                         };
                     }
                 };
@@ -807,7 +803,7 @@ class Datagrid {
 
                     const optionMatch = find(
                         params.values,
-                        keyValue => keyValue.value === valueString || keyValue.label === valueString
+                        (keyValue) => keyValue.value === valueString || keyValue.label === valueString
                     );
                     if (isUndefined(optionMatch)) {
                         return false;
@@ -815,14 +811,14 @@ class Datagrid {
                     return optionMatch.value === cellValueTxt;
                 };
 
-                const checkboxFilterEmptyCheck = value => {
+                const checkboxFilterEmptyCheck = (value) => {
                     if (value == null) {
                         return true;
                     }
                     const valueString = String(value);
                     const optionMatch = find(
                         headerFilterParams.values,
-                        keyValue => keyValue.value === valueString || keyValue.label === valueString
+                        (keyValue) => keyValue.value === valueString || keyValue.label === valueString
                     );
                     return isUndefined(optionMatch) || isUndefined(optionMatch.value);
                 };
@@ -858,25 +854,28 @@ class Datagrid {
                     };
                 };
 
-                column = assign(column, {
+                column = {
+                    ...column,
                     headerFilterPlaceholder: 'No filter',
                     headerFilter: headerFilter,
                     headerFilterParams: headerFilterParams,
                     headerFilterFuncParams: headerFilterParams,
                     headerFilterFunc: getHeaderFilterFn(),
-                    headerFilterEmptyCheck: getHeaderFilterEmptyCheckFn()
-                });
+                    headerFilterEmptyCheck: getHeaderFilterEmptyCheckFn(),
+                };
             }
 
             return column;
         });
 
-        const calculatedColumns = map(calculatedColumnsOptions, options => {
+        const calculatedColumns = map(calculatedColumnsOptions, (options) => {
             const title = get(options, 'title', options.name);
 
-            const getFormatter = (type = 'display') => cell => options.render(cell.getValue(), type, getRowDataForColumns(cell.getData()));
+            const getFormatter = (type = 'display') => (cell) =>
+                options.render(cell.getValue(), type, getRowDataForColumns(cell.getData()));
 
-            let column = assign({}, options, {
+            let column = {
+                ...options,
                 title: escape(String(title)),
                 formatter: getFormatter(),
                 name: options.name,
@@ -884,9 +883,10 @@ class Datagrid {
                 cssClass: getCssClasses(options, false),
                 elementType: enums.DataType.STRING,
                 sortByFormatted: true,
+                filterByFormatted: true,
                 sorter: createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters),
                 accessorDownload: (value, rowData) => options.render(value, 'display', getRowDataForColumns(rowData)),
-            });
+            };
 
             if (gridOptions.columnFilter) {
                 const getHeaderFilterFn = () => {
@@ -900,21 +900,25 @@ class Datagrid {
                     return undefined;
                 };
 
-                column = assign(column, {
+                column = {
+                    ...column,
                     headerFilterPlaceholder: 'No filter',
                     headerFilter: !!gridOptions.columnFilter,
-                    headerFilterFunc: getHeaderFilterFn()
-                });
+                    headerFilterFunc: getHeaderFilterFn(),
+                };
             }
 
             return column;
         });
 
-        let columns = sortBy([].concat(indicesColumns, entitiesColumns, calculatedColumns), column => column.index || -1);
+        let columns = sortBy(
+            [].concat(indicesColumns, entitiesColumns, calculatedColumns),
+            (column) => column.index || -1
+        );
 
         let freezeColumns = parseInt(gridOptions.freezeColumns);
         if (freezeColumns && !isNaN(freezeColumns)) {
-            columns = map(columns, function(col, idx) {
+            columns = map(columns, function (col, idx) {
                 if (idx < freezeColumns) {
                     col.frozen = true;
                 }
@@ -935,7 +939,7 @@ class Datagrid {
         );
 
         const editable = some(
-            reject(entitiesOptions, options => !get(options, 'visible', true)),
+            reject(entitiesOptions, (options) => !get(options, 'visible', true)),
             'editable'
         );
         if (!editable && gridOptions.addRemoveRow) {
@@ -958,23 +962,25 @@ class Datagrid {
         table.setColumns(columns);
         this.initialSortOrder = map(
             sortBy(
-                filter(columns, column => !isUndefined(column.sortOrder)),
+                filter(columns, (column) => !isUndefined(column.sortOrder)),
                 'sortOrder'
             ),
-            column => ({
+            (column) => ({
                 column: column.id,
-                dir: column.sortDirection
+                dir: column.sortDirection,
             })
         );
 
         if (isEmpty(this.initialSortOrder)) {
-            console.debug('No initial column sort order. Going to apply sort order onto index columns, except where disable-set-sorting is specified.');
+            console.debug(
+                'No initial column sort order. Going to apply sort order onto index columns, except where disable-set-sorting is specified.'
+            );
             this.initialSortOrder = reverse(
                 map(
                     filter(columns, (c) => c.dataType === enums.DataType.SET && !c.disableSetSorting),
                     (column) => ({
                         column: column.id,
-                        dir: 'asc'
+                        dir: 'asc',
                     })
                 )
             );
@@ -994,9 +1000,7 @@ class Datagrid {
             } else {
                 return new Promise((resolve, reject) => {
                     delay(() => {
-                        redraw()
-                            .then(resolve)
-                            .catch(reject);
+                        redraw().then(resolve).catch(reject);
                     }, 100);
                 });
             }
@@ -1018,7 +1022,7 @@ class Datagrid {
                 .setData(data)
                 .then(() => redraw())
                 .then(() => (this.table.element.style.visibility = 'visible'))
-                .catch(e => {
+                .catch((e) => {
                     console.error('An error occurred whilst adding data to Tabulator and redrawing', e);
                 })
         );
@@ -1026,9 +1030,9 @@ class Datagrid {
 
     validate() {
         const editableColumns = filter(this.entitiesColumns, 'editable');
-        each(editableColumns, column => {
+        each(editableColumns, (column) => {
             const cells = this.table.columnManager.columnsByField[column.field].cells;
-            each(cells, cell => {
+            each(cells, (cell) => {
                 column.validate(cell.getComponent(), cell.getValue());
             });
         });
@@ -1037,7 +1041,7 @@ class Datagrid {
     dispose() {
         this.view.removeUnloadHandler(this.unloadHandlerId);
         this.table.destroy();
-        each(this.subscriptions, subscription => subscription.dispose());
+        each(this.subscriptions, (subscription) => subscription.dispose());
     }
 }
 

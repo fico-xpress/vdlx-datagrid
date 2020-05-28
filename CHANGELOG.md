@@ -5,6 +5,7 @@
 - Custom CSS classes can be added per column using the `class` attribute, a space-separated list of class names that
   can be a static string or an expression. This fixes an issue where the `class` attribute was not applying the specified 
   class names to a column.
+- Fixed column filtering on calculated columns
 
 ## v4.7.0
 
