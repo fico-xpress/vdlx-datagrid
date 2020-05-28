@@ -90,6 +90,30 @@ const resolveDisplayEntity = (schema, entity) => {
     return schema.getEntity(labelsEntityName);
 };
 
+/**
+ * Generate the CSS class string for an index or array column.
+ *
+ * @param {object} columnOptions
+ * @param {string} [columnOptions.editorType] Editor type of the column, if an array column
+ * @param {string} [columnOptions.style] User-defined style for the column
+ * @param {boolean} isNumeric
+ * @param {boolean} [isIndex]
+ * @returns {string} The CSS style string. Space-separated list of class names
+ */
+export const getCssClasses = (columnOptions, isNumeric, isIndex = false) => {
+    let classes = isIndex ? ['index'] : [];
+    if (isNumeric) {
+        classes.push('numeric');
+    }
+    if (columnOptions.editorType === EDITOR_TYPES.select) {
+        classes.push('select-editor');
+    }
+    if (columnOptions.style) {
+        classes = classes.concat(String(columnOptions.style).trim().split(/\s+/));
+    }
+    return classes.join(' ');
+};
+
 const VALIDATION_ERROR_TITLE = 'Validation Error';
 
 class Datagrid {
@@ -487,14 +511,6 @@ class Datagrid {
             const isNumberEntity = dataUtils.entityTypeIsNumber(displayEntity);
 
             const title = get(options, 'title', entity.getAbbreviation() || name);
-            const getClass = () => {
-                let classes = ['index'];
-                if (isNumberEntity) {
-                    classes = classes.concat('numeric');
-                }
-                return classes.join(' ');
-            };
-
             const defaultFormatter = cell => SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue());
 
             const getFormatter = (type = 'display') => {
@@ -508,7 +524,7 @@ class Datagrid {
             let column = assign({}, setNameAndPosn.options, {
                 title: escape(String(title)),
                 field: options.id,
-                cssClass: getClass(),
+                cssClass: getCssClasses(options, isNumberEntity, true),
                 formatter: getFormatter(),
                 sorter: options.sortByFormatted
                     ? createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters)
@@ -737,21 +753,10 @@ class Datagrid {
                 const validationResult = validateAndStyle(cell, value);
             };
 
-            const getClasses = () => {
-                let classes = [];
-                if (isNumberEntity) {
-                    classes = classes.concat('numeric');
-                }
-                if (entityOptions.editorType === EDITOR_TYPES.select) {
-                    classes = classes.concat('select-editor');
-                }
-                return classes.join(' ');
-            };
-
             let column = assign({}, entityOptions, {
                 title: escape(String(title)),
                 field: entityOptions.id,
-                cssClass: getClasses(),
+                cssClass: getCssClasses(entityOptions, isNumberEntity),
                 cellClick: getCellClickHandler(),
                 cellDblClick : getCellDoubleClickHandler,
                 formatter: getFormatter(),
@@ -876,6 +881,7 @@ class Datagrid {
                 formatter: getFormatter(),
                 name: options.name,
                 field: options.id,
+                cssClass: getCssClasses(options, false),
                 elementType: enums.DataType.STRING,
                 sortByFormatted: true,
                 sorter: createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters),
