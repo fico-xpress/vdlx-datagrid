@@ -43,6 +43,7 @@
     "typescript": "^3.9.3"
   },
   "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.10.1",
     "autoprefixer": "^9.7.6",
     "bestzip": "^2.1.5",
     "copyfiles": "^2.2.0",
