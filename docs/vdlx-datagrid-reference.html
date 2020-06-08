@@ -136,7 +136,7 @@
         <div id="product-name" class="pull-left">FICO<sup>&reg;</sup> Xpress Insight</div>
         <div class="product-sub-title">
             <div class="product-title">vdlx-datagrid reference</div>
-            <div class="product-version">version 4.7.0</div>
+            <div class="product-version">version 4.7.1</div>
         </div>
     </div>
     <div id="main-nav">
@@ -168,10 +168,12 @@
     <div class="vdl-extension-detail" id="introduction">
         <p>
             <code>vdlx-datagrid</code> provides a way to bind model entities to a table element within VDL views. It offers
-            much improved performance for larger data sets compared with <code>vdl-table</code>.
+            much improved performance for larger data sets compared with <code>vdl-table</code>. The project's website
+            is located at <a href="https://github.com/fico-xpress/vdlx-datagrid" target="_blank">https://github.com/fico-xpress/vdlx-datagrid</a>
         </p>
 
-        <p>Download the appropriate release version of <code>vdx-datagrid</code> from the GitHub webiste.
+        <p>Download a release version of <code>vdx-datagrid</code> from the project's website,
+            <a href="https://github.com/fico-xpress/vdlx-datagrid/releases" target="_blank">https://github.com/fico-xpress/vdlx-datagrid/releases</a>.
             The first two digits of the vdlx-datagrid release version number must match the version of VDL you are
             using to develop. For example, if you are developing for VDL 4.6, download vdlx-datagrid version 4.6.x.
         </p>
@@ -938,7 +940,7 @@
                     render
                 </th>
                 <td>
-                    Reference to a custom cell renderer. Overrides any default entity rendering. This will be used to generate the cell value for rendering, filtering and sorting. It must be an expression and resolves as a function, this function should return a string.
+                    Reference to a custom cell renderer. Overrides any default entity rendering. This will be used to generate the cell value for rendering, filtering and sorting. It must be an expression and resolves as a function, this function should return a string. Render callback may only reference entities through VDL expression that are not present on the table. If it is necessary to use entities data from other columns, then rowData array must be used in the render callback.
 
                     <div>
                     </div>
