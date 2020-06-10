@@ -23,6 +23,7 @@
 import '../css/vdlx-datagrid.scss';
 import 'tabulator-tables/dist/css/bootstrap/tabulator_bootstrap.css';
 
+import './data-store-fix';
 import './vdlx-datagrid';
 import './vdlx-datagrid-column';
 import './vdlx-datagrid-index-filter';
