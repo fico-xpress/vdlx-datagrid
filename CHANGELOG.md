@@ -1,4 +1,5 @@
 # vdlx-datagrid changelog
+## v4.7.3
 
 ## v4.7.2
 
