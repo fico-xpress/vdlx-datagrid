@@ -1,5 +1,9 @@
 # vdlx-datagrid changelog
 
+## v4.7.2
+
+- Fixed pre-filtering when filtering a set with label arrays
+
 ## v4.7.1
 
 - Custom CSS classes can be added per column using the `class` attribute, a space-separated list of class names that
