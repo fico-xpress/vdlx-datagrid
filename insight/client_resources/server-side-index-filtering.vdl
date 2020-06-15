@@ -1,6 +1,9 @@
 <vdl version="4.7">
     <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+
+    <vdl-set-sorter set="MonthsOfYear" comparator="months"></vdl-set-sorter>
+
     <vdl-page>
         <vdl-section heading="Server-side index filtering">
             <vdl-row>
