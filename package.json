@@ -37,7 +37,7 @@
     "@types/tabulator-tables": "^4.6.6",
     "babel-jest": "^26.0.1",
     "esm": "^3.2.25",
-    "handlebars": "^4.7.3",
+    "handlebars": "^4.7.7",
     "jest": "^26.0.1",
     "jquery": "^3.5.1",
     "typescript": "^3.9.3"
