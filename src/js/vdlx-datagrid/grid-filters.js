@@ -91,6 +91,7 @@ const EQUALS_OPERATOR = '=';
 const NOT_OPERATOR = '!';
 const LESS_THAN_OPERATOR = '<';
 const GREATER_THAN_OPERATOR = '>';
+const REGEX_OPERATOR = '/';
 
 const LT = (a,b) => a < b;
 const LTEQ = (a,b) => a <= b;
@@ -110,10 +111,10 @@ let filter = (column, searchText, formattedCellValue, rowData, params) => {
     if (exactColumnSearch) {
         return _exactMatchCell(searchText.substring(1), String(cellValue), column);
     }
+    let operator;
     if(!!column.elementType && (column.elementType === Enums.DataType.INTEGER || column.elementType === Enums.DataType.REAL)) {
         const secondChar = searchText.length > 1 ? searchText.substring(1,2) : '';
         let operator_length = 0;
-        let operator;
         if (firstChar === LESS_THAN_OPERATOR) {
             if(secondChar === EQUALS_OPERATOR) { // '<='
                 operator_length = 2;
@@ -145,6 +146,28 @@ let filter = (column, searchText, formattedCellValue, rowData, params) => {
             return operator(cellValue, searchValue);
         }
     }
+
+    if (firstChar === REGEX_OPERATOR) { // '/'
+        let flags = '';
+        try {
+            let regexText = searchText.substr(1);
+            if(_.endsWith(regexText, '/i')) {
+                regexText = regexText.substr(0, regexText.length-2);
+                flags = 'i';
+            } else if (_.endsWith(regexText, '/')) {
+                regexText = regexText.substr(0, regexText.length-1);
+            }
+            let reg = new RegExp(regexText, flags);
+            operator = function(a,b) {
+                var result = reg.exec(a);
+                return !!result;
+            };
+        } catch (err) {
+            operator = (a,b) => { return true; };
+        }
+        return operator(cellValue);
+    }
+
     return _partialMatchCell(searchText, String(cellValue), column);
 };
 
