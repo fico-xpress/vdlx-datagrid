@@ -50,7 +50,7 @@
     "cross-env": "^7.0.2",
     "csv-stringify": "^4.3.1",
     "knockout": "^3.5.1",
-    "lodash-es": "^4.17.15",
+    "lodash-es": "^4.17.21",
     "mkdirp": "^1.0.4",
     "parcel-bundler": "^1.12.4",
     "parcel-plugin-wrapper": "^0.2.2",
