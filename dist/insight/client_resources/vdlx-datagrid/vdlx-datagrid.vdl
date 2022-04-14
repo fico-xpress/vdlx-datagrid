@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<vdl version="4.7">
+<vdl version="4.8">
     <script src="vdlx-datagrid/vdlx-datagrid.js"></script>
     <link rel="stylesheet" href="vdlx-datagrid/vdlx-datagrid.css">
 </vdl>
