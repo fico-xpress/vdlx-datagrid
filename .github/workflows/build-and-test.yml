@@ -20,3 +20,14 @@ jobs:
         npm run test:coverage
       env:
         CI: true
+    - name: Upload component bundle app
+        uses: actions/upload-artifact@v3
+        with:
+          name: vdlx-datagrid.zip
+          path: target/vdlx-datagrid.zip
+    - name: Upload example app
+        uses: actions/upload-artifact@v3
+        with:
+          name: vdlx-datagrid-examples-app.zip
+          path: target/vdlx-datagrid-examples-app.zip
+
