@@ -1,4 +1,4 @@
-<vdl version="4.7">
+<vdl version="4.8">
     <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 

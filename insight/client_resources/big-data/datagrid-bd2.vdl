@@ -20,7 +20,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<vdl version="4.7">
+<vdl version="4.8">
 
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
