@@ -1,4 +1,6 @@
 # vdlx-datagrid changelog
+## v4.8.1
+
 ## v4.8.0
 - Updated to VDL 4.8 compatibility.
 
