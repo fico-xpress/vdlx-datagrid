@@ -41,7 +41,6 @@ import reduce from 'lodash/reduce';
 import intersection from 'lodash/intersection';
 import find from 'lodash/find';
 import { ko, dataUtils, insightGetter } from '../insight-modules';
-import { IndexFilter } from '../../types';
 
 function findScenario(scenarios, identifier) {
     const result = find(scenarios, (scenario) => scenario.getId() === identifier);
