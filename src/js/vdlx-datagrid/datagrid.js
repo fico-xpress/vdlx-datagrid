@@ -490,7 +490,15 @@ class Datagrid {
         const table = this.table;
         const schema = this.schema;
         const indicesOptions = columnOptions.indicesOptions;
-        const entitiesOptions = columnOptions.columnOptions;
+        const entitiesOptions = map(columnOptions.columnOptions, (options) => {
+            return {
+                ...options,
+                editable:
+                    options.editable &&
+                    get(scenariosData.scenarios, options.id, scenariosData.defaultScenario).isEditable(),
+            };
+        });
+        
         const calculatedColumnsOptions = columnOptions.calculatedColumnsOptions;
         const allColumnIndices = getAllColumnIndices(schema, entitiesOptions);
 
