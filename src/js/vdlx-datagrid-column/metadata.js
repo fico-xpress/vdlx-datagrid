@@ -50,7 +50,8 @@ export default {
     },
     {
         name: 'editable',
-        description: 'Whether the cells within this column are editable.',
+        description: 'Whether the cells within this column are editable. The column will automatically switch to read-only ' +
+            'whilst the bound scenario is reserved for execution.',
         acceptsExpression: true,
         valueType: 'boolean'
     },
@@ -157,7 +158,7 @@ export default {
         description:
             'Reference to a custom cell renderer. Overrides any default entity rendering. This will be used to generate the cell value ' +
             'for rendering, filtering and sorting. It must be an expression and resolves as a function, this function should return a string. ' +
-            'Render callback may only reference entities through VDL expression that are not present on the table. ' + 
+            'Render callback may only reference entities through VDL expression that are not present on the table. ' +
             'If it is necessary to use entities data from other columns, then rowData array must be used in the render callback.',
         acceptsExpression: true,
         expressionVars: [
