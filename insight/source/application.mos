@@ -22,7 +22,7 @@
 *******************************************************!)
 model "vdlx-datagrid examples"
   uses "mminsight"
-  version 4.8.0
+  version 4.8.1
 
   !@insight.resultdata.delete on-execute
   !@insight.execmodes.FAST.threads=1
