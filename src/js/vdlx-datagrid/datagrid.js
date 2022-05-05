@@ -225,11 +225,6 @@ class Datagrid {
                             this.tableLock.lock();
                         }
 
-                        // Dismiss add row dialog, if open
-                        if (this.addRemoveRowControl) {
-                            this.addRemoveRowControl.dismiss();
-                        }
-
                         return perf('vdlx-datagrid total build time:', () =>
                             this.setColumnsAndData(gridOptions, columnOptions, scenariosData).then(() =>
                                 this.tableLock.unlock()
@@ -484,8 +479,17 @@ class Datagrid {
      */
     updateAddRemoveControl(enabled, indicesColumns, entitiesColumns, defaultScenario, allSetValues, data) {
         if (this.addRemoveRowControl) {
+            // Dismiss add row dialog if open on table update
+            this.addRemoveRowControl.dismiss();
             this.addRemoveRowControl.setEnabled(enabled);
             this.addRemoveRowControl.update(indicesColumns, entitiesColumns, defaultScenario, allSetValues, data);
+        }
+    }
+
+    cancelPendingEdits() {
+        let editingCell = this.table?.modules?.edit?.getCurrentCell();
+        if (editingCell) {
+            editingCell.cancelEdit();
         }
     }
 
@@ -493,6 +497,9 @@ class Datagrid {
         const table = this.table;
         const schema = this.schema;
         const indicesOptions = columnOptions.indicesOptions;
+
+        this.cancelPendingEdits();
+
         const entitiesOptions = map(columnOptions.columnOptions, (options) => {
             return {
                 ...options,
@@ -734,7 +741,12 @@ class Datagrid {
                     cell.restoreOldValue();
                     validateAndStyle(cell, cell.getValue());
                     dialogs.alert(validationResult.errorMessage, VALIDATION_ERROR_TITLE, () => {
-                        defer(() => cell.edit(true));
+                        defer(() => {
+                            // Check the cell element still exists, the validation dialog can be invoked when the table redraws
+                            if (cell.getElement()) {
+                                cell.edit(true)
+                            }
+                        });
                     });
                     this.savingPromise = Promise.reject({message: validationResult.errorMessage});
                 } else {
