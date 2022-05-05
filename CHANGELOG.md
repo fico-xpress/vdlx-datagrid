@@ -1,7 +1,8 @@
 # vdlx-datagrid changelog
 ## v4.8.1
 
-- Columns automatically switch to read-only when the bound scenario is reserved for execution. 
+- Columns automatically switch to read-only when the bound scenario is reserved for execution
+- Add/Remove row buttons are disabled rather than hidden when an editable vdlx-datagrid goes read-only
 
 ## v4.8.0
 
