@@ -20,7 +20,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<vdl version="4.8">
+<vdl version="4.8" default-execution-overlay="disabled">
     <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
 
@@ -43,21 +43,30 @@ limitations under the License.
                     This example shows that table columns can be made editable by providing
                     an <code>editable</code> attribute. It can be either an expression or a boolean string.
                 </p>
+                <p>
+                    When the scenario bound to an editable column is reserved for execution (e.g. queued, loading or
+                    running) Then the editable column will automatically become read-only until execution has completed.
+                </p>
+                <p>
+                    This view has <code>default-execution-overlay="disabled"</code> declared in the top-level
+                    <code>vdl</code> tag so that you can see the editable cells go read-only during execution.
+                </p>
             </vdl-row>
             <vdl-column heading="Editable table" size="12">
                 <vdl-row>
                     <vdl-form vdl-repeat-contents="=s,i in scenarios">
                         <vdl-field scenario="=i" entity="MyBool" label-size="6"
-                                   label="='Make ' + s.props.name + ' agreements editable'">
+                                   label="='Make ' + s.props.name + ' Agreements column editable'">
                         </vdl-field>
                     </vdl-form>
                 </vdl-row>
                 <vdl-row>
-                    <vdlx-datagrid>
-                        <vdlx-datagrid-column entity="SupportCosts" editable="true" heading="SUPPORT COSTS"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column entity="ServiceLevelAgreements" editable="=scenario.entities.MyBool.value" >
-                            Agreements
-                        </vdlx-datagrid-column>
+                    <vdlx-datagrid vdl-repeat-contents="=s,i in scenarios">
+                        <vdlx-datagrid-column scenario="=i" entity="SupportCosts" editable="true"
+                                              heading="='Support Costs (' + s.props.name + ')'"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column scenario="=i" entity="ServiceLevelAgreements"
+                                              editable="=scenarios[i].entities.MyBool.value"
+                                              heading="='Agreements (' + s.props.name + ')'"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-row>
             </vdl-column>
@@ -65,41 +74,42 @@ limitations under the License.
             <vdl-column size="12" heading="Source Code">
                 <code-panel>
 &lt;vdl-form vdl-repeat-contents=&quot;=s,i in scenarios&quot;&gt;
-    &lt;vdl-field
-            scenario=&quot;=i&quot;
-            entity=&quot;MyBool&quot;
-            label=&quot;=&apos;Make &apos; + s.props.name + &apos; agreements editable&apos;&quot;&gt;
+    &lt;vdl-field scenario=&quot;=i&quot; entity=&quot;MyBool&quot; label-size=&quot;6&quot;
+               label=&quot;=&#39;Make &#39; + s.props.name + &#39; Agreements column editable&#39;&quot;&gt;
     &lt;/vdl-field&gt;
 &lt;/vdl-form&gt;
+
 &lt;vdlx-datagrid vdl-repeat-contents=&quot;=s,i in scenarios&quot;&gt;
-    &lt;vdlx-datagrid-column
-            entity=&quot;SupportCosts&quot;
-            editable=&quot;true&quot;
-            heading=&quot;SUPPORT COSTS&quot;
-            scenario=&quot;=i&quot;&gt;&lt;/vdlx-datagrid-column&gt;
-    &lt;vdlx-datagrid-column
-            entity=&quot;ServiceLevelAgreements&quot;
-            editable=&quot;=s.entities.MyBool.value&quot;
-            scenario=&quot;=i&quot;&gt;Agreements&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column scenario=&quot;=i&quot; entity=&quot;SupportCosts&quot; editable=&quot;true&quot;
+                          heading=&quot;=&#39;Support Costs (&#39; + s.props.name + &#39;)&#39;&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column scenario=&quot;=i&quot; entity=&quot;ServiceLevelAgreements&quot;
+                          editable=&quot;=scenarios[i].entities.MyBool.value&quot;
+                          heading=&quot;=&#39;Agreements (&#39; + s.props.name + &#39;)&#39;&quot;&gt;&lt;/vdlx-datagrid-column&gt;
 &lt;/vdlx-datagrid&gt;
                 </code-panel>
             </vdl-column>
         </vdl-section>
 
-		 <vdl-section heading="Boolean inputs">
+        <vdl-section heading="Boolean inputs">
             <vdl-row class="example">
                 <vdl-row>
                     <vdl-column size="6">
-                        <p>The table below uses booleans where the value is stored into a boolean field and alternatively where it is stored as a string.</p>
+                        <p>The table below uses booleans where the value is stored into a boolean field and
+                            alternatively where it is stored as a string.</p>
                     </vdl-column>
                 </vdl-row>
 
                 <vdl-column size="6">
                     <vdlx-datagrid page-size="10" page-mode="paged" show-filter="true" column-filter="true">
-                        <vdlx-datagrid-column set="SupportLevels" editable="true" filter-by-formatted="true"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="SupportLevels" editable="true"
+                                              filter-by-formatted="true"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="SupportRenewed" editable="true"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column entity="SupportRenewed" heading="Support Not Renewed" editable="true" editor-checked-value="false" editor-unchecked-value="true"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column entity="SupportPaid" editable="true" editor-type="checkbox" editor-unchecked-value="Pending" editor-checked-value="Paid"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="SupportRenewed" heading="Support Not Renewed" editable="true"
+                                              editor-checked-value="false"
+                                              editor-unchecked-value="true"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="SupportPaid" editable="true" editor-type="checkbox"
+                                              editor-unchecked-value="Pending"
+                                              editor-checked-value="Paid"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column size="6" heading="Source code">
