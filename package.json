@@ -57,7 +57,7 @@
     "postcss-modules": "^1.5.0",
     "rimraf": "^3.0.2",
     "sass": "^1.26.5",
-    "tabulator-tables": "^4.6.3"
+    "tabulator-tables": "^4.9.3"
   },
   "browserslist": {
     "production": [

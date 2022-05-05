@@ -368,7 +368,7 @@ class Datagrid {
         if (columnsWidth < tableWidth || inRange(columnsWidth, tableOffsetWidth - 2, tableOffsetWidth + 2)) {
             const columns = filter(
                 reject(this.table.getColumns(), (column) => !!column.getDefinition().width),
-                (column) => column.getVisibility()
+                (column) => column.isVisible()
             );
             const toAddPx = (tableWidth - columnsWidth) / columns.length;
 
