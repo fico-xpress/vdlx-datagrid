@@ -79,6 +79,7 @@ export default class AddRemove {
         this.rowIndexGenerator = rowIndexGenerator;
         this.autoinc = autoinc;
         this.defaultScenario = undefined;
+        this.enabled = false;
     }
 
     /**
@@ -104,6 +105,7 @@ export default class AddRemove {
      * @memberof AddRemove
      */
     setEnabled(enabled) {
+        this.enabled = enabled;
         let buttons = this.$addRemoveControl[0].querySelectorAll('button');
         for (let button of buttons) {
             button.disabled = !enabled;
@@ -311,6 +313,10 @@ export default class AddRemove {
     }
 
     setSelectedRow(row) {
+        if (!this.enabled) {
+            return;
+        }
+
         this.selectedRow = row;
         if (this.selectedRow) {
             this.$addRemoveControl
