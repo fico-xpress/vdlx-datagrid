@@ -20,7 +20,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import each  from 'lodash/each';
+import each from 'lodash/each';
 import mapValues from 'lodash/mapValues';
 import max from 'lodash/max';
 import isEmpty from 'lodash/isEmpty';
@@ -36,7 +36,7 @@ import uniqueId from 'lodash/uniqueId';
 import zip from 'lodash/zip';
 import constant from 'lodash/constant';
 import map from 'lodash/map';
-import { dialogs } from '../insight-modules';
+import {dialogs} from '../insight-modules';
 
 const ADD_REMOVE_TEMPLATE = `
 <div class="add-remove-control">
@@ -60,6 +60,8 @@ const ADD_REMOVE_TEMPLATE = `
 </div>
 `;
 
+const DIALOG_CLASS = 'vdlx-datagrid-add-row';
+
 export default class AddRemove {
     /**
      * @param {*} table The Tabulator object
@@ -77,6 +79,7 @@ export default class AddRemove {
         this.rowIndexGenerator = rowIndexGenerator;
         this.autoinc = autoinc;
         this.defaultScenario = undefined;
+        this.enabled = false;
     }
 
     /**
@@ -102,7 +105,18 @@ export default class AddRemove {
      * @memberof AddRemove
      */
     setEnabled(enabled) {
-        enabled ? this.$addRemoveControl.show() : this.$addRemoveControl.hide();
+        this.enabled = enabled;
+        let buttons = this.$addRemoveControl[0].querySelectorAll('button');
+        for (let button of buttons) {
+            button.disabled = !enabled;
+        }
+    }
+
+    dismiss() {
+        let elements = document.getElementsByClassName(DIALOG_CLASS);
+        for (let element of elements) {
+            $(element).modal('hide');
+        }
     }
 
     addNewRowToTable(newRow) {
@@ -134,9 +148,9 @@ export default class AddRemove {
             .then(row => {
                 const $row = $(row.getElement());
                 $row.addClass('highlight').css('opacity', 0.2);
-                $row.animate({ opacity: 1.0 });
-                $row.animate({ opacity: 0.2 });
-                $row.animate({ opacity: 1.0 }, 2000, 'swing', function() {
+                $row.animate({opacity: 1.0});
+                $row.animate({opacity: 0.2});
+                $row.animate({opacity: 1.0}, 2000, 'swing', function () {
                     $row.removeClass('highlight');
                 });
             });
@@ -220,6 +234,7 @@ export default class AddRemove {
             onEscape: true,
             closeButton: true,
             message: $message,
+            className: DIALOG_CLASS,
             buttons: {
                 ok: {
                     label: 'OK',
@@ -243,7 +258,7 @@ export default class AddRemove {
 
     autoAddRow() {
         const nextValue = isEmpty(this.allSetValues[0]) ? 1 : max(map(this.allSetValues[0], 'key')) + 1;
-        const { name, field } = this.indicesColumns[0];
+        const {name, field} = this.indicesColumns[0];
 
         const commitPromise = this.defaultScenario
             .modify()
@@ -254,7 +269,7 @@ export default class AddRemove {
         return commitPromise
             .then(() => this.addNewRowToTable(set({}, field, nextValue)))
             .then(() => {
-                this.allSetValues[0] = this.allSetValues[0].concat({ key: nextValue, value: nextValue });
+                this.allSetValues[0] = this.allSetValues[0].concat({key: nextValue, value: nextValue});
             })
             .catch(() => dialogs.alert('Could not add row. There was an issue updating the server.', 'Row add failed'))
             .then(() => this.$addRemoveControl.find('button.btn-table-add-row').removeAttr('disabled'));
@@ -298,6 +313,10 @@ export default class AddRemove {
     }
 
     setSelectedRow(row) {
+        if (!this.enabled) {
+            return;
+        }
+
         this.selectedRow = row;
         if (this.selectedRow) {
             this.$addRemoveControl

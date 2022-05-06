@@ -21,7 +21,7 @@
     limitations under the License.
  */
 import Tabulator from 'tabulator-tables/dist/js/tabulator';
-import { getSorter, getSetSorter, createFormattedSorter } from './datagrid-sorter';
+import {getSorter, getSetSorter, createFormattedSorter} from './datagrid-sorter';
 import dataTransform, {
     getAllColumnIndices,
     getDisplayIndices,
@@ -31,13 +31,13 @@ import dataTransform, {
 import withScenarioData from './data-loader';
 import exportCsv from './export-csv';
 import Paginator from './paginator';
-import { getRowData } from './utils';
-import { EDITOR_TYPES } from '../constants';
+import {getRowData} from './utils';
+import {EDITOR_TYPES} from '../constants';
 import AddRemove from './add-remove';
-import { chooseColumnFilter } from './grid-filters';
-import { perf, perfMessage } from '../performance-measurement';
-import { createStateManager } from './state-persistence';
-import { DatagridLock } from './datagrid-lock';
+import {chooseColumnFilter} from './grid-filters';
+import {perf, perfMessage} from '../performance-measurement';
+import {createStateManager} from './state-persistence';
+import {DatagridLock} from './datagrid-lock';
 import escape from 'lodash/escape';
 import delay from 'lodash/delay';
 import some from 'lodash/some';
@@ -64,18 +64,19 @@ import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
 import constant from 'lodash/constant';
-import { withEquals } from '../ko-utils';
+import {withEquals} from '../ko-utils';
 import keys from 'lodash/keys';
-import { dialogs, dataUtils, SelectOptions, enums, ko, insightGetter } from '../insight-modules';
+import {dialogs, dataUtils, SelectOptions, enums, ko, insightGetter} from '../insight-modules';
 import reverse from 'lodash/reverse';
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
+const FILTER_PLACEHOLDER_TEXT = 'No Filter';
 
 const addSelectNull = (items) => {
     if (isArray(items)) {
         // add empty option to the start of the list
-        return [{ key: undefined, value: '' }].concat(items);
+        return [{key: undefined, value: ''}].concat(items);
     }
     return items;
 };
@@ -187,7 +188,7 @@ class Datagrid {
         const columnOptions$ = this.columnOptions$;
         const gridOptions$ = this.gridOptions$;
         const filters$ = this.filters$;
-        const { data: scenariosData$, errors: errors$ } = withScenarioData(columnOptions$, filters$);
+        const {data: scenariosData$, errors: errors$} = withScenarioData(columnOptions$, filters$);
 
         const allOptions$ = withEquals(
             ko.pureComputed(() => {
@@ -219,7 +220,7 @@ class Datagrid {
                 .pureComputed(() => {
                     const allOptions = allOptions$();
                     if (allOptions) {
-                        const { gridOptions, columnOptions, scenariosData } = allOptions;
+                        const {gridOptions, columnOptions, scenariosData} = allOptions;
 
                         if (!isEmpty(get(columnOptions, 'columnOptions'))) {
                             this.tableLock.lock();
@@ -252,7 +253,7 @@ class Datagrid {
 
     saveState() {
         if (this.stateManager) {
-            let sorters = map(this.table.getSorters(), (sorter) => ({ dir: sorter.dir, column: sorter.field }));
+            let sorters = map(this.table.getSorters(), (sorter) => ({dir: sorter.dir, column: sorter.field}));
             if (isEqual(this.initialSortOrder, sorters)) {
                 sorters = [];
             }
@@ -331,9 +332,7 @@ class Datagrid {
             invalidOptionWarnings: false,
         };
 
-        const table = new Tabulator(`#${options.tableId}`, tabulatorOptions);
-
-        return table;
+        return new Tabulator(`#${options.tableId}`, tabulatorOptions);
     }
 
     recalculateHeight(options) {
@@ -370,7 +369,7 @@ class Datagrid {
         if (columnsWidth < tableWidth || inRange(columnsWidth, tableOffsetWidth - 2, tableOffsetWidth + 2)) {
             const columns = filter(
                 reject(this.table.getColumns(), (column) => !!column.getDefinition().width),
-                (column) => column.getVisibility()
+                (column) => column.isVisible()
             );
             const toAddPx = (tableWidth - columnsWidth) / columns.length;
 
@@ -395,7 +394,7 @@ class Datagrid {
                 rowData: rowData,
                 value: cell.getValue(),
                 element: cell.getElement(),
-                displayPosition: { row: rowPosition, column: cellIndex },
+                displayPosition: {row: rowPosition, column: cellIndex},
             });
 
             const cells = map(row.getCells(), getCell);
@@ -481,8 +480,17 @@ class Datagrid {
      */
     updateAddRemoveControl(enabled, indicesColumns, entitiesColumns, defaultScenario, allSetValues, data) {
         if (this.addRemoveRowControl) {
+            // Dismiss add row dialog if open on table update
+            this.addRemoveRowControl.dismiss();
             this.addRemoveRowControl.setEnabled(enabled);
             this.addRemoveRowControl.update(indicesColumns, entitiesColumns, defaultScenario, allSetValues, data);
+        }
+    }
+
+    cancelPendingEdits() {
+        let editingCell = this.table?.modules?.edit?.getCurrentCell();
+        if (editingCell) {
+            editingCell.cancelEdit();
         }
     }
 
@@ -490,7 +498,18 @@ class Datagrid {
         const table = this.table;
         const schema = this.schema;
         const indicesOptions = columnOptions.indicesOptions;
-        const entitiesOptions = columnOptions.columnOptions;
+
+        this.cancelPendingEdits();
+
+        const entitiesOptions = map(columnOptions.columnOptions, (options) => {
+            return {
+                ...options,
+                editable:
+                    options.editable &&
+                    get(scenariosData.scenarios, options.id, scenariosData.defaultScenario).isEditable(),
+            };
+        });
+
         const calculatedColumnsOptions = columnOptions.calculatedColumnsOptions;
         const allColumnIndices = getAllColumnIndices(schema, entitiesOptions);
 
@@ -508,7 +527,7 @@ class Datagrid {
         const tabulatorSorters = this.table.modules.sort.sorters;
 
         const indicesColumns = map(setNamePosnsAndOptions, (setNameAndPosn) => {
-            const { name, options } = setNameAndPosn;
+            const {name, options} = setNameAndPosn;
             const entity = schema.getEntity(name);
             const displayEntity = resolveDisplayEntity(schema, entity);
             const isNumberEntity = dataUtils.entityTypeIsNumber(displayEntity);
@@ -532,8 +551,8 @@ class Datagrid {
                 sorter: options.sortByFormatted
                     ? createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters)
                     : options.disableSetSorting
-                    ? getSorter(entity, tabulatorSorters)
-                    : getSetSorter(entity),
+                        ? getSorter(entity, tabulatorSorters)
+                        : getSetSorter(entity),
                 filterByFormatted: options.filterByFormatted,
                 dataType: entity.getType(),
                 elementType: displayEntity.getElementType(),
@@ -555,7 +574,7 @@ class Datagrid {
 
                 column = {
                     ...column,
-                    headerFilterPlaceholder: 'No filter',
+                    headerFilterPlaceholder: FILTER_PLACEHOLDER_TEXT,
                     headerFilter: !!gridOptions.columnFilter,
                     headerFilterFunc: getHeaderFilterFn(),
                 };
@@ -584,7 +603,7 @@ class Datagrid {
                 return generateCompositeKey(tableKeys, setNameAndPosns, allColumnIndices[columnNumber], entityOptions);
             }, getRowDataForColumns);
 
-            const saveValue = (rowData, value) => setArrayElement({ key: getRowKey(rowData), value: value });
+            const saveValue = (rowData, value) => setArrayElement({key: getRowKey(rowData), value: value});
             const removeValue = (rowData) => removeArrayElement(getRowKey(rowData));
 
             const checkboxFormatter = (cell) => {
@@ -723,9 +742,14 @@ class Datagrid {
                     cell.restoreOldValue();
                     validateAndStyle(cell, cell.getValue());
                     dialogs.alert(validationResult.errorMessage, VALIDATION_ERROR_TITLE, () => {
-                        defer(() => cell.edit(true));
+                        defer(() => {
+                            // Check the cell element still exists, the validation dialog can be invoked when the table redraws
+                            if (cell.getElement()) {
+                                cell.edit(true)
+                            }
+                        });
                     });
-                    this.savingPromise = Promise.reject({ message: validationResult.errorMessage });
+                    this.savingPromise = Promise.reject({message: validationResult.errorMessage});
                 } else {
                     if (value !== oldValue) {
                         if (isUndefined(value) || value === '') {
@@ -794,9 +818,9 @@ class Datagrid {
                         const uncheckedValue = get(entityOptions, 'uncheckedValue', false);
                         return {
                             values: [
-                                { value: undefined, label: 'No Filter' },
-                                { value: String(checkedValue), label: 'Checked' },
-                                { value: String(uncheckedValue), label: 'Unchecked' },
+                                {value: undefined, label: FILTER_PLACEHOLDER_TEXT},
+                                {value: String(checkedValue), label: 'Checked'},
+                                {value: String(uncheckedValue), label: 'Unchecked'},
                             ],
                         };
                     }
@@ -865,7 +889,7 @@ class Datagrid {
 
                 column = {
                     ...column,
-                    headerFilterPlaceholder: 'No filter',
+                    headerFilterPlaceholder: FILTER_PLACEHOLDER_TEXT,
                     headerFilter: headerFilter,
                     headerFilterParams: headerFilterParams,
                     headerFilterFuncParams: headerFilterParams,
@@ -911,7 +935,7 @@ class Datagrid {
 
                 column = {
                     ...column,
-                    headerFilterPlaceholder: 'No filter',
+                    headerFilterPlaceholder: FILTER_PLACEHOLDER_TEXT,
                     headerFilter: !!gridOptions.columnFilter,
                     headerFilterFunc: getHeaderFilterFn(),
                 };
@@ -935,7 +959,7 @@ class Datagrid {
             });
         }
 
-        const { data, allSetValues } = perf('Data generation:', () =>
+        const {data, allSetValues} = perf('Data generation:', () =>
             dataTransform(
                 allColumnIndices,
                 columns,
