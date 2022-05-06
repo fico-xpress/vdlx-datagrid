@@ -1,5 +1,7 @@
 # vdlx-datagrid changelog
 
+## v4.8.2
+
 ## v4.8.1
 
 - Columns automatically switch to read-only when the bound scenario is reserved for execution.
