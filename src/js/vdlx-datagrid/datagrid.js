@@ -71,6 +71,7 @@ import reverse from 'lodash/reverse';
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
+const FILTER_PLACEHOLDER_TEXT = 'No Filter';
 
 const addSelectNull = (items) => {
     if (isArray(items)) {
@@ -573,7 +574,7 @@ class Datagrid {
 
                 column = {
                     ...column,
-                    headerFilterPlaceholder: 'No filter',
+                    headerFilterPlaceholder: FILTER_PLACEHOLDER_TEXT,
                     headerFilter: !!gridOptions.columnFilter,
                     headerFilterFunc: getHeaderFilterFn(),
                 };
@@ -817,7 +818,7 @@ class Datagrid {
                         const uncheckedValue = get(entityOptions, 'uncheckedValue', false);
                         return {
                             values: [
-                                {value: undefined, label: 'No Filter'},
+                                {value: undefined, label: FILTER_PLACEHOLDER_TEXT},
                                 {value: String(checkedValue), label: 'Checked'},
                                 {value: String(uncheckedValue), label: 'Unchecked'},
                             ],
@@ -888,7 +889,7 @@ class Datagrid {
 
                 column = {
                     ...column,
-                    headerFilterPlaceholder: 'No filter',
+                    headerFilterPlaceholder: FILTER_PLACEHOLDER_TEXT,
                     headerFilter: headerFilter,
                     headerFilterParams: headerFilterParams,
                     headerFilterFuncParams: headerFilterParams,
@@ -934,7 +935,7 @@ class Datagrid {
 
                 column = {
                     ...column,
-                    headerFilterPlaceholder: 'No filter',
+                    headerFilterPlaceholder: FILTER_PLACEHOLDER_TEXT,
                     headerFilter: !!gridOptions.columnFilter,
                     headerFilterFunc: getHeaderFilterFn(),
                 };
