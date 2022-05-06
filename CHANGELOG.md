@@ -1,16 +1,19 @@
 # vdlx-datagrid changelog
+
 ## v4.8.1
 
-- Columns automatically switch to read-only when the bound scenario is reserved for execution
-- Add/Remove row buttons are disabled rather than hidden when an editable vdlx-datagrid goes read-only
+- Columns automatically switch to read-only when the bound scenario is reserved for execution.
+- Add/Remove row buttons are disabled rather than hidden when an editable vdlx-datagrid goes read-only.
+- Upgraded to Tabulator 4.9.3.
 
 ## v4.8.0
 
 - Updated to VDL 4.8 compatibility.
+- Microsoft Edge is now supported. Internet Explorer 11 is no longer supported.
 
 ## v4.7.2
 
-- Fixed pre-filtering when filtering a set with label arrays
+- Fixed pre-filtering when filtering a set with label arrays.
 
 ## v4.7.1
 
