@@ -55,6 +55,12 @@ export default {
         valueType: 'boolean'
     },
     {
+        name: 'header-tooltip',
+        description: 'Tooltip content in column header',
+        acceptsExpression: true,
+        valueType: 'string'
+    },
+    {
         name: 'vdl-visible',
         acceptsExpression: true,
         docIgnore: true

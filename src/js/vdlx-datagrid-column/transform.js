@@ -99,6 +99,11 @@ export default (element, attributes, api) => {
                 setPosition = +setPosition;
             }
         }
+        
+        if(attributes['header-tooltip']){
+            paramsBuilder.addRawOrExpressionParam('tooltip', attributes['header-tooltip']);
+        }
+
         var entityType = entity.getType();
         if (entityType !== enums.DataType.SET) {
             throw Error('Entity type ' + entityType + ' cannot be specified as an index set in <vdlx-datagrid>.');

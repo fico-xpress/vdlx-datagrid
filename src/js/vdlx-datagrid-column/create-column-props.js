@@ -25,6 +25,7 @@ export const createProps = (columnId, params, filters, element) => {
         bottomCalc: params.bottomCalc,
         sortOrder: params.sortOrder,
         sortDirection: params.sortDirection,
+        headerTooltip: params.tooltip,
     };
     if (params.bottomCalc) {
         props.bottomCalcFormatter = function (data) {
