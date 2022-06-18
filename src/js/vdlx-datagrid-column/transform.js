@@ -100,10 +100,6 @@ export default (element, attributes, api) => {
             }
         }
         
-        if(attributes['header-tooltip']){
-            paramsBuilder.addRawOrExpressionParam('tooltip', attributes['header-tooltip']);
-        }
-
         var entityType = entity.getType();
         if (entityType !== enums.DataType.SET) {
             throw Error('Entity type ' + entityType + ' cannot be specified as an index set in <vdlx-datagrid>.');
@@ -197,6 +193,11 @@ export default (element, attributes, api) => {
         if (editorOptionsIncludeEmpty) {
             paramsBuilder.addParam('editorOptionsIncludeEmpty', editorOptionsIncludeEmpty.rawValue === 'true');
         }
+    }
+
+    var headerTooltip=attributes['header-tooltip'];
+    if(headerTooltip){
+        paramsBuilder.addRawOrExpressionParam('headerTooltip', headerTooltip);
     }
 
     var heading = attributes['heading'];

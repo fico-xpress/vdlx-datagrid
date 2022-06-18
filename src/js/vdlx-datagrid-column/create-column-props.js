@@ -25,8 +25,14 @@ export const createProps = (columnId, params, filters, element) => {
         bottomCalc: params.bottomCalc,
         sortOrder: params.sortOrder,
         sortDirection: params.sortDirection,
-        headerTooltip: params.tooltip,
     };
+
+    if(params.headerTooltip){
+        props.headerTooltip=function(){
+            return params.headerTooltip.toString();
+        } 
+    }
+
     if (params.bottomCalc) {
         props.bottomCalcFormatter = function (data) {
             var val = data.getValue();
