@@ -142,7 +142,7 @@ export default {
             defaultValue: true
         },
         {
-            name: 'grid-data',
+            name: 'data',
             acceptsExpression: true
         },
         {

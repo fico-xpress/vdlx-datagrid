@@ -124,10 +124,9 @@ export default function transform(element, attributes, api) {
         paramsBuilder.addFunctionOrExpressionParam('rowFilter', rowFilter.expression.value, ['rowData', 'indices']);
     }
 
-    // TODO temporary data
-    var gridData = attributes['grid-data'];
-    if (gridData) {
-        paramsBuilder.addParam('gridData', gridData.expression.value, true);
+    var data = attributes['data'];
+    if (data) {
+        paramsBuilder.addFunctionOrExpressionParam('data', data.expression.value, ['value']);
     }
 
     var gridHeight = attributes['height'];
