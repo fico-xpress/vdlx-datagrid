@@ -25,3 +25,11 @@ export const EDITOR_TYPES = {
     checkbox: 'checkbox',
     select: 'select'
 };
+
+export const COLUMN_SORTERS = {
+    alphanum: 'alphanum',
+    array: 'array',
+    boolean: 'boolean',
+    number: 'number',
+    string: 'string'
+};
