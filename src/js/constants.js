@@ -33,3 +33,9 @@ export const COLUMN_SORTERS = {
     number: 'number',
     string: 'string'
 };
+
+export const ROW_DATA_TYPES = {
+    object: 'object',
+    array: 'array',
+    primitive: 'primitive'
+};
