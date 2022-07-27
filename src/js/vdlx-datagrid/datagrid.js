@@ -68,6 +68,7 @@ import { withEquals } from '../ko-utils';
 import keys from 'lodash/keys';
 import { dialogs, dataUtils, SelectOptions, enums, ko, insightGetter } from '../insight-modules';
 import reverse from 'lodash/reverse';
+import createCustomDataConfig from "./custom-data/create-custom-data-config";
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
@@ -153,7 +154,13 @@ class Datagrid {
         this.paginatorControl = this.createPaginatorControl(footerToolbar, this.table, options);
         this.stateManager = null;
 
-        this.buildTable();
+        if (_.isUndefined(options.data)) {
+            this.buildTable();
+        } else {
+            this.buildCustomDataTable();
+        }
+
+
         this.update();
 
         const mouseDownListener = (e) => {
@@ -181,6 +188,68 @@ class Datagrid {
         };
 
         this.unloadHandlerId = this.view.addUnloadHandler(this.viewUnloadHandler);
+    }
+
+    // stripped down version of build table that only subscribes to grid options
+    buildCustomDataTable() {
+
+        this.componentRoot.style.display = 'block';
+        const gridOptions$ = this.gridOptions$;
+
+        this.subscriptions = this.subscriptions.concat([
+            ko
+                .pureComputed(() => {
+                    const gridOptions = gridOptions$();
+                    if (gridOptions) {
+
+                        this.componentRoot.style.display = 'block';
+                        // lock table until updated
+                        if (!isEmpty(gridOptions)) {
+                            this.tableLock.lock();
+                        }
+
+                        return perf('vdlx-datagrid custom data total build time:', () =>
+                            this.setCustomDataColumnsAndData(gridOptions).then(() =>
+                                this.tableLock.unlock()
+                            )
+                        );
+                    }
+                    return undefined;
+                })
+                .subscribe(noop),
+        ]);
+    }
+
+    setCustomDataColumnsAndData(gridOptions) {
+        console.log('setCustomDataColumnsAndData');
+
+        const table = this.table;
+        let customDataConfig = createCustomDataConfig(gridOptions);
+
+        if (!_.isUndefined(customDataConfig)) {
+
+            table.setColumns(customDataConfig.columns);
+
+            // set the sort order to be consistent with how scenario data works
+            if (!_.isEmpty(customDataConfig.columns)) {
+                const firstVisibleCol = _.find(customDataConfig.columns, (col) => {
+                    return _.isUndefined(col.visible) || col.visible === true;
+                });
+                table.setSort([{column: firstVisibleCol.field, dir: 'asc'}]);
+            }
+
+            const tableData = customDataConfig.data;
+
+            return perf('Tabulator set custom Data and draw', () =>
+                table
+                    .setData(tableData)
+                    .then(() => this.redrawTable())
+                    .then(() => (this.table.element.style.visibility = 'visible'))
+                    .catch((e) => {
+                        console.error('An error occurred whilst adding data to Tabulator and redrawing', e);
+                    })
+            );
+        }
     }
 
     buildTable() {
@@ -486,6 +555,23 @@ class Datagrid {
         }
     }
 
+    redrawTable() {
+        const table = this.table;
+        if (
+            this.table.element.offsetParent &&
+            this.table.element.offsetParent.tagName.toLowerCase() === 'vdlx-datagrid'
+        ) {
+            return Promise.resolve(this.table.redraw(true));
+        } else {
+            return new Promise((resolve, reject) => {
+                delay(() => {
+                    this.redrawTable().then(resolve).catch(reject);
+                }, 100);
+            });
+        }
+    }
+
+
     setColumnsAndData(gridOptions, columnOptions, scenariosData) {
         const table = this.table;
         const schema = this.schema;
@@ -744,7 +830,7 @@ class Datagrid {
 
                         if (calculatedColumnsOptions.length > 0) {
                             await this.savingPromise;
-                            return redraw();
+                            return this.redrawTable();
                         }
                     }
                 }
@@ -968,6 +1054,7 @@ class Datagrid {
         this.entitiesColumns = entitiesColumns;
         this.indicesColumns = indicesColumns;
 
+        debugger;
         table.setColumns(columns);
         this.initialSortOrder = map(
             sortBy(
@@ -1000,21 +1087,6 @@ class Datagrid {
         this.stateManager = this.createStateManager(gridOptions, columns, map(entitiesColumns, 'scenario'));
         this.loadState();
 
-        const redraw = () => {
-            if (
-                this.table.element.offsetParent &&
-                this.table.element.offsetParent.tagName.toLowerCase() === 'vdlx-datagrid'
-            ) {
-                return Promise.resolve(this.table.redraw(true));
-            } else {
-                return new Promise((resolve, reject) => {
-                    delay(() => {
-                        redraw().then(resolve).catch(reject);
-                    }, 100);
-                });
-            }
-        };
-
         this.table.element.style.visibility = 'hidden';
 
         perfMessage(() => {
@@ -1029,7 +1101,7 @@ class Datagrid {
         return perf('Tabulator setData and draw', () =>
             table
                 .setData(data)
-                .then(() => redraw())
+                .then(() => this.redrawTable())
                 .then(() => (this.table.element.style.visibility = 'visible'))
                 .catch((e) => {
                     console.error('An error occurred whilst adding data to Tabulator and redrawing', e);
