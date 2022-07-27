@@ -37,7 +37,8 @@ export default params => {
         pageMode: params.pageMode,
         freezeColumns: params.freezeColumns,
         showExport: params.showExport,
-        exportFilename: params.exportFilename
+        exportFilename: params.exportFilename,
+        data: params.data,
     };
     var pageMode = params['pageMode'];
     if (pageMode === 'paged') {
