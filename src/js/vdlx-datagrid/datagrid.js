@@ -68,7 +68,7 @@ import { withEquals } from '../ko-utils';
 import keys from 'lodash/keys';
 import { dialogs, dataUtils, SelectOptions, enums, ko, insightGetter } from '../insight-modules';
 import reverse from 'lodash/reverse';
-import createCustomDataConfig from "./custom-data/create-custom-data-config";
+import {createCustomConfig} from "./custom-data/create-custom-config";
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
@@ -216,37 +216,33 @@ class Datagrid {
                     }
                     return undefined;
                 })
-                .subscribe(noop),
+                .subscribe(noop)
         ]);
     }
 
     setCustomDataColumnsAndData(gridOptions) {
-        console.log('setCustomDataColumnsAndData');
-
         const table = this.table;
-        let customDataConfig = createCustomDataConfig(gridOptions);
+        const { columns, data } = createCustomConfig(gridOptions);
 
-        if (!_.isUndefined(customDataConfig)) {
+        if (!_.isUndefined(columns)) {
 
-            table.setColumns(customDataConfig.columns);
+            table.setColumns(columns);
 
             // set the sort order to be consistent with how scenario data works
-            if (!_.isEmpty(customDataConfig.columns)) {
-                const firstVisibleCol = _.find(customDataConfig.columns, (col) => {
+            if (!_.isEmpty(columns)) {
+                const firstVisibleCol = _.find(columns, (col) => {
                     return _.isUndefined(col.visible) || col.visible === true;
                 });
                 table.setSort([{column: firstVisibleCol.field, dir: 'asc'}]);
             }
 
-            const tableData = customDataConfig.data;
-
             return perf('Tabulator set custom Data and draw', () =>
                 table
-                    .setData(tableData)
+                    .setData(data)
                     .then(() => this.redrawTable())
                     .then(() => (this.table.element.style.visibility = 'visible'))
                     .catch((e) => {
-                        console.error('An error occurred whilst adding data to Tabulator and redrawing', e);
+                        console.error('An error occurred whilst adding custom data to Tabulator and redrawing', e);
                     })
             );
         }
@@ -1054,7 +1050,6 @@ class Datagrid {
         this.entitiesColumns = entitiesColumns;
         this.indicesColumns = indicesColumns;
 
-        debugger;
         table.setColumns(columns);
         this.initialSortOrder = map(
             sortBy(
