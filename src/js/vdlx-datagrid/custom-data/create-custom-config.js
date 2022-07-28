@@ -8,6 +8,7 @@ import isArray from "lodash/isArray";
 import isNaN from "lodash/isNaN";
 import isBoolean from "lodash/isBoolean";
 import toNumber from "lodash/toNumber";
+import reduce from "lodash/reduce";
 
 export const getRowDataType = (row) => {
     if (isPlainObject(row)) {
@@ -33,7 +34,7 @@ export const createCustomConfig = (gridOptions) => {
 
     // first convert any data that is not an object
     if (rowDataType === ROW_DATA_TYPES.array) {
-        tableData = convertTupleData(data);
+        tableData = convertArrayOfArraysData(data);
     }
     if (rowDataType === ROW_DATA_TYPES.primitive) {
         tableData = convertPrimitiveArray(data);
@@ -51,14 +52,12 @@ export const createCustomConfig = (gridOptions) => {
     };
 }
 
-// pretty basic at the moment - will check functionality requirements of this
-// only interested in tuples - larger arrays treated as tuples
-export const convertTupleData = (data) => {
-    const converted = map(data, (datum) => {
-        return {
-            label: datum[0],
-            value: datum[1]
-        }
+export const convertArrayOfArraysData = (data) => {
+    const converted = map(data, (row) => {
+        return reduce(row, (memo, row, index, c) => {
+            assign(memo, {['column ' + index]: row})
+            return memo;
+        }, {});
     })
     return converted;
 };
@@ -66,7 +65,7 @@ export const convertTupleData = (data) => {
 export const convertPrimitiveArray = (data) => {
     const converted = map(data, (datum) => {
         return {
-            value: datum
+            'column 0': datum
         }
     })
     return converted;

@@ -1,7 +1,7 @@
 import {
     createCustomConfig,
     getRowDataType,
-    convertTupleData,
+    convertArrayOfArraysData,
     convertPrimitiveArray,
     createColumnDefinition,
     createAutoColumnDefinitions,
@@ -22,12 +22,12 @@ describe('createCustomConfig', () => {
         });
     });
 
-    describe('convertTupleData', () => {
+    describe('convertArrayOfArraysData', () => {
         it('converts data', () => {
             const data = [['a', 1], ['b', 2]];
-            expect(convertTupleData(data)).toEqual([
-                {value: 1, label: 'a'},
-                {value: 2, label: 'b'}
+            expect(convertArrayOfArraysData(data)).toEqual([
+                {'column 0': 'a', 'column 1': 1},
+                {'column 0': 'b', 'column 1': 2}
             ]);
         });
     });
@@ -36,9 +36,9 @@ describe('createCustomConfig', () => {
         it('converts data', () => {
             const data = [1, 2, 3];
             expect(convertPrimitiveArray(data)).toEqual([
-                {value: 1},
-                {value: 2},
-                {value: 3}
+                {'column 0': 1},
+                {'column 0': 2},
+                {'column 0': 3}
             ]);
         });
     });
@@ -160,16 +160,16 @@ describe('createCustomConfig', () => {
                         columns: [{
                             cssClass: 'numeric',
                             elementType: 'INTEGER',
-                            field: 'value',
-                            id: 'value',
+                            field: 'column 0',
+                            id: 'column 0',
                             sorter: 'number',
-                            title: 'value'
+                            title: 'column 0'
                         }],
                         data: [
-                            {value: 1},
-                            {value: 2},
-                            {value: 3},
-                            {value: 4}
+                            {'column 0': 1},
+                            {'column 0': 2},
+                            {'column 0': 3},
+                            {'column 0': 4}
                         ]
                     }
                 );
@@ -185,19 +185,19 @@ describe('createCustomConfig', () => {
                         columns: [{
                             cssClass: 'numeric',
                             elementType: 'INTEGER',
-                            field: 'value',
-                            id: 'value',
+                            field: 'column 0',
+                            id: 'column 0',
                             sorter: 'number',
-                            title: 'value',
+                            title: 'column 0',
                             headerFilter: true,
                             headerFilterFunc: expect.any(Function),
                             headerFilterPlaceholder: 'No filter'
                         }],
                         data: [
-                            {value: 1},
-                            {value: 2},
-                            {value: 3},
-                            {value: 4}
+                            {'column 0': 1},
+                            {'column 0': 2},
+                            {'column 0': 3},
+                            {'column 0': 4}
                         ]
                     }
                 );
