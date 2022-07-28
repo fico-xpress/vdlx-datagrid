@@ -1,19 +1,25 @@
-import {COLUMN_SORTERS, EDITOR_TYPES, ROW_DATA_TYPES} from "../../constants";
+import {COLUMN_SORTERS, ROW_DATA_TYPES} from "../../constants";
 import {chooseColumnFilter, Enums} from "../grid-filters";
+import assign from "lodash/assign";
 import cloneDeep from "lodash/cloneDeep";
+import map from "lodash/map";
+import isPlainObject from "lodash/isPlainObject";
+import isArray from "lodash/isArray";
+import isNaN from "lodash/isNaN";
+import isBoolean from "lodash/isBoolean";
+import toNumber from "lodash/toNumber";
 
-const getRowDataType = (row) => {
-    if (_.isPlainObject(row)) {
+export const getRowDataType = (row) => {
+    if (isPlainObject(row)) {
         return ROW_DATA_TYPES.object;
     }
-    if (_.isArray(row)) {
+    if (isArray(row)) {
         return ROW_DATA_TYPES.array;
     }
     return ROW_DATA_TYPES.primitive;
 }
 
-
-const createCustomDataConfig = (gridOptions) => {
+export const createCustomConfig = (gridOptions) => {
 
     // clone the gridOptions data so not updating original
     let data = cloneDeep(gridOptions.data());
@@ -24,8 +30,8 @@ const createCustomDataConfig = (gridOptions) => {
 
     // table data will be an array of objects
     let tableData = data;
-    // first convert any data that is not an object
 
+    // first convert any data that is not an object
     if (rowDataType === ROW_DATA_TYPES.array) {
         tableData = convertTupleData(data);
     }
@@ -33,22 +39,22 @@ const createCustomDataConfig = (gridOptions) => {
         tableData = convertPrimitiveArray(data);
     }
     const tableDataOne = tableData[0];
-    let columns = createAutoColumnConfig(tableDataOne);
+    let columns = createAutoColumnDefinitions(tableDataOne);
 
     if (gridOptions.columnFilter) {
-        columns = _.map(columns, configureCustomColumnFilter);
+        columns = map(columns, configureColumnFilter);
     }
+
     return {
         columns: columns,
         data: tableData
     };
-
 }
 
 // pretty basic at the moment - will check functionality requirements of this
 // only interested in tuples - larger arrays treated as tuples
-const convertTupleData = (data) => {
-    const converted = _.map(data, (datum) => {
+export const convertTupleData = (data) => {
+    const converted = map(data, (datum) => {
         return {
             label: datum[0],
             value: datum[1]
@@ -57,8 +63,8 @@ const convertTupleData = (data) => {
     return converted;
 };
 
-const convertPrimitiveArray = (data) => {
-    const converted = _.map(data, (datum) => {
+export const convertPrimitiveArray = (data) => {
+    const converted = map(data, (datum) => {
         return {
             value: datum
         }
@@ -66,55 +72,46 @@ const convertPrimitiveArray = (data) => {
     return converted;
 };
 
-const getColumnConfig = (val, key) => {
-
+export const createColumnDefinition = (val, key) => {
+    const requiredProps = {
+        id: key,
+        field: key,
+        title: key
+    }
     // string column
-    if (_.isNaN(_.toNumber(val))) {
-        return {
-            id: key,
-            field: key,
-            title: key,
+    if (isNaN(toNumber(val))) {
+        return assign(requiredProps, {
             sorter: COLUMN_SORTERS.string,
             elementType: Enums.DataType.STRING
-        };
+        });
     }
     // boolean column with checkbox
-    if (_.isBoolean(val)) {
-
+    if (isBoolean(val)) {
         const checkboxFormatter = (cell) => {
             const checked = cell.getValue() ? 'checked' : '';
             const disabled = 'disabled';
             return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
         };
 
-        return {
-            id: key,
-            field: key,
-            title: key,
+        return assign(requiredProps, {
             sorter: COLUMN_SORTERS.boolean,
             elementType: Enums.DataType.BOOLEAN,
-            formatter: checkboxFormatter
-        }
+            formatter: checkboxFormatter}
+        );
     }
-
     // numeric column
-    return {
-        id: key,
-        field: key,
-        title: key,
+    return assign(requiredProps, {
         sorter: COLUMN_SORTERS.number,
         elementType: Enums.DataType.INTEGER,
         cssClass: 'numeric'
-    };
+    });
 }
 
-const createAutoColumnConfig = (datum) => {
-    let cols = _.map(datum, getColumnConfig);
-    // debug val
-    return cols;
+export const createAutoColumnDefinitions = (datum) => {
+    return map(datum, createColumnDefinition);
 };
 
-export const configureCustomColumnFilter = (col) => {
+export const configureColumnFilter = (col) => {
 
     const getCustomHeaderFilterFn = () => {
 
@@ -133,7 +130,5 @@ export const configureCustomColumnFilter = (col) => {
         headerFilter: true,
         headerFilterFunc: getCustomHeaderFilterFn()
     };
-    return _.assign(col, filterConfig);
+    return assign(col, filterConfig);
 }
-
-export default createCustomDataConfig;
