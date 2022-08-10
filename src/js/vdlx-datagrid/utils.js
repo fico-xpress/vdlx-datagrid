@@ -1,4 +1,3 @@
-
 /*
    Xpress Insight vdlx-datagrid
    =============================
@@ -22,7 +21,44 @@
     limitations under the License.
  */
 
-import propertyOf  from 'lodash/propertyOf';
+import propertyOf from 'lodash/propertyOf';
 import map from 'lodash/map';
+import isArray from "lodash/isArray";
+import isPlainObject from "lodash/isPlainObject";
+import isFunction from "lodash/isFunction";
+import {ROW_DATA_TYPES} from "../constants";
+import reduce from "lodash/reduce";
+import assign from "lodash/assign";
+
 
 export const getRowData = columnsIds => data => map(columnsIds, propertyOf(data));
+
+export const getRowDataType = (row) => {
+    if (isPlainObject(row)) {
+        return ROW_DATA_TYPES.object;
+    }
+    if (isArray(row)) {
+        return ROW_DATA_TYPES.array;
+    }
+    if (isFunction(row)) {
+        return ROW_DATA_TYPES.function;
+    }
+    return ROW_DATA_TYPES.primitive;
+}
+
+export const convertArrayOfArraysData = (data) => {
+    return map(data, (row) => {
+        return reduce(row, (memo, row, index) => {
+            assign(memo, {['column ' + index]: row})
+            return memo;
+        }, {});
+    });
+};
+
+export const convertPrimitiveArray = (data) => {
+    return map(data, (datum) => {
+        return {
+            'column 0': datum
+        }
+    });
+};
