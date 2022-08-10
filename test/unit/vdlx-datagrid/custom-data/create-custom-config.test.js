@@ -10,13 +10,23 @@ import {
 describe('createCustomConfig', () => {
 
     describe(' default createCustomConfig', () => {
+
+        let gridOptions;
+        beforeEach(() => {
+            gridOptions = {
+                data: () => [1, 2, 3, 4]
+            };
+        });
+
         it('creates config object containing column definitions and table data', () => {
-            expect(createCustomConfig([1, 2, 3, 4], false)).toEqual(
+
+            expect(createCustomConfig(gridOptions)).toEqual(
                 {
                     columns: [{
                         cssClass: 'numeric',
                         elementType: 'INTEGER',
                         field: 'column 0',
+                        frozen: false,
                         id: 'column 0',
                         sorter: 'number',
                         title: 'column 0'
@@ -31,12 +41,14 @@ describe('createCustomConfig', () => {
             );
         });
         it('creat config containing column filters', () => {
-            expect(createCustomConfig([1, 2, 3, 4], true)).toEqual(
+            gridOptions.columnFilter = true;
+            expect(createCustomConfig(gridOptions)).toEqual(
                 {
                     columns: [{
                         cssClass: 'numeric',
                         elementType: 'INTEGER',
                         field: 'column 0',
+                        frozen: false,
                         id: 'column 0',
                         sorter: 'number',
                         title: 'column 0',
@@ -54,7 +66,7 @@ describe('createCustomConfig', () => {
             );
         });
     });
-    
+
     describe('convertCustomData', () => {
 
         it('converts array of arrays', () => {
@@ -147,6 +159,7 @@ describe('createCustomConfig', () => {
                     cssClass: 'numeric',
                     elementType: 'INTEGER',
                     field: 'value',
+                    frozen: false,
                     id: 'value',
                     sorter: 'number',
                     title: 'value'
@@ -154,6 +167,7 @@ describe('createCustomConfig', () => {
                 {
                     elementType: 'STRING',
                     field: 'label',
+                    frozen: false,
                     id: 'label',
                     sorter: 'string',
                     title: 'label'
@@ -161,6 +175,7 @@ describe('createCustomConfig', () => {
                 {
                     elementType: 'BOOLEAN',
                     field: 'isTrue',
+                    frozen: false,
                     formatter: expect.any(Function),
                     id: 'isTrue',
                     sorter: 'boolean',
@@ -168,6 +183,41 @@ describe('createCustomConfig', () => {
                 }
             ]);
         });
+
+
+        it('adds freeze attr', () => {
+
+            const data = {value: 100, label: 'label', isTrue: true};
+            expect(createAutoColumnDefinitions(data, false, 2)).toEqual([
+                {
+                    cssClass: 'numeric',
+                    elementType: 'INTEGER',
+                    field: 'value',
+                    frozen: true,
+                    id: 'value',
+                    sorter: 'number',
+                    title: 'value'
+                },
+                {
+                    elementType: 'STRING',
+                    field: 'label',
+                    frozen: true,
+                    id: 'label',
+                    sorter: 'string',
+                    title: 'label'
+                },
+                {
+                    elementType: 'BOOLEAN',
+                    field: 'isTrue',
+                    frozen: false,
+                    formatter: expect.any(Function),
+                    id: 'isTrue',
+                    sorter: 'boolean',
+                    title: 'isTrue'
+                }
+            ]);
+        });
+
     });
 
     describe('createColumnDefinition', () => {
@@ -175,11 +225,12 @@ describe('createCustomConfig', () => {
         it('creates numeric column config', () => {
             const key = 'colName';
             const val = 123;
-            expect(createColumnDefinition(val, key, false)).toEqual(
+            expect(createColumnDefinition(val, key, false, false)).toEqual(
                 {
                     id: key,
                     field: key,
                     title: key,
+                    frozen: false,
                     cssClass: 'numeric',
                     elementType: 'INTEGER',
                     sorter: 'number'
@@ -190,11 +241,12 @@ describe('createCustomConfig', () => {
         it('creates string column config', () => {
             const key = 'colName';
             const val = 'hello';
-            expect(createColumnDefinition(val, key, false)).toEqual(
+            expect(createColumnDefinition(val, key, false, false)).toEqual(
                 {
                     id: key,
                     field: key,
                     title: key,
+                    frozen: false,
                     elementType: 'STRING',
                     sorter: 'string'
                 }
@@ -204,11 +256,12 @@ describe('createCustomConfig', () => {
         it('creates boolean/checkbox column config', () => {
             const key = 'colName';
             const val = true;
-            expect(createColumnDefinition(val, key, false)).toEqual(
+            expect(createColumnDefinition(val, key, false, false)).toEqual(
                 {
                     id: key,
                     field: key,
                     title: key,
+                    frozen: false,
                     elementType: 'BOOLEAN',
                     sorter: 'boolean',
                     formatter: expect.any(Function)
@@ -219,11 +272,12 @@ describe('createCustomConfig', () => {
         it('creates string column with a filter', () => {
             const key = 'colName';
             const val = 'hello';
-            expect(createColumnDefinition(val, key, true)).toEqual(
+            expect(createColumnDefinition(val, key, true, false)).toEqual(
                 {
                     id: key,
                     field: key,
                     title: key,
+                    frozen: false,
                     elementType: 'STRING',
                     sorter: 'string',
                     headerFilter: true,
@@ -232,6 +286,7 @@ describe('createCustomConfig', () => {
                 }
             );
         });
+
     });
 
     describe('configureColumnFilter', () => {

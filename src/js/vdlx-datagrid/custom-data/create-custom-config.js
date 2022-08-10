@@ -24,15 +24,27 @@ import {COLUMN_SORTERS, ROW_DATA_TYPES} from "../../constants";
 import {chooseColumnFilter, Enums} from "../grid-filters";
 import {convertArrayOfArraysData, convertPrimitiveArray, getRowDataType} from '../utils';
 import assign from "lodash/assign";
-import map from "lodash/map";
 import isNaN from "lodash/isNaN";
 import isBoolean from "lodash/isBoolean";
 import toNumber from "lodash/toNumber";
 import filter from 'lodash/filter';
 import isFunction from "lodash/isFunction";
 import values from "lodash/values";
+import parseInt from "lodash/parseInt";
+import cloneDeep from "lodash/cloneDeep";
 
-export const createCustomConfig = (data, includeFilter, rowFilter) => {
+/**
+ * creates config object containing data and columns
+ * @param gridOptions
+ * @returns {{data: (*|[]), columns: (*|*[])}}
+ */
+export const createCustomConfig = (gridOptions) => {
+
+    const data = gridOptions.data();
+    const freezeColumns = parseInt(gridOptions.freezeColumns);
+    const includeFilter = gridOptions.columnFilter || false;
+    const rowFilter = gridOptions.rowFilter;
+
     // formalise/convert table data
     let tableData = convertCustomData(data);
 
@@ -41,42 +53,70 @@ export const createCustomConfig = (data, includeFilter, rowFilter) => {
         tableData = applyRowFilter(tableData, rowFilter);
     }
 
+    const rowOne = tableData[0];
+
     return {
-        columns: createAutoColumnDefinitions(tableData[0], includeFilter),
+        columns: rowOne ? createAutoColumnDefinitions(rowOne, includeFilter, freezeColumns) : [],
         data: tableData
     };
 };
 
-// data must be returned as an array of objects
+/**
+ * ensures data in the correct array of objects format
+ * @param data
+ * @returns {*[]|*}
+ */
 export const convertCustomData = (data) => {
-    switch (getRowDataType(data[0])) {
+    // clone the gridOptions data so not updating original
+    let customData = cloneDeep(data);
+
+    switch (getRowDataType(customData[0])) {
         case ROW_DATA_TYPES.array:
-            return convertArrayOfArraysData(data);
+            return convertArrayOfArraysData(customData);
         case ROW_DATA_TYPES.primitive:
-            return convertPrimitiveArray(data);
+            return convertPrimitiveArray(customData);
         case ROW_DATA_TYPES.object:
-            return data;
+            return customData;
         default:
             console.error('Error for component vdlx-datagrid: Please remove functions from the data.');
             return [];
     }
 };
 
+/**
+ * triger the rowFilter call back set in the attrs
+ * @param data
+ * @param rowFilter
+ * @returns {*}
+ */
 export const applyRowFilter = (data, rowFilter) => {
     return filter(data, (rowData) => {
         return rowFilter(values(rowData));
     });
 }
 
-export const createAutoColumnDefinitions = (data, includeFilter) => {
-    return map(data, (val, key) => createColumnDefinition(val, key, includeFilter));
+export const createAutoColumnDefinitions = (data, includeFilter, freezeColumns) => {
+    // map over the object entries, so I can have key value and index
+    return Object.entries(data).map(([key,val], index) => {
+        return createColumnDefinition(val, key, includeFilter, index < freezeColumns)
+    });
 };
 
-export const createColumnDefinition = (val, key, includeFilter) => {
+/**
+ * create a column configuration
+ * @param val
+ * @param key
+ * @param includeFilter
+ * @param freeze
+ * @returns {*}
+ */
+export const createColumnDefinition = (val, key, includeFilter, freeze) => {
+
     const requiredProps = {
         id: key,
         field: key,
-        title: key
+        title: key,
+        frozen: freeze
     };
 
     let col;
@@ -114,6 +154,11 @@ export const createColumnDefinition = (val, key, includeFilter) => {
     return col;
 };
 
+/**
+ * configure a column filter for a column
+ * @param Object: column
+ * @returns {*}
+ */
 export const configureColumnFilter = (col) => {
     const getCustomHeaderFilterFn = () => {
         const columnFilter = chooseColumnFilter(col);
