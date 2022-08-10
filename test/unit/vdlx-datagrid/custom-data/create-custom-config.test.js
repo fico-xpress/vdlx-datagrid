@@ -1,9 +1,10 @@
 import {
+    applyRowFilter,
     configureColumnFilter,
+    convertCustomData,
     createAutoColumnDefinitions,
     createColumnDefinition,
-    createCustomConfig,
-    convertCustomData
+    createCustomConfig
 } from '../../../../src/js/vdlx-datagrid/custom-data/create-custom-config';
 
 describe('createCustomConfig', () => {
@@ -53,8 +54,7 @@ describe('createCustomConfig', () => {
             );
         });
     });
-
-
+    
     describe('convertCustomData', () => {
 
         it('converts array of arrays', () => {
@@ -100,6 +100,29 @@ describe('createCustomConfig', () => {
             );
         });
 
+    });
+
+    describe('applyRowFilter', () => {
+
+        let tableData;
+        beforeEach(() => {
+            tableData = [
+                {'column 0': 0, 'column 1': 101},
+                {'column 0': 10, 'column 1': 102},
+                {'column 0': 20, 'column 1': 103}
+            ];
+        });
+
+        it('feeds data row by row thru the rowFilter', () => {
+            const rowFilter = jest.fn();
+            applyRowFilter(tableData, rowFilter);
+            expect(rowFilter).toHaveBeenCalledTimes(3);
+        });
+
+        it('filters data', () => {
+            const rowFilter = (rowData) => rowData[0] > 10;
+            expect(applyRowFilter(tableData, rowFilter)).toEqual([{'column 0': 20, 'column 1': 103}]);
+        });
     });
 
     describe('createAutoColumnDefinitions', () => {

@@ -28,9 +28,19 @@ import map from "lodash/map";
 import isNaN from "lodash/isNaN";
 import isBoolean from "lodash/isBoolean";
 import toNumber from "lodash/toNumber";
+import filter from 'lodash/filter';
+import isFunction from "lodash/isFunction";
+import values from "lodash/values";
 
-export const createCustomConfig = (data, includeFilter) => {
-    const tableData = convertCustomData(data);
+export const createCustomConfig = (data, includeFilter, rowFilter) => {
+    // formalise/convert table data
+    let tableData = convertCustomData(data);
+
+    // apply rowFilter from attr
+    if (isFunction(rowFilter)) {
+        tableData = applyRowFilter(tableData, rowFilter);
+    }
+
     return {
         columns: createAutoColumnDefinitions(tableData[0], includeFilter),
         data: tableData
@@ -51,6 +61,12 @@ export const convertCustomData = (data) => {
             return [];
     }
 };
+
+export const applyRowFilter = (data, rowFilter) => {
+    return filter(data, (rowData) => {
+        return rowFilter(values(rowData));
+    });
+}
 
 export const createAutoColumnDefinitions = (data, includeFilter) => {
     return map(data, (val, key) => createColumnDefinition(val, key, includeFilter));
@@ -78,9 +94,10 @@ export const createColumnDefinition = (val, key, includeFilter) => {
             return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
         };
         col = assign(requiredProps, {
-            sorter: COLUMN_SORTERS.boolean,
-            elementType: Enums.DataType.BOOLEAN,
-            formatter: checkboxFormatter}
+                sorter: COLUMN_SORTERS.boolean,
+                elementType: Enums.DataType.BOOLEAN,
+                formatter: checkboxFormatter
+            }
         );
     } else {
         // numeric column
