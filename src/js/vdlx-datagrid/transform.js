@@ -32,6 +32,15 @@ export default function transform(element, attributes, api) {
     var paramsBuilder = api.getComponentParamsBuilder(element);
     var $element = $(element);
 
+    var data = attributes['data'];
+    if (data) {
+        paramsBuilder.addFunctionOrExpressionParam('data', data.expression.value, ['value']);
+
+        if ($element.has( 'vdlx-datagrid-column').length) {
+            throw Error('vdlx-datagrid-column is not supported when using the data attribute.');
+        }
+    }
+
     var scenarioId = attributes['scenario'];
     if (scenarioId) {
         if (scenarioId.expression.isString) {
@@ -81,6 +90,9 @@ export default function transform(element, attributes, api) {
         } else if (addRemoveRow.rawValue === 'addrow-autoinc') {
             paramsBuilder.addParam('addRemoveRow', 'addrow-autoinc');
         }
+        if (data) {
+            throw Error('add-remove-row is not supported when using the data attribute.');
+        }
     }
 
     var tableIdAttr = attributes['id'];
@@ -122,15 +134,6 @@ export default function transform(element, attributes, api) {
         }
 
         paramsBuilder.addFunctionOrExpressionParam('rowFilter', rowFilter.expression.value, ['rowData', 'indices']);
-    }
-
-    var data = attributes['data'];
-    if (data) {
-        paramsBuilder.addFunctionOrExpressionParam('data', data.expression.value, ['value']);
-
-        if ($element.has( 'vdlx-datagrid-column').length) {
-            throw Error('vdlx-datagrid-column is not supported when using the data attribute.');
-        }
     }
 
     var gridHeight = attributes['height'];
