@@ -127,6 +127,10 @@ export default function transform(element, attributes, api) {
     var data = attributes['data'];
     if (data) {
         paramsBuilder.addFunctionOrExpressionParam('data', data.expression.value, ['value']);
+
+        if ($element.has( 'vdlx-datagrid-column').length) {
+            throw Error('vdlx-datagrid-column is not supported when using the data attribute.');
+        }
     }
 
     var gridHeight = attributes['height'];
