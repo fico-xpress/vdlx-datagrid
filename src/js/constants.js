@@ -39,5 +39,4 @@ export const ROW_DATA_TYPES = {
     array: 'array',
     primitive: 'primitive',
     function: 'function'
-
 };
