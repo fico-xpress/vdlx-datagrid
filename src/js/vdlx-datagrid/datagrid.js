@@ -21,23 +21,23 @@
     limitations under the License.
  */
 import Tabulator from 'tabulator-tables/dist/js/tabulator';
-import { getSorter, getSetSorter, createFormattedSorter } from './datagrid-sorter';
+import {createFormattedSorter, getSetSorter, getSorter} from './datagrid-sorter';
 import dataTransform, {
+    generateCompositeKey,
     getAllColumnIndices,
     getDisplayIndices,
     getPartialExposedKey,
-    generateCompositeKey,
 } from './data-transform';
 import withScenarioData from './data-loader';
 import exportCsv from './export-csv';
 import Paginator from './paginator';
-import { getRowData } from './utils';
-import { EDITOR_TYPES } from '../constants';
+import {getRowData} from './utils';
+import {EDITOR_TYPES} from '../constants';
 import AddRemove from './add-remove';
-import { chooseColumnFilter } from './grid-filters';
-import { perf, perfMessage } from '../performance-measurement';
-import { createStateManager } from './state-persistence';
-import { DatagridLock } from './datagrid-lock';
+import {chooseColumnFilter} from './grid-filters';
+import {perf, perfMessage} from '../performance-measurement';
+import {createStateManager} from './state-persistence';
+import {DatagridLock} from './datagrid-lock';
 import escape from 'lodash/escape';
 import delay from 'lodash/delay';
 import some from 'lodash/some';
@@ -64,9 +64,9 @@ import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
 import constant from 'lodash/constant';
-import { withEquals } from '../ko-utils';
+import {withEquals} from '../ko-utils';
 import keys from 'lodash/keys';
-import { dialogs, dataUtils, SelectOptions, enums, ko, insightGetter } from '../insight-modules';
+import {dataUtils, dialogs, enums, insightGetter, ko, SelectOptions} from '../insight-modules';
 import reverse from 'lodash/reverse';
 import {createCustomConfig} from "./custom-data/create-custom-config";
 
@@ -233,7 +233,7 @@ class Datagrid {
             return Promise.reject('Error for component vdlx-datagrid: Please ensure the data attribute contains an array');
         }
 
-        const { columns, data } = createCustomConfig(customData, gridOptions.columnFilter);
+        const { columns, data } = createCustomConfig(customData, gridOptions.columnFilter, gridOptions.rowFilter);
 
         if (!_.isUndefined(columns)) {
             // set the columns
