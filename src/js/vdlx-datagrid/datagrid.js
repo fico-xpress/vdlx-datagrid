@@ -226,14 +226,12 @@ class Datagrid {
 
     setCustomDataColumnsAndData(gridOptions) {
         const table = this.table;
-        // clone the gridOptions data so not updating original
-        let customData = cloneDeep(gridOptions.data());
 
-        if (!isArray(customData)) {
+        if (!isArray(gridOptions.data())) {
             return Promise.reject('Error for component vdlx-datagrid: Please ensure the data attribute contains an array');
         }
 
-        const { columns, data } = createCustomConfig(customData, gridOptions.columnFilter, gridOptions.rowFilter);
+        const { columns, data } = createCustomConfig(gridOptions);
 
         if (!_.isUndefined(columns)) {
             // set the columns
