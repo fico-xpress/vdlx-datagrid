@@ -166,4 +166,13 @@ export default function transform(element, attributes, api) {
         }
     }
 
+    var columnModifier = attributes['column-modifier'];
+    if (columnModifier) {
+        if (columnModifier.expression.isString) {
+            paramsBuilder.addParam('columnModifier', columnModifier.rawValue, false);
+        } else {
+            paramsBuilder.addParam('columnModifier', columnModifier.expression.value, true);
+        }
+    }
+
 }

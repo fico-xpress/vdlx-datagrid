@@ -39,6 +39,7 @@ export default params => {
         showExport: params.showExport,
         exportFilename: params.exportFilename,
         data: params.data,
+        columnModifier: params.columnModifier
     };
     var pageMode = params['pageMode'];
     if (pageMode === 'paged') {

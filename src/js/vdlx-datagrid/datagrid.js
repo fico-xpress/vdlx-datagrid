@@ -64,10 +64,12 @@ import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
 import constant from 'lodash/constant';
+import isPlainObject from 'lodash/isPlainObject';
 import {withEquals} from '../ko-utils';
 import keys from 'lodash/keys';
 import {dataUtils, dialogs, enums, insightGetter, ko, SelectOptions} from '../insight-modules';
 import reverse from 'lodash/reverse';
+import isFunction from 'lodash/isFunction';
 import {createCustomConfig} from "./custom-data/create-custom-config";
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
@@ -114,6 +116,24 @@ export const getCssClasses = (columnOptions, isNumeric, isIndex = false) => {
     }
     return classes.join(' ');
 };
+
+/**
+ * trigger a user defined column modifier callback function
+ * @param {function} modifier
+ * @param {[Object]}columns
+ * @returns {*}
+ */
+export const modifyColumns = (modifier, columns) => {
+    if (isFunction(modifier)) {
+        const modifiedColumnConfig = modifier(cloneDeep(columns));
+        if (isPlainObject(modifiedColumnConfig)) {
+            columns = modifiedColumnConfig;
+        }
+        return modifiedColumnConfig;
+    } else {
+        console.error('Error for component vdlx-datagrid: column-modifier" attribute must be a function.');
+    }
+}
 
 const VALIDATION_ERROR_TITLE = 'Validation Error';
 
@@ -231,9 +251,15 @@ class Datagrid {
             return Promise.reject('Error for component vdlx-datagrid: Please ensure the data attribute contains an array');
         }
 
-        const { columns, data } = createCustomConfig(gridOptions);
+        let { columns, data } = createCustomConfig(gridOptions);
 
         if (!_.isUndefined(columns)) {
+
+            // user defined column modifier
+            if (!isUndefined(gridOptions.columnModifier)) {
+                columns = modifyColumns(gridOptions.columnModifier, columns);
+            }
+
             // set the columns
             table.setColumns(columns);
 
@@ -575,7 +601,6 @@ class Datagrid {
             });
         }
     }
-
 
     setColumnsAndData(gridOptions, columnOptions, scenariosData) {
         const table = this.table;
@@ -1059,7 +1084,13 @@ class Datagrid {
         this.entitiesColumns = entitiesColumns;
         this.indicesColumns = indicesColumns;
 
+        // user defined column modifier
+        if (!isUndefined(gridOptions.columnModifier)) {
+            columns = modifyColumns(gridOptions.columnModifier, columns);
+        }
+
         table.setColumns(columns);
+
         this.initialSortOrder = map(
             sortBy(
                 filter(columns, (column) => !isUndefined(column.sortOrder)),

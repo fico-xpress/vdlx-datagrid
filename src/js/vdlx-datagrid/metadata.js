@@ -163,6 +163,11 @@ export default {
             acceptsExpression: true,
             required: false,
             defaultValue: 'data'
+        },
+        {
+            name: 'column-modifier',
+            description: 'Function to modify the column configuration for advanced settings.',
+            expression: 'dynamic'
         }
     ]
 };
