@@ -1,121 +1,105 @@
+/*
+   Xpress Insight vdlx-datagrid
+   =============================
+
+   file vdlx-datagrid/utils.js
+   ```````````````````````
+   vdlx-datagrid utils.
+
+    (c) Copyright 2022 Fair Isaac Corporation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+ */
 import {COLUMN_SORTERS, ROW_DATA_TYPES} from "../../constants";
 import {chooseColumnFilter, Enums} from "../grid-filters";
+import {convertArrayOfArraysData, convertPrimitiveArray, getRowDataType} from '../utils';
 import assign from "lodash/assign";
-import cloneDeep from "lodash/cloneDeep";
 import map from "lodash/map";
-import isPlainObject from "lodash/isPlainObject";
-import isArray from "lodash/isArray";
 import isNaN from "lodash/isNaN";
 import isBoolean from "lodash/isBoolean";
 import toNumber from "lodash/toNumber";
-import reduce from "lodash/reduce";
 
-export const getRowDataType = (row) => {
-    if (isPlainObject(row)) {
-        return ROW_DATA_TYPES.object;
-    }
-    if (isArray(row)) {
-        return ROW_DATA_TYPES.array;
-    }
-    return ROW_DATA_TYPES.primitive;
-}
-
-export const createCustomConfig = (gridOptions) => {
-
-    // clone the gridOptions data so not updating original
-    let data = cloneDeep(gridOptions.data());
-    const itemOne = data[0];
-
-    const rowDataType = getRowDataType(itemOne);
-    console.log('ROW DATA TYPE: ' + rowDataType);
-
-    // table data will be an array of objects
-    let tableData = data;
-
-    // first convert any data that is not an object
-    if (rowDataType === ROW_DATA_TYPES.array) {
-        tableData = convertArrayOfArraysData(data);
-    }
-    if (rowDataType === ROW_DATA_TYPES.primitive) {
-        tableData = convertPrimitiveArray(data);
-    }
-    const tableDataOne = tableData[0];
-    let columns = createAutoColumnDefinitions(tableDataOne);
-
-    if (gridOptions.columnFilter) {
-        columns = map(columns, configureColumnFilter);
-    }
-
+export const createCustomConfig = (data, includeFilter) => {
+    const tableData = convertCustomData(data);
     return {
-        columns: columns,
+        columns: createAutoColumnDefinitions(tableData[0], includeFilter),
         data: tableData
     };
-}
-
-export const convertArrayOfArraysData = (data) => {
-    const converted = map(data, (row) => {
-        return reduce(row, (memo, row, index, c) => {
-            assign(memo, {['column ' + index]: row})
-            return memo;
-        }, {});
-    })
-    return converted;
 };
 
-export const convertPrimitiveArray = (data) => {
-    const converted = map(data, (datum) => {
-        return {
-            'column 0': datum
-        }
-    })
-    return converted;
+// data must be returned as an array of objects
+export const convertCustomData = (data) => {
+    switch (getRowDataType(data[0])) {
+        case ROW_DATA_TYPES.array:
+            return convertArrayOfArraysData(data);
+        case ROW_DATA_TYPES.primitive:
+            return convertPrimitiveArray(data);
+        case ROW_DATA_TYPES.object:
+            return data;
+        default:
+            console.error('Error for component vdlx-datagrid: Please remove functions from the data.');
+            return [];
+    }
 };
 
-export const createColumnDefinition = (val, key) => {
+export const createAutoColumnDefinitions = (data, includeFilter) => {
+    return map(data, (val, key) => createColumnDefinition(val, key, includeFilter));
+};
+
+export const createColumnDefinition = (val, key, includeFilter) => {
     const requiredProps = {
         id: key,
         field: key,
         title: key
-    }
-    // string column
+    };
+
+    let col;
     if (isNaN(toNumber(val))) {
-        return assign(requiredProps, {
+        // string column
+        col = assign(requiredProps, {
             sorter: COLUMN_SORTERS.string,
             elementType: Enums.DataType.STRING
         });
-    }
-    // boolean column with checkbox
-    if (isBoolean(val)) {
+    } else if (isBoolean(val)) {
+        // boolean column with checkbox
         const checkboxFormatter = (cell) => {
             const checked = cell.getValue() ? 'checked' : '';
             const disabled = 'disabled';
             return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
         };
-
-        return assign(requiredProps, {
+        col = assign(requiredProps, {
             sorter: COLUMN_SORTERS.boolean,
             elementType: Enums.DataType.BOOLEAN,
             formatter: checkboxFormatter}
         );
+    } else {
+        // numeric column
+        col = assign(requiredProps, {
+            sorter: COLUMN_SORTERS.number,
+            elementType: Enums.DataType.INTEGER,
+            cssClass: 'numeric'
+        });
     }
-    // numeric column
-    return assign(requiredProps, {
-        sorter: COLUMN_SORTERS.number,
-        elementType: Enums.DataType.INTEGER,
-        cssClass: 'numeric'
-    });
-}
 
-export const createAutoColumnDefinitions = (datum) => {
-    return map(datum, createColumnDefinition);
+    if (includeFilter) {
+        return configureColumnFilter(col);
+    }
+    return col;
 };
 
 export const configureColumnFilter = (col) => {
-
     const getCustomHeaderFilterFn = () => {
-
         const columnFilter = chooseColumnFilter(col);
-
         if (columnFilter) {
             return (valueTxt, cellValue, rowData, params) => {
                 return columnFilter(valueTxt, cellValue, rowData, params);
@@ -130,4 +114,4 @@ export const configureColumnFilter = (col) => {
         headerFilterFunc: getCustomHeaderFilterFn()
     };
     return assign(col, filterConfig);
-}
+};
