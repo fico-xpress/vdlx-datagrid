@@ -56,6 +56,9 @@ export default function transform(element, attributes, api) {
         } else {
             paramsBuilder.addParam('scenarioId', scenarioId.expression.value, true);
         }
+        if (data) {
+            throw Error('scenario is not supported when using the data attribute.');
+        }
     }
 
     var pageSize = attributes['page-size'];
