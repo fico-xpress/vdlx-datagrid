@@ -99,7 +99,7 @@ describe('createCustomConfig', () => {
             expect(convertCustomData(data)).toEqual(data);
         });
 
-        it('logs errort and returns empty when javascript function discovered', () => {
+        it('logs error and returns empty when javascript function discovered', () => {
             const data = [
                 () => 666,
                 () => 666
