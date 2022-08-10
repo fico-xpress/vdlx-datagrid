@@ -160,7 +160,6 @@ class Datagrid {
             this.buildCustomDataTable();
         }
 
-
         this.update();
 
         const mouseDownListener = (e) => {
@@ -201,7 +200,6 @@ class Datagrid {
                 .pureComputed(() => {
                     const gridOptions = gridOptions$();
                     if (gridOptions) {
-
                         this.componentRoot.style.display = 'block';
                         // lock table until updated
                         if (!isEmpty(gridOptions)) {
@@ -211,7 +209,13 @@ class Datagrid {
                         return perf('vdlx-datagrid custom data total build time:', () =>
                             this.setCustomDataColumnsAndData(gridOptions).then(() =>
                                 this.tableLock.unlock()
-                            )
+                            ).catch((err) => {
+                                this.tableLock.unlock()
+                                this.table.clearData();
+                                this.table.setColumns([]);
+                                dialogs.toast(err, dialogs.level.ERROR);
+                                console.error('An error occurred whilst adding data to Tabulator', err);
+                            })
                         );
                     }
                     return undefined;
@@ -222,10 +226,17 @@ class Datagrid {
 
     setCustomDataColumnsAndData(gridOptions) {
         const table = this.table;
-        const { columns, data } = createCustomConfig(gridOptions);
+        // clone the gridOptions data so not updating original
+        let customData = cloneDeep(gridOptions.data());
+
+        if (!isArray(customData)) {
+            return Promise.reject('Error for component vdlx-datagrid: Please ensure the data attribute contains an array');
+        }
+
+        const { columns, data } = createCustomConfig(customData, gridOptions.columnFilter);
 
         if (!_.isUndefined(columns)) {
-
+            // set the columns
             table.setColumns(columns);
 
             // set the sort order to be consistent with how scenario data works
