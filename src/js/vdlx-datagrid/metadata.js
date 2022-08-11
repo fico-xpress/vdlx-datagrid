@@ -143,6 +143,9 @@ export default {
         },
         {
             name: 'data',
+            description:
+                'Use this attribute to pass data directly to vdlx-datagrid. Supported formats are; array of primitives: [1,2,3], Array of objects: [{... prop: 1}], ' +
+                'or an array of arrays: [...["a",1]] ',
             acceptsExpression: true
         },
         {
