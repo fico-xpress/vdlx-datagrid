@@ -52,7 +52,7 @@ Once you are happy with the release draft you can **publish** to make it availab
 The VDLDoc for a release should be generated as follows:
 
 1. From your local machine, checkout master and pull changes from origin
-1. Run: `npn run vdldoc`
+1. Run: `npm run vdldoc`
 1. Check the generated file `docs/vdlx-datagrid-reference.html` and commit if it all looks good
 1. Push the change to origin
 1. Check on the GitHub site that it has deployed the change: https://github.com/fico-xpress/vdlx-datagrid/deployments

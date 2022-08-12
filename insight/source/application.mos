@@ -22,7 +22,7 @@
 *******************************************************!)
 model "vdlx-datagrid examples"
   uses "mminsight"
-  version 4.8.0
+  version 4.8.1
 
   !@insight.resultdata.delete on-execute
   !@insight.execmodes.FAST.threads=1
@@ -39,6 +39,8 @@ model "vdlx-datagrid examples"
     DATAFILE = DATAFOLDER + "agency_example_data.txt"
     TRANSPORT_DATAFILE = DATAFOLDER + "transport.dat"
     MaxPeriods = 15
+    LOAD_SLEEP = 0
+    RUN_SLEEP = 0
   end-parameters
 
   ! *** Declare public data *** !
@@ -540,6 +542,7 @@ model "vdlx-datagrid examples"
 
   case insightgetmode of
     INSIGHT_MODE_LOAD: do
+      sleep(LOAD_SLEEP*1000)
       datainput
       LoadTableOne2k
       LoadTableTwo10K
@@ -548,6 +551,7 @@ model "vdlx-datagrid examples"
 	    LoadTableFive1Million
     end-do
     INSIGHT_MODE_RUN: do
+      sleep(RUN_SLEEP*1000)
       insightpopulate
     end-do
     "FAST": do
