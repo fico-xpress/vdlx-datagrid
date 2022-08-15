@@ -24,6 +24,7 @@ describe('createCustomConfig', () => {
                 {
                     columns: [{
                         cssClass: 'numeric',
+                        editor: 'input',
                         elementType: 'INTEGER',
                         field: 'column 0',
                         frozen: false,
@@ -46,6 +47,7 @@ describe('createCustomConfig', () => {
                 {
                     columns: [{
                         cssClass: 'numeric',
+                        editor: 'input',
                         elementType: 'INTEGER',
                         field: 'column 0',
                         frozen: false,
@@ -54,7 +56,8 @@ describe('createCustomConfig', () => {
                         title: 'column 0',
                         headerFilter: true,
                         headerFilterFunc: expect.any(Function),
-                        headerFilterPlaceholder: 'No filter'
+                        headerFilterParams: undefined,
+                        headerFilterPlaceholder: 'No Filter'
                     }],
                     data: [
                         {'column 0': 1},
@@ -157,6 +160,7 @@ describe('createCustomConfig', () => {
             expect(createAutoColumnDefinitions(data)).toEqual([
                 {
                     cssClass: 'numeric',
+                    editor: 'input',
                     elementType: 'INTEGER',
                     field: 'value',
                     frozen: false,
@@ -165,6 +169,7 @@ describe('createCustomConfig', () => {
                     title: 'value'
                 },
                 {
+                    editor: 'input',
                     elementType: 'STRING',
                     field: 'label',
                     frozen: false,
@@ -173,6 +178,7 @@ describe('createCustomConfig', () => {
                     title: 'label'
                 },
                 {
+                    editor: 'checkbox',
                     elementType: 'BOOLEAN',
                     field: 'isTrue',
                     frozen: false,
@@ -191,6 +197,7 @@ describe('createCustomConfig', () => {
             expect(createAutoColumnDefinitions(data, false, 2)).toEqual([
                 {
                     cssClass: 'numeric',
+                    editor: 'input',
                     elementType: 'INTEGER',
                     field: 'value',
                     frozen: true,
@@ -199,6 +206,7 @@ describe('createCustomConfig', () => {
                     title: 'value'
                 },
                 {
+                    editor: 'input',
                     elementType: 'STRING',
                     field: 'label',
                     frozen: true,
@@ -207,6 +215,7 @@ describe('createCustomConfig', () => {
                     title: 'label'
                 },
                 {
+                    editor: 'checkbox',
                     elementType: 'BOOLEAN',
                     field: 'isTrue',
                     frozen: false,
@@ -232,6 +241,7 @@ describe('createCustomConfig', () => {
                     title: key,
                     frozen: false,
                     cssClass: 'numeric',
+                    editor: 'input',
                     elementType: 'INTEGER',
                     sorter: 'number'
                 }
@@ -247,6 +257,7 @@ describe('createCustomConfig', () => {
                     field: key,
                     title: key,
                     frozen: false,
+                    editor: 'input',
                     elementType: 'STRING',
                     sorter: 'string'
                 }
@@ -262,6 +273,7 @@ describe('createCustomConfig', () => {
                     field: key,
                     title: key,
                     frozen: false,
+                    editor: 'checkbox',
                     elementType: 'BOOLEAN',
                     sorter: 'boolean',
                     formatter: expect.any(Function)
@@ -278,11 +290,13 @@ describe('createCustomConfig', () => {
                     field: key,
                     title: key,
                     frozen: false,
+                    editor: 'input',
                     elementType: 'STRING',
                     sorter: 'string',
                     headerFilter: true,
                     headerFilterFunc: expect.any(Function),
-                    headerFilterPlaceholder: 'No filter'
+                    headerFilterParams: undefined,
+                    headerFilterPlaceholder: 'No Filter'
                 }
             );
         });
@@ -293,6 +307,7 @@ describe('createCustomConfig', () => {
         it('creates new object with filter props', () => {
             const col = {
                 cssClass: 'numeric',
+                editor: 'input',
                 elementType: 'INTEGER',
                 field: 'value',
                 id: 'value',
@@ -303,6 +318,7 @@ describe('createCustomConfig', () => {
             expect(configureColumnFilter(col)).toEqual(
                 {
                     cssClass: 'numeric',
+                    editor: 'input',
                     elementType: 'INTEGER',
                     field: 'value',
                     id: 'value',
@@ -310,7 +326,8 @@ describe('createCustomConfig', () => {
                     title: 'value',
                     headerFilter: true,
                     headerFilterFunc: expect.any(Function),
-                    headerFilterPlaceholder: 'No filter'
+                    headerFilterParams: undefined,
+                    headerFilterPlaceholder: 'No Filter'
                 }
             );
         });

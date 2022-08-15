@@ -20,9 +20,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import {COLUMN_SORTERS, ROW_DATA_TYPES} from "../../constants";
+import {COLUMN_SORTERS, EDITOR_TYPES, ROW_DATA_TYPES} from "../../constants";
 import {chooseColumnFilter, Enums} from "../grid-filters";
 import {convertArrayOfArraysData, convertPrimitiveArray, getRowDataType} from '../utils';
+import {checkboxFilterFunc, FILTER_PLACEHOLDER_TEXT, getHeaderFilterParams} from '../column-filter-utils';
 import assign from "lodash/assign";
 import isNaN from "lodash/isNaN";
 import isBoolean from "lodash/isBoolean";
@@ -123,6 +124,7 @@ export const createColumnDefinition = (val, key, includeFilter, freeze) => {
     if (isNaN(toNumber(val))) {
         // string column
         col = assign(requiredProps, {
+            editor: EDITOR_TYPES.text,
             sorter: COLUMN_SORTERS.string,
             elementType: Enums.DataType.STRING
         });
@@ -134,6 +136,7 @@ export const createColumnDefinition = (val, key, includeFilter, freeze) => {
             return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
         };
         col = assign(requiredProps, {
+                editor: EDITOR_TYPES.checkbox,
                 sorter: COLUMN_SORTERS.boolean,
                 elementType: Enums.DataType.BOOLEAN,
                 formatter: checkboxFormatter
@@ -142,6 +145,7 @@ export const createColumnDefinition = (val, key, includeFilter, freeze) => {
     } else {
         // numeric column
         col = assign(requiredProps, {
+            editor: EDITOR_TYPES.text,
             sorter: COLUMN_SORTERS.number,
             elementType: Enums.DataType.INTEGER,
             cssClass: 'numeric'
@@ -156,12 +160,25 @@ export const createColumnDefinition = (val, key, includeFilter, freeze) => {
 
 /**
  * configure a column filter for a column
- * @param Object: column
  * @returns {*}
+ * @param col
  */
 export const configureColumnFilter = (col) => {
-    const getCustomHeaderFilterFn = () => {
-        const columnFilter = chooseColumnFilter(col);
+
+    const getHeaderFilter = () => {
+        if (col.editor === EDITOR_TYPES.checkbox) {
+            return EDITOR_TYPES.select;
+        }
+        return true;
+    };
+
+    const getHeaderFilterFn = (column) => {
+
+        if (column.editor === EDITOR_TYPES.checkbox) {
+            return checkboxFilterFunc;
+        }
+
+        const columnFilter = chooseColumnFilter(column);
         if (columnFilter) {
             return (valueTxt, cellValue, rowData, params) => {
                 return columnFilter(valueTxt, cellValue, rowData, params);
@@ -171,9 +188,10 @@ export const configureColumnFilter = (col) => {
     };
 
     let filterConfig = {
-        headerFilterPlaceholder: 'No filter',
-        headerFilter: true,
-        headerFilterFunc: getCustomHeaderFilterFn()
+        headerFilterParams: getHeaderFilterParams(col),
+        headerFilterPlaceholder: FILTER_PLACEHOLDER_TEXT,
+        headerFilter: getHeaderFilter(),
+        headerFilterFunc: getHeaderFilterFn(col)
     };
     return assign(col, filterConfig);
 };

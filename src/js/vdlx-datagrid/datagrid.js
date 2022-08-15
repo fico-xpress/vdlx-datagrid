@@ -71,10 +71,10 @@ import {dataUtils, dialogs, enums, insightGetter, ko, SelectOptions} from '../in
 import reverse from 'lodash/reverse';
 import isFunction from 'lodash/isFunction';
 import {createCustomConfig} from "./custom-data/create-custom-config";
+import {checkboxFilterFunc, getHeaderFilterParams, FILTER_PLACEHOLDER_TEXT} from './column-filter-utils';
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
-const FILTER_PLACEHOLDER_TEXT = 'No Filter';
 
 const addSelectNull = (items) => {
     if (isArray(items)) {
@@ -928,37 +928,8 @@ class Datagrid {
                     }
                     return EDITOR_TYPES.text;
                 };
-                const getHeaderFilterParams = () => {
-                    if (column.editor === EDITOR_TYPES.checkbox) {
-                        const checkedValue = get(entityOptions, 'checkedValue', true);
-                        const uncheckedValue = get(entityOptions, 'uncheckedValue', false);
-                        return {
-                            values: [
-                                {value: undefined, label: FILTER_PLACEHOLDER_TEXT},
-                                {value: String(checkedValue), label: 'Checked'},
-                                {value: String(uncheckedValue), label: 'Unchecked'},
-                            ],
-                        };
-                    }
-                };
                 const headerFilter = getHeaderFilter();
-                const headerFilterParams = getHeaderFilterParams();
-                const checkboxFilterFunc = (value, cellValue, rowData, params) => {
-                    const valueString = String(value);
-                    const cellValueTxt = String(cellValue);
-                    if (valueString === cellValueTxt) {
-                        return true;
-                    }
-
-                    const optionMatch = find(
-                        params.values,
-                        (keyValue) => keyValue.value === valueString || keyValue.label === valueString
-                    );
-                    if (isUndefined(optionMatch)) {
-                        return false;
-                    }
-                    return optionMatch.value === cellValueTxt;
-                };
+                const headerFilterParams = getHeaderFilterParams(column, entityOptions);
 
                 const checkboxFilterEmptyCheck = (value) => {
                     if (value == null) {
