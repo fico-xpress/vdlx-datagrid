@@ -22,7 +22,7 @@
  */
 import {COLUMN_SORTERS, EDITOR_TYPES, ROW_DATA_TYPES} from "../../constants";
 import {chooseColumnFilter, Enums} from "../grid-filters";
-import {convertArrayOfArraysData, convertPrimitiveArray, getRowDataType} from '../utils';
+import {convertArrayOfArraysData, convertPrimitiveArray, getRowDataType} from './custom-data-utils';
 import {checkboxFilterFunc, FILTER_PLACEHOLDER_TEXT, getHeaderFilterParams} from '../column-filter-utils';
 import assign from "lodash/assign";
 import isNaN from "lodash/isNaN";

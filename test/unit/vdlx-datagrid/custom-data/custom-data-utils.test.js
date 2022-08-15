@@ -1,16 +1,12 @@
 import {
     convertArrayOfArraysData,
     convertPrimitiveArray,
-    getRowData,
     getRowDataType
-} from '../../../src/js/vdlx-datagrid/utils';
-import {ROW_DATA_TYPES} from "../../../src/js/constants";
+} from '../../../../src/js/vdlx-datagrid/custom-data/custom-data-utils';
+import {ROW_DATA_TYPES} from "../../../../src/js/constants";
 
-describe('utils', () => {
 
-    describe('getRowData', () => {
-        // todo - tech debt
-    });
+describe('custom data utils', () => {
 
     describe('getRowDataType', () => {
 
