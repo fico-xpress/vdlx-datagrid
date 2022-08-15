@@ -1,5 +1,10 @@
-import {checkboxFilterFunc, getHeaderFilterParams} from '../../../src/js/vdlx-datagrid/column-filter-utils';
+import {
+    checkboxFilterFunc,
+    getHeaderFilterEmptyCheckFn,
+    getHeaderFilterParams
+} from '../../../src/js/vdlx-datagrid/column-filter-utils';
 import {EDITOR_TYPES} from "../../../src/js/constants";
+import find from "lodash/find";
 
 describe('column filter utils', () => {
 
@@ -12,10 +17,10 @@ describe('column filter utils', () => {
                     cellValue = false;
                 });
                 it('returns true for when looking for un checked', () => {
-                    expect(checkboxFilterFunc('false', cellValue, {},{} )).toEqual(true);
+                    expect(checkboxFilterFunc('false', cellValue, {}, {})).toEqual(true);
                 });
                 it('returns false for when looking for checked', () => {
-                    expect(checkboxFilterFunc('true', cellValue, {},{} )).toEqual(false);
+                    expect(checkboxFilterFunc('true', cellValue, {}, {})).toEqual(false);
                 });
             });
 
@@ -24,10 +29,10 @@ describe('column filter utils', () => {
                     cellValue = true;
                 });
                 it('returns false for when looking for un checked', () => {
-                    expect(checkboxFilterFunc('false', cellValue, {},{} )).toEqual(false);
+                    expect(checkboxFilterFunc('false', cellValue, {}, {})).toEqual(false);
                 });
                 it('returns true for when looking for checked', () => {
-                    expect(checkboxFilterFunc('true', cellValue, {},{} )).toEqual(true);
+                    expect(checkboxFilterFunc('true', cellValue, {}, {})).toEqual(true);
                 });
             });
 
@@ -36,10 +41,10 @@ describe('column filter utils', () => {
                     cellValue = 'hello';
                 });
                 it('returns false for when looking for un checked', () => {
-                    expect(checkboxFilterFunc('goodbye', cellValue, {},{} )).toEqual(false);
+                    expect(checkboxFilterFunc('goodbye', cellValue, {}, {})).toEqual(false);
                 });
                 it('returns true for when looking for checked', () => {
-                    expect(checkboxFilterFunc('hello', cellValue, {},{} )).toEqual(true);
+                    expect(checkboxFilterFunc('hello', cellValue, {}, {})).toEqual(true);
                 });
             });
 
@@ -56,12 +61,12 @@ describe('column filter utils', () => {
                 const entityOptions = {};
 
                 expect(getHeaderFilterParams(column, entityOptions)).toEqual({
-                    values: [
-                        {label: "No Filter", value: undefined},
-                        {label: "Checked", value: "true"},
-                        {label: "Unchecked", value: "false"}
-                    ]
-                }
+                        values: [
+                            {label: 'No Filter', value: undefined},
+                            {label: 'Checked', value: "true"},
+                            {label: 'Unchecked', value: "false"}
+                        ]
+                    }
                 );
             });
             it('with entityOptions', () => {
@@ -73,9 +78,9 @@ describe('column filter utils', () => {
 
                 expect(getHeaderFilterParams(column, entityOptions)).toEqual({
                         values: [
-                            {label: "No Filter", value: undefined},
-                            {label: "Checked", value: "yep"},
-                            {label: "Unchecked", value: "nope"}
+                            {label: 'No Filter', value: undefined},
+                            {label: 'Checked', value: 'yep'},
+                            {label: 'Unchecked', value: 'nope'}
                         ]
                     }
                 );
@@ -90,6 +95,55 @@ describe('column filter utils', () => {
             it('select editor', () => {
                 const column = {editor: EDITOR_TYPES.select};
                 expect(getHeaderFilterParams(column, {})).toEqual(undefined);
+            });
+        });
+    });
+
+    describe('getHeaderFilterEmptyCheckFn', () => {
+        let column;
+        let params;
+        beforeEach(() => {
+            column = {editor: EDITOR_TYPES.checkbox};
+            params = {
+                values: [
+                    {label: 'No Filter', value: undefined},
+                    {label: 'Checked', value: 'yep'},
+                    {label: 'Unchecked', value: 'nope'}
+                ]
+            };
+        });
+
+        describe('function creation', () => {
+            it(' returns undefind for input column/editor', () => {
+                expect(getHeaderFilterEmptyCheckFn({editor: EDITOR_TYPES.text}, params)).toEqual(undefined);
+            });
+            it(' returns undefind for select column/editor', () => {
+                expect(getHeaderFilterEmptyCheckFn({editor: EDITOR_TYPES.select}, params)).toEqual(undefined);
+            });
+
+            it('creates a function for a checkbox column/editor', () => {
+                expect(getHeaderFilterEmptyCheckFn(column, params)).toEqual(expect.any(Function));
+            });
+        });
+
+        describe('testing the created headerFilterEmptyCheck function', () => {
+            let headerFilterEmptyCheckFn;
+            beforeEach(() => {
+                headerFilterEmptyCheckFn = getHeaderFilterEmptyCheckFn(column, params);
+            });
+
+            it('created function returns true for No Filter option', () => {
+                const noOption = find(params.values, (param) => param.label === 'No Filter');
+                expect(headerFilterEmptyCheckFn(noOption.value)).toEqual(true);
+            });
+
+            it('created function returns true for checked option', () => {
+                const checkedOption = find(params.values, (param) => param.label === 'Checked');
+                expect(headerFilterEmptyCheckFn(checkedOption.value)).toEqual(false);
+            });
+            it('created function returns true for Unchecked option', () => {
+                const uncheckedOption = find(params.values, (param) => param.label === 'Unchecked');
+                expect(headerFilterEmptyCheckFn(uncheckedOption.value)).toEqual(false);
             });
         });
     });

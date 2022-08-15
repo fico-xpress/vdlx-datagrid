@@ -58,3 +58,24 @@ export const getHeaderFilterParams = (column, entityOptions) => {
         };
     }
 };
+
+export const getHeaderFilterEmptyCheckFn = (column, headerFilterParams) => {
+
+    const checkboxFilterEmptyCheck = (value) => {
+        if (value == null) {
+            return true;
+        }
+        const valueString = String(value);
+        const optionMatch = find(
+            headerFilterParams.values,
+            (keyValue) => keyValue.value === valueString || keyValue.label === valueString
+        );
+        return isUndefined(optionMatch) || isUndefined(optionMatch.value);
+    }
+
+    if (column.editor === EDITOR_TYPES.checkbox) {
+        return checkboxFilterEmptyCheck;
+    }
+    return undefined;
+};
+

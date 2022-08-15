@@ -71,7 +71,12 @@ import {dataUtils, dialogs, enums, insightGetter, ko, SelectOptions} from '../in
 import reverse from 'lodash/reverse';
 import isFunction from 'lodash/isFunction';
 import {createCustomConfig} from "./custom-data/create-custom-config";
-import {checkboxFilterFunc, getHeaderFilterParams, FILTER_PLACEHOLDER_TEXT} from './column-filter-utils';
+import {
+    checkboxFilterFunc,
+    getHeaderFilterParams,
+    FILTER_PLACEHOLDER_TEXT,
+    getHeaderFilterEmptyCheckFn
+} from './column-filter-utils';
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
@@ -930,25 +935,9 @@ class Datagrid {
                 };
                 const headerFilter = getHeaderFilter();
                 const headerFilterParams = getHeaderFilterParams(column, entityOptions);
+                const headerFilterEmptyCheck = getHeaderFilterEmptyCheckFn(column, headerFilterParams);
 
-                const checkboxFilterEmptyCheck = (value) => {
-                    if (value == null) {
-                        return true;
-                    }
-                    const valueString = String(value);
-                    const optionMatch = find(
-                        headerFilterParams.values,
-                        (keyValue) => keyValue.value === valueString || keyValue.label === valueString
-                    );
-                    return isUndefined(optionMatch) || isUndefined(optionMatch.value);
-                };
 
-                const getHeaderFilterEmptyCheckFn = () => {
-                    if (column.editor === EDITOR_TYPES.checkbox) {
-                        return checkboxFilterEmptyCheck;
-                    }
-                    return undefined;
-                };
                 const getHeaderFilterFn = () => {
                     if (column.editor === EDITOR_TYPES.checkbox) {
                         return checkboxFilterFunc;
@@ -981,7 +970,7 @@ class Datagrid {
                     headerFilterParams: headerFilterParams,
                     headerFilterFuncParams: headerFilterParams,
                     headerFilterFunc: getHeaderFilterFn(),
-                    headerFilterEmptyCheck: getHeaderFilterEmptyCheckFn(),
+                    headerFilterEmptyCheck: headerFilterEmptyCheck,
                 };
             }
 

@@ -23,7 +23,7 @@
 import {COLUMN_SORTERS, EDITOR_TYPES, ROW_DATA_TYPES} from "../../constants";
 import {chooseColumnFilter, Enums} from "../grid-filters";
 import {convertArrayOfArraysData, convertPrimitiveArray, getRowDataType} from './custom-data-utils';
-import {checkboxFilterFunc, FILTER_PLACEHOLDER_TEXT, getHeaderFilterParams} from '../column-filter-utils';
+import {checkboxFilterFunc, FILTER_PLACEHOLDER_TEXT, getHeaderFilterParams, getHeaderFilterEmptyCheckFn} from '../column-filter-utils';
 import assign from "lodash/assign";
 import isNaN from "lodash/isNaN";
 import isBoolean from "lodash/isBoolean";
@@ -187,11 +187,15 @@ export const configureColumnFilter = (col) => {
         return undefined;
     };
 
+    const headerFilterParams = getHeaderFilterParams(col);
+    const headerFilterEmptyCheck = getHeaderFilterEmptyCheckFn(col, headerFilterParams);
+
     let filterConfig = {
-        headerFilterParams: getHeaderFilterParams(col),
+        headerFilterParams: headerFilterParams,
         headerFilterPlaceholder: FILTER_PLACEHOLDER_TEXT,
         headerFilter: getHeaderFilter(),
-        headerFilterFunc: getHeaderFilterFn(col)
+        headerFilterFunc: getHeaderFilterFn(col),
+        headerFilterEmptyCheck: headerFilterEmptyCheck,
     };
     return assign(col, filterConfig);
 };

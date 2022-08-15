@@ -5,7 +5,6 @@ import {
 } from '../../../../src/js/vdlx-datagrid/custom-data/custom-data-utils';
 import {ROW_DATA_TYPES} from "../../../../src/js/constants";
 
-
 describe('custom data utils', () => {
 
     describe('getRowDataType', () => {
