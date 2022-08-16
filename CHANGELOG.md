@@ -1,5 +1,10 @@
 # vdlx-datagrid changelog
 
+## v4.8.3
+- un-implemented `data-grid` attribute removed
+- New `data` attribute added. Custom data can be passed directly to `vdlx-datagrid` via the `data` attribute.
+- new `column-modifier` attribute added. Column definitions can now be edited.
+  
 ## v4.8.2
 
 ## v4.8.1
