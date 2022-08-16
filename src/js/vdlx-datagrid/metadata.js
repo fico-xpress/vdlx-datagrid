@@ -168,6 +168,12 @@ export default {
             defaultValue: 'data'
         },
         {
+            name: 'column-definition',
+            description: 'column definition method - auto, by label attribute or by supplying a config object',
+            acceptsExpression: true,
+            defaultValue: 'auto'
+        },
+        {
             name: 'column-modifier',
             description: 'Function to modify the column configuration for advanced settings.',
             expression: 'dynamic'

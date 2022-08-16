@@ -22,6 +22,8 @@
  */
 
 
+import {CUSTOM_COLUMN_DEFINITION} from "../constants";
+
 /**
  * The transform function takes care of setting up/initialising a VDL extension.
  * @param {HTMLElement} element - The VDL DOM node.
@@ -172,6 +174,30 @@ export default function transform(element, attributes, api) {
             paramsBuilder.addParam('columnModifier', columnModifier.rawValue, false);
         } else {
             paramsBuilder.addParam('columnModifier', columnModifier.expression.value, true);
+        }
+    }
+
+    var columnDefinition = attributes['column-definition'];
+    if (columnDefinition) {
+
+        if (!data) {
+            throw Error('you cannot have a config without data or words to this effect');
+        }
+
+        if (columnDefinition.expression.isString) {
+            const defType = _.toLower(columnDefinition.rawValue);
+            if (!_.includes(_.map(CUSTOM_COLUMN_DEFINITION), defType)) {
+                throw Error(defType + ' is not a valid thing');
+            } else {
+                paramsBuilder.addParam('columnDefinitionType', defType, false);
+            }
+        } else {
+            paramsBuilder.addParam('columnDefinitionType', CUSTOM_COLUMN_DEFINITION.OBJECT, false);
+            paramsBuilder.addFunctionOrExpressionParam('columnDefinitions', columnDefinition.expression.value, false);
+        }
+    } else {
+        if (data) {
+            paramsBuilder.addParam('columnDefinitionType', CUSTOM_COLUMN_DEFINITION.AUTO, false);
         }
     }
 

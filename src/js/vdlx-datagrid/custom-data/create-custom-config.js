@@ -20,7 +20,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import {COLUMN_SORTERS, EDITOR_TYPES, ROW_DATA_TYPES} from "../../constants";
+import {COLUMN_SORTERS, CUSTOM_COLUMN_DEFINITION, EDITOR_TYPES, ROW_DATA_TYPES} from "../../constants";
 import {chooseColumnFilter, Enums} from "../grid-filters";
 import {convertArrayOfArraysData, convertPrimitiveArray, getRowDataType} from './custom-data-utils';
 import {checkboxFilterFunc, FILTER_PLACEHOLDER_TEXT, getHeaderFilterParams, getHeaderFilterEmptyCheckFn} from '../column-filter-utils';
@@ -33,6 +33,9 @@ import isFunction from "lodash/isFunction";
 import values from "lodash/values";
 import parseInt from "lodash/parseInt";
 import cloneDeep from "lodash/cloneDeep";
+import size from "lodash/size";
+import map from "lodash/map";
+import head from "lodash/head";
 
 /**
  * creates config object containing data and columns
@@ -41,25 +44,49 @@ import cloneDeep from "lodash/cloneDeep";
  */
 export const createCustomConfig = (gridOptions) => {
 
+    // todo - fix issue that the filters are not cleared out when the data changes
+
     const data = gridOptions.data();
-    const freezeColumns = parseInt(gridOptions.freezeColumns);
-    const includeFilter = gridOptions.columnFilter || false;
-    const rowFilter = gridOptions.rowFilter;
 
-    // formalise/convert table data
-    let tableData = convertCustomData(data);
-
-    // apply rowFilter from attr
-    if (isFunction(rowFilter)) {
-        tableData = applyRowFilter(tableData, rowFilter);
+    if (!size(data)) {
+        return {
+            columns: [],
+            data: []
+        };
     }
 
-    const rowOne = tableData[0];
+    debugger
+        let datagridData = [];
+        let columnDefinitions = [];
+
+        switch (gridOptions.columnDefinitionType) {
+            case CUSTOM_COLUMN_DEFINITION.AUTO:
+                datagridData = convertCustomData(data);
+                columnDefinitions = createAutoColumnDefinitions(head(datagridData));
+                break
+            case CUSTOM_COLUMN_DEFINITION.OBJECT:
+                debugger;
+                break
+            case CUSTOM_COLUMN_DEFINITION.LABELS:
+                break
+            default:
+                console.error('Error for component vdlx-datagrid: unrecognised column format.');
+        }
+
+    // apply rowFilter from attr
+    const rowFilter = gridOptions.rowFilter;
+    if (isFunction(rowFilter)) {
+        datagridData = applyRowFilter(datagridData, rowFilter);
+    }
+
+    // apply the gridOptions column attrs.
+    columnDefinitions = addDataGridColumnAttrs(gridOptions, columnDefinitions);
 
     return {
-        columns: rowOne ? createAutoColumnDefinitions(rowOne, includeFilter, freezeColumns) : [],
-        data: tableData
+        columns: columnDefinitions,
+        data: datagridData
     };
+
 };
 
 /**
@@ -85,7 +112,7 @@ export const convertCustomData = (data) => {
 };
 
 /**
- * triger the rowFilter call back set in the attrs
+ * trigger the rowFilter call back set in the attrs
  * @param data
  * @param rowFilter
  * @returns {*}
@@ -96,12 +123,79 @@ export const applyRowFilter = (data, rowFilter) => {
     });
 }
 
-export const createAutoColumnDefinitions = (data, includeFilter, freezeColumns) => {
-    // map over the object entries, so I can have key value and index
-    return Object.entries(data).map(([key,val], index) => {
-        return createColumnDefinition(val, key, includeFilter, index < freezeColumns)
-    });
+export const createAutoColumnDefinitions = (data) => {
+    return map(data, (key, val) => createBasicColumnDefinition(key, val));
 };
+
+// export const createAutoColumnDefinitions = (data, includeFilter, freezeColumns) => {
+//     // map over the object entries, so I can have key value and index
+//     return Object.entries(data).map(([key,val], index) => {
+//         return createColumnDefinition(val, key, includeFilter, index < freezeColumns)
+//     });
+// };
+
+
+export const createBasicColumnDefinition = (val, key) => {
+    const requiredProps = {
+        id: key,
+        field: key,
+        title: key
+    };
+    let col;
+    if (isNaN(toNumber(val))) {
+        // string column
+        col = assign(requiredProps, {
+            editor: EDITOR_TYPES.text,
+            sorter: COLUMN_SORTERS.string,
+            elementType: Enums.DataType.STRING
+        });
+    } else if (isBoolean(val)) {
+        // boolean column with checkbox
+        const checkboxFormatter = (cell) => {
+            const checked = cell.getValue() ? 'checked' : '';
+            const disabled = 'disabled';
+            return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
+        };
+        col = assign(requiredProps, {
+                editor: EDITOR_TYPES.checkbox,
+                sorter: COLUMN_SORTERS.boolean,
+                elementType: Enums.DataType.BOOLEAN,
+                formatter: checkboxFormatter
+            }
+        );
+    } else {
+        // numeric column
+        col = assign(requiredProps, {
+            editor: EDITOR_TYPES.text,
+            sorter: COLUMN_SORTERS.number,
+            elementType: Enums.DataType.INTEGER,
+            cssClass: 'numeric'
+        });
+    }
+    // todo - return out from each clause instead of using a let
+    return col;
+}
+
+const addDataGridColumnAttrs = (gridOptions, columns) => {
+    const freezeColumns = parseInt(gridOptions.freezeColumns);
+    const includeFilter = gridOptions.columnFilter || false;
+
+    const updatedColumns = map(columns, (col, index) => {
+
+        let column = {...col};
+        if (index < freezeColumns) {
+            assign(column, {frozen: true});
+        }
+        if (includeFilter) {
+            assign(column, configureColumnFilter(col));
+        }
+        return column
+    });
+debugger
+    return updatedColumns
+
+};
+
 
 /**
  * create a column configuration

@@ -39,6 +39,8 @@ export default params => {
         showExport: params.showExport,
         exportFilename: params.exportFilename,
         data: params.data,
+        columnDefinitionType: params.columnDefinitionType,
+        columnDefinitions: params.columnDefinitions || [],
         columnModifier: params.columnModifier
     };
     var pageMode = params['pageMode'];
