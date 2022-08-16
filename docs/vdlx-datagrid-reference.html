@@ -136,7 +136,7 @@
         <div id="product-name" class="pull-left">FICO<sup>&reg;</sup> Xpress Insight</div>
         <div class="product-sub-title">
             <div class="product-title">vdlx-datagrid reference</div>
-            <div class="product-version">version 4.8.1</div>
+            <div class="product-version">version 4.8.3</div>
         </div>
     </div>
     <div id="main-nav">
@@ -307,6 +307,46 @@
             </tr>
             <tr>
                 <th>
+                    column-modifier
+                </th>
+                <td>
+                    Function to modify the column configuration for advanced settings.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">requires expression</span>
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    data
+                </th>
+                <td>
+                    Use this attribute to pass data directly to vdlx-datagrid. Supported formats are; array of primitives: [1,2,3], Array of objects: [{... prop: 1}], or an array of arrays: [...["a",1]] 
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
                     export-filename
                 </th>
                 <td>
@@ -331,7 +371,7 @@
                     freeze-columns
                 </th>
                 <td>
-                    The number of columns to freeze in the table starting from the left hand column.
+                    The number of columns to freeze in the table starting from the left hand column. Works best when vdlx-datagrid is in a fixed width container
 
                     <div>
                     </div>
@@ -342,26 +382,6 @@
                     <div>
 
                     </div>
-
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    grid-data
-                </th>
-                <td>
-                    
-
-                    <div>
-                    </div>
-
-                    <div>
-                    </div>
-
-                    <div>
-
-                        <span class="label label-primary">accepts expression</span>
-                                            </div>
 
                 </td>
             </tr>
