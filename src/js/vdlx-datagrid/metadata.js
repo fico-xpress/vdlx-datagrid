@@ -150,7 +150,7 @@ export default {
         },
         {
             name: 'freeze-columns',
-            description: 'The number of columns to freeze in the table starting from the left hand column.',
+            description: 'The number of columns to freeze in the table starting from the left hand column. Works best when vdlx-datagrid is in a fixed width container',
             required: false
         },
         {
