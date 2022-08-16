@@ -29,7 +29,8 @@ export const Enums = {
         REAL: 'REAL',
         CONSTRAINT: 'CONSTRAINT',
         DECISION_VARIABLE: 'DECISION_VARIABLE',
-        STRING: 'STRING'
+        STRING: 'STRING',
+        BOOLEAN: 'BOOLEAN'
     }
 };
 

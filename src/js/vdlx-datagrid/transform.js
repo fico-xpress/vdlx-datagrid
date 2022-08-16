@@ -32,6 +32,15 @@ export default function transform(element, attributes, api) {
     var paramsBuilder = api.getComponentParamsBuilder(element);
     var $element = $(element);
 
+    var data = attributes['data'];
+    if (data) {
+        paramsBuilder.addFunctionOrExpressionParam('data', data.expression.value, ['value']);
+
+        if ($element.has( 'vdlx-datagrid-column').length) {
+            throw Error('vdlx-datagrid-column is not supported when using the data attribute.');
+        }
+    }
+
     var scenarioId = attributes['scenario'];
     if (scenarioId) {
         if (scenarioId.expression.isString) {
@@ -46,6 +55,9 @@ export default function transform(element, attributes, api) {
             }
         } else {
             paramsBuilder.addParam('scenarioId', scenarioId.expression.value, true);
+        }
+        if (data) {
+            throw Error('scenario is not supported when using the data attribute.');
         }
     }
 
@@ -80,6 +92,9 @@ export default function transform(element, attributes, api) {
             paramsBuilder.addParam('addRemoveRow', true);
         } else if (addRemoveRow.rawValue === 'addrow-autoinc') {
             paramsBuilder.addParam('addRemoveRow', 'addrow-autoinc');
+        }
+        if (data && addRemoveRow.rawValue.toUpperCase() !== 'FALSE') {
+            throw Error('add-remove-row is not supported when using the data attribute.');
         }
     }
 
@@ -124,12 +139,6 @@ export default function transform(element, attributes, api) {
         paramsBuilder.addFunctionOrExpressionParam('rowFilter', rowFilter.expression.value, ['rowData', 'indices']);
     }
 
-    // TODO temporary data
-    var gridData = attributes['grid-data'];
-    if (gridData) {
-        paramsBuilder.addParam('gridData', gridData.expression.value, true);
-    }
-
     var gridHeight = attributes['height'];
     if (gridHeight) {
         if (gridHeight.expression.isString) {
@@ -154,6 +163,15 @@ export default function transform(element, attributes, api) {
             paramsBuilder.addParam('exportFilename', exportFilename.rawValue, false);
         } else {
             paramsBuilder.addParam('exportFilename', exportFilename.expression.value, true);
+        }
+    }
+
+    var columnModifier = attributes['column-modifier'];
+    if (columnModifier) {
+        if (columnModifier.expression.isString) {
+            paramsBuilder.addParam('columnModifier', columnModifier.rawValue, false);
+        } else {
+            paramsBuilder.addParam('columnModifier', columnModifier.expression.value, true);
         }
     }
 

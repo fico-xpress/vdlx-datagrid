@@ -23,10 +23,10 @@
 import Tabulator from 'tabulator-tables/dist/js/tabulator';
 import {getSorter, getSetSorter, createFormattedSorter} from './datagrid-sorter';
 import dataTransform, {
+    generateCompositeKey,
     getAllColumnIndices,
     getDisplayIndices,
     getPartialExposedKey,
-    generateCompositeKey,
 } from './data-transform';
 import withScenarioData from './data-loader';
 import exportCsv from './export-csv';
@@ -64,14 +64,22 @@ import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
 import constant from 'lodash/constant';
+import isPlainObject from 'lodash/isPlainObject';
 import {withEquals} from '../ko-utils';
 import keys from 'lodash/keys';
-import {dialogs, dataUtils, SelectOptions, enums, ko, insightGetter} from '../insight-modules';
+import {dataUtils, dialogs, enums, insightGetter, ko, SelectOptions} from '../insight-modules';
 import reverse from 'lodash/reverse';
+import isFunction from 'lodash/isFunction';
+import {createCustomConfig} from "./custom-data/create-custom-config";
+import {
+    checkboxFilterFunc,
+    getHeaderFilterParams,
+    FILTER_PLACEHOLDER_TEXT,
+    getHeaderFilterEmptyCheckFn
+} from './column-filter-utils';
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
-const FILTER_PLACEHOLDER_TEXT = 'No Filter';
 
 const addSelectNull = (items) => {
     if (isArray(items)) {
@@ -115,6 +123,24 @@ export const getCssClasses = (columnOptions, isNumeric, isIndex = false) => {
     return classes.join(' ');
 };
 
+/**
+ * trigger a user defined column modifier callback function
+ * @param {function} modifier
+ * @param {[Object]}columns
+ * @returns {*}
+ */
+export const modifyColumns = (modifier, columns) => {
+    if (isFunction(modifier)) {
+        const modifiedColumnConfig = modifier(cloneDeep(columns));
+        if (isPlainObject(modifiedColumnConfig)) {
+            columns = modifiedColumnConfig;
+        }
+        return modifiedColumnConfig;
+    } else {
+        console.error('Error for component vdlx-datagrid: column-modifier" attribute must be a function.');
+    }
+}
+
 const VALIDATION_ERROR_TITLE = 'Validation Error';
 
 class Datagrid {
@@ -154,7 +180,12 @@ class Datagrid {
         this.paginatorControl = this.createPaginatorControl(footerToolbar, this.table, options);
         this.stateManager = null;
 
-        this.buildTable();
+        if (_.isUndefined(options.data)) {
+            this.buildTable();
+        } else {
+            this.buildCustomDataTable();
+        }
+
         this.update();
 
         const mouseDownListener = (e) => {
@@ -182,6 +213,80 @@ class Datagrid {
         };
 
         this.unloadHandlerId = this.view.addUnloadHandler(this.viewUnloadHandler);
+    }
+
+    // stripped down version of build table that only subscribes to grid options
+    buildCustomDataTable() {
+
+        this.componentRoot.style.display = 'block';
+        const gridOptions$ = this.gridOptions$;
+
+        this.subscriptions = this.subscriptions.concat([
+            ko
+                .pureComputed(() => {
+                    const gridOptions = gridOptions$();
+                    if (gridOptions) {
+                        this.componentRoot.style.display = 'block';
+                        // lock table until updated
+                        if (!isEmpty(gridOptions)) {
+                            this.tableLock.lock();
+                        }
+
+                        return perf('vdlx-datagrid custom data total build time:', () =>
+                            this.setCustomDataColumnsAndData(gridOptions).then(() =>
+                                this.tableLock.unlock()
+                            ).catch((err) => {
+                                this.tableLock.unlock()
+                                this.table.clearData();
+                                this.table.setColumns([]);
+                                dialogs.toast(err, dialogs.level.ERROR);
+                                console.error('An error occurred whilst adding data to Tabulator', err);
+                            })
+                        );
+                    }
+                    return undefined;
+                })
+                .subscribe(noop)
+        ]);
+    }
+
+    setCustomDataColumnsAndData(gridOptions) {
+        const table = this.table;
+
+        if (!isArray(gridOptions.data())) {
+            return Promise.reject('Error for component vdlx-datagrid: Please ensure the data attribute contains an array');
+        }
+
+        let { columns, data } = createCustomConfig(gridOptions);
+
+        if (!_.isUndefined(columns)) {
+
+            // user defined column modifier
+            if (!isUndefined(gridOptions.columnModifier)) {
+                columns = modifyColumns(gridOptions.columnModifier, columns);
+            }
+
+            // set the columns
+            table.setColumns(columns);
+
+            // set the sort order to be consistent with how scenario data works
+            if (!_.isEmpty(columns)) {
+                const firstVisibleCol = _.find(columns, (col) => {
+                    return _.isUndefined(col.visible) || col.visible === true;
+                });
+                table.setSort([{column: firstVisibleCol.field, dir: 'asc'}]);
+            }
+
+            return perf('Tabulator set custom Data and draw', () =>
+                table
+                    .setData(data)
+                    .then(() => this.redrawTable())
+                    .then(() => (this.table.element.style.visibility = 'visible'))
+                    .catch((e) => {
+                        console.error('An error occurred whilst adding custom data to Tabulator and redrawing', e);
+                    })
+            );
+        }
     }
 
     buildTable() {
@@ -487,6 +592,22 @@ class Datagrid {
         }
     }
 
+    redrawTable() {
+        const table = this.table;
+        if (
+            this.table.element.offsetParent &&
+            this.table.element.offsetParent.tagName.toLowerCase() === 'vdlx-datagrid'
+        ) {
+            return Promise.resolve(this.table.redraw(true));
+        } else {
+            return new Promise((resolve, reject) => {
+                delay(() => {
+                    this.redrawTable().then(resolve).catch(reject);
+                }, 100);
+            });
+        }
+    }
+
     cancelPendingEdits() {
         let editingCell = this.table?.modules?.edit?.getCurrentCell();
         if (editingCell) {
@@ -768,7 +889,7 @@ class Datagrid {
 
                         if (calculatedColumnsOptions.length > 0) {
                             await this.savingPromise;
-                            return redraw();
+                            return this.redrawTable();
                         }
                     }
                 }
@@ -812,56 +933,11 @@ class Datagrid {
                     }
                     return EDITOR_TYPES.text;
                 };
-                const getHeaderFilterParams = () => {
-                    if (column.editor === EDITOR_TYPES.checkbox) {
-                        const checkedValue = get(entityOptions, 'checkedValue', true);
-                        const uncheckedValue = get(entityOptions, 'uncheckedValue', false);
-                        return {
-                            values: [
-                                {value: undefined, label: FILTER_PLACEHOLDER_TEXT},
-                                {value: String(checkedValue), label: 'Checked'},
-                                {value: String(uncheckedValue), label: 'Unchecked'},
-                            ],
-                        };
-                    }
-                };
                 const headerFilter = getHeaderFilter();
-                const headerFilterParams = getHeaderFilterParams();
-                const checkboxFilterFunc = (value, cellValue, rowData, params) => {
-                    const valueString = String(value);
-                    const cellValueTxt = String(cellValue);
-                    if (valueString === cellValueTxt) {
-                        return true;
-                    }
+                const headerFilterParams = getHeaderFilterParams(column, entityOptions);
+                const headerFilterEmptyCheck = getHeaderFilterEmptyCheckFn(column, headerFilterParams);
 
-                    const optionMatch = find(
-                        params.values,
-                        (keyValue) => keyValue.value === valueString || keyValue.label === valueString
-                    );
-                    if (isUndefined(optionMatch)) {
-                        return false;
-                    }
-                    return optionMatch.value === cellValueTxt;
-                };
 
-                const checkboxFilterEmptyCheck = (value) => {
-                    if (value == null) {
-                        return true;
-                    }
-                    const valueString = String(value);
-                    const optionMatch = find(
-                        headerFilterParams.values,
-                        (keyValue) => keyValue.value === valueString || keyValue.label === valueString
-                    );
-                    return isUndefined(optionMatch) || isUndefined(optionMatch.value);
-                };
-
-                const getHeaderFilterEmptyCheckFn = () => {
-                    if (column.editor === EDITOR_TYPES.checkbox) {
-                        return checkboxFilterEmptyCheck;
-                    }
-                    return undefined;
-                };
                 const getHeaderFilterFn = () => {
                     if (column.editor === EDITOR_TYPES.checkbox) {
                         return checkboxFilterFunc;
@@ -894,7 +970,7 @@ class Datagrid {
                     headerFilterParams: headerFilterParams,
                     headerFilterFuncParams: headerFilterParams,
                     headerFilterFunc: getHeaderFilterFn(),
-                    headerFilterEmptyCheck: getHeaderFilterEmptyCheckFn(),
+                    headerFilterEmptyCheck: headerFilterEmptyCheck,
                 };
             }
 
@@ -992,7 +1068,13 @@ class Datagrid {
         this.entitiesColumns = entitiesColumns;
         this.indicesColumns = indicesColumns;
 
+        // user defined column modifier
+        if (!isUndefined(gridOptions.columnModifier)) {
+            columns = modifyColumns(gridOptions.columnModifier, columns);
+        }
+
         table.setColumns(columns);
+
         this.initialSortOrder = map(
             sortBy(
                 filter(columns, (column) => !isUndefined(column.sortOrder)),
@@ -1024,21 +1106,6 @@ class Datagrid {
         this.stateManager = this.createStateManager(gridOptions, columns, map(entitiesColumns, 'scenario'));
         this.loadState();
 
-        const redraw = () => {
-            if (
-                this.table.element.offsetParent &&
-                this.table.element.offsetParent.tagName.toLowerCase() === 'vdlx-datagrid'
-            ) {
-                return Promise.resolve(this.table.redraw(true));
-            } else {
-                return new Promise((resolve, reject) => {
-                    delay(() => {
-                        redraw().then(resolve).catch(reject);
-                    }, 100);
-                });
-            }
-        };
-
         this.table.element.style.visibility = 'hidden';
 
         perfMessage(() => {
@@ -1053,7 +1120,7 @@ class Datagrid {
         return perf('Tabulator setData and draw', () =>
             table
                 .setData(data)
-                .then(() => redraw())
+                .then(() => this.redrawTable())
                 .then(() => (this.table.element.style.visibility = 'visible'))
                 .catch((e) => {
                     console.error('An error occurred whilst adding data to Tabulator and redrawing', e);

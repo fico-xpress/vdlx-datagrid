@@ -142,12 +142,15 @@ export default {
             defaultValue: true
         },
         {
-            name: 'grid-data',
+            name: 'data',
+            description:
+                'Use this attribute to pass data directly to vdlx-datagrid. Supported formats are; array of primitives: [1,2,3], Array of objects: [{... prop: 1}], ' +
+                'or an array of arrays: [...["a",1]] ',
             acceptsExpression: true
         },
         {
             name: 'freeze-columns',
-            description: 'The number of columns to freeze in the table starting from the left hand column.',
+            description: 'The number of columns to freeze in the table starting from the left hand column. Works best when vdlx-datagrid is in a fixed width container',
             required: false
         },
         {
@@ -163,6 +166,11 @@ export default {
             acceptsExpression: true,
             required: false,
             defaultValue: 'data'
+        },
+        {
+            name: 'column-modifier',
+            description: 'Function to modify the column configuration for advanced settings.',
+            expression: 'dynamic'
         }
     ]
 };
