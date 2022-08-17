@@ -7,7 +7,7 @@ import {
     createCustomConfig
 } from '../../../../src/js/vdlx-datagrid/custom-data/create-custom-config';
 
-describe('createCustomConfig', () => {
+describe.skip('createCustomConfig', () => {
 
     describe(' default createCustomConfig', () => {
 
