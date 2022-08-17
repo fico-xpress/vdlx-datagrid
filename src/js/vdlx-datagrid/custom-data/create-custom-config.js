@@ -20,43 +20,29 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+import {CUSTOM_COLUMN_DEFINITION, EDITOR_TYPES} from "../../constants";
+import {chooseColumnFilter} from "../grid-filters";
 import {
-    APPROVED_COLUMN_PROPS,
-    COLUMN_SORTERS,
-    CUSTOM_COLUMN_DEFINITION,
-    EDITOR_TYPES,
-    ROW_DATA_TYPES
-} from "../../constants";
-import {chooseColumnFilter, Enums} from "../grid-filters";
-import {
-    convertArrayOfArraysData,
-    convertPrimitiveArray,
-    getRowDataType,
-    convertObjectDataToLabelData, createValueTypedColumnProperties
-} from './custom-data-utils';
+    createBasicColumnDefinition,
+    createValueTypedColumnProperties,
+    removePropsNotInApprovedList
+} from './custom-column-utils';
+import {convertCustomDataToObjectData, convertObjectDataToLabelData} from './custom-data-utils';
 import {
     checkboxFilterFunc,
     FILTER_PLACEHOLDER_TEXT,
-    getHeaderFilterParams,
-    getHeaderFilterEmptyCheckFn
+    getHeaderFilterEmptyCheckFn,
+    getHeaderFilterParams
 } from '../column-filter-utils';
 import assign from "lodash/assign";
-import isNaN from "lodash/isNaN";
-import isBoolean from "lodash/isBoolean";
-import toNumber from "lodash/toNumber";
 import filter from 'lodash/filter';
 import isFunction from "lodash/isFunction";
 import values from "lodash/values";
 import parseInt from "lodash/parseInt";
-import cloneDeep from "lodash/cloneDeep";
 import size from "lodash/size";
 import map from "lodash/map";
 import head from "lodash/head";
 import get from "lodash/get";
-import omit from "lodash/omit";
-import keys from "lodash/keys";
-import difference from "lodash/difference";
-import {getDataType} from "../utils";
 
 /**
  * creates config object containing data and columns
@@ -82,7 +68,7 @@ export const createCustomConfig = (gridOptions) => {
 
     switch (gridOptions.columnDefinitionType) {
         case CUSTOM_COLUMN_DEFINITION.AUTO:
-            datagridData = convertCustomData(data);
+            datagridData = convertCustomDataToObjectData(data);
             columnDefinitions = createAutoColumnDefinitions(head(datagridData));
             break
         case CUSTOM_COLUMN_DEFINITION.OBJECT:
@@ -97,6 +83,7 @@ export const createCustomConfig = (gridOptions) => {
             console.error('Error for component vdlx-datagrid: unrecognised column format.');
     }
 
+    // todo - should this be in datagrid.setCustomDataColumnsAndData
     // apply rowFilter from attr
     const rowFilter = gridOptions.rowFilter;
     if (isFunction(rowFilter)) {
@@ -104,32 +91,10 @@ export const createCustomConfig = (gridOptions) => {
     }
 
     return {
-        columns: addDataGridColumnAttrs(gridOptions, columnDefinitions),
+        columns: addGridOptionsProps(gridOptions, columnDefinitions),
         data: datagridData
     };
 
-};
-
-/**
- * ensures data in the correct array of objects format
- * @param data
- * @returns {*[]|*}
- */
-export const convertCustomData = (data) => {
-    // clone the gridOptions data so not updating original
-    let customData = cloneDeep(data);
-
-    switch (getRowDataType(customData[0])) {
-        case ROW_DATA_TYPES.array:
-            return convertArrayOfArraysData(customData);
-        case ROW_DATA_TYPES.primitive:
-            return convertPrimitiveArray(customData);
-        case ROW_DATA_TYPES.object:
-            return customData;
-        default:
-            console.error('Error for component vdlx-datagrid: Please remove functions from the data.');
-            return [];
-    }
 };
 
 /**
@@ -145,7 +110,7 @@ export const applyRowFilter = (data, rowFilter) => {
 }
 
 export const createAutoColumnDefinitions = (data) => {
-    return map(data, (key, val) => createBasicColumnDefinition(key, val));
+    return map(data, (val, key) => createBasicColumnDefinition(key, val));
 };
 
 /**
@@ -157,11 +122,11 @@ export const createAutoColumnDefinitions = (data) => {
 export const createColumnsFromUserDefinition = (colDefinitions, data) => {
     // pick the data attr by using the col definition field attr
     return map(colDefinitions, (col) => {
-       const colValue = get(data, col.field, '');
-       return {
-           ...removePropsNotInApprovedList(col),
-           ...createValueTypedColumnProperties(colValue)
-       }
+        const colValue = get(data, col.field, '');
+        return {
+            ...removePropsNotInApprovedList(col),
+            ...createValueTypedColumnProperties(colValue)
+        }
     });
 }
 
@@ -177,49 +142,13 @@ export const createColumnsFromLabels = (data) => {
     });
 };
 
-export const createBasicColumnDefinition = (value, key) => {
-    return {
-        id: key,
-        field: key,
-        title: key,
-        ...createValueTypedColumnProperties(value)
-    };
-}
-
-
-// remove any props we don't want
-// todo we may even add an constant for this?
-// todo - we could actually consider having a list of allowed props instead of disallowed?
-export const removeUnsupportedProps = (column) => {
-    // removing all event handlers to prevent clashing with vdlx-selection handlers
-    // consider including menus, mutators accessors ect
-    // http://tabulator.info/docs/4.9/columns
-
-    const unsupportedProps = ['cellClick', 'cellDblClick', 'cellContext', 'cellTap', 'cellDblTap', 'cellTapHold', 'cellMouseEnter',
-        'cellMouseLeave', 'cellMouseOver', 'cellMouseOut', 'cellMouseMove', 'cellEditing', 'cellEdited', 'cellEditCancelled' ];
-
-    return omit(column, unsupportedProps);
-}
-
-/**
- * remove any property not on the approved list
- * @param column
- * @returns {*}
- */
-export const removePropsNotInApprovedList = (column) => {
-    const colProps = keys(column);
-    const approvedColumnProps = keys(APPROVED_COLUMN_PROPS);
-    const invalidProps = _.difference(colProps, approvedColumnProps);
-    return omit(column, invalidProps);
-}
-
 /**
  * add all properties set via the vdlx-datagrid attributes
  * @param gridOptions
  * @param columns
  * @returns {*}
  */
-const addDataGridColumnAttrs = (gridOptions, columns) => {
+const addGridOptionsProps = (gridOptions, columns) => {
 
     const freezeColumns = parseInt(gridOptions.freezeColumns);
     const includeFilter = gridOptions.columnFilter || false;
@@ -241,6 +170,7 @@ const addDataGridColumnAttrs = (gridOptions, columns) => {
     });
 
 };
+
 
 /**
  * configure a column filter for a column

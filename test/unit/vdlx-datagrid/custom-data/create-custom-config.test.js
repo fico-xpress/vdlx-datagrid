@@ -1,19 +1,21 @@
 import {
     applyRowFilter,
     configureColumnFilter,
-    convertCustomData,
+    convertCustomDataToObjectData,
     createAutoColumnDefinitions,
     createColumnDefinition,
     createCustomConfig
 } from '../../../../src/js/vdlx-datagrid/custom-data/create-custom-config';
+import {CUSTOM_COLUMN_DEFINITION} from "../../../../src/js/constants";
 
-describe.skip('createCustomConfig', () => {
+describe('createCustomConfig', () => {
 
     describe(' default createCustomConfig', () => {
 
         let gridOptions;
         beforeEach(() => {
             gridOptions = {
+                columnDefinitionType: CUSTOM_COLUMN_DEFINITION.AUTO,
                 data: () => [1, 2, 3, 4]
             };
         });
@@ -24,10 +26,10 @@ describe.skip('createCustomConfig', () => {
                 {
                     columns: [{
                         cssClass: 'numeric',
+                        editable: false,
                         editor: 'input',
                         elementType: 'INTEGER',
                         field: 'column 0',
-                        frozen: false,
                         id: 'column 0',
                         sorter: 'number',
                         title: 'column 0'
@@ -47,10 +49,10 @@ describe.skip('createCustomConfig', () => {
                 {
                     columns: [{
                         cssClass: 'numeric',
+                        editable: false,
                         editor: 'input',
                         elementType: 'INTEGER',
                         field: 'column 0',
-                        frozen: false,
                         id: 'column 0',
                         sorter: 'number',
                         title: 'column 0',
@@ -70,52 +72,6 @@ describe.skip('createCustomConfig', () => {
         });
     });
 
-    describe('convertCustomData', () => {
-
-        it('converts array of arrays', () => {
-            const data = [
-                [1, 2],
-                [3, 4]
-            ];
-
-            expect(convertCustomData(data)).toEqual([
-                {'column 0': 1, 'column 1': 2},
-                {'column 0': 3, 'column 1': 4}
-            ]);
-        });
-
-        it('converts array of primitives', () => {
-
-            expect(convertCustomData([1, 2, 3, 4])).toEqual([
-                {'column 0': 1},
-                {'column 0': 2},
-                {'column 0': 3},
-                {'column 0': 4}
-            ]);
-        });
-
-        it('returns passed data when data is array objects', () => {
-            const data = [
-                {key: 1, value: 1},
-                {key: 2, value: 2}
-            ];
-            expect(convertCustomData(data)).toEqual(data);
-        });
-
-        it('logs error and returns empty when javascript function discovered', () => {
-            const data = [
-                () => 666,
-                () => 666
-            ];
-
-            const result = convertCustomData(data);
-            expect(result).toEqual([]);
-            expect(global.console.error).toBeCalledWith(
-                expect.stringContaining('Error for component vdlx-datagrid: Please remove functions from the data.')
-            );
-        });
-
-    });
 
     describe('applyRowFilter', () => {
 
@@ -163,7 +119,6 @@ describe.skip('createCustomConfig', () => {
                     editor: 'input',
                     elementType: 'INTEGER',
                     field: 'value',
-                    frozen: false,
                     id: 'value',
                     sorter: 'number',
                     title: 'value'
@@ -172,7 +127,6 @@ describe.skip('createCustomConfig', () => {
                     editor: 'input',
                     elementType: 'STRING',
                     field: 'label',
-                    frozen: false,
                     id: 'label',
                     sorter: 'string',
                     title: 'label'
@@ -181,7 +135,6 @@ describe.skip('createCustomConfig', () => {
                     editor: 'checkbox',
                     elementType: 'BOOLEAN',
                     field: 'isTrue',
-                    frozen: false,
                     formatter: expect.any(Function),
                     id: 'isTrue',
                     sorter: 'boolean',
@@ -191,45 +144,45 @@ describe.skip('createCustomConfig', () => {
         });
 
 
-        it('adds freeze attr', () => {
-
-            const data = {value: 100, label: 'label', isTrue: true};
-            expect(createAutoColumnDefinitions(data, false, 2)).toEqual([
-                {
-                    cssClass: 'numeric',
-                    editor: 'input',
-                    elementType: 'INTEGER',
-                    field: 'value',
-                    frozen: true,
-                    id: 'value',
-                    sorter: 'number',
-                    title: 'value'
-                },
-                {
-                    editor: 'input',
-                    elementType: 'STRING',
-                    field: 'label',
-                    frozen: true,
-                    id: 'label',
-                    sorter: 'string',
-                    title: 'label'
-                },
-                {
-                    editor: 'checkbox',
-                    elementType: 'BOOLEAN',
-                    field: 'isTrue',
-                    frozen: false,
-                    formatter: expect.any(Function),
-                    id: 'isTrue',
-                    sorter: 'boolean',
-                    title: 'isTrue'
-                }
-            ]);
-        });
+        // it('adds freeze attr', () => {
+        //
+        //     const data = {value: 100, label: 'label', isTrue: true};
+        //     expect(createAutoColumnDefinitions(data, false, 2)).toEqual([
+        //         {
+        //             cssClass: 'numeric',
+        //             editor: 'input',
+        //             elementType: 'INTEGER',
+        //             field: 'value',
+        //             frozen: true,
+        //             id: 'value',
+        //             sorter: 'number',
+        //             title: 'value'
+        //         },
+        //         {
+        //             editor: 'input',
+        //             elementType: 'STRING',
+        //             field: 'label',
+        //             frozen: true,
+        //             id: 'label',
+        //             sorter: 'string',
+        //             title: 'label'
+        //         },
+        //         {
+        //             editor: 'checkbox',
+        //             elementType: 'BOOLEAN',
+        //             field: 'isTrue',
+        //             frozen: false,
+        //             formatter: expect.any(Function),
+        //             id: 'isTrue',
+        //             sorter: 'boolean',
+        //             title: 'isTrue'
+        //         }
+        //     ]);
+        // });
 
     });
 
-    describe('createColumnDefinition', () => {
+    describe.skip('createColumnDefinition', () => {
 
         it('creates numeric column config', () => {
             const key = 'colName';

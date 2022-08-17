@@ -48,6 +48,8 @@ export const CUSTOM_COLUMN_DEFINITION = {
 };
 
 export const APPROVED_COLUMN_PROPS = {
+    id: 'undocumented',
+    elementType: 'id for the column',
     title: 'docs for the title prop',
     field: 'docs for the field prop',
     visible: 'docs for the visible prop',
@@ -60,12 +62,15 @@ export const APPROVED_COLUMN_PROPS = {
     cssClass: 'docs for the prop',
     sorter: 'docs for the prop',
     formatter: 'docs for the prop',
-    editable: 'docs for the prop',
     editor: 'docs for the prop',
     contextMenu: 'a fancy context menu',
-    cellClick: 'cell click handler'
+    cellClick: 'cell click handler',
+    editable: 'sdsfddsfsdfds'
 };
 
 // const approveProps = ['title', 'field', 'visible', 'hozAlign','vertAlign', 'headerHozAlign', 'width', 'minWidth', 'maxWidth',
 //     'frozen', 'cssClass', 'sorter', 'formatter', 'editable', 'editor'];
+
+
+
 

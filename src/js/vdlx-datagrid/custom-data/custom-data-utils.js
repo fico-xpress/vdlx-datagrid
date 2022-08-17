@@ -25,14 +25,25 @@ import map from 'lodash/map';
 import isArray from "lodash/isArray";
 import isPlainObject from "lodash/isPlainObject";
 import isFunction from "lodash/isFunction";
-import {COLUMN_SORTERS, EDITOR_TYPES, ROW_DATA_TYPES} from "../../constants";
+import {ROW_DATA_TYPES} from "../../constants";
 import reduce from "lodash/reduce";
 import assign from "lodash/assign";
 import {Enums} from "../grid-filters";
 import isNaN from "lodash/isNaN";
 import toNumber from "lodash/toNumber";
 import isBoolean from "lodash/isBoolean";
-import parseInt from "lodash/parseInt";
+import cloneDeep from "lodash/cloneDeep";
+
+//todo - this is rough - to be improved
+export const getDataType = (data) => {
+    if (isNaN(toNumber(data))) {
+        return Enums.DataType.STRING
+    } else if (isBoolean(data)) {
+        return Enums.DataType.BOOLEAN;
+    } else {
+        return Enums.DataType.INTEGER;
+    }
+}
 
 export const getRowDataType = (row) => {
     if (isPlainObject(row)) {
@@ -46,6 +57,28 @@ export const getRowDataType = (row) => {
     }
     return ROW_DATA_TYPES.primitive;
 }
+
+/**
+ * ensures data in the correct array of objects format
+ * @param data
+ * @returns {*[]|*}
+ */
+export const convertCustomDataToObjectData = (data) => {
+    // clone the gridOptions data so not updating original
+    let customData = cloneDeep(data);
+
+    switch (getRowDataType(customData[0])) {
+        case ROW_DATA_TYPES.array:
+            return convertArrayOfArraysData(customData);
+        case ROW_DATA_TYPES.primitive:
+            return convertPrimitiveArray(customData);
+        case ROW_DATA_TYPES.object:
+            return customData;
+        default:
+            console.error('Error for component vdlx-datagrid: Please remove functions from the data.');
+            return [];
+    }
+};
 
 export const convertArrayOfArraysData = (data) => {
     return map(data, (row) => {
@@ -72,56 +105,5 @@ export const convertObjectDataToLabelData = (data) => {
         });
         return memo;
     }, {});
-
     return [newData];
-
-}
-
-export const getDataType = (data) => {
-    if (isNaN(toNumber(data))) {
-        return Enums.DataType.STRING
-    } else if (isBoolean(data)) {
-        return Enums.DataType.BOOLEAN;
-    } else {
-        return Enums.DataType.INTEGER;
-    }
-}
-
-export const createValueTypedColumnProperties = (value) => {
-    switch (getDataType(value)) {
-        case Enums.DataType.BOOLEAN:
-            const checkboxFormatter = (cell) => {
-                const checked = cell.getValue() ? 'checked' : '';
-                const disabled = 'disabled';
-                return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
-            };
-            return {
-                    editor: EDITOR_TYPES.checkbox,
-                    sorter: COLUMN_SORTERS.boolean,
-                    elementType: Enums.DataType.BOOLEAN,
-                    formatter: checkboxFormatter
-                };
-        case Enums.DataType.INTEGER:
-            return {
-                editor: EDITOR_TYPES.text,
-                sorter: COLUMN_SORTERS.number,
-                elementType: Enums.DataType.INTEGER,
-                cssClass: 'numeric'
-            }
-        case Enums.DataType.STRING:
-            return {
-                editor: EDITOR_TYPES.text,
-                sorter: COLUMN_SORTERS.string,
-                elementType: Enums.DataType.STRING
-            };
-        default:
-            console.error('unrecognised data type');
-            return {};
-    }
-}
-
-// todo - give this idea some thought
-export const createVdlxDatagridColumnProperties = (gridOptions) => {
-    const freezeColumns = parseInt(gridOptions.freezeColumns);
-    const includeFilter = gridOptions.columnFilter || false;
 }
