@@ -46,3 +46,26 @@ export const CUSTOM_COLUMN_DEFINITION = {
     LABELS: 'labels',
     OBJECT: 'object'
 };
+
+export const APPROVED_COLUMN_PROPS = {
+    title: 'docs for the title prop',
+    field: 'docs for the field prop',
+    visible: 'docs for the visible prop',
+    vertAlign: 'docs for the vertAlign prop',
+    headerHozAlign: 'docs for the prop',
+    width: 'docs for the prop',
+    minWidth: 'docs for the prop',
+    maxWidth: 'docs for the prop',
+    frozen: 'docs for the prop',
+    cssClass: 'docs for the prop',
+    sorter: 'docs for the prop',
+    formatter: 'docs for the prop',
+    editable: 'docs for the prop',
+    editor: 'docs for the prop',
+    contextMenu: 'a fancy context menu',
+    cellClick: 'cell click handler'
+};
+
+// const approveProps = ['title', 'field', 'visible', 'hozAlign','vertAlign', 'headerHozAlign', 'width', 'minWidth', 'maxWidth',
+//     'frozen', 'cssClass', 'sorter', 'formatter', 'editable', 'editor'];
+
