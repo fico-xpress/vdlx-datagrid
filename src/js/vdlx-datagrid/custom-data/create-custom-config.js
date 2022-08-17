@@ -20,10 +20,26 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import {COLUMN_SORTERS, CUSTOM_COLUMN_DEFINITION, EDITOR_TYPES, ROW_DATA_TYPES} from "../../constants";
+import {
+    APPROVED_COLUMN_PROPS,
+    COLUMN_SORTERS,
+    CUSTOM_COLUMN_DEFINITION,
+    EDITOR_TYPES,
+    ROW_DATA_TYPES
+} from "../../constants";
 import {chooseColumnFilter, Enums} from "../grid-filters";
-import {convertArrayOfArraysData, convertPrimitiveArray, getRowDataType} from './custom-data-utils';
-import {checkboxFilterFunc, FILTER_PLACEHOLDER_TEXT, getHeaderFilterParams, getHeaderFilterEmptyCheckFn} from '../column-filter-utils';
+import {
+    convertArrayOfArraysData,
+    convertPrimitiveArray,
+    getRowDataType,
+    convertObjectDataToLabelData, createValueTypedColumnProperties
+} from './custom-data-utils';
+import {
+    checkboxFilterFunc,
+    FILTER_PLACEHOLDER_TEXT,
+    getHeaderFilterParams,
+    getHeaderFilterEmptyCheckFn
+} from '../column-filter-utils';
 import assign from "lodash/assign";
 import isNaN from "lodash/isNaN";
 import isBoolean from "lodash/isBoolean";
@@ -36,6 +52,11 @@ import cloneDeep from "lodash/cloneDeep";
 import size from "lodash/size";
 import map from "lodash/map";
 import head from "lodash/head";
+import get from "lodash/get";
+import omit from "lodash/omit";
+import keys from "lodash/keys";
+import difference from "lodash/difference";
+import {getDataType} from "../utils";
 
 /**
  * creates config object containing data and columns
@@ -44,7 +65,8 @@ import head from "lodash/head";
  */
 export const createCustomConfig = (gridOptions) => {
 
-    // todo - fix issue that the filters are not cleared out when the data changes
+    // todo - fix issue of the filters are not cleared out when the data changes
+    // todo - fix issue of filters not working with user defined columns
 
     const data = gridOptions.data();
 
@@ -55,23 +77,25 @@ export const createCustomConfig = (gridOptions) => {
         };
     }
 
-    debugger
-        let datagridData = [];
-        let columnDefinitions = [];
+    let datagridData = [];
+    let columnDefinitions = [];
 
-        switch (gridOptions.columnDefinitionType) {
-            case CUSTOM_COLUMN_DEFINITION.AUTO:
-                datagridData = convertCustomData(data);
-                columnDefinitions = createAutoColumnDefinitions(head(datagridData));
-                break
-            case CUSTOM_COLUMN_DEFINITION.OBJECT:
-                debugger;
-                break
-            case CUSTOM_COLUMN_DEFINITION.LABELS:
-                break
-            default:
-                console.error('Error for component vdlx-datagrid: unrecognised column format.');
-        }
+    switch (gridOptions.columnDefinitionType) {
+        case CUSTOM_COLUMN_DEFINITION.AUTO:
+            datagridData = convertCustomData(data);
+            columnDefinitions = createAutoColumnDefinitions(head(datagridData));
+            break
+        case CUSTOM_COLUMN_DEFINITION.OBJECT:
+            datagridData = data;
+            columnDefinitions = createColumnsFromUserDefinition(gridOptions.columnDefinitions(), head(data));
+            break
+        case CUSTOM_COLUMN_DEFINITION.LABELS:
+            datagridData = convertObjectDataToLabelData(data);
+            columnDefinitions = createColumnsFromLabels(data);
+            break
+        default:
+            console.error('Error for component vdlx-datagrid: unrecognised column format.');
+    }
 
     // apply rowFilter from attr
     const rowFilter = gridOptions.rowFilter;
@@ -79,11 +103,8 @@ export const createCustomConfig = (gridOptions) => {
         datagridData = applyRowFilter(datagridData, rowFilter);
     }
 
-    // apply the gridOptions column attrs.
-    columnDefinitions = addDataGridColumnAttrs(gridOptions, columnDefinitions);
-
     return {
-        columns: columnDefinitions,
+        columns: addDataGridColumnAttrs(gridOptions, columnDefinitions),
         data: datagridData
     };
 
@@ -127,129 +148,98 @@ export const createAutoColumnDefinitions = (data) => {
     return map(data, (key, val) => createBasicColumnDefinition(key, val));
 };
 
-// export const createAutoColumnDefinitions = (data, includeFilter, freezeColumns) => {
-//     // map over the object entries, so I can have key value and index
-//     return Object.entries(data).map(([key,val], index) => {
-//         return createColumnDefinition(val, key, includeFilter, index < freezeColumns)
-//     });
-// };
-
-
-export const createBasicColumnDefinition = (val, key) => {
-    const requiredProps = {
-        id: key,
-        field: key,
-        title: key
-    };
-    let col;
-    if (isNaN(toNumber(val))) {
-        // string column
-        col = assign(requiredProps, {
-            editor: EDITOR_TYPES.text,
-            sorter: COLUMN_SORTERS.string,
-            elementType: Enums.DataType.STRING
-        });
-    } else if (isBoolean(val)) {
-        // boolean column with checkbox
-        const checkboxFormatter = (cell) => {
-            const checked = cell.getValue() ? 'checked' : '';
-            const disabled = 'disabled';
-            return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
-        };
-        col = assign(requiredProps, {
-                editor: EDITOR_TYPES.checkbox,
-                sorter: COLUMN_SORTERS.boolean,
-                elementType: Enums.DataType.BOOLEAN,
-                formatter: checkboxFormatter
-            }
-        );
-    } else {
-        // numeric column
-        col = assign(requiredProps, {
-            editor: EDITOR_TYPES.text,
-            sorter: COLUMN_SORTERS.number,
-            elementType: Enums.DataType.INTEGER,
-            cssClass: 'numeric'
-        });
-    }
-    // todo - return out from each clause instead of using a let
-    return col;
+/**
+ * take the user defined column configurations and add the required value type attributes, and delete undesired props
+ * @param colDefinitions
+ * @param data
+ * @returns {*}
+ */
+export const createColumnsFromUserDefinition = (colDefinitions, data) => {
+    // pick the data attr by using the col definition field attr
+    return map(colDefinitions, (col) => {
+       const colValue = get(data, col.field, '');
+       return {
+           ...removePropsNotInApprovedList(col),
+           ...createValueTypedColumnProperties(colValue)
+       }
+    });
 }
 
+export const createColumnsFromLabels = (data) => {
+    return map(data, (row, index) => {
+        const id = index.toString();
+        return {
+            id: id,
+            title: row.label,
+            field: id,
+            ...createValueTypedColumnProperties(row.value)
+        };
+    });
+};
+
+export const createBasicColumnDefinition = (value, key) => {
+    return {
+        id: key,
+        field: key,
+        title: key,
+        ...createValueTypedColumnProperties(value)
+    };
+}
+
+
+// remove any props we don't want
+// todo we may even add an constant for this?
+// todo - we could actually consider having a list of allowed props instead of disallowed?
+export const removeUnsupportedProps = (column) => {
+    // removing all event handlers to prevent clashing with vdlx-selection handlers
+    // consider including menus, mutators accessors ect
+    // http://tabulator.info/docs/4.9/columns
+
+    const unsupportedProps = ['cellClick', 'cellDblClick', 'cellContext', 'cellTap', 'cellDblTap', 'cellTapHold', 'cellMouseEnter',
+        'cellMouseLeave', 'cellMouseOver', 'cellMouseOut', 'cellMouseMove', 'cellEditing', 'cellEdited', 'cellEditCancelled' ];
+
+    return omit(column, unsupportedProps);
+}
+
+/**
+ * remove any property not on the approved list
+ * @param column
+ * @returns {*}
+ */
+export const removePropsNotInApprovedList = (column) => {
+    const colProps = keys(column);
+    const approvedColumnProps = keys(APPROVED_COLUMN_PROPS);
+    const invalidProps = _.difference(colProps, approvedColumnProps);
+    return omit(column, invalidProps);
+}
+
+/**
+ * add all properties set via the vdlx-datagrid attributes
+ * @param gridOptions
+ * @param columns
+ * @returns {*}
+ */
 const addDataGridColumnAttrs = (gridOptions, columns) => {
+
     const freezeColumns = parseInt(gridOptions.freezeColumns);
     const includeFilter = gridOptions.columnFilter || false;
 
-    const updatedColumns = map(columns, (col, index) => {
-
-        let column = {...col};
+    return map(columns, (col, index) => {
+        // custom data does not support editable columns
+        let column = {
+            ...col,
+            editable: false
+        };
         if (index < freezeColumns) {
             assign(column, {frozen: true});
         }
         if (includeFilter) {
             assign(column, configureColumnFilter(col));
         }
-        return column
+
+        return column;
     });
-debugger
-    return updatedColumns
 
-};
-
-
-/**
- * create a column configuration
- * @param val
- * @param key
- * @param includeFilter
- * @param freeze
- * @returns {*}
- */
-export const createColumnDefinition = (val, key, includeFilter, freeze) => {
-
-    const requiredProps = {
-        id: key,
-        field: key,
-        title: key,
-        frozen: freeze
-    };
-
-    let col;
-    if (isNaN(toNumber(val))) {
-        // string column
-        col = assign(requiredProps, {
-            editor: EDITOR_TYPES.text,
-            sorter: COLUMN_SORTERS.string,
-            elementType: Enums.DataType.STRING
-        });
-    } else if (isBoolean(val)) {
-        // boolean column with checkbox
-        const checkboxFormatter = (cell) => {
-            const checked = cell.getValue() ? 'checked' : '';
-            const disabled = 'disabled';
-            return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
-        };
-        col = assign(requiredProps, {
-                editor: EDITOR_TYPES.checkbox,
-                sorter: COLUMN_SORTERS.boolean,
-                elementType: Enums.DataType.BOOLEAN,
-                formatter: checkboxFormatter
-            }
-        );
-    } else {
-        // numeric column
-        col = assign(requiredProps, {
-            editor: EDITOR_TYPES.text,
-            sorter: COLUMN_SORTERS.number,
-            elementType: Enums.DataType.INTEGER,
-            cssClass: 'numeric'
-        });
-    }
-
-    if (includeFilter) {
-        return configureColumnFilter(col);
-    }
-    return col;
 };
 
 /**
