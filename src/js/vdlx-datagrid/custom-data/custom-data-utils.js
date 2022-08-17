@@ -25,9 +25,14 @@ import map from 'lodash/map';
 import isArray from "lodash/isArray";
 import isPlainObject from "lodash/isPlainObject";
 import isFunction from "lodash/isFunction";
-import {ROW_DATA_TYPES} from "../../constants";
+import {COLUMN_SORTERS, EDITOR_TYPES, ROW_DATA_TYPES} from "../../constants";
 import reduce from "lodash/reduce";
 import assign from "lodash/assign";
+import {Enums} from "../grid-filters";
+import isNaN from "lodash/isNaN";
+import toNumber from "lodash/toNumber";
+import isBoolean from "lodash/isBoolean";
+import parseInt from "lodash/parseInt";
 
 export const getRowDataType = (row) => {
     if (isPlainObject(row)) {
@@ -58,3 +63,65 @@ export const convertPrimitiveArray = (data) => {
         }
     });
 };
+
+export const convertObjectDataToLabelData = (data) => {
+    const newData = reduce(data, function (memo, row, index) {
+        assign(memo, {
+            [index.toString()]:
+            row.value
+        });
+        return memo;
+    }, {});
+
+    return [newData];
+
+}
+
+export const getDataType = (data) => {
+    if (isNaN(toNumber(data))) {
+        return Enums.DataType.STRING
+    } else if (isBoolean(data)) {
+        return Enums.DataType.BOOLEAN;
+    } else {
+        return Enums.DataType.INTEGER;
+    }
+}
+
+export const createValueTypedColumnProperties = (value) => {
+    switch (getDataType(value)) {
+        case Enums.DataType.BOOLEAN:
+            const checkboxFormatter = (cell) => {
+                const checked = cell.getValue() ? 'checked' : '';
+                const disabled = 'disabled';
+                return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
+            };
+            return {
+                    editor: EDITOR_TYPES.checkbox,
+                    sorter: COLUMN_SORTERS.boolean,
+                    elementType: Enums.DataType.BOOLEAN,
+                    formatter: checkboxFormatter
+                };
+        case Enums.DataType.INTEGER:
+            return {
+                editor: EDITOR_TYPES.text,
+                sorter: COLUMN_SORTERS.number,
+                elementType: Enums.DataType.INTEGER,
+                cssClass: 'numeric'
+            }
+        case Enums.DataType.STRING:
+            return {
+                editor: EDITOR_TYPES.text,
+                sorter: COLUMN_SORTERS.string,
+                elementType: Enums.DataType.STRING
+            };
+        default:
+            console.error('unrecognised data type');
+            return {};
+    }
+}
+
+// todo - give this idea some thought
+export const createVdlxDatagridColumnProperties = (gridOptions) => {
+    const freezeColumns = parseInt(gridOptions.freezeColumns);
+    const includeFilter = gridOptions.columnFilter || false;
+}
