@@ -25,7 +25,9 @@ import {chooseColumnFilter} from "../grid-filters";
 import {
     createBasicColumnDefinition,
     createValueTypedColumnProperties,
-    removePropsNotInApprovedList
+    removePropsNotInApprovedList,
+    validateLabelsData,
+    validateUserCols
 } from './custom-column-utils';
 import {convertCustomDataToObjectData, convertObjectDataToLabelData} from './custom-data-utils';
 import {
@@ -43,6 +45,7 @@ import size from "lodash/size";
 import map from "lodash/map";
 import head from "lodash/head";
 import get from "lodash/get";
+import isUndefined from "lodash/isUndefined";
 
 /**
  * creates config object containing data and columns
@@ -50,10 +53,7 @@ import get from "lodash/get";
  * @returns {{data: (*|[]), columns: (*|*[])}}
  */
 export const createCustomConfig = (gridOptions) => {
-
     // todo - fix issue of the filters are not cleared out when the data changes
-    // todo - fix issue of filters not working with user defined columns
-
     const data = gridOptions.data();
 
     if (!size(data)) {
@@ -76,20 +76,21 @@ export const createCustomConfig = (gridOptions) => {
             columnDefinitions = createColumnsFromUserDefinition(gridOptions.columnDefinitions(), head(data));
             break
         case CUSTOM_COLUMN_DEFINITION.LABELS:
-            datagridData = convertObjectDataToLabelData(data);
+            datagridData = createLabelData(data);
             columnDefinitions = createColumnsFromLabels(data);
             break
         default:
             console.error('Error for component vdlx-datagrid: unrecognised column format.');
     }
 
-    // todo - should this be in datagrid.setCustomDataColumnsAndData
+    // todo - should this be in datagrid.setCustomDataColumnsAndData?
     // apply rowFilter from attr
     const rowFilter = gridOptions.rowFilter;
     if (isFunction(rowFilter)) {
         datagridData = applyRowFilter(datagridData, rowFilter);
     }
 
+    // addGridOptionsProps will add column features set from vdlx-datagrid attributes
     return {
         columns: addGridOptionsProps(gridOptions, columnDefinitions),
         data: datagridData
@@ -113,20 +114,34 @@ export const createAutoColumnDefinitions = (data) => {
     return map(data, (val, key) => createBasicColumnDefinition(key, val));
 };
 
+export const createLabelData = (data) => {
+    // error thrown for invalid data
+    validateLabelsData(data);
+    return convertObjectDataToLabelData(data);
+}
+
 /**
  * take the user defined column configurations and add the required value type attributes, and delete undesired props
+ * if present, the ID will be overwritten, this is to make it work with grid-filters.filter(...)
  * @param colDefinitions
  * @param data
  * @returns {*}
  */
 export const createColumnsFromUserDefinition = (colDefinitions, data) => {
+
+    // error thrown if validation fails
+    validateUserCols(colDefinitions);
+
     // pick the data attr by using the col definition field attr
-    return map(colDefinitions, (col) => {
-        const colValue = get(data, col.field, '');
+    return map(colDefinitions, (column) => {
+        const colValue = get(data, column.field, '');
         return {
-            ...removePropsNotInApprovedList(col),
-            ...createValueTypedColumnProperties(colValue)
-        }
+            ...removePropsNotInApprovedList(column),
+            ...createValueTypedColumnProperties(colValue),
+            id: column.field,
+            title: column.title || column.field,
+            editable: false
+        };
     });
 }
 
@@ -144,6 +159,7 @@ export const createColumnsFromLabels = (data) => {
 
 /**
  * add all properties set via the vdlx-datagrid attributes
+ * this will not overwrite properties directly set on the column
  * @param gridOptions
  * @param columns
  * @returns {*}
@@ -154,26 +170,24 @@ const addGridOptionsProps = (gridOptions, columns) => {
     const includeFilter = gridOptions.columnFilter || false;
 
     return map(columns, (col, index) => {
-        // custom data does not support editable columns
-        let column = {
-            ...col,
-            editable: false
-        };
-        if (index < freezeColumns) {
-            assign(column, {frozen: true});
+        let column = {};
+        if (isUndefined(col.frozen) && index < freezeColumns) {
+            column.frozen = true;
         }
         if (includeFilter) {
             assign(column, configureColumnFilter(col));
         }
-
-        return column;
+        return {
+            ...col,
+            ...column
+        };
     });
-
 };
 
 
 /**
  * configure a column filter for a column
+ * existing column filter attrs will not be overwritten
  * @returns {*}
  * @param col
  */
@@ -201,14 +215,14 @@ export const configureColumnFilter = (col) => {
         return undefined;
     };
 
-    const headerFilterParams = getHeaderFilterParams(col);
-    const headerFilterEmptyCheck = getHeaderFilterEmptyCheckFn(col, headerFilterParams);
+    const headerFilterParams = col.headerFilterParams || getHeaderFilterParams(col);
+    const headerFilterEmptyCheck = col.headerFilterEmptyCheck || getHeaderFilterEmptyCheckFn(col, headerFilterParams);
 
     let filterConfig = {
         headerFilterParams: headerFilterParams,
-        headerFilterPlaceholder: FILTER_PLACEHOLDER_TEXT,
-        headerFilter: getHeaderFilter(),
-        headerFilterFunc: getHeaderFilterFn(col),
+        headerFilterPlaceholder: col.headerFilterPlaceholder || FILTER_PLACEHOLDER_TEXT,
+        headerFilter: isUndefined(col.headerFilter) ? getHeaderFilter() : col.headerFilter,
+        headerFilterFunc: col.headerFilterFunc || getHeaderFilterFn(col),
         headerFilterEmptyCheck: headerFilterEmptyCheck,
     };
     return assign(col, filterConfig);
