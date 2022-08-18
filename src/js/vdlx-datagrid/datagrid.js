@@ -257,21 +257,24 @@ class Datagrid {
             return Promise.reject('Error for component vdlx-datagrid: Please ensure the data attribute contains an array');
         }
 
-        let { columns, data } = createCustomConfig(gridOptions);
+        let config = {};
+        try {
+            config = createCustomConfig(gridOptions);
+        } catch (err) {
+            return Promise.reject(err);
+        }
 
-        if (!_.isUndefined(columns)) {
-
+        if (!_.isUndefined(config.columns)) {
             // user defined column modifier
             if (!isUndefined(gridOptions.columnModifier)) {
-                columns = modifyColumns(gridOptions.columnModifier, columns);
+                config.columns = modifyColumns(gridOptions.columnModifier, config.columns);
             }
-
             // set the columns
-            table.setColumns(columns);
+            table.setColumns(config.columns);
 
             // set the sort order to be consistent with how scenario data works
-            if (!_.isEmpty(columns)) {
-                const firstVisibleCol = _.find(columns, (col) => {
+            if (!_.isEmpty(config.columns)) {
+                const firstVisibleCol = _.find(config.columns, (col) => {
                     return _.isUndefined(col.visible) || col.visible === true;
                 });
                 table.setSort([{column: firstVisibleCol.field, dir: 'asc'}]);
@@ -279,7 +282,7 @@ class Datagrid {
 
             return perf('Tabulator set custom Data and draw', () =>
                 table
-                    .setData(data)
+                    .setData(config.data)
                     .then(() => this.redrawTable())
                     .then(() => (this.table.element.style.visibility = 'visible'))
                     .catch((e) => {
