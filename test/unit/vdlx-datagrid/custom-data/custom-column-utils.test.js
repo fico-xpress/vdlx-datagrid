@@ -72,10 +72,8 @@ describe('custom column utils', () => {
 
         it('returns valid column', () => {
             const column = {
-                id: 'key',
                 field: 'key',
                 title: 'key',
-                editor: 'checkbox',
                 elementType: 'BOOLEAN',
                 formatter: expect.any(Function),
                 sorter: 'boolean'}
@@ -90,7 +88,6 @@ describe('custom column utils', () => {
              };
          expect(removePropsNotInApprovedList(column)).toEqual(
              {
-                 id: 'key',
                  field: 'key'
              }
          );

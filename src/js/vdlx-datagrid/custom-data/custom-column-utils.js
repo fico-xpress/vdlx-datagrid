@@ -27,6 +27,8 @@ import {getDataType} from "./custom-data-utils";
 import keys from "lodash/keys";
 import omit from "lodash/omit";
 import difference from "lodash/difference";
+import has from "lodash/has";
+import every from "lodash/every";
 
 export const createValueTypedColumnProperties = (value) => {
     switch (getDataType(value)) {
@@ -69,6 +71,7 @@ export const createBasicColumnDefinition = (key, value) => {
         ...createValueTypedColumnProperties(value)
     };
 }
+
 /**
  * remove any property not on the approved list
  * @param column
@@ -79,4 +82,19 @@ export const removePropsNotInApprovedList = (column) => {
     const approvedColumnProps = keys(APPROVED_COLUMN_PROPS);
     const invalidProps = difference(colProps, approvedColumnProps);
     return omit(column, invalidProps);
+}
+
+// check all definitions have the field attr
+export const validateUserCols = (columnDefinitions) => {
+    if (!every(columnDefinitions, (col) => has(col, 'field'))) {
+        throw Error('Error for component vdlx-datagrid: Invalid column definition, the field attribute is missing.');
+    }
+}
+// check have the value and label attrs
+export const validateLabelsData = (columnDefinitions) => {
+    if (!every(columnDefinitions, (col) => {
+        return has(col, 'value') && has(col, 'label')
+    })) {
+        throw Error('Error for component vdlx-datagrid: Invalid column definition, the value and/or label attribute is missing.');
+    }
 }
