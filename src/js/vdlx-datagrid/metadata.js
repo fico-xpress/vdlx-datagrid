@@ -169,14 +169,10 @@ export default {
         },
         {
             name: 'column-definition',
-            description: 'column definition method - auto, by label attribute or by supplying a config object',
+            description: 'column definition method. Auto generate columns from the data, by the label attribute,' +
+                ' or by supplying a column definition object',
             acceptsExpression: true,
             defaultValue: 'auto'
-        },
-        {
-            name: 'column-modifier',
-            description: 'Function to modify the column configuration for advanced settings.',
-            expression: 'dynamic'
         }
     ]
 };

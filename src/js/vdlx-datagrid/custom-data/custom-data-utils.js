@@ -2,11 +2,11 @@
    Xpress Insight vdlx-datagrid
    =============================
 
-   file vdlx-datagrid/utils.js
+   file vdlx-datagrid/custom-data/custom-data-utils.js
    ```````````````````````
    vdlx-datagrid utils.
 
-    (c) Copyright 2019 Fair Isaac Corporation
+    (c) Copyright 2022 Fair Isaac Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -33,8 +33,13 @@ import isNaN from "lodash/isNaN";
 import toNumber from "lodash/toNumber";
 import isBoolean from "lodash/isBoolean";
 import cloneDeep from "lodash/cloneDeep";
+import toString from "lodash/toString";
 
-//todo - this is rough - to be improved
+/**
+ * if a string can be converted to numeric then it will return INTEGER
+ * @param data
+ * @returns {string}
+ */
 export const getDataType = (data) => {
     if (isNaN(toNumber(data))) {
         return Enums.DataType.STRING
@@ -44,7 +49,11 @@ export const getDataType = (data) => {
         return Enums.DataType.INTEGER;
     }
 }
-
+/**
+ * determind the type of data used in a row
+ * @param row
+ * @returns {string}
+ */
 export const getRowDataType = (row) => {
     if (isPlainObject(row)) {
         return ROW_DATA_TYPES.object;
@@ -79,7 +88,11 @@ export const convertCustomDataToObjectData = (data) => {
             return [];
     }
 };
-
+/**
+ * convert an array of arrays to an array of objects
+ * @param data
+ * @returns {*}
+ */
 export const convertArrayOfArraysData = (data) => {
     return map(data, (row) => {
         return reduce(row, (memo, row, index) => {
@@ -89,6 +102,11 @@ export const convertArrayOfArraysData = (data) => {
     });
 };
 
+/**
+ * convert an array of primitives to an array of objects
+ * @param data
+ * @returns {*}
+ */
 export const convertPrimitiveArray = (data) => {
     return map(data, (datum) => {
         return {
@@ -97,13 +115,15 @@ export const convertPrimitiveArray = (data) => {
     });
 };
 
+/**
+ * convert an array of key value objects to an array of objects keyed by the index
+ * @param data
+ * @returns {[undefined]}
+ */
 export const convertObjectDataToLabelData = (data) => {
-    const newData = reduce(data, function (memo, row, index) {
-        assign(memo, {
-            [index.toString()]:
-            row.value
-        });
+    // create a single object containing properties for each row
+    return [reduce(data, function (memo, row, index) {
+        assign(memo, { [toString(index)]: row.value});
         return memo;
-    }, {});
-    return [newData];
+    }, {})];
 }

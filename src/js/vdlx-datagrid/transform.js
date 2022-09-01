@@ -168,26 +168,17 @@ export default function transform(element, attributes, api) {
         }
     }
 
-    var columnModifier = attributes['column-modifier'];
-    if (columnModifier) {
-        if (columnModifier.expression.isString) {
-            paramsBuilder.addParam('columnModifier', columnModifier.rawValue, false);
-        } else {
-            paramsBuilder.addParam('columnModifier', columnModifier.expression.value, true);
-        }
-    }
-
     var columnDefinition = attributes['column-definition'];
     if (columnDefinition) {
-
         if (!data) {
-            throw Error('you cannot have a config without data or words to this effect');
+            throw Error('Error for component vdlx-datagrid: When using the column-definition attribute, data must be ' +
+                'provided via the data attribute.');
         }
-
         if (columnDefinition.expression.isString) {
             const defType = _.toLower(columnDefinition.rawValue);
             if (!_.includes(_.map(CUSTOM_COLUMN_DEFINITION), defType)) {
-                throw Error(defType + ' is not a valid thing');
+                throw Error('Error for component vdlx-datagrid: ' + defType + ' is not a recognised column definition.  ' +
+                    'Allowed values are "auto", "labels" or a valid column definition object.');
             } else {
                 paramsBuilder.addParam('columnDefinitionType', defType, false);
             }

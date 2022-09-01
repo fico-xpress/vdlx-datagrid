@@ -86,37 +86,3 @@ describe('datagrid getCssClasses', () => {
         });
     });
 });
-
-describe('modifyColumns', () => {
-
-    let columns;
-    beforeEach(() => {
-        columns = [{a: 1}];
-    });
-
-    it('calls the user defined modifier', function () {
-        const columnModifier = jest.fn();
-        modifyColumns(columnModifier, columns);
-        expect(columnModifier).toHaveBeenCalledTimes(1);
-        expect(columnModifier).toHaveBeenCalledWith(columns);
-    });
-
-    it('returns modified columns', function () {
-
-        const columnModifier = (cols) => {
-            cols[0].b = 2;
-            return cols;
-        };
-
-        expect(modifyColumns(columnModifier, columns)).toEqual([{a: 1, b: 2}]);
-    });
-
-    it('logs error when modifier not a function', () => {
-        const columnModifier = 666;
-        modifyColumns(columnModifier, columns)
-        expect(global.console.error).toBeCalledWith(
-            expect.stringContaining('Error for component vdlx-datagrid: column-modifier" attribute must be a function.')
-        );
-    });
-
-});

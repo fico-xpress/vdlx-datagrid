@@ -21,7 +21,7 @@
     limitations under the License.
  */
 import Tabulator from 'tabulator-tables/dist/js/tabulator';
-import {getSorter, getSetSorter, createFormattedSorter} from './datagrid-sorter';
+import {createFormattedSorter, getSetSorter, getSorter} from './datagrid-sorter';
 import dataTransform, {
     generateCompositeKey,
     getAllColumnIndices,
@@ -41,7 +41,6 @@ import {DatagridLock} from './datagrid-lock';
 import escape from 'lodash/escape';
 import delay from 'lodash/delay';
 import some from 'lodash/some';
-import find from 'lodash/find';
 import defer from 'lodash/defer';
 import isUndefined from 'lodash/isUndefined';
 import identity from 'lodash/identity';
@@ -64,19 +63,18 @@ import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
 import constant from 'lodash/constant';
-import isPlainObject from 'lodash/isPlainObject';
 import {withEquals} from '../ko-utils';
 import keys from 'lodash/keys';
 import {dataUtils, dialogs, enums, insightGetter, ko, SelectOptions} from '../insight-modules';
 import reverse from 'lodash/reverse';
-import isFunction from 'lodash/isFunction';
 import {createCustomConfig} from "./custom-data/create-custom-config";
 import {
     checkboxFilterFunc,
-    getHeaderFilterParams,
     FILTER_PLACEHOLDER_TEXT,
-    getHeaderFilterEmptyCheckFn
+    getHeaderFilterEmptyCheckFn,
+    getHeaderFilterParams
 } from './column-filter-utils';
+import {createCustomColumnSortOrder} from "./custom-data/custom-column-utils";
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
@@ -122,24 +120,6 @@ export const getCssClasses = (columnOptions, isNumeric, isIndex = false) => {
     }
     return classes.join(' ');
 };
-
-/**
- * trigger a user defined column modifier callback function
- * @param {function} modifier
- * @param {[Object]}columns
- * @returns {*}
- */
-export const modifyColumns = (modifier, columns) => {
-    if (isFunction(modifier)) {
-        const modifiedColumnConfig = modifier(cloneDeep(columns));
-        if (isPlainObject(modifiedColumnConfig)) {
-            columns = modifiedColumnConfig;
-        }
-        return modifiedColumnConfig;
-    } else {
-        console.error('Error for component vdlx-datagrid: column-modifier" attribute must be a function.');
-    }
-}
 
 const VALIDATION_ERROR_TITLE = 'Validation Error';
 
@@ -218,7 +198,6 @@ class Datagrid {
     // stripped down version of build table that only subscribes to grid options
     buildCustomDataTable() {
 
-        this.componentRoot.style.display = 'block';
         const gridOptions$ = this.gridOptions$;
 
         this.subscriptions = this.subscriptions.concat([
@@ -265,19 +244,26 @@ class Datagrid {
         }
 
         if (!_.isUndefined(config.columns)) {
-            // user defined column modifier
-            if (!isUndefined(gridOptions.columnModifier)) {
-                config.columns = modifyColumns(gridOptions.columnModifier, config.columns);
-            }
+
             // set the columns
             table.setColumns(config.columns);
 
-            // set the sort order to be consistent with how scenario data works
-            if (!_.isEmpty(config.columns)) {
-                const firstVisibleCol = _.find(config.columns, (col) => {
-                    return _.isUndefined(col.visible) || col.visible === true;
-                });
-                table.setSort([{column: firstVisibleCol.field, dir: 'asc'}]);
+            // set the sort order
+            const sortOrder = createCustomColumnSortOrder(config.columns);
+
+            if (isEmpty(this.initialSortOrder)) {
+                this.initialSortOrder = sortOrder;
+            }
+
+            this.stateManager = this.createStateManager(gridOptions, config.columns);
+
+            // clear the filters
+            if (gridOptions.saveState) {
+                this.table.setSort(cloneDeep(this.initialSortOrder));
+                this.loadState();
+            } else {
+                table.setSort(sortOrder);
+                this.table.clearHeaderFilter();
             }
 
             return perf('Tabulator set custom Data and draw', () =>
@@ -289,6 +275,7 @@ class Datagrid {
                         console.error('An error occurred whilst adding custom data to Tabulator and redrawing', e);
                     })
             );
+
         }
     }
 
@@ -369,7 +356,6 @@ class Datagrid {
                 filters: this.table.getHeaderFilters(),
                 sorters: sorters,
             };
-
             this.stateManager.saveState(state);
         }
     }
@@ -537,7 +523,6 @@ class Datagrid {
     createStateManager(gridOptions, columns, scenarios) {
         if (gridOptions.saveState) {
             const saveStateSuffix = map(columns, 'name').join('#');
-
             return createStateManager(gridOptions.tableId, saveStateSuffix);
         }
         return undefined;
@@ -1070,11 +1055,6 @@ class Datagrid {
         );
         this.entitiesColumns = entitiesColumns;
         this.indicesColumns = indicesColumns;
-
-        // user defined column modifier
-        if (!isUndefined(gridOptions.columnModifier)) {
-            columns = modifyColumns(gridOptions.columnModifier, columns);
-        }
 
         table.setColumns(columns);
 

@@ -2,9 +2,7 @@
    Xpress Insight vdlx-datagrid
    =============================
 
-   file vdlx-datagrid/utils.js
-   ```````````````````````
-   vdlx-datagrid utils.
+   file vdlx-datagrid/custom-data/create-custom-config.js
 
     (c) Copyright 2022 Fair Isaac Corporation
 
@@ -23,11 +21,10 @@
 import {CUSTOM_COLUMN_DEFINITION, EDITOR_TYPES} from "../../constants";
 import {chooseColumnFilter} from "../grid-filters";
 import {
+    convertObjectColDefinitions,
     createBasicColumnDefinition,
-    createValueTypedColumnProperties,
-    removePropsNotInApprovedList,
     validateLabelsData,
-    validateUserCols
+    validateObjectColDefinitions
 } from './custom-column-utils';
 import {convertCustomDataToObjectData, convertObjectDataToLabelData} from './custom-data-utils';
 import {
@@ -44,7 +41,6 @@ import parseInt from "lodash/parseInt";
 import size from "lodash/size";
 import map from "lodash/map";
 import head from "lodash/head";
-import get from "lodash/get";
 import isUndefined from "lodash/isUndefined";
 
 /**
@@ -53,7 +49,6 @@ import isUndefined from "lodash/isUndefined";
  * @returns {{data: (*|[]), columns: (*|*[])}}
  */
 export const createCustomConfig = (gridOptions) => {
-    // todo - fix issue of the filters are not cleared out when the data changes
     const data = gridOptions.data();
 
     if (!size(data)) {
@@ -69,21 +64,20 @@ export const createCustomConfig = (gridOptions) => {
     switch (gridOptions.columnDefinitionType) {
         case CUSTOM_COLUMN_DEFINITION.AUTO:
             datagridData = convertCustomDataToObjectData(data);
-            columnDefinitions = createAutoColumnDefinitions(head(datagridData));
+            columnDefinitions = createAutoDefinitionColumns(head(datagridData));
             break
         case CUSTOM_COLUMN_DEFINITION.OBJECT:
             datagridData = data;
-            columnDefinitions = createColumnsFromUserDefinition(gridOptions.columnDefinitions(), head(data));
+            columnDefinitions = createObjectDefinitionColumns(gridOptions.columnDefinitions(), head(data));
             break
         case CUSTOM_COLUMN_DEFINITION.LABELS:
             datagridData = createLabelData(data);
-            columnDefinitions = createColumnsFromLabels(data);
+            columnDefinitions = createLabelsDefinitionColumns(data);
             break
         default:
-            console.error('Error for component vdlx-datagrid: unrecognised column format.');
+            throw Error('Error for component vdlx-datagrid: Unrecognised column format.');
     }
 
-    // todo - should this be in datagrid.setCustomDataColumnsAndData?
     // apply rowFilter from attr
     const rowFilter = gridOptions.rowFilter;
     if (isFunction(rowFilter)) {
@@ -109,15 +103,25 @@ export const applyRowFilter = (data, rowFilter) => {
         return rowFilter(values(rowData));
     });
 }
-
-export const createAutoColumnDefinitions = (data) => {
+/**
+ * create the column definitions from a row of data
+ * @param data
+ * @returns {*}
+ */
+export const createAutoDefinitionColumns = (data) => {
     return map(data, (val, key) => createBasicColumnDefinition(key, val));
 };
 
+/**
+ * validate and convert an array of objects containing a value and label
+ * @param data
+ * @returns {undefined[]}
+ */
 export const createLabelData = (data) => {
     // error thrown for invalid data
-    validateLabelsData(data);
-    return convertObjectDataToLabelData(data);
+    if (validateLabelsData(data)) {
+        return convertObjectDataToLabelData(data);
+    }
 }
 
 /**
@@ -127,34 +131,15 @@ export const createLabelData = (data) => {
  * @param data
  * @returns {*}
  */
-export const createColumnsFromUserDefinition = (colDefinitions, data) => {
-
+export const createObjectDefinitionColumns = (colDefinitions, data) => {
     // error thrown if validation fails
-    validateUserCols(colDefinitions);
-
-    // pick the data attr by using the col definition field attr
-    return map(colDefinitions, (column) => {
-        const colValue = get(data, column.field, '');
-        return {
-            ...removePropsNotInApprovedList(column),
-            ...createValueTypedColumnProperties(colValue),
-            id: column.field,
-            title: column.title || column.field,
-            editable: false
-        };
-    });
+    if (validateObjectColDefinitions(colDefinitions, data)) {
+        return convertObjectColDefinitions(colDefinitions, data)
+    }
 }
 
-export const createColumnsFromLabels = (data) => {
-    return map(data, (row, index) => {
-        const id = index.toString();
-        return {
-            id: id,
-            title: row.label,
-            field: id,
-            ...createValueTypedColumnProperties(row.value)
-        };
-    });
+export const createLabelsDefinitionColumns = (data) => {
+    return map(data, (row, index) => createBasicColumnDefinition(index, row.value, row.label));
 };
 
 /**
@@ -164,22 +149,22 @@ export const createColumnsFromLabels = (data) => {
  * @param columns
  * @returns {*}
  */
-const addGridOptionsProps = (gridOptions, columns) => {
+export const addGridOptionsProps = (gridOptions, columns) => {
 
     const freezeColumns = parseInt(gridOptions.freezeColumns);
     const includeFilter = gridOptions.columnFilter || false;
 
     return map(columns, (col, index) => {
-        let column = {};
+        let gridCol = {};
         if (isUndefined(col.frozen) && index < freezeColumns) {
-            column.frozen = true;
+            gridCol.frozen = true;
         }
         if (includeFilter) {
-            assign(column, configureColumnFilter(col));
+            assign(gridCol, configureColumnFilter(col));
         }
         return {
             ...col,
-            ...column
+            ...gridCol
         };
     });
 };
@@ -194,6 +179,7 @@ const addGridOptionsProps = (gridOptions, columns) => {
 export const configureColumnFilter = (col) => {
 
     const getHeaderFilter = () => {
+
         if (col.editor === EDITOR_TYPES.checkbox) {
             return EDITOR_TYPES.select;
         }

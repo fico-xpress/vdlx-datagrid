@@ -1,5 +1,26 @@
-import isPlainObject from 'lodash/isPlainObject';
-import cloneDeep from 'lodash/cloneDeep';
+/*
+   Xpress Insight vdlx-datagrid
+   =============================
+
+   file vdlx-datagrid/create-table-options.js
+   ```````````````````````
+   vdlx-datagrid create-table-options.js
+
+    (c) Copyright 2022 Fair Isaac Corporation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+ */
+
 import isFunction from 'lodash/isFunction';
 import get from 'lodash/get';
 import bindKey from 'lodash/bindKey';
@@ -31,7 +52,6 @@ export default params => {
         onError: bindKey(self, '_wrapAlert'),
         alwaysShowSelection: params.alwaysShowSelection,
         gridHeight: params.gridHeight,
-        gridData: params.gridData,
         paginationSize: params.pageSize || DEFAULT_GRID_PAGE_SIZE,
         saveState: get(params, 'saveState', true),
         pageMode: params.pageMode,
@@ -40,8 +60,7 @@ export default params => {
         exportFilename: params.exportFilename,
         data: params.data,
         columnDefinitionType: params.columnDefinitionType,
-        columnDefinitions: params.columnDefinitions || [],
-        columnModifier: params.columnModifier
+        columnDefinitions: params.columnDefinitions || []
     };
     var pageMode = params['pageMode'];
     if (pageMode === 'paged') {
@@ -53,16 +72,5 @@ export default params => {
         gridOptions.rowFilter = params.rowFilter;
     }
     gridOptions = stripEmpties(gridOptions);
-    if (!isUndefined(params.modifier)) {
-        if (isFunction(params.modifier)) {
-            // Pass cloned options so they cannot modify the original table options object
-            var modifiedTableOptions = params.modifier(cloneDeep(gridOptions));
-            if (isPlainObject(modifiedTableOptions)) {
-                gridOptions = modifiedTableOptions;
-            }
-        } else {
-            // console.error('vdl-table (' + self.tableId + '): "modifier" attribute must be a function.');
-        }
-    }
     return gridOptions;
 };

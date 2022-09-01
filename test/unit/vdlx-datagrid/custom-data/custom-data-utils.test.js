@@ -22,9 +22,8 @@ describe('custom data utils', () => {
         it('returns string for "true"', () => {
             expect(getDataType('true')).toEqual(Enums.DataType.STRING);
         });
-        // todo is this a bug with the method
-        it.skip('returns string for "1"', () => {
-            expect(getDataType('1')).toEqual(Enums.DataType.STRING);
+        it('returns integer for a string that can be converted to numeric', () => {
+            expect(getDataType('1')).toEqual(Enums.DataType.INTEGER);
         });
         it('returns string', () => {
             expect(getDataType('one')).toEqual(Enums.DataType.STRING);
