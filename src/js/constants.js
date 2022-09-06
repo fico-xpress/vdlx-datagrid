@@ -40,3 +40,9 @@ export const ROW_DATA_TYPES = {
     primitive: 'primitive',
     function: 'function'
 };
+
+export const CUSTOM_COLUMN_DEFINITION = {
+    AUTO: 'auto',
+    LABELS: 'labels',
+    OBJECT: 'object'
+};

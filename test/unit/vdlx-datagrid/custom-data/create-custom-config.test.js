@@ -1,22 +1,101 @@
+import {CUSTOM_COLUMN_DEFINITION} from "../../../../src/js/constants";
 import {
+    addGridOptionsProps,
     applyRowFilter,
     configureColumnFilter,
-    convertCustomData,
-    createAutoColumnDefinitions,
-    createColumnDefinition,
-    createCustomConfig
+    createAutoDefinitionColumns,
+    createCustomConfig,
+    createLabelData,
+    createLabelsDefinitionColumns,
+    createObjectDefinitionColumns
 } from '../../../../src/js/vdlx-datagrid/custom-data/create-custom-config';
+import * as gridFilters from "../../../../src/js/vdlx-datagrid/grid-filters";
+import * as colUtils from "../../../../src/js/vdlx-datagrid/custom-data/custom-column-utils";
+import {
+    convertObjectColDefinitions,
+    createBasicColumnDefinition,
+    validateLabelsData,
+    validateObjectColDefinitions
+} from "../../../../src/js/vdlx-datagrid/custom-data/custom-column-utils";
+import * as dataUtils from '../../../../src/js/vdlx-datagrid/custom-data/custom-data-utils';
 
-describe('createCustomConfig', () => {
+describe('createCustomConfig module', () => {
 
-    describe(' default createCustomConfig', () => {
+    describe('createCustomConfig', () => {
 
         let gridOptions;
         beforeEach(() => {
             gridOptions = {
+                columnDefinitionType: CUSTOM_COLUMN_DEFINITION.AUTO,
+                columnDefinitions: () => [{column:'definition'}],
                 data: () => [1, 2, 3, 4]
             };
         });
+
+        describe('switches different methods for column definition types', () => {
+
+            const resultData = [{data:'data'}];
+
+            let convertCustomDataToObjectDataSpy;
+            let convertObjectDataToLabelDataSpy;
+            let createBasicColumnDefinitionSpy;
+            let validateObjectColDefinitionsSpy;
+            let convertObjectColDefinitionsSpy;
+            let validateLabelsDataSpy;
+
+            beforeEach(() => {
+                convertCustomDataToObjectDataSpy = jest.spyOn(dataUtils, 'convertCustomDataToObjectData').mockReturnValue(resultData);
+                convertObjectDataToLabelDataSpy = jest.spyOn(dataUtils, 'convertObjectDataToLabelData').mockReturnValue(resultData);
+                createBasicColumnDefinitionSpy = jest.spyOn(colUtils, 'createBasicColumnDefinition').mockReturnValue(resultData);
+                validateObjectColDefinitionsSpy = jest.spyOn(colUtils, 'validateObjectColDefinitions').mockReturnValue(resultData);
+                convertObjectColDefinitionsSpy = jest.spyOn(colUtils, 'convertObjectColDefinitions').mockReturnValue(resultData);
+                validateLabelsDataSpy = jest.spyOn(colUtils, 'validateLabelsData').mockReturnValue(resultData);
+            });
+
+            afterEach(() => {
+                dataUtils.convertCustomDataToObjectData.mockRestore();
+                dataUtils.convertObjectDataToLabelData.mockRestore();
+                colUtils.createBasicColumnDefinition.mockRestore();
+                colUtils.validateObjectColDefinitions.mockRestore();
+                colUtils.convertObjectColDefinitions.mockRestore();
+                colUtils.validateLabelsData.mockRestore();
+            });
+
+            it('column definition type: CUSTOM_COLUMN_DEFINITION.AUTO', () => {
+                gridOptions.columnDefinitionType = CUSTOM_COLUMN_DEFINITION.AUTO;
+                createCustomConfig(gridOptions);
+                expect(convertCustomDataToObjectDataSpy).toHaveBeenCalledWith(gridOptions.data());
+                expect(createBasicColumnDefinitionSpy).toHaveBeenCalledTimes(1);
+                expect(validateLabelsDataSpy).not.toHaveBeenCalled();
+                expect(validateObjectColDefinitionsSpy).not.toHaveBeenCalled();
+            });
+
+            it('column definition type: CUSTOM_COLUMN_DEFINITION.OBJECT', () => {
+                gridOptions.columnDefinitionType = CUSTOM_COLUMN_DEFINITION.OBJECT;
+                createCustomConfig(gridOptions);
+                expect(validateObjectColDefinitionsSpy).toHaveBeenCalled();
+                expect(convertObjectColDefinitionsSpy).toHaveBeenCalledTimes(1);
+                expect(convertCustomDataToObjectDataSpy).not.toHaveBeenCalledWith(gridOptions.data());
+                expect(validateLabelsDataSpy).not.toHaveBeenCalled();
+            });
+            it('column definition type: CUSTOM_COLUMN_DEFINITION.LABELS', () => {
+                gridOptions.columnDefinitionType = CUSTOM_COLUMN_DEFINITION.LABELS;
+                createCustomConfig(gridOptions);
+                expect(validateLabelsDataSpy).toHaveBeenCalled();
+                expect(convertObjectDataToLabelDataSpy).toHaveBeenCalledTimes(1);
+                expect(convertCustomDataToObjectDataSpy).not.toHaveBeenCalledWith(gridOptions.data());
+                expect(validateObjectColDefinitionsSpy).not.toHaveBeenCalled();
+            });
+            it('console error for unknown type', () => {
+                gridOptions.columnDefinitionType = 'unsupported';
+                expect(() => {
+                    createCustomConfig(gridOptions);
+                }).toThrow('Error for component vdlx-datagrid: Unrecognised column format.');
+                expect(validateLabelsDataSpy).not.toHaveBeenCalled();
+                expect(convertCustomDataToObjectDataSpy).not.toHaveBeenCalledWith(gridOptions.data());
+                expect(validateObjectColDefinitionsSpy).not.toHaveBeenCalled();
+            });
+        })
 
         it('creates config object containing column definitions and table data', () => {
 
@@ -24,10 +103,10 @@ describe('createCustomConfig', () => {
                 {
                     columns: [{
                         cssClass: 'numeric',
+                        editable: false,
                         editor: 'input',
                         elementType: 'INTEGER',
                         field: 'column 0',
-                        frozen: false,
                         id: 'column 0',
                         sorter: 'number',
                         title: 'column 0'
@@ -47,10 +126,10 @@ describe('createCustomConfig', () => {
                 {
                     columns: [{
                         cssClass: 'numeric',
+                        editable: false,
                         editor: 'input',
                         elementType: 'INTEGER',
                         field: 'column 0',
-                        frozen: false,
                         id: 'column 0',
                         sorter: 'number',
                         title: 'column 0',
@@ -68,54 +147,23 @@ describe('createCustomConfig', () => {
                 }
             );
         });
-    });
-
-    describe('convertCustomData', () => {
-
-        it('converts array of arrays', () => {
-            const data = [
-                [1, 2],
-                [3, 4]
-            ];
-
-            expect(convertCustomData(data)).toEqual([
-                {'column 0': 1, 'column 1': 2},
-                {'column 0': 3, 'column 1': 4}
-            ]);
-        });
-
-        it('converts array of primitives', () => {
-
-            expect(convertCustomData([1, 2, 3, 4])).toEqual([
-                {'column 0': 1},
-                {'column 0': 2},
-                {'column 0': 3},
-                {'column 0': 4}
-            ]);
-        });
-
-        it('returns passed data when data is array objects', () => {
-            const data = [
-                {key: 1, value: 1},
-                {key: 2, value: 2}
-            ];
-            expect(convertCustomData(data)).toEqual(data);
-        });
-
-        it('logs error and returns empty when javascript function discovered', () => {
-            const data = [
-                () => 666,
-                () => 666
-            ];
-
-            const result = convertCustomData(data);
-            expect(result).toEqual([]);
-            expect(global.console.error).toBeCalledWith(
-                expect.stringContaining('Error for component vdlx-datagrid: Please remove functions from the data.')
+        it('creates config object containing empty column definitions data', () => {
+            gridOptions.data = () => [];
+            expect(createCustomConfig(gridOptions)).toEqual(
+                {
+                    columns: [],
+                    data: []
+                }
             );
         });
-
+        it('triggers a row filter function', () => {
+            const rowFilter = jest.fn();
+            gridOptions.rowFilter = rowFilter;
+            createCustomConfig(gridOptions);
+            expect(rowFilter).toHaveBeenCalledTimes(4);
+        });
     });
+
 
     describe('applyRowFilter', () => {
 
@@ -140,48 +188,48 @@ describe('createCustomConfig', () => {
         });
     });
 
-    describe('createAutoColumnDefinitions', () => {
+    describe('createAutoDefinitionColumns', () => {
 
         it('returns singular column config', () => {
-            expect(createAutoColumnDefinitions(1)).toEqual(expect.any(Object));
+            expect(createAutoDefinitionColumns(1)).toEqual(expect.any(Object));
         });
 
         it('returns arrays of column configs', () => {
-            expect(createAutoColumnDefinitions([1, 2])).toEqual([expect.any(Object), expect.any(Object)]);
+            expect(createAutoDefinitionColumns([1, 2])).toEqual([expect.any(Object), expect.any(Object)]);
         });
 
         it('returns empty column config when no data', () => {
-            expect(createAutoColumnDefinitions([])).toEqual([]);
+            expect(createAutoDefinitionColumns([])).toEqual([]);
         });
 
         it('converts data into column definitions', () => {
 
             const data = {value: 100, label: 'label', isTrue: true};
-            expect(createAutoColumnDefinitions(data)).toEqual([
+            expect(createAutoDefinitionColumns(data)).toEqual([
                 {
                     cssClass: 'numeric',
+                    editable: false,
                     editor: 'input',
                     elementType: 'INTEGER',
                     field: 'value',
-                    frozen: false,
                     id: 'value',
                     sorter: 'number',
                     title: 'value'
                 },
                 {
                     editor: 'input',
+                    editable: false,
                     elementType: 'STRING',
                     field: 'label',
-                    frozen: false,
                     id: 'label',
                     sorter: 'string',
                     title: 'label'
                 },
                 {
                     editor: 'checkbox',
+                    editable: false,
                     elementType: 'BOOLEAN',
                     field: 'isTrue',
-                    frozen: false,
                     formatter: expect.any(Function),
                     id: 'isTrue',
                     sorter: 'boolean',
@@ -189,116 +237,207 @@ describe('createCustomConfig', () => {
                 }
             ]);
         });
+    });
 
+    describe('createLabelData', () => {
 
-        it('adds freeze attr', () => {
+        describe('happy path', () => {
 
-            const data = {value: 100, label: 'label', isTrue: true};
-            expect(createAutoColumnDefinitions(data, false, 2)).toEqual([
+            const data = [
                 {
-                    cssClass: 'numeric',
-                    editor: 'input',
-                    elementType: 'INTEGER',
-                    field: 'value',
-                    frozen: true,
-                    id: 'value',
-                    sorter: 'number',
-                    title: 'value'
+                    key: '1',
+                    value: 123,
+                    label: 'bottom'
                 },
                 {
-                    editor: 'input',
-                    elementType: 'STRING',
-                    field: 'label',
-                    frozen: true,
-                    id: 'label',
-                    sorter: 'string',
-                    title: 'label'
+                    key: '2',
+                    value: 456,
+                    label: 'middle'
                 },
                 {
-                    editor: 'checkbox',
-                    elementType: 'BOOLEAN',
-                    field: 'isTrue',
-                    frozen: false,
-                    formatter: expect.any(Function),
-                    id: 'isTrue',
-                    sorter: 'boolean',
-                    title: 'isTrue'
+                    key: '3',
+                    value: 789,
+                    label: 'top'
                 }
-            ]);
+            ];
+
+          it('creates expected config', () => {
+              expect(createLabelData(data)).toEqual([{
+                  '0': 123,
+                  '1': 456,
+                  '2': 789
+              }]);
+          })
+        });
+
+
+        describe('with mocked utils', () => {
+            const colDefinitions = ['definitions'];
+            let createLabelDataSpy;
+            beforeEach(() => {
+                createLabelDataSpy = jest.spyOn(dataUtils, 'convertObjectDataToLabelData');
+            });
+
+            afterEach(() => {
+                jest.clearAllMocks();
+            });
+
+
+            describe('when validation passes', () => {
+
+                let validateLabelsDataSpy;
+                beforeEach(() => {
+                    validateLabelsDataSpy = jest.spyOn(colUtils, 'validateLabelsData').mockReturnValue(true);
+                })
+
+                it('creates columns if validation passes', () => {
+                    createLabelData(colDefinitions);
+                    expect(validateLabelsDataSpy).toBeCalledWith(colDefinitions);
+                    expect(createLabelDataSpy).toBeCalledWith(colDefinitions);
+                });
+
+            });
+
+            describe('when validation fails', () => {
+
+                let validateLabelsDataSpy;
+                beforeEach(() => {
+                    validateLabelsDataSpy = jest.spyOn(colUtils, 'validateLabelsData').mockImplementation(() => {
+                        throw new Error('I am an error');
+                    });
+                })
+
+                it('creates columns if validation fails', () => {
+                    expect(() => {
+                        createLabelData(colDefinitions);
+                    }).toThrow('I am an error');
+
+                    expect(validateLabelsDataSpy).toBeCalledWith(colDefinitions);
+                    expect(createLabelDataSpy).not.toBeCalled();
+                });
+            });
+        });
+
+
+    });
+
+    describe('createObjectDefinitionColumns', () => {
+
+        const colDefinitions = ['definitions'];
+        const data = ['data'];
+        let convertObjectColDefinitionsSpy;
+        beforeEach(() => {
+            convertObjectColDefinitionsSpy = jest.spyOn(colUtils, 'convertObjectColDefinitions');
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        describe('when validation passes', () => {
+
+
+            let validateSpy;
+            beforeEach(() => {
+                validateSpy = jest.spyOn(colUtils, 'validateObjectColDefinitions').mockReturnValue(true);
+            })
+
+            it('creates columns if validation passes', () => {
+
+                createObjectDefinitionColumns(colDefinitions, data);
+                expect(validateSpy).toBeCalledWith(colDefinitions, data);
+                expect(convertObjectColDefinitionsSpy).toBeCalledWith(colDefinitions, data);
+            });
+
+        });
+
+        describe('when validation fails', () => {
+
+            let validateSpy;
+            beforeEach(() => {
+                validateSpy = jest.spyOn(colUtils, 'validateObjectColDefinitions').mockImplementation(() => {
+                    throw new Error('I am an error');
+                });
+            })
+
+            it('creates columns if validation passes', () => {
+                expect(() => {
+                    createObjectDefinitionColumns(colDefinitions, data);
+                }).toThrow('I am an error');
+                expect(validateSpy).toBeCalledWith(colDefinitions, data);
+                expect(convertObjectColDefinitionsSpy).not.toBeCalled();
+            });
+
         });
 
     });
 
-    describe('createColumnDefinition', () => {
+    describe('createLabelsDefinitionColumns', () => {
 
-        it('creates numeric column config', () => {
-            const key = 'colName';
-            const val = 123;
-            expect(createColumnDefinition(val, key, false, false)).toEqual(
-                {
-                    id: key,
-                    field: key,
-                    title: key,
-                    frozen: false,
-                    cssClass: 'numeric',
-                    editor: 'input',
-                    elementType: 'INTEGER',
-                    sorter: 'number'
-                }
-            );
+        let labeledData;
+        let createColSpy;
+
+        beforeEach(() => {
+            labeledData = [
+                {key: '1', value: 123, label: 'one'},
+                {key: '2', value: 456, label: 'two'}
+            ];
+            createColSpy = jest.spyOn(colUtils, 'createBasicColumnDefinition').mockReturnValue({column: 'config'});
+        })
+
+        it('calls createBasicColumnDefinition with each row', () => {
+            createLabelsDefinitionColumns(labeledData);
+            expect(createColSpy).toHaveBeenCalledTimes(2);
+            expect(createColSpy.mock.calls).toEqual([
+                [0, 123, 'one'],
+                [1, 456, 'two']
+            ]);
         });
 
-        it('creates string column config', () => {
-            const key = 'colName';
-            const val = 'hello';
-            expect(createColumnDefinition(val, key, false, false)).toEqual(
-                {
-                    id: key,
-                    field: key,
-                    title: key,
-                    frozen: false,
-                    editor: 'input',
-                    elementType: 'STRING',
-                    sorter: 'string'
-                }
-            );
+        afterEach(() => {
+            colUtils.createBasicColumnDefinition.mockRestore();
+        })
+
+    });
+
+    describe('addGridOptionsProps', () => {
+
+        let gridOptions;
+        let columns;
+        beforeEach(() => {
+            gridOptions = {};
+            columns = [{1: 'one'}, {2: 'two'}, {3: 'three'}];
         });
 
-        it('creates boolean/checkbox column config', () => {
-            const key = 'colName';
-            const val = true;
-            expect(createColumnDefinition(val, key, false, false)).toEqual(
-                {
-                    id: key,
-                    field: key,
-                    title: key,
-                    frozen: false,
-                    editor: 'checkbox',
-                    elementType: 'BOOLEAN',
-                    sorter: 'boolean',
-                    formatter: expect.any(Function)
-                }
-            );
+        it('adds column filter', () => {
+            gridOptions.columnFilter = true;
+            const result = addGridOptionsProps(gridOptions, columns);
+            expect(result[0]).toHaveProperty('headerFilter');
+            expect(result[1]).toHaveProperty('headerFilter');
+            expect(result[2]).toHaveProperty('headerFilter');
         });
 
-        it('creates string column with a filter', () => {
-            const key = 'colName';
-            const val = 'hello';
-            expect(createColumnDefinition(val, key, true, false)).toEqual(
-                {
-                    id: key,
-                    field: key,
-                    title: key,
-                    frozen: false,
-                    editor: 'input',
-                    elementType: 'STRING',
-                    sorter: 'string',
-                    headerFilter: true,
-                    headerFilterFunc: expect.any(Function),
-                    headerFilterParams: undefined,
-                    headerFilterPlaceholder: 'No Filter'
-                }
-            );
+        it('freezes correct columns', () => {
+            gridOptions.freezeColumns = 2;
+            const result = addGridOptionsProps(gridOptions, columns);
+            expect(result[0]).toHaveProperty('frozen');
+            expect(result[1]).toHaveProperty('frozen');
+            expect(result[2]).not.toHaveProperty('frozen');
+        });
+
+        it('ignores negative freezeColumns', () => {
+            gridOptions.freezeColumns = -1;
+            const result = addGridOptionsProps(gridOptions, columns);
+            expect(result[0]).not.toHaveProperty('frozen');
+            expect(result[1]).not.toHaveProperty('frozen');
+            expect(result[2]).not.toHaveProperty('frozen');
+        });
+        it('handles out of bounds freezeColumns', () => {
+            gridOptions.freezeColumns = 4;
+            const result = addGridOptionsProps(gridOptions, columns);
+            expect(result[0]).toHaveProperty('frozen');
+            expect(result[1]).toHaveProperty('frozen');
+            expect(result[2]).toHaveProperty('frozen');
         });
 
     });
@@ -330,6 +469,98 @@ describe('createCustomConfig', () => {
                     headerFilterPlaceholder: 'No Filter'
                 }
             );
+        });
+
+        it('creates new object with filter props and checkbox editor', () => {
+            const col = {
+                editor: 'checkbox',
+                elementType: 'BOOLEAN',
+                field: 'value',
+                id: 'value',
+                sorter: 'boolean',
+                title: 'value'
+            };
+
+            expect(configureColumnFilter(col)).toEqual(
+                {
+                    editor: 'checkbox',
+                    elementType: 'BOOLEAN',
+                    field: 'value',
+                    id: 'value',
+                    sorter: 'boolean',
+                    title: 'value',
+                    headerFilter: 'select',
+                    headerFilterFunc: expect.any(Function),
+                    headerFilterPlaceholder: 'No Filter',
+                    headerFilterEmptyCheck: expect.any(Function),
+                    headerFilterParams: expect.any(Object)
+                }
+            );
+        });
+
+        it('does not override passed column config', () => {
+
+            const col = {
+                elementType: 'STRING',
+                field: 'value',
+                id: 'value',
+                sorter: 'boolean',
+                title: 'value',
+                headerFilterParams: 'headerFilterParams',
+                headerFilterPlaceholder: 'headerFilterPlaceholder',
+                headerFilter: 'headerFilter',
+                headerFilterFunc: 'headerFilterFunc',
+                headerFilterEmptyCheck: 'headerFilterEmptyCheck'
+            };
+
+            expect(configureColumnFilter(col)).toEqual(
+                {
+                    elementType: 'STRING',
+                    field: 'value',
+                    id: 'value',
+                    sorter: 'boolean',
+                    title: 'value',
+                    headerFilterParams: 'headerFilterParams',
+                    headerFilterPlaceholder: 'headerFilterPlaceholder',
+                    headerFilter: 'headerFilter',
+                    headerFilterFunc: 'headerFilterFunc',
+                    headerFilterEmptyCheck: 'headerFilterEmptyCheck'
+                }
+            );
+        });
+
+        describe('filters', () => {
+
+            const mockFilter = jest.fn();
+
+            let chooseColumnFilterSpy;
+            beforeEach(() => {
+                chooseColumnFilterSpy = jest.spyOn(gridFilters, 'chooseColumnFilter').mockReturnValue(mockFilter);
+            });
+
+            it('can trigger filter ', () => {
+
+                const col = {
+                    cssClass: 'numeric',
+                    editor: 'input',
+                    elementType: 'INTEGER',
+                    field: 'value',
+                    id: 'value',
+                    sorter: 'number',
+                    title: 'value'
+                };
+
+
+                const result = configureColumnFilter(col);
+                result.headerFilterFunc('a', 'b', 'c', 'd');
+                expect(chooseColumnFilterSpy).toHaveBeenCalledWith(col);
+                expect(mockFilter).toHaveBeenCalledWith('a', 'b', 'c', 'd');
+
+            });
+
+            afterEach(()=> {
+                gridFilters.chooseColumnFilter.mockRestore();
+            });
         });
     });
 

@@ -1,0 +1,148 @@
+<!--
+Xpress Insight vdlx-datagrid
+=============================
+
+file vdl-lang/table/table.vdl
+```````````````````````
+vdlx-datagrid Basic usage
+
+(c) Copyright 2022 Fair Isaac Corporation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<vdl version="4.8">
+    <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
+    <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+    <vdl-page>
+        <vdl-section heading="Column-Definition = Column Config Object">
+            <vdl-row>
+                <vdl-column size="12">
+                    <span vdl-text="Using a column definition provides the most control over the functionality of a table."></span>
+                    <span vdl-text="A definition object is passed via the column-definition attribute."></span>
+                    <span vdl-text="The definition will define how the data is loaded into the table."></span>
+                    <span vdl-text="Each column definition requires a 'field' and 'title' attribute."></span>
+                    <span vdl-text="The field attribute represents a property/field on the data."></span>
+
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column heading="Example" size="6">
+                    <script>
+                        const columnDefinition = [
+                            {title:'First Name', field:'firstName'},
+                            {title:'Second Name', field:'secondName'}
+                        ];
+                        const example1data = [
+                            {firstName:'Bob', secondName:'Doe'},
+                            {firstName:'Jane', secondName:'Doe'},
+                        ];
+                    </script>
+                    <vdlx-datagrid
+                            id="custom-definition-example-1"
+                            column-definition="=columnDefinition"
+                            data="=example1data"></vdlx-datagrid>
+                </vdl-column>
+                <vdl-column size="6" heading="source:">
+                    <code-panel>
+&lt;script&gt;
+    const columnDefinition = [
+        {title:&#39;First Name&#39;, field:&#39;firstName&#39;},
+        {title:&#39;Second Name&#39;, field:&#39;secondName&#39;}
+    ];
+
+    const example1data = [
+        {firstName:&#39;Bob&#39;, secondName:&#39;Doe&#39;},
+        {firstName:&#39;Jane&#39;, secondName:&#39;Doe&#39;},
+    ];
+&lt;/script&gt;
+
+&lt;vdlx-datagrid
+    id=&quot;custom-definition-example-1&quot;
+    column-definition=&quot;=columnDefinition&quot;
+    data=&quot;=exampledata&quot;&gt;&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column heading="Simple column configuration">
+                    <span vdl-text="The data returned from 'vdl-action-get-entity-data' is in the format"></span><b>[{key:x, value:y, label:z}]</b>
+                    <span>The following actions group, aggregate, add labels and set the data into a vdl-var.</span>
+                    <span vdl-text="The following configuration:"></span>
+                    <ul>
+                        <li>visible: false: Hides the key column **</li>
+                        <li>title: Changes the title for the value column</li>
+                        <li>cssClass:'index': Makes the country data bold</li>
+                        <li>headerSortStartingDir: Sorts the data by the value/average column</li>
+                    </ul>
+                    ** the key column could also be hidden, simply by not including it in the column configuration
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column heading="Example" size="6">
+                    <script>
+                        const columnConfig = [
+                            {field: 'key', visible: false},
+                            {field: 'label', title: 'Country', cssClass:'index'},
+                            {field: 'value', title: 'Average', headerSortStartingDir:'desc'}];
+                    </script>
+
+                    <vdl-var name="example1data" value="=[]"></vdl-var>
+
+                    <vdl-action-group name="createExample1Data">
+                        <vdl-action-get-entity-data entity="CountryStats"></vdl-action-get-entity-data>
+                        <vdl-action-group-by set-position="0"></vdl-action-group-by>
+                        <vdl-action-aggregate opperation="avg"></vdl-action-aggregate>
+                        <vdl-action-add-labels annotated-entity="CountryCodes"></vdl-action-add-labels>
+                        <vdl-action-set-var var="example1data"></vdl-action-set-var>
+                    </vdl-action-group>
+
+                    <vdl-button label="populate table" vdl-event="click: actions.createExample1Data"></vdl-button>
+
+                    <vdlx-datagrid
+                            id="custom-object-example-1"
+                            column-definition="=columnConfig"
+                            data="=vars.example1data"></vdlx-datagrid>
+                </vdl-column>
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;script&gt;
+    const columnConfig = [
+        {field: &#39;key&#39;, visible: false},
+        {field: &#39;label&#39;, title: &#39;Country&#39;, cssClass:&#39;index&#39;},
+        {field: &#39;value&#39;, title: &#39;Average&#39;, headerSortStartingDir:&#39;desc&#39;}];
+&lt;/script&gt;
+
+&lt;vdl-var name=&quot;example1data&quot; value=&quot;=[]&quot;&gt;&lt;/vdl-var&gt;
+
+&lt;vdl-action-group name=&quot;createExample1Data&quot;&gt;
+    &lt;vdl-action-get-entity-data entity=&quot;CountryStats&quot;&gt;&lt;/vdl-action-get-entity-data&gt;
+    &lt;vdl-action-group-by set-position=&quot;0&quot;&gt;&lt;/vdl-action-group-by&gt;
+    &lt;vdl-action-aggregate opperation=&quot;avg&quot;&gt;&lt;/vdl-action-aggregate&gt;
+    &lt;vdl-action-add-labels annotated-entity=&quot;CountryCodes&quot;&gt;&lt;/vdl-action-add-labels&gt;
+    &lt;vdl-action-set-var var=&quot;example1data&quot;&gt;&lt;/vdl-action-set-var&gt;
+&lt;/vdl-action-group&gt;
+
+&lt;vdl-button label=&quot;populate table&quot; vdl-event=&quot;click: actions.createExample1Data&quot;&gt;&lt;/vdl-button&gt;
+
+&lt;vdlx-datagrid
+    id=&quot;custom-object-example-1&quot;
+    column-definition=&quot;=columnConfig&quot;
+    data=&quot;=vars.example1data&quot;&gt;&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+        </vdl-section>
+
+    </vdl-page>
+</vdl>

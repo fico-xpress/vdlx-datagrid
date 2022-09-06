@@ -168,9 +168,11 @@ export default {
             defaultValue: 'data'
         },
         {
-            name: 'column-modifier',
-            description: 'Function to modify the column configuration for advanced settings.',
-            expression: 'dynamic'
+            name: 'column-definition',
+            description: 'column definition method. Auto generate columns from the data, by the label attribute,' +
+                ' or by supplying a column definition object',
+            acceptsExpression: true,
+            defaultValue: 'auto'
         }
     ]
 };

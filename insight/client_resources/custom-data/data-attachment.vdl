@@ -1,0 +1,210 @@
+<!--
+Xpress Insight vdlx-datagrid
+=============================
+
+file vdl-lang/table/table.vdl
+```````````````````````
+vdlx-datagrid Basic usage
+
+(c) Copyright 2022 Fair Isaac Corporation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<vdl version="4.8">
+    <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
+    <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+    <vdl-page>
+        <vdl-header>
+
+            <script>
+
+                insight.ready(function () {
+
+                    const setFileName = (fileName) => {
+                        actions.setFileName(undefined, undefined, fileName);
+                    }
+
+                    const updateTable = (cols, data) => {
+                        actions.loadCols(undefined, undefined, cols);
+                        actions.loadData(undefined, undefined, data);
+                    }
+
+                    const loadJson = (dataUrl) => {
+                        fetch(dataUrl)
+                            .then((response) => response.json())
+                            .then((json) => {
+                                    if (json.hasOwnProperty('cols') && json.hasOwnProperty('data')) {
+                                        updateTable(json.cols, json.data);
+                                    } else {
+                                        updateTable([], []);
+                                        actions.showError(undefined, undefined, 'invalid data - missing cols or data properties.');
+                                    }
+                                }
+                            ).catch((err) => {
+                            actions.showError(undefined, undefined, err.message);
+                        });
+                    }
+
+                    const loadCSV = (dataUrl) => {
+                        fetch(dataUrl, {
+                            method: 'get',
+                            headers: {
+                                'content-type': 'text/csv;charset=UTF-8',
+                            }
+                        }).then((response) => response.text())
+                            .then((responseTxt) => {
+
+                                const fields = responseTxt.slice(0, responseTxt.indexOf('\n')).split(',');
+                                const headers = fields.map(row => {
+                                    return {field: row, title: row.replaceAll('_', ' ')};
+                                });
+
+                                const rows = responseTxt.slice(responseTxt.indexOf('\n') + 1).split('\n');
+
+                                const data = rows.map(row => {
+                                    const values = row.split(',');
+                                    if (values.length > 1) {
+                                        return fields.reduce(
+                                            (newRow, field, i) => (newRow[field] = values[i], newRow), {});
+                                    }
+                                });
+
+                                updateTable(headers, data);
+                            })
+                    }
+
+                    const view = insight.getView();
+                    view.withFirstScenario()
+                        .withAttachments({
+                            tags: ['file-input']
+                        })
+                        .notify(function (scenario) {
+                            const attachments = scenario.getTaggedScenarioAttachments('file-input');
+
+                            if (attachments.length) {
+                                const myAttachment = attachments[0];
+                                const filename = myAttachment.getFilename();
+
+                                setFileName(filename);
+
+                                const ext = filename.split('.').findLast((el) => el).toUpperCase();
+                                const dataUrl = myAttachment.getDataUrl();
+
+                                if (ext === 'JSON') {
+                                    loadJson(dataUrl);
+                                } else if (ext === 'CSV') {
+                                    loadCSV(dataUrl);
+                                } else {
+                                    updateTable([], []);
+                                    actions.showError(undefined, undefined, ext + ' format npt supported');
+                                }
+
+                            } else {
+                                setFileName('');
+                                updateTable([], []);
+                            }
+
+                        })
+                        .start();
+                });
+
+            </script>
+
+            <vdl-action-group name="showError">
+                <vdl-action-message text="=value" level='error'></vdl-action-message>
+            </vdl-action-group>
+
+            <vdl-action-group name="appAttachments">
+                <vdl-action-attachment-manage
+                        scope="app"
+                        message="Download input.json and/or input.csv for an example input file.">
+                </vdl-action-attachment-manage>
+            </vdl-action-group>
+
+            <vdl-action-group name="scenarioAttachments">
+                <vdl-action-attachment-manage
+                        message="Upload a JSON or CSV file and assign the 'file-input' tag">
+                </vdl-action-attachment-manage>
+            </vdl-action-group>
+
+
+            <vdl-var name="fileName" value=""></vdl-var>
+            <vdl-var name="gridCols" value="=[]"></vdl-var>
+            <vdl-var name="gridData" value="=[]"></vdl-var>
+
+            <vdl-action-group name="setFileName">
+                <vdl-action-set-var var="fileName"></vdl-action-set-var>
+            </vdl-action-group>
+            <vdl-action-group name="loadCols">
+                <vdl-action-set-var var="gridCols"></vdl-action-set-var>
+            </vdl-action-group>
+            <vdl-action-group name="loadData">
+                <vdl-action-set-var var="gridData"></vdl-action-set-var>
+            </vdl-action-group>
+        </vdl-header>
+
+        <vdl-section heading="Reading data from a file uploaded uploaded to scenario attachments.">
+            <vdl-row>
+                <vdl-column size="12">
+                    <span>This example demonstrates how to load data into vdlx-data from a file.</span>
+                    <span>Supplied in the App Attachments are two examples tagged 'file-input-example'.</span>
+                    <span></span>
+                    <b>JSON</b>
+                     <span>The supplied A JSON file has a 'cols' and a 'data' property
+                     <ul>
+                         <li>Cols: This is an array of column definitions with a field property.</li>
+                         <li>Data: This is an array of data objects. The properties on the data relate to the field property in the column definitions.</li>
+                     </ul>
+                     </span>
+
+                    <b>CSV</b>
+                    <span>This CSV example uses the first row of data for the columns, and the and the rest as the data.</span>
+
+                    <span>
+                        Steps
+                        <ul>
+                        <li>Open the app attachments</li>
+                        <li>Download a file or files that are tagged 'file-input-example'.</li>
+                        <li>Upload the input file to the scenario attachments and assign the 'file-input' tag</li>
+                        <li>Please remove the 'file-input' tag from an attachment before assigning to another.</li>
+                    </ul></span>
+                    <span>The example is built using a combination of VDL Actions, the JS API and JavaScript. If you wish to view the code, please open in Workbench.</span>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="12" heading="Attachments">
+                    <vdl-container>
+                        <vdl-button label="Open App Attachments" vdl-event="click:actions.appAttachments"></vdl-button>
+                        <vdl-button label="Open Scenario Attachments" vdl-event="click:actions.scenarioAttachments">
+                        </vdl-button>
+                    </vdl-container>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="12" heading="Data Loaded from a file uploaded to the scenario attachments" vdl-if="=vars.fileName !== ''">
+                    <span vdl-text="='Currently showing data from: ' + vars.fileName"></span>
+                    <vdlx-datagrid
+                            id="file-upload-example"
+                            show-export="true"
+                            column-filter="true"
+                            freeze-columns="3"
+                            page-mode="paged"
+                            page-size="20"
+                            column-definition="=vars.gridCols"
+                            data="=vars.gridData"></vdlx-datagrid>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+
+    </vdl-page>
+</vdl>

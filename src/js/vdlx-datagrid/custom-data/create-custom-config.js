@@ -2,9 +2,7 @@
    Xpress Insight vdlx-datagrid
    =============================
 
-   file vdlx-datagrid/utils.js
-   ```````````````````````
-   vdlx-datagrid utils.
+   file vdlx-datagrid/custom-data/create-custom-config.js
 
     (c) Copyright 2022 Fair Isaac Corporation
 
@@ -20,19 +18,30 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import {COLUMN_SORTERS, EDITOR_TYPES, ROW_DATA_TYPES} from "../../constants";
-import {chooseColumnFilter, Enums} from "../grid-filters";
-import {convertArrayOfArraysData, convertPrimitiveArray, getRowDataType} from './custom-data-utils';
-import {checkboxFilterFunc, FILTER_PLACEHOLDER_TEXT, getHeaderFilterParams, getHeaderFilterEmptyCheckFn} from '../column-filter-utils';
+import {CUSTOM_COLUMN_DEFINITION, EDITOR_TYPES} from "../../constants";
+import {chooseColumnFilter} from "../grid-filters";
+import {
+    convertObjectColDefinitions,
+    createBasicColumnDefinition,
+    validateLabelsData,
+    validateObjectColDefinitions
+} from './custom-column-utils';
+import {convertCustomDataToObjectData, convertObjectDataToLabelData} from './custom-data-utils';
+import {
+    checkboxFilterFunc,
+    FILTER_PLACEHOLDER_TEXT,
+    getHeaderFilterEmptyCheckFn,
+    getHeaderFilterParams
+} from '../column-filter-utils';
 import assign from "lodash/assign";
-import isNaN from "lodash/isNaN";
-import isBoolean from "lodash/isBoolean";
-import toNumber from "lodash/toNumber";
 import filter from 'lodash/filter';
 import isFunction from "lodash/isFunction";
 import values from "lodash/values";
 import parseInt from "lodash/parseInt";
-import cloneDeep from "lodash/cloneDeep";
+import size from "lodash/size";
+import map from "lodash/map";
+import head from "lodash/head";
+import isUndefined from "lodash/isUndefined";
 
 /**
  * creates config object containing data and columns
@@ -40,52 +49,51 @@ import cloneDeep from "lodash/cloneDeep";
  * @returns {{data: (*|[]), columns: (*|*[])}}
  */
 export const createCustomConfig = (gridOptions) => {
-
     const data = gridOptions.data();
-    const freezeColumns = parseInt(gridOptions.freezeColumns);
-    const includeFilter = gridOptions.columnFilter || false;
-    const rowFilter = gridOptions.rowFilter;
 
-    // formalise/convert table data
-    let tableData = convertCustomData(data);
+    if (!size(data)) {
+        return {
+            columns: [],
+            data: []
+        };
+    }
+
+    let datagridData = [];
+    let columnDefinitions = [];
+
+    switch (gridOptions.columnDefinitionType) {
+        case CUSTOM_COLUMN_DEFINITION.AUTO:
+            datagridData = convertCustomDataToObjectData(data);
+            columnDefinitions = createAutoDefinitionColumns(head(datagridData));
+            break
+        case CUSTOM_COLUMN_DEFINITION.OBJECT:
+            datagridData = data;
+            columnDefinitions = createObjectDefinitionColumns(gridOptions.columnDefinitions(), head(data));
+            break
+        case CUSTOM_COLUMN_DEFINITION.LABELS:
+            datagridData = createLabelData(data);
+            columnDefinitions = createLabelsDefinitionColumns(data);
+            break
+        default:
+            throw Error('Error for component vdlx-datagrid: Unrecognised column format.');
+    }
 
     // apply rowFilter from attr
+    const rowFilter = gridOptions.rowFilter;
     if (isFunction(rowFilter)) {
-        tableData = applyRowFilter(tableData, rowFilter);
+        datagridData = applyRowFilter(datagridData, rowFilter);
     }
 
-    const rowOne = tableData[0];
-
+    // addGridOptionsProps will add column features set from vdlx-datagrid attributes
     return {
-        columns: rowOne ? createAutoColumnDefinitions(rowOne, includeFilter, freezeColumns) : [],
-        data: tableData
+        columns: addGridOptionsProps(gridOptions, columnDefinitions),
+        data: datagridData
     };
+
 };
 
 /**
- * ensures data in the correct array of objects format
- * @param data
- * @returns {*[]|*}
- */
-export const convertCustomData = (data) => {
-    // clone the gridOptions data so not updating original
-    let customData = cloneDeep(data);
-
-    switch (getRowDataType(customData[0])) {
-        case ROW_DATA_TYPES.array:
-            return convertArrayOfArraysData(customData);
-        case ROW_DATA_TYPES.primitive:
-            return convertPrimitiveArray(customData);
-        case ROW_DATA_TYPES.object:
-            return customData;
-        default:
-            console.error('Error for component vdlx-datagrid: Please remove functions from the data.');
-            return [];
-    }
-};
-
-/**
- * triger the rowFilter call back set in the attrs
+ * trigger the rowFilter call back set in the attrs
  * @param data
  * @param rowFilter
  * @returns {*}
@@ -95,77 +103,83 @@ export const applyRowFilter = (data, rowFilter) => {
         return rowFilter(values(rowData));
     });
 }
+/**
+ * create the column definitions from a row of data
+ * @param data
+ * @returns {*}
+ */
+export const createAutoDefinitionColumns = (data) => {
+    return map(data, (val, key) => createBasicColumnDefinition(key, val));
+};
 
-export const createAutoColumnDefinitions = (data, includeFilter, freezeColumns) => {
-    // map over the object entries, so I can have key value and index
-    return Object.entries(data).map(([key,val], index) => {
-        return createColumnDefinition(val, key, includeFilter, index < freezeColumns)
+/**
+ * validate and convert an array of objects containing a value and label
+ * @param data
+ * @returns {undefined[]}
+ */
+export const createLabelData = (data) => {
+    // error thrown for invalid data
+    if (validateLabelsData(data)) {
+        return convertObjectDataToLabelData(data);
+    }
+}
+
+/**
+ * take the user defined column configurations and add the required value type attributes, and delete undesired props
+ * if present, the ID will be overwritten, this is to make it work with grid-filters.filter(...)
+ * @param colDefinitions
+ * @param data
+ * @returns {*}
+ */
+export const createObjectDefinitionColumns = (colDefinitions, data) => {
+    // error thrown if validation fails
+    if (validateObjectColDefinitions(colDefinitions, data)) {
+        return convertObjectColDefinitions(colDefinitions, data)
+    }
+}
+
+export const createLabelsDefinitionColumns = (data) => {
+    return map(data, (row, index) => createBasicColumnDefinition(index, row.value, row.label));
+};
+
+/**
+ * add all properties set via the vdlx-datagrid attributes
+ * this will not overwrite properties directly set on the column
+ * @param gridOptions
+ * @param columns
+ * @returns {*}
+ */
+export const addGridOptionsProps = (gridOptions, columns) => {
+
+    const freezeColumns = parseInt(gridOptions.freezeColumns);
+    const includeFilter = gridOptions.columnFilter || false;
+
+    return map(columns, (col, index) => {
+        let gridCol = {};
+        if (isUndefined(col.frozen) && index < freezeColumns) {
+            gridCol.frozen = true;
+        }
+        if (includeFilter) {
+            assign(gridCol, configureColumnFilter(col));
+        }
+        return {
+            ...col,
+            ...gridCol
+        };
     });
 };
 
-/**
- * create a column configuration
- * @param val
- * @param key
- * @param includeFilter
- * @param freeze
- * @returns {*}
- */
-export const createColumnDefinition = (val, key, includeFilter, freeze) => {
-
-    const requiredProps = {
-        id: key,
-        field: key,
-        title: key,
-        frozen: freeze
-    };
-
-    let col;
-    if (isNaN(toNumber(val))) {
-        // string column
-        col = assign(requiredProps, {
-            editor: EDITOR_TYPES.text,
-            sorter: COLUMN_SORTERS.string,
-            elementType: Enums.DataType.STRING
-        });
-    } else if (isBoolean(val)) {
-        // boolean column with checkbox
-        const checkboxFormatter = (cell) => {
-            const checked = cell.getValue() ? 'checked' : '';
-            const disabled = 'disabled';
-            return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
-        };
-        col = assign(requiredProps, {
-                editor: EDITOR_TYPES.checkbox,
-                sorter: COLUMN_SORTERS.boolean,
-                elementType: Enums.DataType.BOOLEAN,
-                formatter: checkboxFormatter
-            }
-        );
-    } else {
-        // numeric column
-        col = assign(requiredProps, {
-            editor: EDITOR_TYPES.text,
-            sorter: COLUMN_SORTERS.number,
-            elementType: Enums.DataType.INTEGER,
-            cssClass: 'numeric'
-        });
-    }
-
-    if (includeFilter) {
-        return configureColumnFilter(col);
-    }
-    return col;
-};
 
 /**
  * configure a column filter for a column
+ * existing column filter attrs will not be overwritten
  * @returns {*}
  * @param col
  */
 export const configureColumnFilter = (col) => {
 
     const getHeaderFilter = () => {
+
         if (col.editor === EDITOR_TYPES.checkbox) {
             return EDITOR_TYPES.select;
         }
@@ -187,14 +201,14 @@ export const configureColumnFilter = (col) => {
         return undefined;
     };
 
-    const headerFilterParams = getHeaderFilterParams(col);
-    const headerFilterEmptyCheck = getHeaderFilterEmptyCheckFn(col, headerFilterParams);
+    const headerFilterParams = col.headerFilterParams || getHeaderFilterParams(col);
+    const headerFilterEmptyCheck = col.headerFilterEmptyCheck || getHeaderFilterEmptyCheckFn(col, headerFilterParams);
 
     let filterConfig = {
         headerFilterParams: headerFilterParams,
-        headerFilterPlaceholder: FILTER_PLACEHOLDER_TEXT,
-        headerFilter: getHeaderFilter(),
-        headerFilterFunc: getHeaderFilterFn(col),
+        headerFilterPlaceholder: col.headerFilterPlaceholder || FILTER_PLACEHOLDER_TEXT,
+        headerFilter: isUndefined(col.headerFilter) ? getHeaderFilter() : col.headerFilter,
+        headerFilterFunc: col.headerFilterFunc || getHeaderFilterFn(col),
         headerFilterEmptyCheck: headerFilterEmptyCheck,
     };
     return assign(col, filterConfig);

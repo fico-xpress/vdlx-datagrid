@@ -22,6 +22,8 @@
  */
 
 
+import {CUSTOM_COLUMN_DEFINITION} from "../constants";
+
 /**
  * The transform function takes care of setting up/initialising a VDL extension.
  * @param {HTMLElement} element - The VDL DOM node.
@@ -93,7 +95,7 @@ export default function transform(element, attributes, api) {
         } else if (addRemoveRow.rawValue === 'addrow-autoinc') {
             paramsBuilder.addParam('addRemoveRow', 'addrow-autoinc');
         }
-        if (data && addRemoveRow.rawValue.toUpperCase() !== 'FALSE') {
+        if (data && addRemoveRow.rawValue.toUpperCase() !== 'FALSE' && attributes['add-remove-row'].rawValue !== '') {
             throw Error('add-remove-row is not supported when using the data attribute.');
         }
     }
@@ -166,12 +168,27 @@ export default function transform(element, attributes, api) {
         }
     }
 
-    var columnModifier = attributes['column-modifier'];
-    if (columnModifier) {
-        if (columnModifier.expression.isString) {
-            paramsBuilder.addParam('columnModifier', columnModifier.rawValue, false);
+    var columnDefinition = attributes['column-definition'];
+    if (columnDefinition) {
+        if (!data) {
+            throw Error('Error for component vdlx-datagrid: When using the column-definition attribute, data must be ' +
+                'provided via the data attribute.');
+        }
+        if (columnDefinition.expression.isString) {
+            const defType = _.toLower(columnDefinition.rawValue);
+            if (!_.includes(_.map(CUSTOM_COLUMN_DEFINITION), defType)) {
+                throw Error('Error for component vdlx-datagrid: ' + defType + ' is not a recognised column definition.  ' +
+                    'Allowed values are "auto", "labels" or a valid column definition object.');
+            } else {
+                paramsBuilder.addParam('columnDefinitionType', defType, false);
+            }
         } else {
-            paramsBuilder.addParam('columnModifier', columnModifier.expression.value, true);
+            paramsBuilder.addParam('columnDefinitionType', CUSTOM_COLUMN_DEFINITION.OBJECT, false);
+            paramsBuilder.addFunctionOrExpressionParam('columnDefinitions', columnDefinition.expression.value, false);
+        }
+    } else {
+        if (data) {
+            paramsBuilder.addParam('columnDefinitionType', CUSTOM_COLUMN_DEFINITION.AUTO, false);
         }
     }
 

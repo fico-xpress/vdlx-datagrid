@@ -2,11 +2,11 @@
    Xpress Insight vdlx-datagrid
    =============================
 
-   file vdlx-datagrid/utils.js
+   file vdlx-datagrid/custom-data/custom-data-utils.js
    ```````````````````````
    vdlx-datagrid utils.
 
-    (c) Copyright 2019 Fair Isaac Corporation
+    (c) Copyright 2022 Fair Isaac Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -28,7 +28,32 @@ import isFunction from "lodash/isFunction";
 import {ROW_DATA_TYPES} from "../../constants";
 import reduce from "lodash/reduce";
 import assign from "lodash/assign";
+import {Enums} from "../grid-filters";
+import isNaN from "lodash/isNaN";
+import toNumber from "lodash/toNumber";
+import isBoolean from "lodash/isBoolean";
+import cloneDeep from "lodash/cloneDeep";
+import toString from "lodash/toString";
 
+/**
+ * if a string can be converted to numeric then it will return INTEGER
+ * @param data
+ * @returns {string}
+ */
+export const getDataType = (data) => {
+    if (isNaN(toNumber(data))) {
+        return Enums.DataType.STRING
+    } else if (isBoolean(data)) {
+        return Enums.DataType.BOOLEAN;
+    } else {
+        return Enums.DataType.INTEGER;
+    }
+}
+/**
+ * determind the type of data used in a row
+ * @param row
+ * @returns {string}
+ */
 export const getRowDataType = (row) => {
     if (isPlainObject(row)) {
         return ROW_DATA_TYPES.object;
@@ -42,6 +67,32 @@ export const getRowDataType = (row) => {
     return ROW_DATA_TYPES.primitive;
 }
 
+/**
+ * ensures data in the correct array of objects format
+ * @param data
+ * @returns {*[]|*}
+ */
+export const convertCustomDataToObjectData = (data) => {
+    // clone the gridOptions data so not updating original
+    let customData = cloneDeep(data);
+
+    switch (getRowDataType(customData[0])) {
+        case ROW_DATA_TYPES.array:
+            return convertArrayOfArraysData(customData);
+        case ROW_DATA_TYPES.primitive:
+            return convertPrimitiveArray(customData);
+        case ROW_DATA_TYPES.object:
+            return customData;
+        default:
+            console.error('Error for component vdlx-datagrid: Please remove functions from the data.');
+            return [];
+    }
+};
+/**
+ * convert an array of arrays to an array of objects
+ * @param data
+ * @returns {*}
+ */
 export const convertArrayOfArraysData = (data) => {
     return map(data, (row) => {
         return reduce(row, (memo, row, index) => {
@@ -51,6 +102,11 @@ export const convertArrayOfArraysData = (data) => {
     });
 };
 
+/**
+ * convert an array of primitives to an array of objects
+ * @param data
+ * @returns {*}
+ */
 export const convertPrimitiveArray = (data) => {
     return map(data, (datum) => {
         return {
@@ -58,3 +114,16 @@ export const convertPrimitiveArray = (data) => {
         }
     });
 };
+
+/**
+ * convert an array of key value objects to an array of objects keyed by the index
+ * @param data
+ * @returns {[undefined]}
+ */
+export const convertObjectDataToLabelData = (data) => {
+    // create a single object containing properties for each row
+    return [reduce(data, function (memo, row, index) {
+        assign(memo, { [toString(index)]: row.value});
+        return memo;
+    }, {})];
+}
