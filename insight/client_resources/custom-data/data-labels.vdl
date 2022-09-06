@@ -25,12 +25,13 @@ limitations under the License.
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
     <vdl-page>
 
-        <vdl-section heading="Column Definition: labels">
+        <vdl-section heading="Column-Definition = labels">
             <vdl-row>
                 <vdl-column size="12">
                     <span vdl-text="By using the labels configuration, column headers can be derived from the data."></span>
                     <span vdl-text="The column header is derived from the label attribute, and the data is supplied by the value attribute"></span>
                     <span vdl-text="This configuration will reduce multiple rows into one row."></span>
+                    <span vdl-text="The data is used for both column headers and rows."></span>
                 </vdl-column>
             </vdl-row>
 

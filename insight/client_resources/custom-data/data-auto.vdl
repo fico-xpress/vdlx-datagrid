@@ -24,7 +24,7 @@ limitations under the License.
     <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
     <vdl-page>
-        <vdl-section heading="Auto Columns">
+        <vdl-section heading="Column-Definition = Auto">
             <vdl-row>
                 <vdl-column size="12">
                     <span vdl-text="The simplest way to add custom data is by using the 'auto' column configuration. This is the default configuration."></span>
@@ -165,6 +165,8 @@ limitations under the License.
             <vdl-row>
                 <vdl-column heading="Using data attr with a vdl-var" size="12">
                     <span vdl-text="The data attr can be used with a vdl-var."></span>
+                    <span>The example is using 'vdl-action-get-entity-data' to return entity from sets and arrays.</span>
+                    <span>The data is set using 'vdl-action-set-var'.</span>
                     <span vdl-text="Each time the vdl-var is updated, the table is redrawn."></span>
                 </vdl-column>
             </vdl-row>
@@ -179,7 +181,7 @@ limitations under the License.
                     </vdl-action-group>
 
                     <vdl-form>
-                        <vdl-field label="Select an Entity to display" options="=['CountryCodes', 'StatTypes']" vdl-event="change:actions.createExample5Data"></vdl-field>
+                        <vdl-field label="Select an Entity to display" options="=['CountryCodes', 'StatTypes', 'CountryStats', 'RealArray']" vdl-event="change:actions.createExample5Data"></vdl-field>
                     </vdl-form>
 
                     <vdlx-datagrid
@@ -199,7 +201,7 @@ limitations under the License.
 &lt;/vdl-action-group&gt;
 
 &lt;vdl-form&gt;
-    &lt;vdl-field label=&quot;Select an Entity to display&quot; options=&quot;=[&#39;CountryCodes&#39;, &#39;StatTypes&#39;]&quot; vdl-event=&quot;change:actions.createExample5Data&quot;&gt;&lt;/vdl-field&gt;
+    &lt;vdl-field label=&quot;Select an Entity to display&quot; options=&quot;=[&#39;CountryCodes&#39;, &#39;StatTypes&#39;, &#39;CountryStats&#39;, &#39;RealArray&#39;]&quot; vdl-event=&quot;change:actions.createExample5Data&quot;&gt;&lt;/vdl-field&gt;
 &lt;/vdl-form&gt;
 
 &lt;vdlx-datagrid

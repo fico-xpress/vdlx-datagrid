@@ -24,7 +24,7 @@ limitations under the License.
     <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
     <vdl-page>
-        <vdl-section heading="Column Config Object">
+        <vdl-section heading="Column-Definition = Column Config Object">
             <vdl-row>
                 <vdl-column size="12">
                     <span vdl-text="Using a column definition provides the most control over the functionality of a table."></span>
@@ -74,11 +74,12 @@ limitations under the License.
                 </vdl-column>
             </vdl-row>
             <vdl-row>
-                <vdl-column heading="Simple column configuration" size="12">
-                    <span vdl-text="The data returned from 'actions.createExample1Data' is in the format"></span><b>[{key:x, value:y, label:z}]</b>
+                <vdl-column heading="Simple column configuration">
+                    <span vdl-text="The data returned from 'vdl-action-get-entity-data' is in the format"></span><b>[{key:x, value:y, label:z}]</b>
+                    <span>The following actions group, aggregate, add labels and set the data into a vdl-var.</span>
                     <span vdl-text="The following configuration:"></span>
                     <ul>
-                        <li>visible: false: Hides the key column</li>
+                        <li>visible: false: Hides the key column **</li>
                         <li>title: Changes the title for the value column</li>
                         <li>cssClass:'index': Makes the country data bold</li>
                         <li>headerSortStartingDir: Sorts the data by the value/average column</li>

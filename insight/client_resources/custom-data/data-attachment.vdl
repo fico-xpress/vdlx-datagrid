@@ -178,7 +178,7 @@ limitations under the License.
                         <li>Upload the input file to the scenario attachments and assign the 'file-input' tag</li>
                         <li>Please remove the 'file-input' tag from an attachment before assigning to another.</li>
                     </ul></span>
-                    <span>The example is built using a combination of VDL Actions, the JS API and JavaScript. If you wish view the code, please open in Workbench.</span>
+                    <span>The example is built using a combination of VDL Actions, the JS API and JavaScript. If you wish to view the code, please open in Workbench.</span>
                 </vdl-column>
             </vdl-row>
             <vdl-row>
