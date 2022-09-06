@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <model-companion xmlns="http://www.fico.com/xpress/optimization-modeler/model-companion" version="3.0">
+
+    <attachment-config>
+        <attachment-tags>
+           <attachment-tag name="file-input-example">
+                <description>Example files for inputting data into a table. This tag has been marked as 'single' so you may only tag one file this way.</description>
+                <attachments>
+                    <attachment>input.json</attachment>
+                    <attachment>input.csv</attachment>
+                </attachments>
+            </attachment-tag>
+            <attachment-tag name="file-input" usage="single-file">
+                <description>File for inputting data into a table. This tag has been marked as 'single' so you may only tag one file this way.</description>
+            </attachment-tag>
+        </attachment-tags>
+    </attachment-config>
+
     <client>
         <view-group title="vdlx-datagrid">
             <vdl-view title="Basic usage" path="vdl-lang/table/table.vdl" />
@@ -17,6 +33,12 @@
             <vdl-view title="Validation" path="vdl-lang/table/table-validation.vdl" />
             <vdl-view title="Multi-scenario" path="vdl-lang/table/table-multi-scenario.vdl" />
             <vdl-view title="Error handling" path="vdl-lang/table/table-errors.vdl" />
+        </view-group>
+        <view-group title="Custom Columns and Data">
+            <vdl-view title="Auto column configuration" path="custom-data/data-auto.vdl" />
+            <vdl-view title="Label configuration" path="custom-data/data-labels.vdl" />
+            <vdl-view title="Column definition object" path="custom-data/data-config.vdl" />
+            <vdl-view title="Loading from attachment" path="custom-data/data-attachment.vdl" />
         </view-group>
         <view-group title="Big Data">
             <vdl-view title="Big Data 2k rows" path="big-data/datagrid-bd1.vdl" />

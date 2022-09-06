@@ -1,0 +1,215 @@
+<!--
+Xpress Insight vdlx-datagrid
+=============================
+
+file vdl-lang/table/table.vdl
+```````````````````````
+vdlx-datagrid Basic usage
+
+(c) Copyright 2022 Fair Isaac Corporation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<vdl version="4.8">
+    <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
+    <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+    <vdl-page>
+        <vdl-section heading="Auto Columns">
+            <vdl-row>
+                <vdl-column size="12">
+                    <span vdl-text="The simplest way to add custom data is by using the 'auto' column configuration. This is the default configuration."></span>
+                    <span vdl-text="datagrid will read the first row of data and based on the data type create the columns."></span>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column heading="Array of primitive values" size="12">
+                    <span vdl-text="Given a simple array of primitives, datagrid will produce a single column table."></span>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column heading="Example" size="6">
+                    <vdlx-datagrid
+                            id="custom-basic-example-1"
+                            column-definition="auto"
+                            data="=[1,2,3]"></vdlx-datagrid>
+                </vdl-column>
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;vdlx-datagrid
+    id=&quot;custom-basic-example-1&quot;
+    column-definition=&quot;auto&quot;
+    data=&quot;=[1,2,3]&quot;&gt;&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="Array of arrays" size="12">
+                    <span vdl-text="Multiple columns can be achieved with an array of arrays."></span>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="Example" size="6">
+                    <script>
+                        const example2data = [
+                            ['New York', 100],
+                            ['Paris', 50],
+                            ['Peckham', 20]
+                        ]
+                    </script>
+
+                    <vdlx-datagrid
+                            id="custom-basic-example-2"
+                            column-definition="auto"
+                            data="=example2data"></vdlx-datagrid>
+                </vdl-column>
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;script&gt;
+    const example2data = [
+        [&#39;New York&#39;, 100],
+        [&#39;Paris&#39;, 50],
+        [&#39;Peckham&#39;, 20]
+    ]
+&lt;/script&gt;
+
+&lt;vdlx-datagrid
+    id=&quot;custom-basic-example-2&quot;
+    column-definition=&quot;auto&quot;
+    data=&quot;=example2data&quot;&gt;&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column heading="Example" size="6">
+                    <script>
+                        const example3data = [
+                            ['New York', 100, 'USA', false],
+                            ['Paris', 50, 'FR', true],
+                            ['Peckham', 20, 'UK', true]
+                        ]
+                    </script>
+
+                    <vdlx-datagrid
+                            id="custom-basic-example-3"
+                            column-definition="auto"
+                            data="=example3data"></vdlx-datagrid>
+                </vdl-column>
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;script&gt;
+    const example3data = [
+        [&#39;New York&#39;, 100, &#39;USA&#39;, false],
+        [&#39;Paris&#39;, 50, &#39;FR&#39;, true],
+        [&#39;Peckham&#39;, 20, &#39;UK&#39;, true]
+    ]
+&lt;/script&gt;
+
+&lt;vdlx-datagrid
+    id=&quot;custom-basic-example-3&quot;
+    column-definition=&quot;auto&quot;
+    data=&quot;=example3data&quot;&gt;&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="Reading Properties from objects" size="12">
+                    <span vdl-text="Multiple columns with more meaningful column titles can be achieved with an array of objects."></span>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="Example" size="6">
+                    <script>
+                        const example4data = [
+                            {factory: 'New York', availability:100, country: 'USA', open: false},
+                            {factory: 'Paris', availability:50, country: 'FR', open: true},
+                            {factory: 'Peckham', availability:20, country: 'UK', open: true}]
+                    </script>
+
+                    <vdlx-datagrid
+                            id="custom-basic-example-4"
+                            column-definition="auto"
+                            data="=example4data"></vdlx-datagrid>
+                </vdl-column>
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;script&gt;
+    const example4data = [
+        {factory: &#39;New York&#39;, availability:100, country: &#39;USA&#39;, open: false},
+        {factory: &#39;Paris&#39;, availability:50, country: &#39;FR&#39;, open: true},
+        {factory: &#39;Peckham&#39;, availability:20, country: &#39;UK&#39;, open: true}
+    ]
+&lt;/script&gt;
+
+&lt;vdlx-datagrid
+    id=&quot;custom-basic-example-4&quot;
+    column-definition=&quot;auto&quot;
+    data=&quot;=example4data&quot;&gt;&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="Using data attr with a vdl-var" size="12">
+                    <span vdl-text="The data attr can be used with a vdl-var."></span>
+                    <span vdl-text="Each time the vdl-var is updated, the table is redrawn."></span>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="Example" size="6">
+
+                    <vdl-var name="example5data" value="=[]"></vdl-var>
+                    <vdl-action-group name="createExample5Data">
+                        <vdl-action-get-entity-data entity="=value" with-labels="true"></vdl-action-get-entity-data>
+                        <vdl-action-set-var var="example5data"></vdl-action-set-var>
+                    </vdl-action-group>
+
+                    <vdl-form>
+                        <vdl-field label="Select an Entity to display" options="=['CountryCodes', 'StatTypes']" vdl-event="change:actions.createExample5Data"></vdl-field>
+                    </vdl-form>
+
+                    <vdlx-datagrid
+                            id="custom-basic-example-5"
+                            data="=vars.example5data"
+                    ></vdlx-datagrid>
+
+                </vdl-column>
+
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;vdl-var name=&quot;example5data&quot; value=&quot;=[]&quot;&gt;&lt;/vdl-var&gt;
+
+&lt;vdl-action-group name=&quot;createExample5Data&quot;&gt;
+    &lt;vdl-action-get-entity-data entity=&quot;=value&quot; with-labels=&quot;true&quot;&gt;&lt;/vdl-action-get-entity-data&gt;
+    &lt;vdl-action-set-var var=&quot;example5data&quot;&gt;&lt;/vdl-action-set-var&gt;
+&lt;/vdl-action-group&gt;
+
+&lt;vdl-form&gt;
+    &lt;vdl-field label=&quot;Select an Entity to display&quot; options=&quot;=[&#39;CountryCodes&#39;, &#39;StatTypes&#39;]&quot; vdl-event=&quot;change:actions.createExample5Data&quot;&gt;&lt;/vdl-field&gt;
+&lt;/vdl-form&gt;
+
+&lt;vdlx-datagrid
+    id=&quot;custom-basic-example-5&quot;
+    data=&quot;=vars.example5data&quot;&gt;&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+        </vdl-section>
+
+    </vdl-page>
+</vdl>

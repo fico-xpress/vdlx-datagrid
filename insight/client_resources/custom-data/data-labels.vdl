@@ -1,0 +1,187 @@
+<!--
+Xpress Insight vdlx-datagrid
+=============================
+
+file vdl-lang/table/table.vdl
+```````````````````````
+vdlx-datagrid Basic usage
+
+(c) Copyright 2022 Fair Isaac Corporation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<vdl version="4.8">
+    <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
+    <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+    <vdl-page>
+
+        <vdl-section heading="Column Definition: labels">
+            <vdl-row>
+                <vdl-column size="12">
+                    <span vdl-text="By using the labels configuration, column headers can be derived from the data."></span>
+                    <span vdl-text="The column header is derived from the label attribute, and the data is supplied by the value attribute"></span>
+                    <span vdl-text="This configuration will reduce multiple rows into one row."></span>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="Reading Headers from labels" size="12">
+                    <span vdl-text="Multiple columns with meaningful column titles can be achieved with arrays of objects that contain a value and label attribute."></span>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="Example" size="6">
+                    <script>
+                        const example1data = [
+                            {label: 'New York', value:100},
+                            {label: 'Paris', value:50},
+                            {label: 'Peckham', value:20}]
+                    </script>
+
+                    <vdlx-datagrid
+                            id="custom-labels-example-1"
+                            column-definition="labels"
+                            data="=example1data"></vdlx-datagrid>
+                </vdl-column>
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;script&gt;
+    const example1data = [
+        {label: &#39;New York&#39;, value:100},
+        {label: &#39;Paris&#39;, value:50},
+        {label: &#39;Peckham&#39;, value:20}]
+&lt;/script&gt;
+
+&lt;vdlx-datagrid
+    id=&quot;custom-labels-example-1&quot;
+    column-definition=&quot;labels&quot;
+    data=&quot;=example1data&quot;&gt;&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="Using data attr with a vdl-var" size="12">
+                    <span vdl-text="The data attr can be used with a vdl-var."></span>
+                    <span vdl-text="Each time the vdl-var is updated, the table is redrawn."></span>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="Example" size="6">
+
+                    <vdl-var name="example2data" value="=[]"></vdl-var>
+                    <vdl-action-group name="createExample2Data">
+                        <vdl-action-get-entity-data entity="=value" with-labels="true"></vdl-action-get-entity-data>
+                        <vdl-action-set-var var="example2data"></vdl-action-set-var>
+                    </vdl-action-group>
+
+                    <vdl-form>
+                        <vdl-field label="Select an Entity to display" options="=['CountryCodes', 'StatTypes']" vdl-event="change:actions.createExample2Data"></vdl-field>
+                    </vdl-form>
+
+                    <vdlx-datagrid
+                            id="custom-label-example-2"
+                            column-definition="labels"
+                            data="=vars.example2data"></vdlx-datagrid>
+
+                </vdl-column>
+
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;vdl-var name=&quot;example2data&quot; value=&quot;=[]&quot;&gt;&lt;/vdl-var&gt;
+&lt;vdl-action-group name=&quot;createExample2Data&quot;&gt;
+    &lt;vdl-action-get-entity-data entity=&quot;=value&quot; with-labels=&quot;true&quot;&gt;&lt;/vdl-action-get-entity-data&gt;
+    &lt;vdl-action-set-var var=&quot;example2data&quot;&gt;&lt;/vdl-action-set-var&gt;
+&lt;/vdl-action-group&gt;
+
+&lt;vdl-form&gt;
+    &lt;vdl-field label=&quot;Select an Entity to display&quot; options=&quot;=[&#39;CountryCodes&#39;, &#39;StatTypes&#39;]&quot; vdl-event=&quot;change:actions.createExample2Data&quot;&gt;&lt;/vdl-field&gt;
+&lt;/vdl-form&gt;
+
+&lt;vdlx-datagrid
+    id=&quot;custom-label-example-2&quot;
+    column-definition=&quot;labels&quot;
+    data=&quot;=vars.example2data&quot;&gt;&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+            <vdl-row>
+                <vdl-column heading="Using data attr with a vdl-var" size="12">
+                    <span vdl-text="The following example aggregates entity data and reduces it to one row."></span>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column heading="Example" size="6">
+
+                    <vdl-var name="indexSets" value="=['CountryCodes', 'StatTypes']"></vdl-var>
+                    <vdl-var name="selectedSet" value="=0"></vdl-var>
+                    <vdl-var name="example3data" value="=[]"></vdl-var>
+
+                    <vdl-action-group name="createExample3Data">
+                        <vdl-action-set-var var="selectedSet" value="=value"></vdl-action-set-var>
+                        <vdl-action-get-entity-data entity="CountryStats"></vdl-action-get-entity-data>
+                        <vdl-action-group-by set-position="=vars.selectedSet"></vdl-action-group-by>
+                        <vdl-action-aggregate opperation="avg"></vdl-action-aggregate>
+                        <vdl-action-add-labels annotated-entity="=vars.indexSets[vars.selectedSet]"></vdl-action-add-labels>
+                        <vdl-action-set-var var="example3data"></vdl-action-set-var>
+                    </vdl-action-group>
+
+                    <vdl-form>
+                        <vdl-field
+                                label="Choose what to display"
+                                options="=[{value:0, label:'Average by Country'},{value:1, label:'Average by Stat'}]"
+                                vdl-event="change:actions.createExample3Data"></vdl-field>
+                    </vdl-form>
+
+                    <vdlx-datagrid
+                            id="custom-label-example-3"
+                            column-definition="labels"
+                            data="=vars.example3data"></vdlx-datagrid>
+                </vdl-column>
+                <vdl-column size="6" heading="VDL source:">
+                    <code-panel>
+&lt;vdl-var name=&quot;indexSets&quot; value=&quot;=[&#39;CountryCodes&#39;, &#39;StatTypes&#39;]&quot;&gt;&lt;/vdl-var&gt;
+&lt;vdl-var name=&quot;selectedSet&quot; value=&quot;=0&quot;&gt;&lt;/vdl-var&gt;
+&lt;vdl-var name=&quot;example3data&quot; value=&quot;=[]&quot;&gt;&lt;/vdl-var&gt;
+
+&lt;vdl-action-group name=&quot;createExample3Data&quot;&gt;
+    &lt;vdl-action-set-var var=&quot;selectedSet&quot; value=&quot;=value&quot;&gt;&lt;/vdl-action-set-var&gt;
+    &lt;vdl-action-get-entity-data entity=&quot;CountryStats&quot;&gt;&lt;/vdl-action-get-entity-data&gt;
+    &lt;vdl-action-group-by set-position=&quot;=vars.selectedSet&quot;&gt;&lt;/vdl-action-group-by&gt;
+    &lt;vdl-action-aggregate opperation=&quot;avg&quot;&gt;&lt;/vdl-action-aggregate&gt;
+    &lt;vdl-action-add-labels annotated-entity=&quot;=vars.indexSets[vars.selectedSet]&quot;&gt;&lt;/vdl-action-add-labels&gt;
+    &lt;vdl-action-set-var var=&quot;example3data&quot;&gt;&lt;/vdl-action-set-var&gt;
+&lt;/vdl-action-group&gt;
+
+&lt;vdl-form&gt;
+    &lt;vdl-field
+        label=&quot;Choose what to display&quot;
+        options=&quot;=[{value:0, label:&#39;Average by Country&#39;},{value:1, label:&#39;Average by Stat&#39;}]&quot;
+        vdl-event=&quot;change:actions.createExample3Data&quot;&gt;&lt;/vdl-field&gt;
+&lt;/vdl-form&gt;
+
+&lt;vdlx-datagrid
+    id=&quot;custom-label-example-3&quot;
+    column-definition=&quot;labels&quot;
+    data=&quot;=vars.example3data&quot;&gt;&lt;/vdlx-datagrid&gt;
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+
+        </vdl-section>
+
+    </vdl-page>
+</vdl>
