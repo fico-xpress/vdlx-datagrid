@@ -118,6 +118,19 @@ model "vdlx-datagrid examples"
     !@insight.transform.labels.entity SupportLevelNames
     SupportLevels = 0..2                           ! Set of support levels
 
+    ! for labels data example
+    !@insight.transform.labels.entity CountryCodesLabel
+    CountryCodes: set of string
+    CountryCodesLabel: array(CountryCodes) of string
+
+    !@insight.transform.labels.entity StatTypeLabels
+    StatTypes: set of string
+
+    StatTypeLabels: array(StatTypes) of string
+
+    CountryStats: dynamic array(CountryCodes, StatTypes) of real
+
+
     SupportLevelNames: array(SupportLevels) of string ! Support level names
     !@insight.alias Support Costs
     SupportCosts: array(SupportLevels) of real     ! Support level cost
@@ -531,6 +544,26 @@ model "vdlx-datagrid examples"
         UI_IsPurchMatInT(i,j,k,l,m):= false     !dynamic array(SITE,VEN,MAT,MAT_NAMES,T) of boolean
         UI_OwnProdPerPeriod(i,j,k,l,m):= true  !dynamic array(SITE,VEN,MAT,MAT_NAMES,T) of boolean
         mycounter:=mycounter+1
+    end-do
+
+
+    CountryCodes := {'UK','FR','IT', 'USA'}
+    CountryCodesLabel('UK') := 'United Kingdom'
+    CountryCodesLabel('FR') := 'France'
+    CountryCodesLabel('IT') := 'Italy'
+    CountryCodesLabel('USA') := 'United States'
+
+    StatTypes := {'S1','S2','S3', 'S4', 'S5'}
+
+    StatTypeLabels('S1') := 'Stat 1'
+    StatTypeLabels('S2') := 'Stat 2'
+    StatTypeLabels('S3') := 'Stat 3'
+    StatTypeLabels('S4') := 'Stat 4'
+    StatTypeLabels('S5') := 'Stat 5'
+
+
+    forall(a in CountryCodes, b in StatTypes) do
+      CountryStats(a,b) := integer(round((100*random)+0.5))
     end-do
 
   end-procedure
