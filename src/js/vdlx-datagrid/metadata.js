@@ -169,8 +169,13 @@ export default {
         },
         {
             name: 'column-definition',
-            description: 'column definition method. Auto generate columns from the data, by the label attribute,' +
-                ' or by supplying a column definition object',
+            description: 'Specify how columns are defined, allowed values: "auto", "labels", or an object defining column properties [{field:"key", title="Key"}...].<br><br>' +
+                '"auto" (default) will generate columns from the data.<br>' +
+                '"labels" will use the "label" property on an object as the column header, and the "value" property as the cell value. Data will be reduced to one row.<br><br>' +
+                'When using column properties, you should supply aa column definition object for each column you require and each object must have a property named \'field\'. <br>' +
+                'The value of the field property must reference a property on the data. <br>For example: ' +
+                'column-definition="=[{field:"name", title:"Full Name", field:"tel", title:"Phone Number"}] data="=[{name="John Doe", tel:"1234"}...]".<br>' +
+                'Other recommended properties: title, width, cssClass (space separated class names), headerSortStartingDir (asc/desc)',
             acceptsExpression: true,
             defaultValue: 'auto'
         }
