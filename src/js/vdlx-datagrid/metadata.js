@@ -56,7 +56,7 @@ export default {
             description:
                 'The default scenario to use for fetching data in the grid. This can be overridden per column but the default ' +
                 'will be used when a column does not specify a particular scenario and the index sets will be fetched from the default scenario. ' +
-                'This attribute will not affect the scenario variable in any render expression on the datagrid columns.', +
+                'This attribute will not affect the scenario variable in any render expression on the datagrid columns.' +
                 'This attribute can not be set when "data" attribute is being used.',
             acceptsExpression: true
         },
@@ -177,7 +177,7 @@ export default {
                 'When using column properties, you should supply aa column definition object for each column you require and each object must have a property named \'field\'. <br>' +
                 'The value of the field property must reference a property on the data. <br>For example: ' +
                 'column-definition="=[{field:"name", title:"Full Name", field:"tel", title:"Phone Number"}] data="=[{name="John Doe", tel:"1234"}...]".<br>' +
-                'Other recommended properties: title, width, cssClass (space separated class names), headerSortStartingDir (asc/desc), <br>', +
+                'Other recommended properties: title, width, cssClass (space separated class names), headerSortStartingDir (asc/desc), <br>' +
                 'This attribute can not be set when "data" attribute is being used.',
             acceptsExpression: true,
             defaultValue: 'auto'
