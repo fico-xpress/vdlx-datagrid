@@ -95,7 +95,7 @@ export default function transform(element, attributes, api) {
         } else if (addRemoveRow.rawValue === 'addrow-autoinc') {
             paramsBuilder.addParam('addRemoveRow', 'addrow-autoinc');
         }
-        if (data && addRemoveRow.rawValue.toUpperCase() !== 'FALSE' && attributes['add-remove-row'].rawValue !== '') {
+        if (data) {
             throw Error('add-remove-row is not supported when using the data attribute.');
         }
     }
