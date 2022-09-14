@@ -26,7 +26,7 @@ export default {
     doc: {
         description: `
             Add a validation rule to a <code>&lt;vdlx-datagrid-column&gt;</code> element.
-             You can declare multiple <code>&lt;vdl-validate&gt;</code> rules within a
+             You can declare multiple <code>&lt;vdlx-datagrid-validate&gt;</code> rules within a
              <code>&lt;vdlx-datagrid-column&gt;</code> and they will all be applied. Each rule can specify whether the field is allowed to save data if that rule
              fails (this is soft validation). The <em>pass</em> attribute defines the expression that is called every time the field or autocolumn
              changes. The expression is automatically given the variables: <code>entityName</code>, <code>value</code>, <code>indices</code> 
@@ -42,10 +42,10 @@ export default {
             '' +
             '<vdlx-datagrid>\n' +
             '  <vdlx-datagrid-column entity="FactoryDemand">\n' +
-            '    <vdl-validate pass="=value >= scenario.entities.SupportLevel.value"\n' +
+            '    <vdlx-datagrid-validate pass="=value >= scenario.entities.SupportLevel.value"\n' +
             '                  allow-save="=scenario.entities.CanSave.value">\n' +
             '      FactoryDemand should be greater than or equal to SupportLevel\n' +
-            '    </vdl-validate>\n' +
+            '    </vdlx-datagrid-validate>\n' +
             '  </vdlx-datagrid-column>\n' +
             '</vdlx-datagrid>'
     },

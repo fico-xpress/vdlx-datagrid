@@ -26,7 +26,7 @@ export default function(element, attributes, api) {
     var $element = $(element);
 
     if (!$element.parents('vdlx-datagrid-column').length) {
-        throw Error('<vdl-validate> must be contained within a <vdlx-datagrid-column> tag');
+        throw Error('<vdlx-datagrid-validate> must be contained within a <vdlx-datagrid-column> tag');
     }
 
     var pass = attributes['pass'];

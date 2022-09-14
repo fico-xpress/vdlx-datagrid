@@ -27,12 +27,12 @@ import { validatorRegistry } from '../insight-modules';
 export default function(params, componentInfo) {
     var fieldElement = $(componentInfo.element).parents('vdlx-datagrid-column')[0];
     if (!fieldElement) {
-        throw Error('Cannot find parent <vdlx-datagrid-column> for <vdl-validate>');
+        throw Error('Cannot find parent <vdlx-datagrid-column> for <vdlx-datagrid-validate>');
     }
 
     var callback = params['pass'];
     if (!callback) {
-        throw Error('Missing a "pass" attribute for <vdl-validate>');
+        throw Error('Missing a "pass" attribute for <vdlx-datagrid-validate>');
     }
 
     var registryId = validatorRegistry.add({
