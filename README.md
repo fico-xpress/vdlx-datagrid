@@ -46,7 +46,7 @@ See [CHANGELOG](./CHANGELOG.md) for a list of changes in each version.
 
 __Note:__ There are some features shared between `vdl-table` and `vdlx-datagrid` that are implemented differently. _Always test any code ported between the two._ 
 
-### Features available in `vdl-table` that are not included in `vdlx-datagrid` 4.6.x.
+### Features available in `vdl-table` that are not included in `vdlx-datagrid`
 
 * Block and column selection
 * Copy and Paste data
@@ -62,9 +62,15 @@ __Note:__ There are some features shared between `vdl-table` and `vdlx-datagrid`
 This information is only required if you are developing the `vdlx-datagrid` extension. See the 'Usage' section above for more on using this tag in your views. 
 
 1. `npm install`
-1. `npm run build`
+2. `npm run build`
 
-To watch the src and rebuild on changes, run: `npm run watch`
+Whilst developing vdlx-datagrid:
+
+1. Build the library with `npm run build`. This will place the vdlx-datagrid vdl file and minified JS and CSS into the example app.
+2. Start incremental build of the library with `npm run watch`. This will build an unminified version of the JS and CSS and place into the example app.
+3. Add local `<client-resources-local-path>` path to the cfile `insight/application.xml`, pointing to the absolute path for `insight/client_resources`.
+4. Build the example application: `npm run bundle:app`.
+5. Upload the app `target/vdlx-datagrid-examples-app.zip` to your running Insight server.
 
 ## Building a release
 
