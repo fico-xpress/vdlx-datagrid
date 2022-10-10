@@ -2,7 +2,7 @@
 
 ## v4.8.5
 
-- Fixed add row when `addrow-autoinc` enabled and array/set is empty 
+- Fixed add row when `addrow-autoinc` enabled and index set is empty 
 
 ## v4.8.4
 
