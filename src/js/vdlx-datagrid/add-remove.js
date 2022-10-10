@@ -269,7 +269,9 @@ export default class AddRemove {
         return commitPromise
             .then(() => this.addNewRowToTable(set({}, field, nextValue)))
             .then(() => {
-                this.allSetValues[0] = this.allSetValues[0].concat({key: nextValue, value: nextValue});
+                this.allSetValues[0] = isEmpty(this.allSetValues[0])
+                    ? [{key: nextValue, value: nextValue}]
+                    : this.allSetValues[0].concat({key: nextValue, value: nextValue})
             })
             .catch(() => dialogs.alert('Could not add row. There was an issue updating the server.', 'Row add failed'))
             .then(() => this.$addRemoveControl.find('button.btn-table-add-row').removeAttr('disabled'));
