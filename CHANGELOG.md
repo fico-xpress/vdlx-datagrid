@@ -1,5 +1,15 @@
 # vdlx-datagrid changelog
 
+## v4.8.5
+
+- Fixed add row when `addrow-autoinc` enabled and index set is empty 
+
+## v4.8.4
+
+- New `column-definition` attribute, columns can be defined automatically from the data, from the label property on the data, or by a column definition object.
+- `column-modifier` attribute removed.
+- New examples added.
+
 ## v4.8.3
 
 - Removed unused attribute: `data-grid`
