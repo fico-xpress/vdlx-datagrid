@@ -1,5 +1,9 @@
 # vdlx-datagrid changelog
 
+## v5.0.0
+
+- Updated to VDL 5.0 compatibility.
+
 ## v4.8.5
 
 - Fixed add row when `addrow-autoinc` enabled and index set is empty 
