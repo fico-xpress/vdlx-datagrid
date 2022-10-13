@@ -12,7 +12,7 @@
     "prebuild": "npm run clean",
     "create-target-dir": "mkdirp target",
     "clean": "rimraf dist/insight/client_resources/**/*.js dist/insight/client_resources/**/*.css dist/insight/client_resources/**/VERSION.txt insight/client_resources/vdlx-datagrid dist/insight/client_resources/*.zip insight/model_resources/*.csv target",
-    "build": "npm run version-txt && parcel build --no-cache --no-source-maps -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js src/js/index.js",
+    "build": "npm run clean && npm run version-txt && parcel build --no-cache --no-source-maps -d dist/insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js src/js/index.js",
     "postbuild": "npm run copy-production-to-app",
     "build:debug": "cross-env NODE_ENV=development npm run version-txt && parcel build --no-cache --no-minify --no-source-maps -d dist/insight/client_resources/vdlx-datagrid-debug -o vdlx-datagrid-debug.js src/js/index.js",
     "bundle:library": "npm run create-target-dir && cd dist/insight/client_resources/ && bestzip ../../../target/vdlx-datagrid.zip vdlx-datagrid/",
