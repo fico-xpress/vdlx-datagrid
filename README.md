@@ -1,4 +1,5 @@
 ![Build and Test](https://github.com/fico-xpress/vdlx-datagrid/workflows/Build%20and%20Test/badge.svg?branch=master)
+[![CodeQL](https://github.com/fico-xpress/vdlx-datagrid/actions/workflows/codeql.yml/badge.svg?branch=security-scanning)](https://github.com/fico-xpress/vdlx-datagrid/actions/workflows/codeql.yml)
 
 # VDLX-DATAGRID
 
