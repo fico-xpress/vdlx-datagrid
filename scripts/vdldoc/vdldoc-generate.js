@@ -10,7 +10,8 @@ const MODULES = [
     '../../src/js/vdlx-datagrid/metadata.js',
     '../../src/js/vdlx-datagrid-column/metadata.js',
     '../../src/js/vdlx-datagrid-index-filter/metadata.js',
-    '../../src/js/vdlx-datagrid-validate/metadata.js'
+    '../../src/js/vdlx-datagrid-validate/metadata.js',
+    '../../src/js/vdlx-pivotgrid/metadata.js'
 ];
 const TARGET_DIR = path.join(__dirname, '../../docs');
 

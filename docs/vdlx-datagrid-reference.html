@@ -157,6 +157,7 @@
         <li><a href="#vdlx-datagrid-column">vdlx-datagrid-column</a></li>
         <li><a href="#vdlx-datagrid-index-filter">vdlx-datagrid-index-filter</a></li>
         <li><a href="#vdlx-datagrid-validate">vdlx-datagrid-validate</a></li>
+        <li><a href="#vdlx-pivotgrid">vdlx-pivotgrid</a></li>
 
     </ul>
     <div class="copyright">
@@ -233,7 +234,7 @@
                     add-remove-row
                 </th>
                 <td>
-                    Setting this will show the add-remove row buttons at the bottom of the grid. Set to "true" to prompt for index selection on row add. Set to <em>addrow-autoinc</em> will switch the behaviour to allow new index values to be created, incrementing from the highest value in the set(s).
+                    Setting this will show the add-remove row buttons at the bottom of the grid. Set to "true" to prompt for index selection on row add. Set to <em>addrow-autoinc</em> will switch the behaviour to allow new index values to be created, incrementing from the highest value in the set(s).This attribute can not be set when "data" attribute is being used.
 
                     <div>
                     </div>
@@ -291,7 +292,7 @@
                     column-definition
                 </th>
                 <td>
-                    Specify how columns are defined, allowed values: "auto", "labels", or an object defining column properties [{field:"key", title="Key"}...].<br><br>"auto" (default) will generate columns from the data.<br>"labels" will use the "label" property on an object as the column header, and the "value" property as the cell value. Data will be reduced to one row.<br><br>When using column properties, you should supply aa column definition object for each column you require and each object must have a property named 'field'. <br>The value of the field property must reference a property on the data. <br>For example: column-definition="=[{field:"name", title:"Full Name", field:"tel", title:"Phone Number"}] data="=[{name="John Doe", tel:"1234"}...]".<br>Other recommended properties: title, width, cssClass (space separated class names), headerSortStartingDir (asc/desc)
+                    Specify how columns are defined, allowed values: "auto", "labels", or an object defining column properties [{field:"key", title="Key"}...].<br><br>"auto" (default) will generate columns from the data.<br>"labels" will use the "label" property on an object as the column header, and the "value" property as the cell value. Data will be reduced to one row.<br><br>When using column properties, you should supply aa column definition object for each column you require and each object must have a property named 'field'. <br>The value of the field property must reference a property on the data. <br>For example: column-definition="=[{field:"name", title:"Full Name", field:"tel", title:"Phone Number"}] data="=[{name="John Doe", tel:"1234"}...]".<br>Other recommended properties: title, width, cssClass (space separated class names), headerSortStartingDir (asc/desc), <br>This attribute can not be set when "data" attribute is being used.
 
                     <div>
                         <span><strong>Default value</strong>: "auto"</span>
@@ -535,7 +536,7 @@
                     scenario
                 </th>
                 <td>
-                    The default scenario to use for fetching data in the grid. This can be overridden per column but the default will be used when a column does not specify a particular scenario and the index sets will be fetched from the default scenario. This attribute will not affect the scenario variable in any render expression on the datagrid columns.
+                    The default scenario to use for fetching data in the grid. This can be overridden per column but the default will be used when a column does not specify a particular scenario and the index sets will be fetched from the default scenario. This attribute will not affect the scenario variable in any render expression on the datagrid columns.This attribute can not be set when "data" attribute is being used.
 
                     <div>
                     </div>
@@ -1272,7 +1273,7 @@
         <p>
             
             Add a validation rule to a <code>&lt;vdlx-datagrid-column&gt;</code> element.
-             You can declare multiple <code>&lt;vdl-validate&gt;</code> rules within a
+             You can declare multiple <code>&lt;vdlx-datagrid-validate&gt;</code> rules within a
              <code>&lt;vdlx-datagrid-column&gt;</code> and they will all be applied. Each rule can specify whether the field is allowed to save data if that rule
              fails (this is soft validation). The <em>pass</em> attribute defines the expression that is called every time the field or autocolumn
              changes. The expression is automatically given the variables: <code>entityName</code>, <code>value</code>, <code>indices</code> 
@@ -1292,10 +1293,10 @@
         <div>
             <pre><code>&lt;vdlx-datagrid&gt;
   &lt;vdlx-datagrid-column entity&#x3D;&quot;FactoryDemand&quot;&gt;
-    &lt;vdl-validate pass&#x3D;&quot;&#x3D;value &gt;&#x3D; scenario.entities.SupportLevel.value&quot;
+    &lt;vdlx-datagrid-validate pass&#x3D;&quot;&#x3D;value &gt;&#x3D; scenario.entities.SupportLevel.value&quot;
                   allow-save&#x3D;&quot;&#x3D;scenario.entities.CanSave.value&quot;&gt;
       FactoryDemand should be greater than or equal to SupportLevel
-    &lt;/vdl-validate&gt;
+    &lt;/vdlx-datagrid-validate&gt;
   &lt;/vdlx-datagrid-column&gt;
 &lt;/vdlx-datagrid&gt;</code></pre>
         </div>
@@ -1395,6 +1396,375 @@
             <span class="label label-default">Text content only</span>
         </p>
         <p>Text content of the element is used as the message to display when attempting to save and validation fails</p>
+
+        <div class="pull-left">
+            <a href="#introduction">Back to top</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="vdl-extension-detail" id="vdlx-pivotgrid">
+        <h2>vdlx-pivotgrid</h2>
+        <p>
+            description required
+        </p>
+
+
+
+
+        <h3>Example</h3>
+        <div>
+            <pre><code>example required</code></pre>
+        </div>
+
+        <h3>Attributes</h3>
+        <table class="table table-hover table-condensed attributes-table">
+            <tbody>
+            <tr>
+                <th>
+                    always-show-selection
+                </th>
+                <td>
+                    Whether to display selection on inactive grids. Set to <em>true</em> to keep selection on a grid when it becomes inactive.
+
+                    <div>
+                        <span><strong>Default value</strong>: "false"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    class
+                </th>
+                <td>
+                    Space-separated list of the classes of the element.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    column-count
+                </th>
+                <td>
+                    Just an idea - instead of passing set positions - we send the amount of eache.g, 1 x rows, 2 x cols
+
+                    <div>
+                        <span><strong>Default value</strong>: "1"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    column-filter
+                </th>
+                <td>
+                    Set this to <em>true</em> to enable the column filters. This will show a header row with filter inputs for each column.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    column-set-positions
+                </th>
+                <td>
+                    The position of the key or keys you wish to pivot onto the columns.  You can specify a single value or an array.  For example: key[x,y,z] to pivot by y col-set-positions="1", or to pivot by z and x col-set-positions="=[2,0]" The default value is 1.  
+
+                    <div>
+                        <span><strong>Default value</strong>: "1"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    data
+                </th>
+                <td>
+                    Use this attribute to pass data directly to vdlx-datagrid. Supported formats are; array of primitives: [1,2,3], Array of objects: [{... prop: 1}], or an array of arrays: [...["a",1]] 
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    export-filename
+                </th>
+                <td>
+                    The name of the file exported from the table. A file extension will be assigned.
+
+                    <div>
+                        <span><strong>Default value</strong>: "data"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    headers
+                </th>
+                <td>
+                    The column and/or row headers, accepts an array of strings.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    height
+                </th>
+                <td>
+                    Grid height, When page-mode is set to <em>scrolling</em> you can set the height of the grid to something other than the default.
+
+                    <div>
+                        <span><strong>Default value</strong>: "600"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    id
+                </th>
+                <td>
+                    Specify an element id for the grid. Useful if you later want to target the grid using a selector. If not given then an id will be generated.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    labels
+                </th>
+                <td>
+                    The label arrays for the data, accepts an array of label arrays. The order is by rows and then columns.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    page-mode
+                </th>
+                <td>
+                    By default the grid will show all rows in scrolling mode. Set this attribute to <em>paged</em> to enable grid pagination.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    page-size
+                </th>
+                <td>
+                    The number of rows to show per-page in paged mode.
+
+                    <div>
+                        <span><strong>Default value</strong>: "50"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    row-count
+                </th>
+                <td>
+                    Just an idea - instead of passing set positions - we send the amount of eache.g, 1 x rows, 2 x cols
+
+                    <div>
+                        <span><strong>Default value</strong>: "1"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    row-set-positions
+                </th>
+                <td>
+                    The position of the key or keys you wish to pivot onto the rows.  You can specify a single value or an array.  For example: key[x,y,z] to pivot by y row-set-positions="1", or to pivot by z and x row-set-positions="=[2,0]" The default value is 0.  
+
+                    <div>
+                        <span><strong>Default value</strong>: "0"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    show-export
+                </th>
+                <td>
+                    Set this to true to display an export to CSV button.
+
+                    <div>
+                        <span><strong>Default value</strong>: "false"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    width
+                </th>
+                <td>
+                    Set the grid to a fixed width, in pixels. Accepts an integer value. If set to the string <em>custom</em> then the grid width is calculated by adding up all the widths of the columns in the grid. If a column doesn't have a width specified then it is given a default value of <em>100px</em>.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                    </div>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
 
         <div class="pull-left">
             <a href="#introduction">Back to top</a>
