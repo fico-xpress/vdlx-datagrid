@@ -1,5 +1,5 @@
-import { chooseColumnFilter } from '../../../src/js/vdlx-datagrid/grid-filters';
-import { Enums } from '../../../src/js/vdlx-datagrid/grid-filters';
+import { chooseColumnFilter } from '../../../src/js/datagrid/grid-filters';
+import { Enums } from '../../../src/js/datagrid/grid-filters';
 import { insightGetter } from '../../../src/js/insight-modules';
 
 /*

@@ -8,16 +8,16 @@ import {
     createLabelData,
     createLabelsDefinitionColumns,
     createObjectDefinitionColumns
-} from '../../../../src/js/vdlx-datagrid/custom-data/create-custom-config';
-import * as gridFilters from "../../../../src/js/vdlx-datagrid/grid-filters";
-import * as colUtils from "../../../../src/js/vdlx-datagrid/custom-data/custom-column-utils";
+} from '../../../../src/js/datagrid/custom-data/create-custom-config';
+import * as gridFilters from "../../../../src/js/datagrid/grid-filters";
+import * as colUtils from "../../../../src/js/datagrid/custom-data/custom-column-utils";
 import {
     convertObjectColDefinitions,
     createBasicColumnDefinition,
     validateLabelsData,
     validateObjectColDefinitions
-} from "../../../../src/js/vdlx-datagrid/custom-data/custom-column-utils";
-import * as dataUtils from '../../../../src/js/vdlx-datagrid/custom-data/custom-data-utils';
+} from "../../../../src/js/datagrid/custom-data/custom-column-utils";
+import * as dataUtils from '../../../../src/js/datagrid/custom-data/custom-data-utils';
 
 describe('createCustomConfig module', () => {
 

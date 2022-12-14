@@ -5,9 +5,9 @@ import {
     convertPrimitiveArray,
     getDataType,
     getRowDataType
-} from '../../../../src/js/vdlx-datagrid/custom-data/custom-data-utils';
+} from '../../../../src/js/datagrid/custom-data/custom-data-utils';
 import {ROW_DATA_TYPES} from "../../../../src/js/constants";
-import {Enums} from "../../../../src/js/vdlx-datagrid/grid-filters";
+import {Enums} from "../../../../src/js/datagrid/grid-filters";
 
 describe('custom data utils', () => {
 

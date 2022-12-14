@@ -8,8 +8,8 @@ import {
     overrideCustomColumnAttributes,
     validateLabelsData,
     validateObjectColDefinitions
-} from "../../../../src/js/vdlx-datagrid/custom-data/custom-column-utils";
-import * as dataUtils from '../../../../src/js/vdlx-datagrid/custom-data/custom-data-utils';
+} from "../../../../src/js/datagrid/custom-data/custom-column-utils";
+import * as dataUtils from '../../../../src/js/datagrid/custom-data/custom-data-utils';
 
 describe('custom column utils', () => {
 

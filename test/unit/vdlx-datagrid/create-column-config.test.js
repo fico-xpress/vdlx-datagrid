@@ -1,4 +1,4 @@
-import createColumnConfig from '../../../src/js/vdlx-datagrid/create-column-config';
+import createColumnConfig from '../../../src/js/datagrid/create-column-config';
 
 describe('createColumnConfig', () => {
     describe('calculated columns', () => {

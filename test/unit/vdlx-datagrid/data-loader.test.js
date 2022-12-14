@@ -1,4 +1,4 @@
-import getScenarioData from '../../../src/js/vdlx-datagrid/data-loader';
+import getScenarioData from '../../../src/js/datagrid/data-loader';
 import { scenarioObserverMock, getEntityMock, dataUtilsSpy } from '../../jest/mocks/insight-modules';
 import ko from 'knockout';
 

@@ -1,4 +1,4 @@
-import {getCssClasses, modifyColumns} from '../../../src/js/vdlx-datagrid/datagrid';
+import {getCssClasses, modifyColumns} from '../../../src/js/datagrid/datagrid';
 import {EDITOR_TYPES} from '../../../src/js/constants';
 
 describe('datagrid getCssClasses', () => {

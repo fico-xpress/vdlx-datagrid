@@ -1,4 +1,4 @@
-import createExportCsv from '../../../src/js/vdlx-datagrid/export-csv';
+import createExportCsv from '../../../src/js/datagrid/export-csv';
 
 describe('export-csv', () => {
     let table;

@@ -22,27 +22,9 @@ export default {
     tag: 'vdlx-pivotgrid',
     modifiesDescendants: false,
     doc: {
-        description: `Render a table of related array entities. The array entities for each column are defined as child
-            <code>&lt;vdlx-datagrid-column&gt;</code> elements. The common index sets are automatically detected.
-            The table will emit the following events on user interaction: <ul>
-            <li><code>selection-changed</code> - Triggered whenever the selection is changed, e.g. when user creates new selection. This event is triggered on the vdlx-datagrid element. Event handler also receives context of the selection, which includes selection cell list, active cell and selection type.</li>
-            <li><code>selection-removed</code> - Triggered whenever the selection is destroyed, e.g. when sorting and filtering. This event is triggered on the vdlx-datagrid element.</li>
-            </ul>See the JavaScript API Documentation, Table section for more details on the events.`,
+        description: `description required`,
         descriptionAsHtml: true,
-        example: `<vdl-var name="selectedRowData" value="=[]"></vdl-var>
-
-<vdl-action-group name="handleSelectionChanged">
-    <vdl-action-set-var var="selectedRowData" value="=value ? value.activeCell.rowData : []"></vdl-action-set-var>
-</vdl-action-group>
-
-<vdl-action-group name="handleSelectionRemoved">
-    <vdl-action-set-var var="selectedRowData" value="=[]"></vdl-action-set-var>
-</vdl-action-group>
-
-<vdlx-datagrid vdl-event="'selection-changed':handleSelectionChanged, 'selection-removed':handleSelectionRemoved">
-    <vdlx-datagrid-column entity="MY_ARRAY_1"></vdlx-datagrid-column>
-    <vdlx-datagrid-column entity="MY_ARRAY_2"></vdlx-datagrid-column>
-</vdlx-datagrid>`
+        example: `example required`
     },
     attributes: [
         {

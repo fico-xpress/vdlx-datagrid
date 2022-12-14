@@ -1,4 +1,4 @@
-import { TESTING_ONLY } from '../../../src/js/vdlx-datagrid/grid-filters';
+import { TESTING_ONLY } from '../../../src/js/datagrid/grid-filters';
 import { insightGetter } from '../../../src/js/insight-modules';
 
 describe('grid filters functions', () => {

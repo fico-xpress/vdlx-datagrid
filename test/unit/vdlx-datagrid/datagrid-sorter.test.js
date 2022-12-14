@@ -2,7 +2,7 @@ import {
     getSorter,
     createFormattedSorter,
     getSetSorter
-} from '../../../src/js/vdlx-datagrid/datagrid-sorter';
+} from '../../../src/js/datagrid/datagrid-sorter';
 import { enums, dataUtils, setSorter } from '../../../src/js/insight-modules';
 
 describe('datagrid-sorter', () => {

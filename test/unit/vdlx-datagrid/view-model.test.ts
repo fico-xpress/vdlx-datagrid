@@ -1,5 +1,5 @@
 import createViewModel from '../../../src/js/vdlx-datagrid/view-model';
-import Datagrid from '../../../src/js/vdlx-datagrid/datagrid';
+import Datagrid from '../../../src/js/datagrid/datagrid';
 import { createMutationObservable } from '../../../src/js/ko-utils';
 import ko from 'knockout';
 import noop from 'lodash/noop';

@@ -20,7 +20,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import Datagrid from '../vdlx-datagrid/datagrid';
+import Datagrid from '../datagrid/datagrid';
 import { withDeepEquals, createMutationObservable, withEquals } from '../ko-utils';
 import { ko, $ } from '../insight-modules';
 
@@ -29,9 +29,9 @@ import get from 'lodash/get';
 import map from 'lodash/map';
 import size from 'lodash/size';
 import omit from 'lodash/omit';
-import createColumnConfig from '../vdlx-datagrid/create-column-config';
+import createColumnConfig from '../datagrid/create-column-config';
 import mapValues from 'lodash/mapValues';
-import createTableOptions from '../vdlx-datagrid/create-table-options';
+import createTableOptions from '../datagrid/create-table-options';
 import filter from 'lodash/filter';
 import toLower from 'lodash/toLower';
 import noop from 'lodash/noop';

@@ -2,7 +2,7 @@ import {
     checkboxFilterFunc,
     getHeaderFilterEmptyCheckFn,
     getHeaderFilterParams
-} from '../../../src/js/vdlx-datagrid/column-filter-utils';
+} from '../../../src/js/datagrid/column-filter-utils';
 import {EDITOR_TYPES} from "../../../src/js/constants";
 import find from "lodash/find";
 
