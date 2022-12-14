@@ -61,7 +61,7 @@ $sorting-icon-right-offset: -4px;
   background-clip: padding-box;
 }
 
-vdlx-datagrid {
+vdlx-datagrid, vdlx-pivotgrid {
   color: $black;
   user-select: none;
   display: inline-block;
@@ -495,6 +495,14 @@ vdlx-datagrid {
 
 vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col {
   height: 100% !important;
+
+  .tabulator-col-content {
+    padding: 0;
+  }
+}
+
+vdlx-pivotgrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col {
+  //height: 100% !important;
 
   .tabulator-col-content {
     padding: 0;

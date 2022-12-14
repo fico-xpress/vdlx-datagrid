@@ -34,6 +34,7 @@ import toNumber from "lodash/toNumber";
 import isBoolean from "lodash/isBoolean";
 import cloneDeep from "lodash/cloneDeep";
 import toString from "lodash/toString";
+import size from "lodash/size";
 
 /**
  * if a string can be converted to numeric then it will return INTEGER
@@ -126,4 +127,48 @@ export const convertObjectDataToLabelData = (data) => {
         assign(memo, { [toString(index)]: row.value});
         return memo;
     }, {})];
+}
+
+export const castToArray = (value) => {
+    if (!isArray(value)) {
+        return [toNumber(value)];
+    }
+    return value;
+}
+
+export const columnCountToIndexes = (size, rowCount, colCount) => {
+    // add some validation
+    const rowColSize = (toNumber(rowCount) + toNumber(colCount));
+    if (rowColSize > size) {
+        throw Error(`The sum of row and column sizes ${rowColSize}, exceed the dimensionality of the data ${size}`);
+    }
+
+    let colCounter = colCount - 1;
+    const cols = [];
+    _.forEach(_.times(colCount), () => {
+        cols.push(colCounter);
+        colCounter ++;
+    });
+
+    return {
+        rows: _.times(rowCount, (i) => i),
+        columns: cols
+    }
+}
+
+export  const createLabelsConfig = (labelArrays) => {
+    if (size(labelArrays)) {
+        return reduce(labelArrays, (memo, labArray, index) => {
+            const labelConfig = reduce(labArray, (innerMemo, labObject) => {
+                innerMemo = assign(innerMemo, {[labObject.value]: labObject.label});
+                return innerMemo;
+            }, {});
+
+            memo = assign(memo, {[index]: labelConfig});
+            return memo;
+        }, {});
+    } else {
+        return {};
+    }
+
 }

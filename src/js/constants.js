@@ -44,5 +44,6 @@ export const ROW_DATA_TYPES = {
 export const CUSTOM_COLUMN_DEFINITION = {
     AUTO: 'auto',
     LABELS: 'labels',
-    OBJECT: 'object'
+    OBJECT: 'object',
+    PIVOT: 'pivot'
 };

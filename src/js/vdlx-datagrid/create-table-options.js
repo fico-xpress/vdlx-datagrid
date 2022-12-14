@@ -31,6 +31,7 @@ import negate from 'lodash/negate';
 import identity from 'lodash/identity';
 import isNull from 'lodash/isNull';
 import overSome from 'lodash/overSome';
+import isArray from "lodash/isArray";
 
 const DEFAULT_GRID_PAGE_SIZE = 50;
 
@@ -60,7 +61,15 @@ export default params => {
         exportFilename: params.exportFilename,
         data: params.data,
         columnDefinitionType: params.columnDefinitionType,
-        columnDefinitions: params.columnDefinitions || []
+        columnDefinitions: params.columnDefinitions || [],
+
+        // pivot attrs
+        pivotRowPositions: params.pivotRowPositions,
+        pivotColumnPositions: params.pivotColumnPositions,
+        pivotRowCount: params.pivotRowCount,
+        pivotColCount: params.pivotColCount,
+        pivotHeaders: params.pivotHeaders,
+        pivotLabels: params.pivotLabels
     };
     var pageMode = params['pageMode'];
     if (pageMode === 'paged') {

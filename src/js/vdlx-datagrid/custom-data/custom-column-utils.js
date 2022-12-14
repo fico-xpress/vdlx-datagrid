@@ -36,6 +36,9 @@ import filter from "lodash/filter";
 import find from "lodash/find";
 import keys from "lodash/keys";
 import intersection from "lodash/intersection";
+import isArray from "lodash/isArray";
+import toNumber from "lodash/toNumber";
+import times from "lodash/times";
 
 /**
  * create column properties that are data value type related
@@ -105,13 +108,13 @@ export const isObjectDefinitionColValid = (column) => {
 // check all definitions have the field attr
 export const validateObjectColDefinitions = (columnDefinitions, data) => {
 
-    if (getRowDataType(data) !== ROW_DATA_TYPES.object) {
-        throw Error('Error for component vdlx-datagrid: Invalid column definition, data incompatible with column definition.');
-    }
-
-    if (!every(columnDefinitions, isObjectDefinitionColValid)) {
-        throw Error('Error for component vdlx-datagrid: Invalid column definition, the field attribute is missing or empty.');
-    }
+    // if (getRowDataType(data) !== ROW_DATA_TYPES.object) {
+    //     throw Error('Error for component vdlx-datagrid: Invalid column definition, data incompatible with column definition.');
+    // }
+    //
+    // if (!every(columnDefinitions, isObjectDefinitionColValid)) {
+    //     throw Error('Error for component vdlx-datagrid: Invalid column definition, the field attribute is missing or empty.');
+    // }
 
     const props = keys(data);
     const fields = map(columnDefinitions, 'field');
@@ -149,9 +152,9 @@ export const isLabelObjectValid = (labelObject) => {
 
 // check have the value and label attrs
 export const validateLabelsData = (columnDefinitions) => {
-    if (!every(columnDefinitions, isLabelObjectValid)) {
-        throw Error('Error for component vdlx-datagrid: Invalid column definition, the value and/or label attribute is missing or empty.');
-    }
+    // if (!every(columnDefinitions, isLabelObjectValid)) {
+    //     throw Error('Error for component vdlx-datagrid: Invalid column definition, the value and/or label attribute is missing or empty.');
+    // }
     return true;
 }
 
@@ -193,4 +196,41 @@ export const createCustomColumnSortOrder = (columnDefinitions) => {
 
     const firstVisibleCol = find(columnDefinitions, (col) => isUndefined(col.visible) || col.visible === true);
     return [{column: firstVisibleCol.field, dir: 'asc'}];
+}
+
+export const countColumns = (columns) => {
+    let total = 0;
+    const scanCols = (datum) => {
+        _.forEach(datum, (row) => {
+            if (_.has(row, 'columns')) {
+                scanCols(row.columns);
+            } else {
+                total++;
+            }
+        });
+    }
+    scanCols(columns, 0);
+    return total;
+}
+
+export const pivotRowSizeToIndex = (size, rowCount) => {
+    return times(rowCount, (i) => i);
+}
+
+export const pivotColumnSizeToIndex = (size, colCount) => {
+    let colCounter = colCount - 1;
+    const cols = [];
+    _.forEach(times(colCount), () => {
+        cols.push(colCounter);
+        colCounter ++;
+    });
+    return cols;
+}
+
+/// todo - extend to validate positions?
+export const validatePivotRowsAndColumns = (rows, cols, size) => {
+    const rowColSize = (rows.length + cols.length);
+    if (rowColSize > size) {
+        throw Error(`Error for component vdlx-pivotgrid: The sum of row and column sizes ${rowColSize}, exceed the dimensionality of the data ${size}`);
+    }
 }

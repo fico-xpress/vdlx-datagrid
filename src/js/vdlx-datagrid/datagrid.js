@@ -582,9 +582,10 @@ class Datagrid {
 
     redrawTable() {
         const table = this.table;
-        if (
-            this.table.element.offsetParent &&
-            this.table.element.offsetParent.tagName.toLowerCase() === 'vdlx-datagrid'
+        // console.log('redrawTable: ' + this.table.element.offsetParent.tagName.toLowerCase())
+
+        if (this.table.element.offsetParent &&
+            _.includes(['vdlx-datagrid', 'vdlx-pivotgrid'], this.table.element.offsetParent.tagName.toLowerCase())
         ) {
             return Promise.resolve(this.table.redraw(true));
         } else {

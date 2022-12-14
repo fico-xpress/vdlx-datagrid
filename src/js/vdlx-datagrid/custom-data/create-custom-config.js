@@ -21,18 +21,27 @@
 import {CUSTOM_COLUMN_DEFINITION, EDITOR_TYPES} from "../../constants";
 import {chooseColumnFilter} from "../grid-filters";
 import {
+    validatePivotRowsAndColumns,
     convertObjectColDefinitions,
     createBasicColumnDefinition,
+    pivotColumnSizeToIndex,
+    pivotRowSizeToIndex,
     validateLabelsData,
     validateObjectColDefinitions
 } from './custom-column-utils';
-import {convertCustomDataToObjectData, convertObjectDataToLabelData} from './custom-data-utils';
+import {
+    castToArray,
+    convertCustomDataToObjectData,
+    convertObjectDataToLabelData,
+    createLabelsConfig
+} from './custom-data-utils';
 import {
     checkboxFilterFunc,
     FILTER_PLACEHOLDER_TEXT,
     getHeaderFilterEmptyCheckFn,
     getHeaderFilterParams
 } from '../column-filter-utils';
+import {createPivotConfig} from './create-pivot-config';
 import assign from "lodash/assign";
 import filter from 'lodash/filter';
 import isFunction from "lodash/isFunction";
@@ -74,10 +83,53 @@ export const createCustomConfig = (gridOptions) => {
             datagridData = createLabelData(data);
             columnDefinitions = createLabelsDefinitionColumns(data);
             break
+        case CUSTOM_COLUMN_DEFINITION.PIVOT:
+
+            // take the first row of the data and count the dimensions
+            const dimensionality = data[0].key ? data[0].key.length : 0;
+
+            let rows;
+            // pivotRowPositions and pivotRowCount are mutually exclusive
+            if (gridOptions.pivotRowPositions) {
+                rows = castToArray(gridOptions.pivotRowPositions)
+            } else {
+                rows = pivotRowSizeToIndex(dimensionality, gridOptions.pivotRowCount);
+            }
+
+            let columns;
+            // pivotColumnPositions and pivotColCount are mutually exclusive
+            if (gridOptions.pivotColumnPositions) {
+                columns = castToArray(gridOptions.pivotColumnPositions)
+            } else {
+                columns = pivotColumnSizeToIndex(dimensionality, gridOptions.pivotColCount);
+            }
+
+            validatePivotRowsAndColumns(rows, columns, dimensionality);
+
+            const pivotConfig = {
+                rows: rows,
+                cols: columns,
+                aggregationType: 'sum',
+                includeTotals: true
+            };
+
+            const labelConfig = createLabelsConfig(gridOptions.pivotLabels);
+            if (size(labelConfig)) {
+                pivotConfig.labels = labelConfig;
+            }
+
+            const pivotHeaders = gridOptions.pivotHeaders;
+            if (size(labelConfig)) {
+                pivotConfig.header = pivotHeaders;
+            }
+
+            const pivotData = createPivotConfig(data, pivotConfig);
+            datagridData = pivotData.data;
+            columnDefinitions = pivotData.cols;
+            break
         default:
             throw Error('Error for component vdlx-datagrid: Unrecognised column format.');
     }
-
     // apply rowFilter from attr
     const rowFilter = gridOptions.rowFilter;
     if (isFunction(rowFilter)) {
