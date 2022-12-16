@@ -6,7 +6,7 @@ import noop from 'lodash/noop';
 
 const DatagridMock = Datagrid as jest.MockedClass<typeof Datagrid>;
 
-jest.mock('../../../src/js/vdlx-datagrid/datagrid');
+jest.mock('../../../src/js/datagrid/datagrid');
 jest.mock('../../../src/js/ko-utils', () => {
     const actualUtils = jest.requireActual('../../../src/js/ko-utils');
     return {
