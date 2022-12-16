@@ -52,15 +52,8 @@ export default {
             defaultValue: '600'
         },
         {
-            name: 'column-filter',
-            description:
-                'Set this to <em>true</em> to enable the column filters. This will show a header row with filter inputs for each column.'
-        },
-
-        {
             name: 'width',
-            description:
-                'Set the grid to a fixed width, in pixels. Accepts an integer value. ' +
+            description: 'Set the grid to a fixed width, in pixels. Accepts an integer value. ' +
                 'If set to the string <em>custom</em> then the grid width is calculated by adding up all the widths of the columns in the grid. ' +
                 "If a column doesn't have a width specified then it is given a default value of <em>100px</em>.",
             acceptsExpression: false
@@ -77,75 +70,62 @@ export default {
             acceptsExpression: false,
             defaultValue: false
         },
-        // todo - potentially we could called it - grouped-data?
         {
             name: 'data',
             description:
-                'Use this attribute to pass data directly to vdlx-datagrid. Supported formats are; array of primitives: [1,2,3], Array of objects: [{... prop: 1}], ' +
-                'or an array of arrays: [...["a",1]] ',
+                'Use this attribute to pass data directly to vdlx-pivotgrid. Supported formats: Array of key/value objects: [{key:[x,y] value: z}]',
             acceptsExpression: true
         },
         {
-            name: 'show-export',
-            description: 'Set this to true to display an export to CSV button.',
-            acceptsExpression: true,
-            required: false,
-            defaultValue: false
-        },
-        {
-            name: 'export-filename',
-            description: 'The name of the file exported from the table. A file extension will be assigned.',
-            acceptsExpression: true,
-            required: false,
-            defaultValue: 'data'
-        },
-        {
-            name: 'row-set-positions',
-            description: 'The position of the key or keys you wish to pivot onto the rows.  ' +
-                'You can specify a single value or an array.  ' +
-                'For example: key[x,y,z] to pivot by y row-set-positions="1", or ' +
-                'to pivot by z and x row-set-positions="=[2,0]" The default value is 0.  ',
+            name: 'column-dimensions',
+            description: 'Used to define the dimensions pivoted onto the columns. Supported format: An array of column group headings ' +
+                '["pivot column a", "pivot column b"], or a number representing the number of dimensions from the original data set that ' +
+                'will be used as columns in the pivot grid. Both would result in two columns groups, but only the array of strings would ' +
+                'result in the groups having headings. Pivoting will always be done by row first, then by column. Only an array of strings is ' +
+                'valid when used in conjunction with "column-set-positions".',
             expression: 'all',
-            defaultValue: 0,
-            mutexGroup: 'ROW_SELECTION'
-        },
-        {
-            name: 'column-set-positions',
-            description: 'The position of the key or keys you wish to pivot onto the columns.  ' +
-                'You can specify a single value or an array.  ' +
-                'For example: key[x,y,z] to pivot by y col-set-positions="1", or ' +
-                'to pivot by z and x col-set-positions="=[2,0]" The default value is 1.  ',
-            expression: 'all',
-            defaultValue: 1,
             mutexGroup: 'COLUMN_SELECTION'
         },
-
         {
-            name: 'row-count',
-            description: 'Just an idea - instead of passing set positions - we send the amount of each' +
-                'e.g, 1 x rows, 2 x cols',
+            name: 'column-set-position',
+            description: 'The position of the keys that are used to produce the columns of the pivot grid. You can specify a single value or ' +
+                'an array. For example: key[x,y,z] to pivot by y column-set-positions="1", or to pivot by z and x column-set-positions="=[2,0]".',
             expression: 'all',
-            defaultValue: 1,
-            mutexGroup: 'ROW_SELECTION'
-        },
-        {
-            name: 'column-count',
-            description: 'Just an idea - instead of passing set positions - we send the amount of each' +
-                'e.g, 1 x rows, 2 x cols',
-            expression: 'all',
-            defaultValue: 1,
             mutexGroup: 'COLUMN_SELECTION'
-        },
 
+        },
         {
-            name: 'headers',
-            description: 'The column and/or row headers, accepts an array of strings.',
+            name: 'column-titles',
+            description: 'An array of arrays used to decorate the column titles, supported formats are; Array of strings ["Column 1", "Column 2"], ' +
+                'or an array of value/label objects: [{value:x label: "x label"}]. One array per dimension. When using the value/label array, the ' +
+                'value represents the column index and the label the string that will be used to for the column heading.',
             expression: 'all',
             defaultValue: []
         },
         {
-            name: 'labels',
-            description: 'The label arrays for the data, accepts an array of label arrays. The order is by rows and then columns.',
+            name: 'row-dimensions',
+            description: 'Used to define the dimensions pivoted onto the rows.  Supported format: An array of row group ' +
+                'headings ["pivot row a", "pivot row b"], or a the of row group headings "2". ' +
+                'Both would result in two row groups, but only the array of strings would result in the rows having headings. ' +
+                'Pivoting will always be done by row first, then by column.  ' +
+                'Only an array of strings is valid when used in conjunction with "row-set-positions".',
+            expression: 'all',
+            mutexGroup: 'ROW_SELECTION'
+        },
+        {
+            name: 'row-set-position',
+            description: 'The position of the key or keys you wish to pivot onto the rows.  ' +
+                'You can specify a single value or an array.  ' +
+                'For example: key[x,y,z] to pivot by y row-set-positions="1", or ' +
+                'to pivot by z and x row-set-positions="=[2,0]". The default value is 0.',
+            expression: 'all',
+            mutexGroup: 'ROW_SELECTION',
+            defaultValue: 0
+        },
+        {
+            name: 'row-titles',
+            description: 'An array of arrays used to decorate the row titles, supported formats are; Array of strings ["Column 1", "Column 2"], ' +
+                'or an array of value/label objects: [{value:x label: "x label"}].  One array per dimension.',
             expression: 'all',
             defaultValue: []
         }

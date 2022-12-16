@@ -27,7 +27,7 @@ import {
     pivotColumnSizeToIndex,
     pivotRowSizeToIndex,
     validateLabelsData,
-    validateObjectColDefinitions
+    validateObjectColDefinitions, createPivotIndexes, extractLabels
 } from './custom-column-utils';
 import {
     castToArray,
@@ -51,6 +51,10 @@ import size from "lodash/size";
 import map from "lodash/map";
 import head from "lodash/head";
 import isUndefined from "lodash/isUndefined";
+import isArrayLike from "lodash/isArrayLike";
+import concat from "lodash/concat";
+import isNumber from "lodash/isNumber";
+import toNumber from "lodash/toNumber";
 
 /**
  * creates config object containing data and columns
@@ -85,41 +89,56 @@ export const createCustomConfig = (gridOptions) => {
             break
         case CUSTOM_COLUMN_DEFINITION.PIVOT:
 
+            // pivotRowDimensions: params.pivotRowDimensions,
+            //     pivotRowTitles: params.pivotRowTitles,
+            // pivotColumnPositions: params.pivotColumnPositions,
+            // pivotColumnDimensions: params.pivotColumnDimensions,
+            // pivotColumnTitles: params.pivotColumnTitles
+
+
             // take the first row of the data and count the dimensions
             const dimensionality = data[0].key ? data[0].key.length : 0;
 
-            let rows;
-            // pivotRowPositions and pivotRowCount are mutually exclusive
-            if (gridOptions.pivotRowPositions) {
-                rows = castToArray(gridOptions.pivotRowPositions)
+            const rowPositions = gridOptions.pivotRowPositions;
+            const rowDimensions = gridOptions.pivotRowDimensions;
+            const rowLabels = gridOptions.pivotRowTitles;
+
+            const columnPositions = gridOptions.pivotColumnPositions;
+            const columnDimensions = gridOptions.pivotColumnDimensions;
+            const columnLabels = gridOptions.pivotColumnTitles;
+
+            let rowsIndexes;
+            if (rowPositions) {
+                rowsIndexes = rowPositions;
             } else {
-                rows = pivotRowSizeToIndex(dimensionality, gridOptions.pivotRowCount);
+                const rowCount = createPivotIndexes(rowDimensions);
+                rowsIndexes = pivotRowSizeToIndex(dimensionality, rowCount);
             }
 
-            let columns;
-            // pivotColumnPositions and pivotColCount are mutually exclusive
-            if (gridOptions.pivotColumnPositions) {
-                columns = castToArray(gridOptions.pivotColumnPositions)
+            let columnIndexes;
+            if (columnPositions) {
+                columnIndexes = rowPositions;
             } else {
-                columns = pivotColumnSizeToIndex(dimensionality, gridOptions.pivotColCount);
+                const columnCount = createPivotIndexes(columnDimensions);
+                columnIndexes = pivotColumnSizeToIndex(dimensionality, size(rowsIndexes), columnCount);
             }
 
-            validatePivotRowsAndColumns(rows, columns, dimensionality);
+            validatePivotRowsAndColumns(rowsIndexes, columnIndexes, dimensionality);
 
             const pivotConfig = {
-                rows: rows,
-                cols: columns,
+                rows: rowsIndexes,
+                cols: columnIndexes,
                 aggregationType: 'sum',
                 includeTotals: true
             };
 
-            const labelConfig = createLabelsConfig(gridOptions.pivotLabels);
+            const labelConfig = createLabelsConfig(concat(rowLabels, columnLabels));
             if (size(labelConfig)) {
                 pivotConfig.labels = labelConfig;
             }
 
-            const pivotHeaders = gridOptions.pivotHeaders;
-            if (size(labelConfig)) {
+            let pivotHeaders = concat(extractLabels(rowDimensions), extractLabels(columnDimensions));
+            if (size(pivotHeaders)) {
                 pivotConfig.header = pivotHeaders;
             }
 

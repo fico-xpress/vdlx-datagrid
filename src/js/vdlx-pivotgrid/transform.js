@@ -44,7 +44,7 @@ export default function transform(element, attributes, api) {
     // hardcoded to pivot
     paramsBuilder.addParam('columnDefinitionType', CUSTOM_COLUMN_DEFINITION.PIVOT, false);
 
-    const pivotRowPositions = attributes['row-set-positions'];
+    const pivotRowPositions = attributes['row-set-position'];
     if (pivotRowPositions) {
         if (pivotRowPositions.expression.isString) {
             paramsBuilder.addParam('pivotRowPositions', pivotRowPositions.rawValue, false);
@@ -52,20 +52,29 @@ export default function transform(element, attributes, api) {
             paramsBuilder.addParam('pivotRowPositions', pivotRowPositions.expression.value, true);
         }
     }
-    const pivotRowCount = attributes['row-count'];
-    if (pivotRowCount) {
-        if (pivotRowCount.expression.isString) {
-            paramsBuilder.addParam('pivotRowCount', pivotRowCount.rawValue, false);
+    const pivotRowDimensions = attributes['row-dimensions'];
+    if (pivotRowDimensions) {
+        if (pivotRowDimensions.expression.isString) {
+            paramsBuilder.addParam('pivotRowDimensions', pivotRowDimensions.rawValue, false);
         } else {
-            paramsBuilder.addParam('pivotRowCount', pivotRowCount.expression.value, true);
+            paramsBuilder.addParam('pivotRowDimensions', pivotRowDimensions.expression.value, true);
+        }
+    }
+    const pivotRowTitles = attributes['row-titles'];
+    if (pivotRowTitles) {
+        if (pivotRowTitles.expression.isString) {
+            paramsBuilder.addParam('pivotRowTitles', pivotRowTitles.rawValue, false);
+        } else {
+            paramsBuilder.addParam('pivotRowTitles', pivotRowTitles.expression.value, true);
         }
     }
 
-    if (pivotRowPositions && pivotRowCount) {
-        throw Error('Error for component vdlx-pivotgrid: "row-set-position" and "row-count" are mutually exclusive.');
-    }
+    // todo this should validate that if pivotRowPositions && pivotRowDimensions both exist, that pivotRowDimensions is an array of strings
+    // if (pivotRowPositions && pivotRowDimensions) {
+    //     throw Error('Error for component vdlx-pivotgrid: "row-set-position" and "row-count" are mutually exclusive.');
+    // }
 
-    const pivotColumnPositions = attributes['column-set-positions'];
+    const pivotColumnPositions = attributes['column-set-position'];
     if (pivotColumnPositions) {
         if (pivotColumnPositions.expression.isString) {
             paramsBuilder.addParam('pivotColumnPositions', pivotColumnPositions.rawValue, false);
@@ -73,35 +82,27 @@ export default function transform(element, attributes, api) {
             paramsBuilder.addParam('pivotColumnPositions', pivotColumnPositions.expression.value, true);
         }
     }
-    const pivotColCount = attributes['column-count'];
-    if (pivotColCount) {
-        if (pivotColCount.expression.isString) {
-            paramsBuilder.addParam('pivotColCount', pivotColCount.rawValue, false);
+    const pivotColumnDimensions = attributes['column-dimensions'];
+    if (pivotColumnDimensions) {
+        if (pivotColumnDimensions.expression.isString) {
+            paramsBuilder.addParam('pivotColumnDimensions', pivotColumnDimensions.rawValue, false);
         } else {
-            paramsBuilder.addParam('pivotColCount', pivotColCount.expression.value, true);
+            paramsBuilder.addParam('pivotColumnDimensions', pivotColumnDimensions.expression.value, true);
         }
     }
-    if (pivotColumnPositions && pivotColCount) {
-        throw Error('Error for component vdlx-pivotgrid: "column-count" and "column-count" are mutually exclusive.');
-    }
-
-    const pivotHeaders = attributes['headers'];
-    if (pivotHeaders) {
-        if (pivotHeaders.expression.isString) {
-            paramsBuilder.addParam('pivotHeaders', pivotHeaders.rawValue, false);
+    const pivotColumnTitles = attributes['column-titles'];
+    if (pivotColumnTitles) {
+        if (pivotColumnTitles.expression.isString) {
+            paramsBuilder.addParam('pivotColumnTitles', pivotColumnTitles.rawValue, false);
         } else {
-            paramsBuilder.addParam('pivotHeaders', pivotHeaders.expression.value, true);
+            paramsBuilder.addParam('pivotColumnTitles', pivotColumnTitles.expression.value, true);
         }
     }
 
-    const pivotLabels = attributes['labels'];
-    if (pivotLabels) {
-        if (pivotLabels.expression.isString) {
-            paramsBuilder.addParam('pivotLabels', pivotLabels.rawValue, false);
-        } else {
-            paramsBuilder.addParam('pivotLabels', pivotLabels.expression.value, true);
-        }
-    }
+    // todo this should validate that if pivotRowPositions && pivotRowDimensions both exist, that pivotRowDimensions is an array of strings
+    // if (pivotColumnPositions && pivotColumnDimensions) {
+    //     throw Error('Error for component vdlx-pivotgrid: "column-count" and "column-count" are mutually exclusive.');
+    // }
 
     var pageSize = attributes['page-size'];
     if (pageSize) {

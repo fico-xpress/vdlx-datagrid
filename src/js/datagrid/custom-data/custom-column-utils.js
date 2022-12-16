@@ -39,6 +39,10 @@ import intersection from "lodash/intersection";
 import isArray from "lodash/isArray";
 import toNumber from "lodash/toNumber";
 import times from "lodash/times";
+import isArrayLike from "lodash/isArrayLike";
+import isNumber from "lodash/isNumber";
+import size from "lodash/size";
+import slice from "lodash/slice";
 
 /**
  * create column properties that are data value type related
@@ -136,7 +140,7 @@ export const convertObjectColDefinitions = (colDefinitions, data) => {
         const colValue = get(data, column.field, '');
         return {
             ...column,
-            ...createBasicColumnDefinition(column.field, colValue,column.title || column.field)
+            ...createBasicColumnDefinition(column.field, colValue, column.title || column.field)
         };
     });
 }
@@ -162,7 +166,7 @@ export const validateLabelsData = (columnDefinitions) => {
 export const overrideCustomColumnAttributes = (columnDefinitions) => {
     return map(columnDefinitions, (column) => {
         if (!isUndefined(column.editable)) {
-            return assign(column, { editable: false});
+            return assign(column, {editable: false});
         }
         return column
     });
@@ -214,17 +218,18 @@ export const countColumns = (columns) => {
 }
 
 export const pivotRowSizeToIndex = (size, rowCount) => {
+    // todo - validation
     return times(rowCount, (i) => i);
 }
 
-export const pivotColumnSizeToIndex = (size, colCount) => {
-    let colCounter = colCount - 1;
-    const cols = [];
-    _.forEach(times(colCount), () => {
-        cols.push(colCounter);
-        colCounter ++;
-    });
-    return cols;
+export const pivotColumnSizeToIndex = (dimensionality, rowCount, columnCount) => {
+    if (columnCount) {
+        const indexArray = times(dimensionality);
+        const sliceEnd = rowCount + columnCount;
+        const columnIndexes = slice(indexArray, rowCount, sliceEnd);
+        return columnIndexes;
+    }
+    return [];
 }
 
 /// todo - extend to validate positions?
@@ -233,4 +238,25 @@ export const validatePivotRowsAndColumns = (rows, cols, size) => {
     if (rowColSize > size) {
         throw Error(`Error for component vdlx-pivotgrid: The sum of row and column sizes ${rowColSize}, exceed the dimensionality of the data ${size}`);
     }
+}
+
+
+export const createPivotIndexes = (dimensions) => {
+    let count;
+    if (isArrayLike(dimensions)) {
+        count = size(dimensions);
+    } else if (isNumber(toNumber(dimensions))) {
+        count = dimensions;
+    } else {
+        // throw error
+        debugger
+    }
+    return count;
+}
+
+export const extractLabels = (dimensions) => {
+    if (isArrayLike(dimensions)) {
+        return dimensions;
+    }
+    return [];
 }

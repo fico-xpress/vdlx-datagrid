@@ -65,11 +65,11 @@ export default params => {
 
         // pivot attrs
         pivotRowPositions: params.pivotRowPositions,
+        pivotRowDimensions: params.pivotRowDimensions,
+        pivotRowTitles: params.pivotRowTitles,
         pivotColumnPositions: params.pivotColumnPositions,
-        pivotRowCount: params.pivotRowCount,
-        pivotColCount: params.pivotColCount,
-        pivotHeaders: params.pivotHeaders,
-        pivotLabels: params.pivotLabels
+        pivotColumnDimensions: params.pivotColumnDimensions,
+        pivotColumnTitles: params.pivotColumnTitles
     };
     var pageMode = params['pageMode'];
     if (pageMode === 'paged') {
