@@ -342,10 +342,18 @@ class Datagrid {
             const gridOptions = ko.unwrap(this.gridOptions$);
             this.validate();
             this.updatePaginator();
-            // this.recalculateWidth();
             if (gridOptions) {
-                // this.recalculateHeight(gridOptions);
                 this.exportControl = this.updateExportControl(this.table, this.headerToolbar, gridOptions);
+            }
+        }
+    }
+
+    updateSize() {
+        if (this.table) {
+            const gridOptions = ko.unwrap(this.gridOptions$);
+            this.recalculateWidth();
+            if (gridOptions) {
+                this.recalculateHeight(gridOptions);
             }
         }
     }
@@ -405,7 +413,7 @@ class Datagrid {
             paginationMode: options.pagination,
             paginationSize: options.paginationSize,
             paginationElement: options.paginationElement,
-            layout: 'fitDataFill',
+            layout: 'fitColumns',
             placeholder: 'No data available',
             groupStartOpen: false,
             dataLoader: true,
@@ -452,6 +460,9 @@ class Datagrid {
         table.on('rowClick', (e, row) => select(row));
         table.on('rowSelectionChanged', (data, rows) => this.setSelectedRow(first(rows)));
         table.on('renderComplete', () => this.update());
+        // FIXME instead of this setTimeout there could be an observable flag for when renderComplete. When this changes or
+        //  or the data change it could call updateSize
+        table.on('dataLoaded', () => setTimeout(() => this.updateSize()));
 
         return table
     }
@@ -480,7 +491,7 @@ class Datagrid {
     }
 
     recalculateWidth() {
-        const tableHolder = first(this.table.element.getElementsByClassName('tabulator-tableHolder'));
+        const tableHolder = first(this.table.element.getElementsByClassName('tabulator-tableholder'));
 
         const tableWidth = tableHolder ? tableHolder.clientWidth : 0;
         const tableOffsetWidth = tableHolder ? tableHolder.offsetWidth : 0;
@@ -1130,7 +1141,8 @@ class Datagrid {
         return perf('Tabulator setData and draw', () =>
             table
                 .setData(data)
-                .then(() => this.redrawTable())
+                // FIXME Not sure why this redraw is called after setting data. Is it needed with Tabulator 5?
+                // .then(() => this.redrawTable())
                 .then(() => (this.table.element.style.visibility = 'visible'))
                 .catch((e) => {
                     console.error('An error occurred whilst adding data to Tabulator and redrawing', e);
