@@ -21,19 +21,13 @@
     limitations under the License.
  */
 import Datagrid from '../datagrid/datagrid';
-import { withDeepEquals, createMutationObservable, withEquals } from '../ko-utils';
-import { ko, $ } from '../insight-modules';
+import {withDeepEquals} from '../ko-utils';
+import {$, ko} from '../insight-modules';
 
 import uniqueId from 'lodash/uniqueId';
 import get from 'lodash/get';
-import map from 'lodash/map';
-import size from 'lodash/size';
-import omit from 'lodash/omit';
-import createColumnConfig from '../datagrid/create-column-config';
 import mapValues from 'lodash/mapValues';
 import createTableOptions from '../datagrid/create-table-options';
-import filter from 'lodash/filter';
-import toLower from 'lodash/toLower';
 import noop from 'lodash/noop';
 
 /**
@@ -88,13 +82,8 @@ export default function createViewModel(params, componentInfo) {
     const $footerToolBar = $('<div class="footer-toolbar"/>');
     $element.append($footerToolBar);
 
-    const tableIndexFilters$ = withDeepEquals(ko.observable({}));
-
-    const mutation$ = createMutationObservable(element, { childList: true });
-
     const params$ = withDeepEquals(ko.pureComputed(() => mapValues(params, ko.unwrap)));
     const tableOptions$ = withDeepEquals(ko.pureComputed(() => createTableOptions(params$())));
-
 
     const datagrid = new Datagrid(element, tableOptions$, undefined, undefined);
 
