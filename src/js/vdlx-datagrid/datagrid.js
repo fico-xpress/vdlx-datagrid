@@ -415,7 +415,7 @@ class Datagrid {
             paginationMode: options.pagination,
             paginationSize: options.paginationSize,
             paginationElement: options.paginationElement,
-            layout: 'fitColumns',
+            layout: 'fitDataFill',
             placeholder: 'No data available',
             groupStartOpen: false,
             dataLoader: true,
