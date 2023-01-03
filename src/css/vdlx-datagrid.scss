@@ -323,7 +323,7 @@ vdlx-datagrid {
       .tabulator-page {
       }
 
-      .tabulator-tableHolder {
+      .tabulator-tableholder {
         .tabulator-cell {
           .checkbox-editor {
             text-align: center;
@@ -371,7 +371,7 @@ vdlx-datagrid {
       }
     }
 
-    &.table-condensed .tabulator-tableHolder .tabulator-table .tabulator-row {
+    &.table-condensed .tabulator-tableholder .tabulator-table .tabulator-row {
       &.highlight {
         background-color: $highlight-color !important;
       }
@@ -489,7 +489,7 @@ vdlx-datagrid {
   }
 }
 
-.tabulator.table-bordered .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+.tabulator.table-bordered .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell {
   border-color: $color-medium-grey;
 }
 

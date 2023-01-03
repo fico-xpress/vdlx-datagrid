@@ -342,9 +342,9 @@ class Datagrid {
             const gridOptions = ko.unwrap(this.gridOptions$);
             this.validate();
             this.updatePaginator();
-            this.recalculateWidth();
+            // this.recalculateWidth();
             if (gridOptions) {
-                this.recalculateHeight(gridOptions);
+                // this.recalculateHeight(gridOptions);
                 this.exportControl = this.updateExportControl(this.table, this.headerToolbar, gridOptions);
             }
         }
@@ -451,7 +451,7 @@ class Datagrid {
         table.on('cellEditing', (cell) => select(cell.getRow()));
         table.on('rowClick', (e, row) => select(row));
         table.on('rowSelectionChanged', (data, rows) => this.setSelectedRow(first(rows)));
-        // table.on('renderComplete', () => this.update());
+        table.on('renderComplete', () => this.update());
 
         return table
     }
