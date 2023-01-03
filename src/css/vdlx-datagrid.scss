@@ -503,7 +503,6 @@ vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tab
 
 vdlx-pivotgrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col {
   //height: 100% !important;
-
   .tabulator-col-content {
     padding: 0;
   }
@@ -520,4 +519,8 @@ vdlx-pivotgrid .tabulator.table-striped .tabulator-header .tabulator-headers .ta
       text-align: right;
     }
   }
+}
+
+.pivot-row-header {
+  background-color: $color-table-header;
 }
