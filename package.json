@@ -34,7 +34,7 @@
     "@types/jquery": "^3.3.38",
     "@types/knockout": "^3.4.67",
     "@types/lodash": "^4.14.152",
-    "@types/tabulator-tables": "^4.6.6",
+    "@types/tabulator-tables": "^5.4.3",
     "babel-jest": "^26.0.1",
     "esm": "^3.2.25",
     "handlebars": "^4.7.7",
@@ -57,7 +57,7 @@
     "postcss-modules": "^1.5.0",
     "rimraf": "^3.0.2",
     "sass": "^1.26.5",
-    "tabulator-tables": "^4.9.3"
+    "tabulator-tables": "^5.4.3"
   },
   "browserslist": {
     "production": [

@@ -20,7 +20,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-import Tabulator from 'tabulator-tables/dist/js/tabulator';
+// import {Tabulator, SortModule, FilterModule, EditModule, FormatModule} from 'tabulator-tables';
+// Tabulator.registerModule([SortModule, FilterModule, EditModule, FormatModule]);
+import {TabulatorFull as Tabulator} from 'tabulator-tables';
 import {createFormattedSorter, getSetSorter, getSorter} from './datagrid-sorter';
 import dataTransform, {
     generateCompositeKey,
@@ -160,39 +162,41 @@ class Datagrid {
         this.paginatorControl = this.createPaginatorControl(footerToolbar, this.table, options);
         this.stateManager = null;
 
-        if (_.isUndefined(options.data)) {
-            this.buildTable();
-        } else {
-            this.buildCustomDataTable();
-        }
-
-        this.update();
-
-        const mouseDownListener = (e) => {
-            if (!root.contains(e.target)) {
-                if (!isEmpty(this.table.getSelectedRows()) && !options.alwaysShowSelection) {
-                    this.table.modules.selectRow.deselectRows();
-                }
+        this.table.on("tableBuilt", ()=>{
+            if (_.isUndefined(options.data)) {
+                this.buildTable();
+            } else {
+                this.buildCustomDataTable();
             }
-        };
-        document.addEventListener('mousedown', mouseDownListener);
 
-        this.subscriptions = this.subscriptions.concat([
-            {
-                dispose: () => {
-                    document.removeEventListener('mousedown', mouseDownListener);
+            this.update();
+
+            const mouseDownListener = (e) => {
+                if (!root.contains(e.target)) {
+                    if (!isEmpty(this.table.getSelectedRows()) && !options.alwaysShowSelection) {
+                        this.table.deselectRow();
+                    }
+                }
+            };
+            document.addEventListener('mousedown', mouseDownListener);
+
+            this.subscriptions = this.subscriptions.concat([
+                {
+                    dispose: () => {
+                        document.removeEventListener('mousedown', mouseDownListener);
+                    },
                 },
-            },
-        ]);
+            ]);
 
-        this.unloadHandlerId = null;
-        this.savingPromise = Promise.resolve();
+            this.unloadHandlerId = null;
+            this.savingPromise = Promise.resolve();
 
-        this.viewUnloadHandler = () => {
-            return Promise.resolve(this.savingPromise).catch((err) => dialogs.toast(err.message, dialogs.level.ERROR));
-        };
+            this.viewUnloadHandler = () => {
+                return Promise.resolve(this.savingPromise).catch((err) => dialogs.toast(err.message, dialogs.level.ERROR));
+            };
 
-        this.unloadHandlerId = this.view.addUnloadHandler(this.viewUnloadHandler);
+            this.unloadHandlerId = this.view.addUnloadHandler(this.viewUnloadHandler);
+        });
     }
 
     // stripped down version of build table that only subscribes to grid options
@@ -397,36 +401,59 @@ class Datagrid {
         let sortPromiseResolve = noop;
 
         const tabulatorOptions = {
-            pagination: options.pagination,
+            pagination: !!options.pagination,
+            paginationMode: options.pagination,
             paginationSize: options.paginationSize,
             paginationElement: options.paginationElement,
             layout: 'fitDataFill',
             placeholder: 'No data available',
             groupStartOpen: false,
-            ajaxLoader: true,
+            dataLoader: true,
             height: '100%',
-            resizableColumns: false,
-            dataFiltered: saveState,
-            dataSorting: () => {
-                this.tableLock && this.tableLock.lock();
-                sortPromise = new Promise((resolve) => {
-                    sortPromiseResolve = resolve;
-                });
-                perf('datagrid sorting', constant(sortPromise));
-                saveState();
+            columnDefaults:{
+                resizable: 'false',
             },
-            dataSorted: () => {
-                sortPromiseResolve();
-                this.tableLock && this.tableLock.unlock();
-            },
-            cellEditing: (cell) => select(cell.getRow()),
-            rowClick: (e, row) => select(row),
-            rowSelectionChanged: (data, rows) => this.setSelectedRow(first(rows)),
-            renderComplete: () => this.update(),
-            invalidOptionWarnings: false,
+            // dataFiltered: saveState,
+            // dataSorting: () => {
+            //     this.tableLock && this.tableLock.lock();
+            //     sortPromise = new Promise((resolve) => {
+            //         sortPromiseResolve = resolve;
+            //     });
+            //     perf('datagrid sorting', constant(sortPromise));
+            //     saveState();
+            // },
+            // dataSorted: () => {
+            //     sortPromiseResolve();
+            //     this.tableLock && this.tableLock.unlock();
+            // },
+            // cellEditing: (cell) => select(cell.getRow()),
+            // rowClick: (e, row) => select(row),
+            // rowSelectionChanged: (data, rows) => this.setSelectedRow(first(rows)),
+            // renderComplete: () => this.update(),
+            debugInvalidOptions: false,
         };
 
-        return new Tabulator(`#${options.tableId}`, tabulatorOptions);
+        const table = new Tabulator(`#${options.tableId}`, tabulatorOptions);
+
+        table.on('dataFiltered', saveState);
+        table.on('dataSorting', () => {
+            this.tableLock && this.tableLock.lock();
+            sortPromise = new Promise((resolve) => {
+                sortPromiseResolve = resolve;
+            });
+            perf('datagrid sorting', constant(sortPromise));
+            saveState();
+        });
+        table.on('dataSorted', () => {
+            sortPromiseResolve();
+            this.tableLock && this.tableLock.unlock();
+        });
+        table.on('cellEditing', (cell) => select(cell.getRow()));
+        table.on('rowClick', (e, row) => select(row));
+        table.on('rowSelectionChanged', (data, rows) => this.setSelectedRow(first(rows)));
+        // table.on('renderComplete', () => this.update());
+
+        return table
     }
 
     recalculateHeight(options) {
@@ -435,7 +462,7 @@ class Datagrid {
             if (this.table && this.table.getDataCount() > options.paginationSize) {
                 height = options.gridHeight;
                 if (!height) {
-                    const row = this.table.getRowFromPosition(0, true);
+                    const row = this.table.getRowFromPosition(1);
                     if (row) {
                         height = $(row.getElement()).outerHeight(true) * options.paginationSize;
                     } else {
@@ -633,7 +660,7 @@ class Datagrid {
 
         const allScenarios = uniq([scenariosData.defaultScenario].concat(values(scenariosData.scenarios)));
 
-        const tabulatorSorters = this.table.modules.sort.sorters;
+        const tabulatorSorters = this.table.getSorters();
 
         const indicesColumns = map(setNamePosnsAndOptions, (setNameAndPosn) => {
             const {name, options} = setNameAndPosn;
@@ -1114,7 +1141,7 @@ class Datagrid {
     validate() {
         const editableColumns = filter(this.entitiesColumns, 'editable');
         each(editableColumns, (column) => {
-            const cells = this.table.columnManager.columnsByField[column.field].cells;
+            const cells = this.table.columnManager.getColumnByField(column.field).cells;
             each(cells, (cell) => {
                 column.validate(cell.getComponent(), cell.getValue());
             });
