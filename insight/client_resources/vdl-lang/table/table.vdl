@@ -23,6 +23,15 @@ limitations under the License.
 <vdl version="5.0">
     <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
     <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+    <style>
+        .tabulator-cell:has(.red) {
+            background-color: rgba(255, 0, 0, 0.52);
+        }
+
+        .tabulator-cell:has(.green) {
+            background-color: rgba(0, 128, 0, 0.57);
+        }
+    </style>
     <vdl-page>
         <vdl-section heading="Datagrids">
             <vdl-row>

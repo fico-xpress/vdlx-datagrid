@@ -216,9 +216,10 @@ class Datagrid {
                         }
 
                         return perf('vdlx-datagrid custom data total build time:', () =>
-                            this.setCustomDataColumnsAndData(gridOptions).then(() =>
-                                this.tableLock.unlock()
-                            ).catch((err) => {
+                            this.setCustomDataColumnsAndData(gridOptions).then(() => {
+                                this.updateSize();
+                                this.tableLock.unlock();
+                            }).catch((err) => {
                                 this.tableLock.unlock()
                                 this.table.clearData();
                                 this.table.setColumns([]);
