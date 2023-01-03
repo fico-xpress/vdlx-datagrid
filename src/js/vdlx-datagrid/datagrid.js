@@ -326,9 +326,10 @@ class Datagrid {
                         }
 
                         return perf('vdlx-datagrid total build time:', () =>
-                            this.setColumnsAndData(gridOptions, columnOptions, scenariosData).then(() =>
-                                this.tableLock.unlock()
-                            )
+                            this.setColumnsAndData(gridOptions, columnOptions, scenariosData).then(() => {
+                                this.updateSize();
+                                this.tableLock.unlock();
+                            })
                         );
                     }
                     return undefined;
@@ -460,9 +461,6 @@ class Datagrid {
         table.on('rowClick', (e, row) => select(row));
         table.on('rowSelectionChanged', (data, rows) => this.setSelectedRow(first(rows)));
         table.on('renderComplete', () => this.update());
-        // FIXME instead of this setTimeout there could be an observable flag for when renderComplete. When this changes or
-        //  or the data change it could call updateSize
-        table.on('dataLoaded', () => setTimeout(() => this.updateSize()));
 
         return table
     }
