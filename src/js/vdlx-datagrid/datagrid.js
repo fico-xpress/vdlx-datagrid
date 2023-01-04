@@ -161,15 +161,16 @@ class Datagrid {
         this.addRemoveRowControl = this.createAddRemoveRowControl(footerToolbar, options);
         this.paginatorControl = this.createPaginatorControl(footerToolbar, this.table, options);
         this.stateManager = null;
+        this.isTableBuilt = false;
 
-        this.table.on("tableBuilt", ()=>{
+        this.table.on("tableBuilt", () => {
             if (_.isUndefined(options.data)) {
                 this.buildTable();
             } else {
                 this.buildCustomDataTable();
             }
 
-            this.update();
+            this.isTableBuilt = true;
 
             const mouseDownListener = (e) => {
                 if (!root.contains(e.target)) {
@@ -217,7 +218,6 @@ class Datagrid {
 
                         return perf('vdlx-datagrid custom data total build time:', () =>
                             this.setCustomDataColumnsAndData(gridOptions).then(() => {
-                                this.updateSize();
                                 this.tableLock.unlock();
                             }).catch((err) => {
                                 this.tableLock.unlock()
@@ -328,7 +328,6 @@ class Datagrid {
 
                         return perf('vdlx-datagrid total build time:', () =>
                             this.setColumnsAndData(gridOptions, columnOptions, scenariosData).then(() => {
-                                this.updateSize();
                                 this.tableLock.unlock();
                             })
                         );
@@ -339,24 +338,22 @@ class Datagrid {
         ]);
     }
 
-    update() {
-        if (this.table) {
-            const gridOptions = ko.unwrap(this.gridOptions$);
+    updateLayout() {
+        if (this.table && this.isTableBuilt) {
+            this.recalculateWidth();
             this.validate();
             this.updatePaginator();
+            const gridOptions = ko.unwrap(this.gridOptions$);
             if (gridOptions) {
                 this.exportControl = this.updateExportControl(this.table, this.headerToolbar, gridOptions);
             }
         }
     }
 
-    updateSize() {
-        if (this.table) {
-            const gridOptions = ko.unwrap(this.gridOptions$);
-            this.recalculateWidth();
-            if (gridOptions) {
-                this.recalculateHeight(gridOptions);
-            }
+    updateHeight() {
+        const gridOptions = ko.unwrap(this.gridOptions$);
+        if (this.table && this.isTableBuilt && gridOptions) {
+            this.recalculateHeight(gridOptions);
         }
     }
 
@@ -461,7 +458,8 @@ class Datagrid {
         table.on('cellEditing', (cell) => select(cell.getRow()));
         table.on('rowClick', (e, row) => select(row));
         table.on('rowSelectionChanged', (data, rows) => this.setSelectedRow(first(rows)));
-        table.on('renderComplete', () => this.update());
+        table.on('renderComplete', () => this.updateLayout());
+        table.on('dataProcessed', () => this.updateHeight());
 
         return table
     }
@@ -503,8 +501,7 @@ class Datagrid {
                 (column) => column.isVisible()
             );
             const toAddPx = (tableWidth - columnsWidth) / columns.length;
-
-            each(columns, (column) => column._column.setWidthActual(column._column.getWidth() + toAddPx));
+            each(columns, (column) => column.setWidth(column.getWidth() + toAddPx));
         }
     }
 
@@ -618,7 +615,6 @@ class Datagrid {
     }
 
     redrawTable() {
-        const table = this.table;
         if (
             this.table.element.offsetParent &&
             this.table.element.offsetParent.tagName.toLowerCase() === 'vdlx-datagrid'
