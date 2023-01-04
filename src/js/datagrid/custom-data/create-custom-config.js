@@ -21,20 +21,17 @@
 import {CUSTOM_COLUMN_DEFINITION, EDITOR_TYPES} from "../../constants";
 import {chooseColumnFilter} from "../grid-filters";
 import {
-    validatePivotRowsAndColumns,
     convertObjectColDefinitions,
     createBasicColumnDefinition,
+    createPivotIndexes,
+    extractLabels,
     pivotColumnSizeToIndex,
     pivotRowSizeToIndex,
     validateLabelsData,
-    validateObjectColDefinitions, createPivotIndexes, extractLabels
+    validateObjectColDefinitions,
+    validatePivotRowsAndColumns
 } from './custom-column-utils';
-import {
-    castToArray,
-    convertCustomDataToObjectData,
-    convertObjectDataToLabelData,
-    createLabelsConfig
-} from './custom-data-utils';
+import {convertCustomDataToObjectData, convertObjectDataToLabelData, createLabelsConfig} from './custom-data-utils';
 import {
     checkboxFilterFunc,
     FILTER_PLACEHOLDER_TEXT,
@@ -51,10 +48,7 @@ import size from "lodash/size";
 import map from "lodash/map";
 import head from "lodash/head";
 import isUndefined from "lodash/isUndefined";
-import isArrayLike from "lodash/isArrayLike";
 import concat from "lodash/concat";
-import isNumber from "lodash/isNumber";
-import toNumber from "lodash/toNumber";
 
 /**
  * creates config object containing data and columns
@@ -88,17 +82,8 @@ export const createCustomConfig = (gridOptions) => {
             columnDefinitions = createLabelsDefinitionColumns(data);
             break
         case CUSTOM_COLUMN_DEFINITION.PIVOT:
-
-            // pivotRowDimensions: params.pivotRowDimensions,
-            //     pivotRowTitles: params.pivotRowTitles,
-            // pivotColumnPositions: params.pivotColumnPositions,
-            // pivotColumnDimensions: params.pivotColumnDimensions,
-            // pivotColumnTitles: params.pivotColumnTitles
-
-
             // take the first row of the data and count the dimensions
             const dimensionality = data[0].key ? data[0].key.length : 0;
-
             const rowPositions = gridOptions.pivotRowPositions;
             const rowDimensions = gridOptions.pivotRowDimensions;
             const rowLabels = gridOptions.pivotRowTitles;
