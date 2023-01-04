@@ -799,15 +799,13 @@ class Datagrid {
                         );
                     }
 
-                    const getListItemFormatter = () => {
-                        if (isNumberEntity) {
-                            return (value, title) => `<div class="numeric">${title}</div>`;
-                        }
-                        return undefined;
-                    };
+                    let itemFormatter
+                    if (isNumberEntity) {
+                        itemFormatter = (label, value) => `<div class="numeric">${label}</div>`;
+                    }
 
                     return (cell) => ({
-                        listItemFormatter: getListItemFormatter(),
+                        itemFormatter,
                         values: map(getOptions(cell.getValue(), getRowKey(cell.getData())), (option) => ({
                             value: option.key,
                             label: option.value,

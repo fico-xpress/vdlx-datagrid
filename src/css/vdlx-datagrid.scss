@@ -513,3 +513,16 @@ vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tab
     }
   }
 }
+
+.tabulator-edit-list {
+  .tabulator-edit-list-item {
+    &.active:not(:hover) {
+      background-color: white;
+      color: $black;
+    }
+
+    .numeric {
+      text-align: right;
+    }
+  }
+}
