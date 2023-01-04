@@ -417,26 +417,10 @@ class Datagrid {
             groupStartOpen: false,
             dataLoader: true,
             height: '100%',
-            columnDefaults:{
+            columnDefaults: {
                 resizable: 'false',
+                debugInvalidOptions: false,
             },
-            // dataFiltered: saveState,
-            // dataSorting: () => {
-            //     this.tableLock && this.tableLock.lock();
-            //     sortPromise = new Promise((resolve) => {
-            //         sortPromiseResolve = resolve;
-            //     });
-            //     perf('datagrid sorting', constant(sortPromise));
-            //     saveState();
-            // },
-            // dataSorted: () => {
-            //     sortPromiseResolve();
-            //     this.tableLock && this.tableLock.unlock();
-            // },
-            // cellEditing: (cell) => select(cell.getRow()),
-            // rowClick: (e, row) => select(row),
-            // rowSelectionChanged: (data, rows) => this.setSelectedRow(first(rows)),
-            // renderComplete: () => this.update(),
             debugInvalidOptions: false,
         };
 
