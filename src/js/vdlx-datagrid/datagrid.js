@@ -84,7 +84,7 @@ const SELECTION_REMOVED_EVENT = 'selection-removed';
 const addSelectNull = (items) => {
     if (isArray(items)) {
         // add empty option to the start of the list
-        return [{key: undefined, value: ''}].concat(items);
+        return [{value: '&nbsp'}].concat(items);
     }
     return items;
 };
@@ -806,6 +806,7 @@ class Datagrid {
 
                     return (cell) => ({
                         itemFormatter,
+                        allowEmpty: true,
                         values: map(getOptions(cell.getValue(), getRowKey(cell.getData())), (option) => ({
                             value: option.key,
                             label: option.value,
