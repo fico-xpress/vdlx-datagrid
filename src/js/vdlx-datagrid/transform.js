@@ -135,7 +135,7 @@ export default function transform(element, attributes, api) {
     var rowFilter = attributes['row-filter'];
     if (rowFilter) {
         if (rowFilter.expression.isString) {
-            throw Error('The vdl-table "row-filter" attribute must be supplied as an expression');
+            throw Error('The vdlx-datagrid "row-filter" attribute must be supplied as an expression');
         }
 
         paramsBuilder.addFunctionOrExpressionParam('rowFilter', rowFilter.expression.value, ['rowData', 'indices']);
