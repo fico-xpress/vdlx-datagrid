@@ -41,6 +41,10 @@ export const ROW_DATA_TYPES = {
     function: 'function'
 };
 
+/**
+ *
+ * @type {{AUTO: string, PIVOT: string, LABELS: string, OBJECT: string}}
+ */
 export const CUSTOM_COLUMN_DEFINITION = {
     AUTO: 'auto',
     LABELS: 'labels',
