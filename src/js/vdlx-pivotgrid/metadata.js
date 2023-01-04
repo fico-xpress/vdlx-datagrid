@@ -128,6 +128,27 @@ export default {
                 'or an array of value/label objects: [{value:x label: "x label"}].  One array per dimension.',
             expression: 'all',
             defaultValue: []
-        }
+        },{
+            name: 'row-filter',
+            description:
+                'Expression to be used for filtering the rows of a &lt;vdl-datagrid&gt;. This must be an expression and ' +
+                'should resolve to either a function or a boolean value. If a function it will be executed when grid updates. ' +
+                'The function will have the following signature (rowData, indices) and should return a boolean.',
+            acceptsExpression: true,
+            required: false,
+            expressionVars: [
+                {
+                    name: 'rowData',
+                    type: 'Array.<(string|boolean|number)>',
+                    description: 'The values from each cell in the current row. The order of the row data reflects the underlying ' +
+                        'order of the array indices rather than the display order.'
+                },
+                {
+                    name: 'indices',
+                    type: 'Array.<(string|boolean|number)>',
+                    description: 'Data for the index columns of the row'
+                }
+            ]
+        },
     ]
 };

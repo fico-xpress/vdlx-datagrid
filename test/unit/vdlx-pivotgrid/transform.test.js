@@ -2,6 +2,7 @@ import transform from '../../../src/js/vdlx-pivotgrid/transform'
 import {extensionApiMock, componentParamsBuilder} from '../../jest/mocks/extension-api-mock'
 
 import {CUSTOM_COLUMN_DEFINITION} from "../../../src/js/constants";
+import {validateObjectColDefinitions} from "../../../src/js/datagrid/custom-data/custom-column-utils";
 
 describe('vdlx-pivotgrid: transform', () => {
 
@@ -39,7 +40,7 @@ describe('vdlx-pivotgrid: transform', () => {
 
     });
 
-    describe('column attributes', () => {
+    describe('row attributes', () => {
 
         it('sets rows attrs', () => {
             const attrs = {
@@ -98,6 +99,44 @@ describe('vdlx-pivotgrid: transform', () => {
             );
 
         });
+
+
+        it('row-filter set when expression', () => {
+            const attrs = {
+                'row-filter': {
+                    name: 'rowFilter',
+                    expression: {
+                        isString: false,
+                        value: 'something',
+                    }
+                }
+            };
+
+            transformFunction(mockElement, attrs, apiMock);
+            // not called when pageSize cannot be converted to a number
+            expect(componentParamsBuilder.addFunctionOrExpressionParam).toBeCalledWith(
+                attrs['row-filter'].name, attrs['row-filter'].expression.value, ['rowData', 'indices']
+            );
+        });
+
+        it('row-filter throws error when not expression', () => {
+            const attrs = {
+                'row-filter': {
+                    name: 'rowFilter',
+                    expression: {
+                        isString: true,
+                        value: 'something',
+                    }
+                }
+            };
+
+            expect(() => {
+                transformFunction(mockElement, attrs, apiMock);
+            }).toThrow('The vdlx-pivotgrid "row-filter" attribute must be supplied as an expression');
+
+        });
+
+
     });
     describe('column attributes', () => {
 
