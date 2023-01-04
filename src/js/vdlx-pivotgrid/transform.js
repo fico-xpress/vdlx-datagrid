@@ -24,8 +24,6 @@
 
 import {CUSTOM_COLUMN_DEFINITION} from "../constants";
 
-import {ko} from "../insight-modules";
-
 /**
  * The transform function takes care of setting up/initialising a VDL extension.
  * @param {HTMLElement} element - The VDL DOM node.
@@ -33,16 +31,16 @@ import {ko} from "../insight-modules";
  * @param api - Helper methods for VDL extension creation.
  */
 export default function transform(element, attributes, api) {
-    var paramsBuilder = api.getComponentParamsBuilder(element);
-    var $element = $(element);
 
-    var data = attributes['data'];
+    let paramsBuilder = api.getComponentParamsBuilder(element);
+
+    // hardcode column definition type to pivot
+    paramsBuilder.addParam('columnDefinitionType', CUSTOM_COLUMN_DEFINITION.PIVOT, false);
+
+    const data = attributes['data'];
     if (data) {
         paramsBuilder.addFunctionOrExpressionParam('data', data.expression.value, ['value']);
     }
-
-    // hardcoded to pivot
-    paramsBuilder.addParam('columnDefinitionType', CUSTOM_COLUMN_DEFINITION.PIVOT, false);
 
     const pivotRowPositions = attributes['row-set-position'];
     if (pivotRowPositions) {
@@ -52,6 +50,7 @@ export default function transform(element, attributes, api) {
             paramsBuilder.addParam('pivotRowPositions', pivotRowPositions.expression.value, true);
         }
     }
+
     const pivotRowDimensions = attributes['row-dimensions'];
     if (pivotRowDimensions) {
         if (pivotRowDimensions.expression.isString) {
@@ -60,6 +59,7 @@ export default function transform(element, attributes, api) {
             paramsBuilder.addParam('pivotRowDimensions', pivotRowDimensions.expression.value, true);
         }
     }
+
     const pivotRowTitles = attributes['row-titles'];
     if (pivotRowTitles) {
         if (pivotRowTitles.expression.isString) {
@@ -104,10 +104,10 @@ export default function transform(element, attributes, api) {
     //     throw Error('Error for component vdlx-pivotgrid: "column-count" and "column-count" are mutually exclusive.');
     // }
 
-    var pageSize = attributes['page-size'];
+    const pageSize = attributes['page-size'];
     if (pageSize) {
         if (pageSize.expression.isString) {
-            var pageSizeNum = parseInt(pageSize.rawValue);
+            const pageSizeNum = parseInt(pageSize.rawValue);
             if (!isNaN(pageSizeNum)) {
                 paramsBuilder.addParam('pageSize', pageSizeNum);
             }
@@ -116,42 +116,43 @@ export default function transform(element, attributes, api) {
         }
     }
 
-    var pageMode = attributes['page-mode'];
+    const pageMode = attributes['page-mode'];
     if (pageMode && pageMode.rawValue === 'paged') {
         paramsBuilder.addParam('pageMode', pageMode.rawValue);
     } else {
         paramsBuilder.addParam('pageMode', 'scrolling');
-        $(element).addClass('scrolling');
+        element.classList.add('scrolling');
     }
 
-    var columnFilter = attributes['column-filter'];
+    const columnFilter = attributes['column-filter'];
     if (columnFilter) {
         paramsBuilder.addParam('columnFilter', columnFilter.rawValue.toUpperCase() === 'TRUE');
     }
 
-    var tableIdAttr = attributes['id'];
+    const tableIdAttr = attributes['id'];
     if (tableIdAttr) {
-        $element.attr('id', null);
+        element.setAttribute('id', '');
         paramsBuilder.addParam('tableId', tableIdAttr.rawValue);
     }
 
-    var width = attributes['width'];
+    const width = attributes['width'];
     if (width) {
         paramsBuilder.addParam('width', width.rawValue);
     }
 
-    var klass = attributes['class'];
+    const klass = attributes['class'];
     if (klass) {
-        $element.removeAttr('class');
+        element.removeAttribute('class');
         paramsBuilder.addParam('class', klass.rawValue);
     }
 
-    var alwaysShowSelection = attributes['always-show-selection'];
+    const alwaysShowSelection = attributes['always-show-selection'];
     if (alwaysShowSelection && alwaysShowSelection.rawValue.toUpperCase() === 'TRUE') {
         paramsBuilder.addParam('alwaysShowSelection', true);
     }
 
-    var rowFilter = attributes['row-filter'];
+    // todo - check this works with pivot data
+    const rowFilter = attributes['row-filter'];
     if (rowFilter) {
         if (rowFilter.expression.isString) {
             throw Error('The vdl-table "row-filter" attribute must be supplied as an expression');
@@ -160,7 +161,7 @@ export default function transform(element, attributes, api) {
         paramsBuilder.addFunctionOrExpressionParam('rowFilter', rowFilter.expression.value, ['rowData', 'indices']);
     }
 
-    var gridHeight = attributes['height'];
+    const gridHeight = attributes['height'];
     if (gridHeight) {
         if (gridHeight.expression.isString) {
             paramsBuilder.addParam('gridHeight', gridHeight.rawValue, false);
@@ -169,7 +170,7 @@ export default function transform(element, attributes, api) {
         }
     }
 
-    var showExport = attributes['show-export'];
+    const showExport = attributes['show-export'];
     if (showExport) {
         if (showExport.expression.isString) {
             paramsBuilder.addParam('showExport', showExport.rawValue.toUpperCase() === 'TRUE', false);
@@ -178,7 +179,7 @@ export default function transform(element, attributes, api) {
         }
     }
 
-    var exportFilename = attributes['export-filename'];
+    const exportFilename = attributes['export-filename'];
     if (exportFilename) {
         if (exportFilename.expression.isString) {
             paramsBuilder.addParam('exportFilename', exportFilename.rawValue, false);
@@ -186,5 +187,4 @@ export default function transform(element, attributes, api) {
             paramsBuilder.addParam('exportFilename', exportFilename.expression.value, true);
         }
     }
-
 }
