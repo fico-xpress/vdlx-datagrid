@@ -1,4 +1,25 @@
-const _ = require('lodash');
+/*
+   Xpress Insight vdlx-pivotgrid
+   =============================
+
+   file datagrid/custom-data/custom-data-pivot.js
+   ```````````````````````
+   vdlx-pivotgrid utils.
+
+    (c) Copyright 2023 Fair Isaac Corporation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+ */
 
 /**
  * Before transformation:
@@ -72,7 +93,7 @@ const OptionEnums = {
  * @type {{aggregationType: string}}
  */
 class Options {
-    constructor() {
+    constructor(o) {
         /**
          * The aggregation function that is used to calculate the rows and columns
          * totals.
@@ -81,24 +102,38 @@ class Options {
         this.aggregationType = OptionEnums.AggregationTypes.Count
 
         /**
-         * The totals
+         * The aggregation function used to calculate totals
          * See OptionEnums.EnableTotals for available options
          */
         this.enableTotals = OptionEnums.EnableTotals.All
 
-        /** @type {(numeric)[]} */
+        /**
+         * The list of columns from the input data table that are used as row keys.
+         * @type {(numeric)[]} */
         this.rows = []
-        /** @type {(numeric)[]} */
+
+        /**
+         * The list of columns from the input data table that are used column keys.
+         * @type {(numeric)[]} */
         this.cols = []
+
         this.labels = []
-        /** @type {(string)[]} */
+
+        /**
+         * An array containing header names. Index of this array maps to the
+         * column index of the original data set. If header name is undefined
+         * then a default name based on the column index is automatically generated.
+         * @type {(string)[]} */
         this.header = []
+
+        if (o!==undefined) {
+            Object.assign(this,o)
+        }
     }
 }
 
 export class PivotContext {
     constructor() {
-        this.colDef = {}
         this.rowMap = new ColHashMap()
         this.colMap = new ColHashMap()
         this.colDef = []
@@ -267,11 +302,11 @@ function _createColDef(data, config) {
 
     // Collect the key values
     data.forEach( (e,i) => {
-        let rIds = getSlice(rows,e)
-        pivotContext.rowMap.add(rIds)
+            let rIds = getSlice(rows,e)
+            pivotContext.rowMap.add(rIds)
 
-        let cIds = getSlice(cols,e)
-        pivotContext.colMap.add(cIds)
+            let cIds = getSlice(cols,e)
+            pivotContext.colMap.add(cIds)
     })
 
 
@@ -326,10 +361,15 @@ function _createColDef(data, config) {
     })
 
     // Add the column definition for row totals
-    if (enabledBuiltinTotals(config) && (config.enableTotals == OptionEnums.EnableTotals.All || config.enableTotals == OptionEnums.EnableTotals.Rows )) {
-        let newCol = new ColSimpleDefinition(`Totals (${config.aggregationType})`, constValues.totals);
-        newCol.cssClass = "tabulator-frozen"
-        pivotContext.colDef.push(newCol)
+    const enableAllTotals = (config.enableTotals == OptionEnums.EnableTotals.All)
+    const enableRowTotals = enableAllTotals || (config.enableTotals == OptionEnums.EnableTotals.Rows)
+
+    if (enabledBuiltinTotals(config)) {
+        if (enableAllTotals || enableRowTotals) {
+            let newCol = new ColSimpleDefinition(`Totals (${config.aggregationType})`, constValues.totals);
+            newCol.cssClass = "tabulator-frozen"
+            pivotContext.colDef.push(newCol)
+        }
     }
 
     /**
@@ -340,28 +380,56 @@ function _createColDef(data, config) {
     return pivotContext
 }
 
+/**
+ * The function will compute and add row and column totals. If the
+ * corresponding cell already exist (constValues.totals) then the
+ * value is not calculated/updated and the original value will be
+ * kept.
+ *
+ * For performance reasons, the function does not return anything.
+ * The modifications are performed directly on the pivotData object
+ * passed as argument.
+ *
+ * The pivotData argument has the following structure:
+ *   [ {"0": "a", "1": "x", "2": 1, "3": 2, "4": 2, "5": 2},
+ *     {"0": "b", "1": "x", "2": 3},
+ *     {"0": "b", "1": "y",                         "5": 4} ]
+ *
+ * @param { {}[] } pivotData
+ * @param {Options} pivotOptions
+ * @param {PivotContext} pivotContext
+ */
 export function computeTotals(pivotData, pivotOptions, pivotContext) {
     const rows = pivotOptions.rows
     const nRowKey = rows.length
-    const colDef = pivotContext.colDef
+    const cols = pivotOptions.cols
+    const nCols = cols.length + nRowKey
     const totalFun = totalsFun[pivotOptions.aggregationType];
-    const nCols = pivotContext.colMap.length + nRowKey
     let columnTotals = {}
     let totals = {row: undefined, totalOf: undefined}
     let hasColTotals = false
     let hasRowTotals = false
     let fTotal = []
-    if (pivotOptions.enableTotals == OptionEnums.EnableTotals.All || pivotOptions.enableTotals == OptionEnums.EnableTotals.Rows) {
+    /**
+     * Verify arguments are valid
+     */
+    /**
+     * Prepare aggregation function
+     */
+    const enableAllTotals = (pivotOptions.enableTotals === OptionEnums.EnableTotals.All)
+    const enableRowTotals = (enableAllTotals || pivotOptions.enableTotals === OptionEnums.EnableTotals.Rows)
+    const enableColTotals = (enableAllTotals || pivotOptions.enableTotals === OptionEnums.EnableTotals.Cols)
+    if (enableRowTotals) {
         // Add row totals
         hasRowTotals = true
         fTotal.push((v) => totals.row = totalFun(totals.row, v))
     }
-    if (pivotOptions.enableTotals == OptionEnums.EnableTotals.All || pivotOptions.enableTotals == OptionEnums.EnableTotals.Cols) {
+    if (enableColTotals) {
         // Add column totals
         hasColTotals = true
         fTotal.push((v, i) => columnTotals[i] = totalFun(columnTotals[i], v))
     }
-    if (pivotOptions.enableTotals == OptionEnums.EnableTotals.All) {
+    if (enableAllTotals) {
         // if row and column totals are enabled then we compute rowTotal of totals
         fTotal.push((v) => totals.totalOf = totalFun(totals.totalOf, v))
     }
@@ -371,12 +439,17 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
         pivotData.filter(row => row[constValues.totals] === undefined)
             .forEach(row => {
                 totals.row = undefined
-                for (let i = nRowKey; i < nCols; ++i) fTotal.forEach((f) => f(row[i], i))
+                for(let k in row) {
+                    if (k>=nRowKey) {
+                        fTotal.forEach((f) => f(row[k], k))
+                    }
+                }
                 if (hasRowTotals)
                     row[constValues.totals] = totals.row // totals.row
             })
         if (hasColTotals) {
-            if (colDef[colDef.length - 1] !== undefined && colDef[colDef.length - 1].title !== undefined)
+            const colDef = (pivotContext !== undefined) ? pivotContext.colDef : undefined
+            if (colDef !== undefined && colDef[colDef.length - 1] !== undefined && colDef[colDef.length - 1].title !== undefined)
                 columnTotals[nRowKey - 1] = colDef[colDef.length - 1].title
             if (hasRowTotals) {
                 columnTotals[constValues.totals] = totals.totalOf
@@ -434,7 +507,7 @@ function _createObject(data, pivotOptions, pivotContext) {
 
 /** Array based representation of the pivot data. Kept here as reference but
  * not compatible with tabulator.js internal data representation.
- function _createArray(data) {
+function _createArray(data) {
     const nRowKey =
     // now we are ready to populate the table
     let pivotData = new Array(pivotContext.rowMap.keySet.length);
@@ -471,7 +544,7 @@ function _sanitizeConfig(config) {
         // override default fields. Note this is a shallow copy...
         return Object.assign(new Options(), config)
     } else {
-        error("Configuration is unset. I don't know what to do...")
+        console.error("Configuration is unset. I don't know what to do...")
     }
     return config
 }

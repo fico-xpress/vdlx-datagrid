@@ -5,6 +5,7 @@
   "scripts": {
     "postinstall": "npm run build",
     "test": "jest",
+    "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
     "watch": "cross-env NODE_ENV=development parcel watch --no-source-maps -d insight/client_resources/vdlx-datagrid -o vdlx-datagrid.js --no-hmr src/js/index.js",
