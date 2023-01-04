@@ -138,9 +138,11 @@ vdlx-datagrid {
         .tabulator-calcs-bottom {
           background-color: $color-table-header !important;
           font-weight: normal;
+
           .tabulator-cell {
             border-left: 1px solid $color-medium-grey;
             text-align: center;
+
             &.numeric {
               text-align: right;
             }
@@ -202,7 +204,7 @@ vdlx-datagrid {
           }
         }
 
-        &[aria-sort="asc"] {
+        &[aria-sort="ascending"] {
           .tabulator-col-content .tabulator-arrow {
             &:before {
               visibility: hidden;
@@ -215,7 +217,7 @@ vdlx-datagrid {
           }
         }
 
-        &[aria-sort="desc"] {
+        &[aria-sort="descending"] {
           .tabulator-col-content .tabulator-arrow {
             &:before {
               color: #6E6D6A;
@@ -495,6 +497,10 @@ vdlx-datagrid {
 
 vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col {
   height: 100% !important;
+
+  &.tabulator-sortable.tabulator-col-sorter-element:hover {
+    background-color: #d2e9f4;
+  }
 
   .tabulator-col-content {
     padding: 0;
