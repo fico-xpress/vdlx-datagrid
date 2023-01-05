@@ -22,17 +22,18 @@
 
 import constant from "lodash/constant";
 import { dataUtils, enums, setSorter } from "../insight-modules";
+import {SortModule} from "tabulator-tables";
 
+const TABULATOR_SORTERS = SortModule.sorters;
 const DEFAULT_SORTER_REF = 'alphanum';
 
 /**
  * Get the datagrid column sorter based on the entity type that is bound. Sort by underlying value.
  *
  * @param entity The Insight entity
- * @param tabulatorSorters Array of Tabulator sorters
  * @returns {function} The comparator function to use on the column
  */
-export const getSorter = (entity, tabulatorSorters) => {
+export const getSorter = (entity) => {
     const elementType = entity.getElementType();
     const isNumberEntity = dataUtils.entityTypeIsNumber(entity);
 
@@ -44,7 +45,7 @@ export const getSorter = (entity, tabulatorSorters) => {
         sorterRef = 'boolean';
     }
 
-    return tabulatorSorters[sorterRef];
+    return TABULATOR_SORTERS[sorterRef];
 };
 
 /**
@@ -62,11 +63,10 @@ export const getSetSorter = (entity) => {
  *
  * @param {string} columnId The Tabulator column identifier
  * @param {function} formatter The formatter function to generate the cell data
- * @param tabulatorSorters Array of Tabulator sorters
  * @returns {function} The comparator function to use on the column
  */
-export const createFormattedSorter = (columnId, formatter, tabulatorSorters) => {
-    const sorter = tabulatorSorters[DEFAULT_SORTER_REF];
+export const createFormattedSorter = (columnId, formatter) => {
+    const sorter = TABULATOR_SORTERS[DEFAULT_SORTER_REF];
 
     return (a, b, aRow, bRow, column, dir, sorterParams) => {
         let aCell = {

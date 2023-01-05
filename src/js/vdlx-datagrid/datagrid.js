@@ -650,8 +650,6 @@ class Datagrid {
 
         const allScenarios = uniq([scenariosData.defaultScenario].concat(values(scenariosData.scenarios)));
 
-        const tabulatorSorters = this.table.getSorters();
-
         const indicesColumns = map(setNamePosnsAndOptions, (setNameAndPosn) => {
             const {name, options} = setNameAndPosn;
             const entity = schema.getEntity(name);
@@ -675,9 +673,9 @@ class Datagrid {
                 cssClass: getCssClasses(options, isNumberEntity, true),
                 formatter: getFormatter(),
                 sorter: options.sortByFormatted
-                    ? createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters)
+                    ? createFormattedSorter(options.id, getFormatter('sort'))
                     : options.disableSetSorting
-                        ? getSorter(entity, tabulatorSorters)
+                        ? getSorter(entity)
                         : getSetSorter(entity),
                 filterByFormatted: options.filterByFormatted,
                 dataType: entity.getType(),
@@ -916,8 +914,8 @@ class Datagrid {
                 sortByFormatted: entityOptions.sortByFormatted,
                 filterByFormatted: entityOptions.filterByFormatted,
                 sorter: entityOptions.sortByFormatted
-                    ? createFormattedSorter(entityOptions.id, getFormatter('sort'), tabulatorSorters)
-                    : getSorter(entity, tabulatorSorters),
+                    ? createFormattedSorter(entityOptions.id, getFormatter('sort'))
+                    : getSorter(entity),
                 editor: entityOptions.editorType,
                 editorParams: getEditorParams(),
                 cellEditing: getCellEditingHandler(),
@@ -997,7 +995,7 @@ class Datagrid {
                 elementType: enums.DataType.STRING,
                 sortByFormatted: true,
                 filterByFormatted: true,
-                sorter: createFormattedSorter(options.id, getFormatter('sort'), tabulatorSorters),
+                sorter: createFormattedSorter(options.id, getFormatter('sort')),
                 accessorDownload: (value, rowData) => options.render(value, 'display', getRowDataForColumns(rowData)),
             };
 
