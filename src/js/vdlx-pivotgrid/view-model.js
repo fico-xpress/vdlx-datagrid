@@ -40,8 +40,9 @@ import noop from 'lodash/noop';
  * @param {HTMLElement} componentInfo.element the DOM node for this instance of the VDL extension.
  */
 export default function createViewModel(params, componentInfo) {
+
     // Create the ViewModel object
-    var vm = {};
+    let vm = {};
 
     // Strip off the 'px' units if present.
     if (params.width) {
@@ -87,21 +88,9 @@ export default function createViewModel(params, componentInfo) {
 
     const datagrid = new Datagrid(element, tableOptions$, undefined, undefined);
 
-    vm.addColumn = noop();
-
-    vm.removeColumn = noop();
-
-    vm.tableValidate = function () {
-        datagrid.validate();
-    };
-
-    vm.dispose = function () {
+    vm.dispose = () => {
         datagrid.dispose();
     };
-
-    vm.filterUpdate = noop();
-
-    vm.filterRemove = noop();
 
     return vm;
 }
