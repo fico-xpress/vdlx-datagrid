@@ -133,7 +133,7 @@ export default class AddRemove {
 
                 this.data = this.table.getData();
 
-                if (this.table.getPageMax() === false) {
+                if (!this.table.options.pagination) {
                     return this.table.scrollToRow(row).then(constant(row));
                 }
 
