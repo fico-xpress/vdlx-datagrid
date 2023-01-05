@@ -8,6 +8,17 @@ import _ from "lodash";
 
 describe('custom data pivot.js', function () {
 
+    describe('error handling', () => {
+        //expect(pivotDataModule.run).toBeInstanceOf(Function)
+
+        it("error thrown when calling run without configuration options", () => {
+            expect(() => {
+                pivotDataModule.run();
+            }).toThrow('Error for pivotDataModule: Configuration is unset.');
+        })
+
+    })
+
     /**
      * Verify the behavior of the hashmap that is used to map each row of the original data
      * set to columns and rows of the pivoted table.
@@ -201,7 +212,7 @@ describe('custom data pivot.js', function () {
 
         /**
          * Note here the original data is rather simple with all
-         * columns used and ordered in a convenient wasy
+         * columns used and ordered in a convenient way
          */
         beforeAll( () => {
             _config = new pivotDataModule.Options({ rows: [0, 1],

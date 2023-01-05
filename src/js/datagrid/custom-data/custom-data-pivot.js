@@ -544,9 +544,8 @@ function _sanitizeConfig(config) {
         // override default fields. Note this is a shallow copy...
         return Object.assign(new Options(), config)
     } else {
-        console.error("Configuration is unset. I don't know what to do...")
+        throw Error('Error for pivotDataModule: Configuration is unset.')
     }
-    return config
 }
 
 /**
