@@ -162,6 +162,7 @@ class Datagrid {
         this.paginatorControl = this.createPaginatorControl(footerToolbar, this.table, options);
         this.stateManager = null;
         this.isTableBuilt = false;
+        this.stateLoaded = false;
 
         this.table.on("tableBuilt", () => {
             if (_.isUndefined(options.data)) {
@@ -202,7 +203,6 @@ class Datagrid {
 
     // stripped down version of build table that only subscribes to grid options
     buildCustomDataTable() {
-
         const gridOptions$ = this.gridOptions$;
 
         this.subscriptions = this.subscriptions.concat([
@@ -236,6 +236,7 @@ class Datagrid {
 
     setCustomDataColumnsAndData(gridOptions) {
         const table = this.table;
+        this.stateLoaded = false;
 
         if (!isArray(gridOptions.data())) {
             return Promise.reject('Error for component vdlx-datagrid: Please ensure the data attribute contains an array');
@@ -262,20 +263,21 @@ class Datagrid {
 
             this.stateManager = this.createStateManager(gridOptions, config.columns);
 
-            // clear the filters
-            if (gridOptions.saveState) {
-                this.table.setSort(cloneDeep(this.initialSortOrder));
-                this.loadState();
-            } else {
-                table.setSort(sortOrder);
-                this.table.clearHeaderFilter();
-            }
-
             return perf('Tabulator set custom Data and draw', () =>
                 table
                     .setData(config.data)
                     .then(() => this.redrawTable())
-                    .then(() => (this.table.element.style.visibility = 'visible'))
+                    .then(() => {
+                        // clear the filters
+                        if (gridOptions.saveState) {
+                            this.table.setSort(cloneDeep(this.initialSortOrder));
+                            this.loadState();
+                        } else {
+                            table.setSort(sortOrder);
+                            this.table.clearHeaderFilter();
+                        }
+                        this.table.element.style.visibility = 'visible';
+                    })
                     .catch((e) => {
                         console.error('An error occurred whilst adding custom data to Tabulator and redrawing', e);
                     })
@@ -358,7 +360,7 @@ class Datagrid {
     }
 
     saveState() {
-        if (this.stateManager) {
+        if (this.stateManager && this.stateLoaded) {
             let sorters = map(this.table.getSorters(), (sorter) => ({dir: sorter.dir, column: sorter.field}));
             if (isEqual(this.initialSortOrder, sorters)) {
                 sorters = [];
@@ -389,6 +391,7 @@ class Datagrid {
                 }
             }
         }
+        this.stateLoaded = true;
     }
 
     createTable(options) {
@@ -624,6 +627,7 @@ class Datagrid {
         const table = this.table;
         const schema = this.schema;
         const indicesOptions = columnOptions.indicesOptions;
+        this.stateLoaded = false;
 
         this.cancelPendingEdits();
 
@@ -1101,7 +1105,7 @@ class Datagrid {
         this.table.setSort(cloneDeep(this.initialSortOrder));
 
         this.stateManager = this.createStateManager(gridOptions, columns, map(entitiesColumns, 'scenario'));
-        this.loadState();
+
 
         this.table.element.style.visibility = 'hidden';
 
@@ -1117,9 +1121,10 @@ class Datagrid {
         return perf('Tabulator setData and draw', () =>
             table
                 .setData(data)
-                // FIXME Not sure why this redraw is called after setting data. Is it needed with Tabulator 5?
-                // .then(() => this.redrawTable())
-                .then(() => (this.table.element.style.visibility = 'visible'))
+                .then(() => {
+                    this.loadState();
+                    this.table.element.style.visibility = 'visible';
+                })
                 .catch((e) => {
                     console.error('An error occurred whilst adding data to Tabulator and redrawing', e);
                 })
