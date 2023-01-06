@@ -14,13 +14,14 @@ import * as gridFilters from "../../../../src/js/datagrid/grid-filters";
 import * as colUtils from "../../../../src/js/datagrid/custom-data/custom-column-utils";
 import {
     convertObjectColDefinitions,
-    createBasicColumnDefinition,
+    createBasicColumnDefinition, createPivotIndexes, extractLabels, pivotColumnSizeToIndex,
     validateLabelsData,
     validateObjectColDefinitions, validatePivotRowsAndColumns
 } from "../../../../src/js/datagrid/custom-data/custom-column-utils";
 import * as dataUtils from '../../../../src/js/datagrid/custom-data/custom-data-utils';
 
 import * as createPivotConfigModule from '../../../../src/js/datagrid/custom-data/create-pivot-config';
+import {createLabelsConfig} from "../../../../src/js/datagrid/custom-data/custom-data-utils";
 
 describe('createCustomConfig module', () => {
 
@@ -38,7 +39,6 @@ describe('createCustomConfig module', () => {
         describe('switches different methods for column definition types', () => {
 
             const resultData = [{data:'data'}];
-            const pivotedData = [{data:'pivotedData'}];
 
             let convertCustomDataToObjectDataSpy;
             let convertObjectDataToLabelDataSpy;
@@ -47,7 +47,6 @@ describe('createCustomConfig module', () => {
             let convertObjectColDefinitionsSpy;
             let validateLabelsDataSpy;
             let validatePivotRowsAndColumnsSpy;
-            let createPivotConfigSpy;
 
             beforeEach(() => {
                 convertCustomDataToObjectDataSpy = jest.spyOn(dataUtils, 'convertCustomDataToObjectData').mockReturnValue(resultData);
@@ -57,7 +56,6 @@ describe('createCustomConfig module', () => {
                 convertObjectColDefinitionsSpy = jest.spyOn(colUtils, 'convertObjectColDefinitions').mockReturnValue(resultData);
                 validateLabelsDataSpy = jest.spyOn(colUtils, 'validateLabelsData').mockReturnValue(resultData);
                 validatePivotRowsAndColumnsSpy = jest.spyOn(colUtils, 'validatePivotRowsAndColumns').mockReturnValue(resultData);
-                createPivotConfigSpy = jest.spyOn(createPivotConfigModule, 'createPivotConfig').mockReturnValue(pivotedData);
             });
 
             afterEach(() => {
@@ -68,7 +66,6 @@ describe('createCustomConfig module', () => {
                 colUtils.convertObjectColDefinitions.mockRestore();
                 colUtils.validateLabelsData.mockRestore();
                 colUtils.validatePivotRowsAndColumns.mockRestore();
-                createPivotConfigModule.createPivotConfig.mockRestore();
             });
 
             it('column definition type: CUSTOM_COLUMN_DEFINITION.AUTO', () => {
@@ -96,7 +93,53 @@ describe('createCustomConfig module', () => {
                 expect(convertCustomDataToObjectDataSpy).not.toHaveBeenCalledWith(gridOptions.data());
                 expect(validateObjectColDefinitionsSpy).not.toHaveBeenCalled();
             });
-            it('column definition type: CUSTOM_COLUMN_DEFINITION.PIVOT', () => {
+
+            it('console error for unknown type', () => {
+                gridOptions.columnDefinitionType = 'unsupported';
+                expect(() => {
+                    createCustomConfig(gridOptions);
+                }).toThrow('Error for component vdlx-datagrid: Unrecognised column format.');
+                expect(validateLabelsDataSpy).not.toHaveBeenCalled();
+                expect(convertCustomDataToObjectDataSpy).not.toHaveBeenCalledWith(gridOptions.data());
+                expect(validateObjectColDefinitionsSpy).not.toHaveBeenCalled();
+            });
+        });
+
+
+        describe('pivot data column definition', () => {
+
+            const resultData = [{data:'data'}];
+            const pivotedData = [{data:'pivotedData'}];
+
+            let validatePivotRowsAndColumnsSpy;
+            let createPivotIndexesSpy;
+            let pivotColumnSizeToIndexSpy;
+            let createPivotDisplayCalcsSpy;
+            let extractLabelsSpy;
+            let createLabelsConfigSpy;
+            let createPivotConfigSpy;
+
+            beforeEach(() => {
+                validatePivotRowsAndColumnsSpy = jest.spyOn(colUtils, 'validatePivotRowsAndColumns').mockReturnValue(resultData);
+                createPivotIndexesSpy = jest.spyOn(colUtils, 'createPivotIndexes').mockReturnValue(resultData);
+                pivotColumnSizeToIndexSpy = jest.spyOn(colUtils, 'pivotColumnSizeToIndex').mockReturnValue(resultData);
+                createPivotDisplayCalcsSpy = jest.spyOn(colUtils, 'calculatePivotDisplayCalcs').mockReturnValue('all');
+                extractLabelsSpy = jest.spyOn(colUtils, 'extractLabels').mockReturnValue('all');
+                createLabelsConfigSpy = jest.spyOn(dataUtils, 'createLabelsConfig').mockReturnValue('all');
+                createPivotConfigSpy = jest.spyOn(createPivotConfigModule, 'createPivotConfig').mockReturnValue(pivotedData);
+            });
+
+            afterEach(() => {
+                colUtils.validatePivotRowsAndColumns.mockRestore();
+                colUtils.createPivotIndexes.mockRestore();
+                colUtils.pivotColumnSizeToIndex.mockRestore();
+                createPivotConfigModule.createPivotConfig.mockRestore();
+                colUtils.calculatePivotDisplayCalcs.mockRestore();
+                colUtils.extractLabels.mockRestore();
+                dataUtils.createLabelsConfig.mockRestore();
+            });
+
+            it('pivot config using row and column Positions', () => {
 
                 const pivotGridOptions = {
                     columnDefinitionType: CUSTOM_COLUMN_DEFINITION.PIVOT,
@@ -109,23 +152,67 @@ describe('createCustomConfig module', () => {
                 };
 
                 createCustomConfig(pivotGridOptions);
-                expect(validatePivotRowsAndColumnsSpy).toHaveBeenCalled();
 
-                expect(validateLabelsDataSpy).not.toHaveBeenCalled();
-                expect(convertObjectDataToLabelDataSpy).not.toHaveBeenCalled();
-                expect(convertCustomDataToObjectDataSpy).not.toHaveBeenCalledWith(pivotGridOptions.data());
-                expect(validateObjectColDefinitionsSpy).not.toHaveBeenCalled();
+                expect(createPivotDisplayCalcsSpy).toHaveBeenCalled();
+                // not
+                expect(createPivotIndexesSpy).not.toHaveBeenCalled();
+                expect(pivotColumnSizeToIndexSpy).not.toHaveBeenCalled();
+                expect(createLabelsConfigSpy).not.toHaveBeenCalled();
+                expect(extractLabelsSpy).toHaveBeenCalledTimes(2);
+                expect(validatePivotRowsAndColumnsSpy).toHaveBeenCalled();
+                expect(createPivotConfigSpy).toHaveBeenCalled();
             });
-            it('console error for unknown type', () => {
-                gridOptions.columnDefinitionType = 'unsupported';
-                expect(() => {
-                    createCustomConfig(gridOptions);
-                }).toThrow('Error for component vdlx-datagrid: Unrecognised column format.');
-                expect(validateLabelsDataSpy).not.toHaveBeenCalled();
-                expect(convertCustomDataToObjectDataSpy).not.toHaveBeenCalledWith(gridOptions.data());
-                expect(validateObjectColDefinitionsSpy).not.toHaveBeenCalled();
+
+            it('pivot config using row and column dimensions', () => {
+
+                const pivotGridOptions = {
+                    columnDefinitionType: CUSTOM_COLUMN_DEFINITION.PIVOT,
+                    pivotRowDimensions: ['rowOne'],
+                    pivotColumnDimensions: ['ColOne'],
+                    data: () => [
+                        { key: ['1','IT'], value: 100 },
+                        { key: ['2','IT'], value: 200 }
+                    ]
+                };
+
+                createCustomConfig(pivotGridOptions);
+
+                expect(createPivotDisplayCalcsSpy).toHaveBeenCalled();
+                expect(createPivotIndexesSpy).toHaveBeenCalled();
+                expect(pivotColumnSizeToIndexSpy).toHaveBeenCalled();
+                expect(validatePivotRowsAndColumnsSpy).toHaveBeenCalled();
+                expect(extractLabelsSpy).toHaveBeenCalledTimes(2);
+                expect(createLabelsConfigSpy).not.toHaveBeenCalled();
+                expect(createPivotConfigSpy).toHaveBeenCalled();
             });
-        })
+
+            it('pivot config using row and column labels', () => {
+
+                const pivotGridOptions = {
+                    columnDefinitionType: CUSTOM_COLUMN_DEFINITION.PIVOT,
+                    pivotRowDimensions: ['rowOne'],
+                    pivotColumnDimensions: ['ColOne'],
+                    pivotRowTitles: ['cl1'],
+                    pivotColumnTitles: ['cl1'],
+                    data: () => [
+                        { key: ['1','IT'], value: 100 },
+                        { key: ['2','IT'], value: 200 }
+                    ]
+                };
+
+                createCustomConfig(pivotGridOptions);
+
+                expect(createPivotDisplayCalcsSpy).toHaveBeenCalled();
+                expect(createPivotIndexesSpy).toHaveBeenCalled();
+                expect(pivotColumnSizeToIndexSpy).toHaveBeenCalled();
+                expect(validatePivotRowsAndColumnsSpy).toHaveBeenCalled();
+                expect(extractLabelsSpy).toHaveBeenCalledTimes(2);
+                expect(createLabelsConfigSpy).toHaveBeenCalled();
+                expect(createPivotConfigSpy).toHaveBeenCalled();
+            });
+
+        });
+
 
         it('creates config object containing column definitions and table data', () => {
 

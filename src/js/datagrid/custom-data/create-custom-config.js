@@ -121,6 +121,7 @@ export const createCustomConfig = (gridOptions) => {
                 enableTotals: enableTotals
             };
 
+            // todo - does it need both row AND column labels
             if (!isUndefined(rowLabels) && !isUndefined(columnLabels)) {
                 const labelConfig = createLabelsConfig(rowLabels, columnLabels);
                 if (size(labelConfig)) {
