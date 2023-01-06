@@ -25,6 +25,5 @@
 import {pivotDataModule} from "./custom-data-pivot";
 
 export const createPivotConfig = (data, pivotConfig) => {
-    const pivotData = pivotDataModule.run(data, pivotConfig);
-    return pivotData;
+    return pivotDataModule.run(data, pivotConfig);
 }
