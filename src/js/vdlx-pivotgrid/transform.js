@@ -22,7 +22,7 @@
  */
 
 
-import {CUSTOM_COLUMN_DEFINITION} from "../constants";
+import {CUSTOM_COLUMN_DEFINITION, PIVOT_TOTALS_DISPLAY_TYPES} from "../constants";
 
 /**
  * The transform function takes care of setting up/initialising a VDL extension.
@@ -69,6 +69,17 @@ export default function transform(element, attributes, api) {
         }
     }
 
+    const displayPivotRowCalc = attributes['show-row-calc'];
+    if (displayPivotRowCalc) {
+        if (displayPivotRowCalc.expression.isString) {
+            paramsBuilder.addParam('displayPivotRowCalc', displayPivotRowCalc.rawValue, false);
+        } else {
+            paramsBuilder.addParam('displayPivotRowCalc', displayPivotRowCalc.expression.value, true);
+        }
+    } else {
+        paramsBuilder.addParam('displayPivotRowCalc', true, false);
+    }
+
     // todo this should validate that if pivotRowPositions && pivotRowDimensions both exist, that pivotRowDimensions is an array of strings
     // if (pivotRowPositions && pivotRowDimensions) {
     //     throw Error('Error for component vdlx-pivotgrid: "row-set-position" and "row-count" are mutually exclusive.');
@@ -97,6 +108,17 @@ export default function transform(element, attributes, api) {
         } else {
             paramsBuilder.addParam('pivotColumnTitles', pivotColumnTitles.expression.value, true);
         }
+    }
+
+    const displayPivotColumnCalc = attributes['show-column-calc'];
+    if (displayPivotColumnCalc) {
+        if (displayPivotColumnCalc.expression.isString) {
+            paramsBuilder.addParam('displayPivotColumnCalc', displayPivotColumnCalc.rawValue, false);
+        } else {
+            paramsBuilder.addParam('displayPivotColumnCalc', displayPivotColumnCalc.expression.value, true);
+        }
+    } else {
+        paramsBuilder.addParam('displayPivotColumnCalc', true, false);
     }
 
     // todo this should validate that if pivotRowPositions && pivotRowDimensions both exist, that pivotRowDimensions is an array of strings

@@ -103,6 +103,12 @@ export default {
             defaultValue: []
         },
         {
+            name: 'show-column-calc',
+            description: 'Display a calculated cell displaying the total for each column.',
+            expression: 'all',
+            defaultValue: 'true'
+        },
+        {
             name: 'row-dimensions',
             description: 'Used to define the dimensions pivoted onto the rows.  Supported format: An array of row group ' +
                 'headings ["pivot row a", "pivot row b"], or a the of row group headings "2". ' +
@@ -128,7 +134,14 @@ export default {
                 'or an array of value/label objects: [{value:x label: "x label"}].  One array per dimension.',
             expression: 'all',
             defaultValue: []
-        },{
+        },
+        {
+            name: 'show-row-calc',
+            description: 'Display a calculated cell displaying the total for each row.',
+            expression: 'all',
+            defaultValue: 'true'
+        },
+        {
             name: 'row-filter',
             description:
                 'Expression to be used for filtering the rows of a &lt;vdl-datagrid&gt;. This must be an expression and ' +
@@ -149,6 +162,6 @@ export default {
                     description: 'Data for the index columns of the row'
                 }
             ]
-        },
+        }
     ]
 };

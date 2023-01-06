@@ -21,7 +21,13 @@
     limitations under the License.
  */
 
-import {COLUMN_SORTERS, EDITOR_TYPES, ROW_DATA_TYPES} from "../../constants";
+import {
+    COLUMN_SORTERS,
+    CUSTOM_COLUMN_DEFINITION,
+    EDITOR_TYPES,
+    PIVOT_TOTALS_DISPLAY_TYPES,
+    ROW_DATA_TYPES
+} from "../../constants";
 import {Enums} from "../grid-filters";
 import {getDataType, getRowDataType} from "./custom-data-utils";
 import has from "lodash/has";
@@ -38,11 +44,14 @@ import keys from "lodash/keys";
 import intersection from "lodash/intersection";
 import isArray from "lodash/isArray";
 import toNumber from "lodash/toNumber";
+import toUpper from "lodash/toUpper";
+import toLower from "lodash/toLower";
 import times from "lodash/times";
 import isArrayLike from "lodash/isArrayLike";
 import isNumber from "lodash/isNumber";
 import size from "lodash/size";
 import slice from "lodash/slice";
+import includes from "lodash/includes";
 
 /**
  * create column properties that are data value type related
@@ -240,6 +249,24 @@ export const validatePivotRowsAndColumns = (rows, cols, size) => {
     }
 }
 
+
+export const calculatePivotDisplayCalcs = (displayRowCal, displayColumnCalc) => {
+
+    const rowCalc = toUpper(displayRowCal) === 'TRUE';
+    const columnCalc = toUpper(displayColumnCalc) === 'TRUE';
+
+    if (rowCalc && columnCalc) {
+        return PIVOT_TOTALS_DISPLAY_TYPES.ALL;
+    } else if (rowCalc && !columnCalc) {
+        return PIVOT_TOTALS_DISPLAY_TYPES.ROWS;
+    } else if (!rowCalc && columnCalc) {
+        return PIVOT_TOTALS_DISPLAY_TYPES.COLS;
+    } else if (!rowCalc && !columnCalc) {
+        return PIVOT_TOTALS_DISPLAY_TYPES.NONE;
+    } else {
+        return PIVOT_TOTALS_DISPLAY_TYPES.ALL;
+    }
+}
 
 export const createPivotIndexes = (dimensions) => {
     let count;

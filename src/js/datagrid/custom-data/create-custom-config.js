@@ -29,7 +29,7 @@ import {
     pivotRowSizeToIndex,
     validateLabelsData,
     validateObjectColDefinitions,
-    validatePivotRowsAndColumns
+    validatePivotRowsAndColumns, calculatePivotDisplayCalcs
 } from './custom-column-utils';
 import {convertCustomDataToObjectData, convertObjectDataToLabelData, createLabelsConfig} from './custom-data-utils';
 import {
@@ -87,10 +87,14 @@ export const createCustomConfig = (gridOptions) => {
             const rowPositions = gridOptions.pivotRowPositions;
             const rowDimensions = gridOptions.pivotRowDimensions;
             const rowLabels = gridOptions.pivotRowTitles;
+            const displayPivotRowCalc = gridOptions.displayPivotRowCalc;
 
             const columnPositions = gridOptions.pivotColumnPositions;
             const columnDimensions = gridOptions.pivotColumnDimensions;
             const columnLabels = gridOptions.pivotColumnTitles;
+            const displayPivotColumnCalc = gridOptions.displayPivotColumnCalc;
+
+            const enableTotals = calculatePivotDisplayCalcs(displayPivotRowCalc, displayPivotColumnCalc);
 
             let rowsIndexes;
             if (rowPositions) {
@@ -108,14 +112,13 @@ export const createCustomConfig = (gridOptions) => {
                 columnIndexes = pivotColumnSizeToIndex(dimensionality, size(rowsIndexes), columnCount);
             }
 
-
             validatePivotRowsAndColumns(rowsIndexes, columnIndexes, dimensionality);
 
             const pivotConfig = {
                 rows: rowsIndexes,
                 cols: columnIndexes,
                 aggregationType: 'sum',
-                includeTotals: true
+                enableTotals: enableTotals
             };
 
             if (!isUndefined(rowLabels) && !isUndefined(columnLabels)) {

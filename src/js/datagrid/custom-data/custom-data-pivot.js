@@ -77,9 +77,9 @@ const OptionEnums = {
     },
     EnableTotals: {
         All: 'all',
-        Rows: 'rows',
-        Cols: 'cols',
-        None: ''
+        Rows: 'row',
+        Cols: 'column',
+        None: 'none'
     }
 }
 
