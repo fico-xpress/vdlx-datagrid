@@ -35,6 +35,9 @@ import isBoolean from "lodash/isBoolean";
 import cloneDeep from "lodash/cloneDeep";
 import toString from "lodash/toString";
 import size from "lodash/size";
+import concat from "lodash/concat";
+import isString from "lodash/isString";
+import isNumber from "lodash/isNumber";
 
 /**
  * if a string can be converted to numeric then it will return INTEGER
@@ -156,7 +159,47 @@ export const columnCountToIndexes = (size, rowCount, colCount) => {
     }
 }
 
-export  const createLabelsConfig = (labelArrays) => {
+/**
+ * converts arrays of primitive arrays to scenario data label array format
+ * @param allArrays
+ * @returns {(*)[]|*}
+ */
+export const convertPrimitiveArraysToLabelArrays = (allArrays) => {
+
+    if (isArray(allArrays[0])) {
+        return map(allArrays, (arr) => convertPrimitiveArrayToLabelArray(arr));
+    } else {
+        return [convertPrimitiveArrayToLabelArray(allArrays)];
+    }
+}
+
+/**
+ * convert an array of primitives to scenario data label array format
+ * @param arr
+ * @returns {*}
+ */
+export const convertPrimitiveArrayToLabelArray = (arr) => {
+    // check first row only
+    if (isString(arr[0]) || isNumber(arr[0])){
+        return  map(arr, (datum, index) => ({value:index, label:datum}));
+    }
+    return arr;
+}
+
+/**
+ * convert multiple arrays of labels into a single array object
+ * @param rowLabels
+ * @param columnLabels
+ * @returns {{}|*}
+ */
+export  const createLabelsConfig = (rowLabels, columnLabels) => {
+
+    // if arrays contain primitive values convert to label array format
+    const convertedRowLabels = convertPrimitiveArraysToLabelArrays(rowLabels);
+    const convertedColumnLabels = convertPrimitiveArraysToLabelArrays(columnLabels);
+
+    const labelArrays = concat(convertedRowLabels, convertedColumnLabels);
+
     if (size(labelArrays)) {
         return reduce(labelArrays, (memo, labArray, index) => {
             const labelConfig = reduce(labArray, (innerMemo, labObject) => {
@@ -167,6 +210,7 @@ export  const createLabelsConfig = (labelArrays) => {
             memo = assign(memo, {[index]: labelConfig});
             return memo;
         }, {});
+
     } else {
         return {};
     }
