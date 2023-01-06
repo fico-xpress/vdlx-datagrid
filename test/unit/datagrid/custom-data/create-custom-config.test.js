@@ -1,4 +1,5 @@
 import {CUSTOM_COLUMN_DEFINITION} from "../../../../src/js/constants";
+
 import {
     addGridOptionsProps,
     applyRowFilter,
@@ -15,9 +16,11 @@ import {
     convertObjectColDefinitions,
     createBasicColumnDefinition,
     validateLabelsData,
-    validateObjectColDefinitions
+    validateObjectColDefinitions, validatePivotRowsAndColumns
 } from "../../../../src/js/datagrid/custom-data/custom-column-utils";
 import * as dataUtils from '../../../../src/js/datagrid/custom-data/custom-data-utils';
+
+import * as createPivotConfigModule from '../../../../src/js/datagrid/custom-data/create-pivot-config';
 
 describe('createCustomConfig module', () => {
 
@@ -35,6 +38,7 @@ describe('createCustomConfig module', () => {
         describe('switches different methods for column definition types', () => {
 
             const resultData = [{data:'data'}];
+            const pivotedData = [{data:'pivotedData'}];
 
             let convertCustomDataToObjectDataSpy;
             let convertObjectDataToLabelDataSpy;
@@ -42,6 +46,8 @@ describe('createCustomConfig module', () => {
             let validateObjectColDefinitionsSpy;
             let convertObjectColDefinitionsSpy;
             let validateLabelsDataSpy;
+            let validatePivotRowsAndColumnsSpy;
+            let createPivotConfigSpy;
 
             beforeEach(() => {
                 convertCustomDataToObjectDataSpy = jest.spyOn(dataUtils, 'convertCustomDataToObjectData').mockReturnValue(resultData);
@@ -50,6 +56,8 @@ describe('createCustomConfig module', () => {
                 validateObjectColDefinitionsSpy = jest.spyOn(colUtils, 'validateObjectColDefinitions').mockReturnValue(resultData);
                 convertObjectColDefinitionsSpy = jest.spyOn(colUtils, 'convertObjectColDefinitions').mockReturnValue(resultData);
                 validateLabelsDataSpy = jest.spyOn(colUtils, 'validateLabelsData').mockReturnValue(resultData);
+                validatePivotRowsAndColumnsSpy = jest.spyOn(colUtils, 'validatePivotRowsAndColumns').mockReturnValue(resultData);
+                createPivotConfigSpy = jest.spyOn(createPivotConfigModule, 'createPivotConfig').mockReturnValue(pivotedData);
             });
 
             afterEach(() => {
@@ -59,6 +67,8 @@ describe('createCustomConfig module', () => {
                 colUtils.validateObjectColDefinitions.mockRestore();
                 colUtils.convertObjectColDefinitions.mockRestore();
                 colUtils.validateLabelsData.mockRestore();
+                colUtils.validatePivotRowsAndColumns.mockRestore();
+                createPivotConfigModule.createPivotConfig.mockRestore();
             });
 
             it('column definition type: CUSTOM_COLUMN_DEFINITION.AUTO', () => {
@@ -84,6 +94,26 @@ describe('createCustomConfig module', () => {
                 expect(validateLabelsDataSpy).toHaveBeenCalled();
                 expect(convertObjectDataToLabelDataSpy).toHaveBeenCalledTimes(1);
                 expect(convertCustomDataToObjectDataSpy).not.toHaveBeenCalledWith(gridOptions.data());
+                expect(validateObjectColDefinitionsSpy).not.toHaveBeenCalled();
+            });
+            it('column definition type: CUSTOM_COLUMN_DEFINITION.PIVOT', () => {
+
+                const pivotGridOptions = {
+                    columnDefinitionType: CUSTOM_COLUMN_DEFINITION.PIVOT,
+                    pivotRowPositions: [0],
+                    pivotColumnPositions: [1],
+                    data: () => [
+                        { key: ['1','IT'], value: 100 },
+                        { key: ['2','IT'], value: 200 }
+                    ]
+                };
+
+                createCustomConfig(pivotGridOptions);
+                expect(validatePivotRowsAndColumnsSpy).toHaveBeenCalled();
+
+                expect(validateLabelsDataSpy).not.toHaveBeenCalled();
+                expect(convertObjectDataToLabelDataSpy).not.toHaveBeenCalled();
+                expect(convertCustomDataToObjectDataSpy).not.toHaveBeenCalledWith(pivotGridOptions.data());
                 expect(validateObjectColDefinitionsSpy).not.toHaveBeenCalled();
             });
             it('console error for unknown type', () => {
