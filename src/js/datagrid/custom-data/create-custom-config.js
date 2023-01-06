@@ -108,6 +108,7 @@ export const createCustomConfig = (gridOptions) => {
                 columnIndexes = pivotColumnSizeToIndex(dimensionality, size(rowsIndexes), columnCount);
             }
 
+
             validatePivotRowsAndColumns(rowsIndexes, columnIndexes, dimensionality);
 
             const pivotConfig = {
@@ -117,9 +118,11 @@ export const createCustomConfig = (gridOptions) => {
                 includeTotals: true
             };
 
-            const labelConfig = createLabelsConfig(concat(rowLabels, columnLabels));
-            if (size(labelConfig)) {
-                pivotConfig.labels = labelConfig;
+            if (!isUndefined(rowLabels) && !isUndefined(columnLabels)) {
+                const labelConfig = createLabelsConfig(rowLabels, columnLabels);
+                if (size(labelConfig)) {
+                    pivotConfig.labels = labelConfig;
+                }
             }
 
             let pivotHeaders = concat(extractLabels(rowDimensions), extractLabels(columnDimensions));
