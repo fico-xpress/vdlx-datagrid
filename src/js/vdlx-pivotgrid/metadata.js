@@ -110,11 +110,11 @@ export default {
         },
         {
             name: 'row-dimensions',
-            description: 'Used to define the dimensions pivoted onto the rows.  Supported format: An array of row group ' +
-                'headings ["pivot row a", "pivot row b"], or a the of row group headings "2". ' +
-                'Both would result in two row groups, but only the array of strings would result in the rows having headings. ' +
-                'Pivoting will always be done by row first, then by column.  ' +
-                'Only an array of strings is valid when used in conjunction with "row-set-positions".',
+            description: 'Used to define the dimensions pivoted onto the rows. Supported format: An array of row group headings ' +
+                '["pivot column a", "pivot column b"], or a number representing the number of dimensions from the original data set that ' +
+                'will be used as rows in the pivot grid. Both would result in two row groups, but only the array of strings would ' +
+                'result in the groups having headings. Pivoting will always be done by row first, then by column. Only an array of strings is ' +
+                'valid when used in conjunction with "row-set-positions".',
             expression: 'all',
             mutexGroup: 'ROW_SELECTION'
         },
