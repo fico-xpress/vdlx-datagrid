@@ -14,7 +14,7 @@ import * as gridFilters from "../../../../src/js/datagrid/grid-filters";
 import * as colUtils from "../../../../src/js/datagrid/custom-data/custom-column-utils";
 import {
     convertObjectColDefinitions,
-    createBasicColumnDefinition, createPivotIndexes, extractLabels, pivotColumnSizeToIndex,
+    createBasicColumnDefinition, countDimensions, extractLabels, pivotColumnSizeToIndex,
     validateLabelsData,
     validateObjectColDefinitions, validatePivotRowsAndColumns
 } from "../../../../src/js/datagrid/custom-data/custom-column-utils";
@@ -121,7 +121,7 @@ describe('createCustomConfig module', () => {
 
             beforeEach(() => {
                 validatePivotRowsAndColumnsSpy = jest.spyOn(colUtils, 'validatePivotRowsAndColumns').mockReturnValue(resultData);
-                createPivotIndexesSpy = jest.spyOn(colUtils, 'createPivotIndexes').mockReturnValue(resultData);
+                createPivotIndexesSpy = jest.spyOn(colUtils, 'countDimensions').mockReturnValue(resultData);
                 pivotColumnSizeToIndexSpy = jest.spyOn(colUtils, 'pivotColumnSizeToIndex').mockReturnValue(resultData);
                 createPivotDisplayCalcsSpy = jest.spyOn(colUtils, 'calculatePivotDisplayCalcs').mockReturnValue('all');
                 extractLabelsSpy = jest.spyOn(colUtils, 'extractLabels').mockReturnValue('all');
@@ -131,7 +131,7 @@ describe('createCustomConfig module', () => {
 
             afterEach(() => {
                 colUtils.validatePivotRowsAndColumns.mockRestore();
-                colUtils.createPivotIndexes.mockRestore();
+                colUtils.countDimensions.mockRestore();
                 colUtils.pivotColumnSizeToIndex.mockRestore();
                 createPivotConfigModule.createPivotConfig.mockRestore();
                 colUtils.calculatePivotDisplayCalcs.mockRestore();

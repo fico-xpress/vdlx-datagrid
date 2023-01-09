@@ -23,7 +23,7 @@ import {chooseColumnFilter} from "../grid-filters";
 import {
     convertObjectColDefinitions,
     createBasicColumnDefinition,
-    createPivotIndexes,
+    countDimensions,
     extractLabels,
     pivotColumnSizeToIndex,
     pivotRowSizeToIndex,
@@ -100,15 +100,15 @@ export const createCustomConfig = (gridOptions) => {
             if (rowPositions) {
                 rowsIndexes = rowPositions;
             } else {
-                const rowCount = createPivotIndexes(rowDimensions);
-                rowsIndexes = pivotRowSizeToIndex(dimensionality, rowCount);
+                const rowCount = countDimensions(rowDimensions);
+                rowsIndexes = pivotRowSizeToIndex(rowCount);
             }
 
             let columnIndexes;
             if (columnPositions) {
                 columnIndexes = rowPositions;
             } else {
-                const columnCount = createPivotIndexes(columnDimensions);
+                const columnCount = countDimensions(columnDimensions);
                 columnIndexes = pivotColumnSizeToIndex(dimensionality, size(rowsIndexes), columnCount);
             }
 
@@ -120,9 +120,8 @@ export const createCustomConfig = (gridOptions) => {
                 aggregationType: 'sum',
                 enableTotals: enableTotals
             };
-
             // todo - does it need both row AND column labels
-            if (!isUndefined(rowLabels) && !isUndefined(columnLabels)) {
+            if (!isUndefined(rowLabels) || !isUndefined(columnLabels)) {
                 const labelConfig = createLabelsConfig(rowLabels, columnLabels);
                 if (size(labelConfig)) {
                     pivotConfig.labels = labelConfig;

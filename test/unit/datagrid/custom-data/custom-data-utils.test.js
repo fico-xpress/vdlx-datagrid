@@ -2,7 +2,7 @@ import {
     convertArrayOfArraysData,
     convertCustomDataToObjectData,
     convertObjectDataToLabelData,
-    convertPrimitiveArray,
+    convertPrimitiveArray, convertPrimitiveArraysToLabelArrays, convertPrimitiveArrayToLabelArray, createLabelsConfig,
     getDataType,
     getRowDataType
 } from '../../../../src/js/datagrid/custom-data/custom-data-utils';
@@ -151,5 +151,83 @@ describe('custom data utils', () => {
                     '2': 789
             }]);
         });
+    });
+
+    // describe('convertPrimitiveArraysToLabelArrays', () => {
+    //     it('converts data', () => {
+    //         convertPrimitiveArraysToLabelArrays()
+    //     });
+    // });
+
+    describe('convertPrimitiveArrayToLabelArray', () => {
+        it('primitive numbers to label data format', () => {
+            expect(convertPrimitiveArrayToLabelArray([1,2,3])).toEqual([
+                {value: 0, label: '1'},
+                {value: 1, label: '2'},
+                {value: 2, label: '3'}
+            ]);
+        });
+        it('primitive strings to label data format', () => {
+            expect(convertPrimitiveArrayToLabelArray(['a', 'b', 'c'])).toEqual([
+                {value: 0, label: 'a'},
+                {value: 1, label: 'b'},
+                {value: 2, label: 'c'}
+            ]);
+        });
+        it('if passed an array of objects, returns passed array', () => {
+            const myArr = [
+                { a: 'a'},
+                { b: 'b'}
+            ];
+            expect(convertPrimitiveArrayToLabelArray(myArr)).toEqual(myArr);
+        });
+    });
+
+    describe('createLabelsConfig', () => {
+        it('reduces array of arrays to an object', () => {
+
+            const labelArray = [
+                {value: 1, label: 'label 1'},
+                {value: 2, label: 'label 2'},
+                {value: 3, label: 'label 3'},
+            ];
+
+            const labelObect = {
+                '0': {
+                    '1': 'label 1',
+                    '2': 'label 2',
+                    '3':'label 3'
+                },
+                '1': {
+                    '1': 'label 1',
+                    '2': 'label 2',
+                    '3':'label 3'
+                }
+            }
+
+            expect(createLabelsConfig(labelArray, labelArray)).toEqual(labelObect);
+        });
+
+        it('returns empty objects when passed empty arrays', () => {
+            expect(createLabelsConfig([], [])).toEqual({
+                '0': {},
+                '1': {}
+            });
+        });
+
+        it('ignores undefined rows', () => {
+            expect(createLabelsConfig(undefined, [])).toEqual({
+                '0': {}
+            });
+        });
+        it('ignores undefined columns', () => {
+            expect(createLabelsConfig([], undefined)).toEqual({
+                '0': {}
+            });
+        });
+        it('handles undefined', () => {
+            expect(createLabelsConfig(undefined, undefined)).toEqual({});
+        });
+
     });
 });

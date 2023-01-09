@@ -38,6 +38,7 @@ import size from "lodash/size";
 import concat from "lodash/concat";
 import isString from "lodash/isString";
 import isNumber from "lodash/isNumber";
+import isUndefined from "lodash/isUndefined";
 
 /**
  * if a string can be converted to numeric then it will return INTEGER
@@ -132,40 +133,12 @@ export const convertObjectDataToLabelData = (data) => {
     }, {})];
 }
 
-export const castToArray = (value) => {
-    if (!isArray(value)) {
-        return [toNumber(value)];
-    }
-    return value;
-}
-
-export const columnCountToIndexes = (size, rowCount, colCount) => {
-    // add some validation
-    const rowColSize = (toNumber(rowCount) + toNumber(colCount));
-    if (rowColSize > size) {
-        throw Error(`The sum of row and column sizes ${rowColSize}, exceed the dimensionality of the data ${size}`);
-    }
-
-    let colCounter = colCount - 1;
-    const cols = [];
-    _.forEach(_.times(colCount), () => {
-        cols.push(colCounter);
-        colCounter ++;
-    });
-
-    return {
-        rows: _.times(rowCount, (i) => i),
-        columns: cols
-    }
-}
-
 /**
  * converts arrays of primitive arrays to scenario data label array format
  * @param allArrays
  * @returns {(*)[]|*}
  */
 export const convertPrimitiveArraysToLabelArrays = (allArrays) => {
-
     if (isArray(allArrays[0])) {
         return map(allArrays, (arr) => convertPrimitiveArrayToLabelArray(arr));
     } else {
@@ -181,7 +154,7 @@ export const convertPrimitiveArraysToLabelArrays = (allArrays) => {
 export const convertPrimitiveArrayToLabelArray = (arr) => {
     // check first row only
     if (isString(arr[0]) || isNumber(arr[0])){
-        return  map(arr, (datum, index) => ({value:index, label:datum}));
+        return  map(arr, (datum, index) => ({value:index, label:toString(datum)}));
     }
     return arr;
 }
@@ -192,11 +165,18 @@ export const convertPrimitiveArrayToLabelArray = (arr) => {
  * @param columnLabels
  * @returns {{}|*}
  */
-export  const createLabelsConfig = (rowLabels, columnLabels) => {
+export const createLabelsConfig = (rowLabels, columnLabels) => {
 
     // if arrays contain primitive values convert to label array format
-    const convertedRowLabels = convertPrimitiveArraysToLabelArrays(rowLabels);
-    const convertedColumnLabels = convertPrimitiveArraysToLabelArrays(columnLabels);
+    let convertedRowLabels = [];
+    if (rowLabels) {
+        convertedRowLabels = convertPrimitiveArraysToLabelArrays(rowLabels);
+    }
+
+    let convertedColumnLabels = [];
+    if (columnLabels) {
+        convertedColumnLabels = convertPrimitiveArraysToLabelArrays(columnLabels);
+    }
 
     const labelArrays = concat(convertedRowLabels, convertedColumnLabels);
 

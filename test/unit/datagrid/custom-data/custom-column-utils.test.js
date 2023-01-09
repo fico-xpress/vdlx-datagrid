@@ -1,15 +1,17 @@
 import {
-    convertObjectColDefinitions,
+    calculatePivotDisplayCalcs,
+    convertObjectColDefinitions, countDimensions,
     createBasicColumnDefinition,
     createCustomColumnSortOrder,
-    createValueTypedColumnProperties,
+    createValueTypedColumnProperties, extractLabels,
     isLabelObjectValid,
     isObjectDefinitionColValid,
-    overrideCustomColumnAttributes,
+    overrideCustomColumnAttributes, pivotColumnSizeToIndex, pivotRowSizeToIndex,
     validateLabelsData,
-    validateObjectColDefinitions
+    validateObjectColDefinitions, validatePivotRowsAndColumns
 } from "../../../../src/js/datagrid/custom-data/custom-column-utils";
 import * as dataUtils from '../../../../src/js/datagrid/custom-data/custom-data-utils';
+import {PIVOT_TOTALS_DISPLAY_TYPES} from "../../../../src/js/constants";
 
 describe('custom column utils', () => {
 
@@ -167,7 +169,7 @@ describe('custom column utils', () => {
                 }).toThrow('Error for component vdlx-datagrid: Invalid column definition, data incompatible with column definition.');
             });
             it('throws error when passed array of arrays', () => {
-                const rowOne = [['a',1]];
+                const rowOne = [['a', 1]];
                 expect(() => {
                     validateObjectColDefinitions([{field: ''}, {field: 'f2'}], rowOne);
                 }).toThrow('Error for component vdlx-datagrid: Invalid column definition, data incompatible with column definition.');
@@ -195,6 +197,7 @@ describe('custom column utils', () => {
             });
         });
 
+        // todo this is skipped
         describe.skip('validateLabelsData', () => {
             it('returns true for single valid column', () => {
                 expect(validateLabelsData([{key: '1', value: 123, label: 'one'}])).toEqual(true);
@@ -372,5 +375,96 @@ describe('custom column utils', () => {
             ]);
         });
 
-    })
+    });
+
+    describe('pivot column functions', () => {
+        describe('pivotRowSizeToIndex', () => {
+            it('pivotRowSizeToIndex positive number', () => {
+                expect(pivotRowSizeToIndex(3)).toEqual([0, 1, 2]);
+            });
+
+            it('pivotRowSizeToIndex negative', () => {
+                expect(pivotRowSizeToIndex(-3)).toEqual([]);
+            });
+        });
+
+        describe('pivotColumnSizeToIndex', () => {
+            it('calculate position of single column', () => {
+                expect(pivotColumnSizeToIndex(3, 2, 1)).toEqual([2]);
+            });
+
+            it('calculate positions of 2 columns', () => {
+                expect(pivotColumnSizeToIndex(3, 1, 2)).toEqual([1, 2]);
+            });
+
+            it('calculate positions of 2 columns when total size exceedes row and column count', () => {
+                expect(pivotColumnSizeToIndex(10, 1, 2)).toEqual([1, 2]);
+            });
+
+            it('returns empty when no column count passed', () => {
+                expect(pivotColumnSizeToIndex(10, 1, 0)).toEqual([]);
+            });
+
+        });
+        describe('validatePivotRowsAndColumns', () => {
+            it('calculate position of single column', () => {
+                expect(validatePivotRowsAndColumns(3, 2, 5)).toEqual(true);
+            });
+            it('throws error when col and row count exceeds size', () => {
+                expect(() => {
+                    expect(validatePivotRowsAndColumns([0, 1, 2, 3, 4], [5, 6, 7, 8, 9], 2)).toEqual(true);
+                }).toThrow('Error for component vdlx-pivotgrid: The sum of row and column sizes 10, exceed the dimensionality of the data 2');
+            });
+        });
+
+        describe('calculatePivotDisplayCalcs', () => {
+            it('rows and columns = all', () => {
+                expect(calculatePivotDisplayCalcs(true, true)).toEqual(PIVOT_TOTALS_DISPLAY_TYPES.ALL);
+            });
+            it('rows and no columns = all', () => {
+                expect(calculatePivotDisplayCalcs(true, false)).toEqual(PIVOT_TOTALS_DISPLAY_TYPES.ROWS);
+            });
+            it('no rows and columns = all', () => {
+                expect(calculatePivotDisplayCalcs(false, true)).toEqual(PIVOT_TOTALS_DISPLAY_TYPES.COLS);
+            });
+            it('no rows and no columns = all', () => {
+                expect(calculatePivotDisplayCalcs(false, false)).toEqual(PIVOT_TOTALS_DISPLAY_TYPES.NONE);
+            });
+            it('return all as a default value', () => {
+                expect(calculatePivotDisplayCalcs()).toEqual(PIVOT_TOTALS_DISPLAY_TYPES.NONE);
+            });
+        });
+
+        describe('countDimensions', () => {
+            it('array of numbers', () => {
+                expect(countDimensions([1, 2])).toEqual(2);
+            });
+            it('array of strings', () => {
+                expect(countDimensions(['1', '2'])).toEqual(2);
+            });
+            it('returns number', () => {
+                expect(countDimensions(2)).toEqual(2);
+            });
+            it('throws error', () => {
+                expect(() => {
+                    expect(countDimensions('invalid value')).toEqual(true);
+                }).toThrow('Error for component vdlx-pivotgrid: invalid row-dimensions or column-dimensions.  Supported format: An array of column group headings ["pivot a", "pivot b"], or a number representing the number of dimensions.');
+            });
+        });
+
+        describe('extractLabels', () => {
+            it('array of strings', () => {
+                expect(extractLabels(['one', 'two'])).toEqual(['one', 'two']);
+            });
+            it('single string', () => {
+                expect(extractLabels('label')).toEqual('label');
+            });
+            it('number', () => {
+                expect(extractLabels(123)).toEqual([]);
+            });
+        });
+
+
+    });
+
 });

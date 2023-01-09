@@ -21,17 +21,10 @@
     limitations under the License.
  */
 
-import {
-    COLUMN_SORTERS,
-    CUSTOM_COLUMN_DEFINITION,
-    EDITOR_TYPES,
-    PIVOT_TOTALS_DISPLAY_TYPES,
-    ROW_DATA_TYPES
-} from "../../constants";
+import {COLUMN_SORTERS, EDITOR_TYPES, PIVOT_TOTALS_DISPLAY_TYPES} from "../../constants";
 import {Enums} from "../grid-filters";
-import {getDataType, getRowDataType} from "./custom-data-utils";
+import {getDataType} from "./custom-data-utils";
 import has from "lodash/has";
-import every from "lodash/every";
 import isUndefined from "lodash/isUndefined";
 import map from "lodash/map";
 import get from "lodash/get";
@@ -45,13 +38,11 @@ import intersection from "lodash/intersection";
 import isArray from "lodash/isArray";
 import toNumber from "lodash/toNumber";
 import toUpper from "lodash/toUpper";
-import toLower from "lodash/toLower";
 import times from "lodash/times";
 import isArrayLike from "lodash/isArrayLike";
-import isNumber from "lodash/isNumber";
+import isNaN from "lodash/isNaN";
 import size from "lodash/size";
 import slice from "lodash/slice";
-import includes from "lodash/includes";
 
 /**
  * create column properties that are data value type related
@@ -163,6 +154,7 @@ export const isLabelObjectValid = (labelObject) => {
     return has(labelObject, 'value') && !isUndefined(labelObject.value) && has(labelObject, 'label')
 }
 
+//todo - disabled the validation - come back to this
 // check have the value and label attrs
 export const validateLabelsData = (columnDefinitions) => {
     // if (!every(columnDefinitions, isLabelObjectValid)) {
@@ -211,32 +203,27 @@ export const createCustomColumnSortOrder = (columnDefinitions) => {
     return [{column: firstVisibleCol.field, dir: 'asc'}];
 }
 
-export const countColumns = (columns) => {
-    let total = 0;
-    const scanCols = (datum) => {
-        _.forEach(datum, (row) => {
-            if (_.has(row, 'columns')) {
-                scanCols(row.columns);
-            } else {
-                total++;
-            }
-        });
-    }
-    scanCols(columns, 0);
-    return total;
+/**
+ * starting from zero, create an array of ascending integers
+ * @param length of the created array
+ * @returns [number]
+ */
+export const pivotRowSizeToIndex = (length) => {
+    return times(length, (i) => i);
 }
 
-export const pivotRowSizeToIndex = (size, rowCount) => {
-    // todo - validation
-    return times(rowCount, (i) => i);
-}
-
+/**
+ * given a total size, a row and column count, calculate column index positions
+ * @param dimensionality
+ * @param rowCount
+ * @param columnCount
+ * @returns {*[]|*}
+ */
 export const pivotColumnSizeToIndex = (dimensionality, rowCount, columnCount) => {
     if (columnCount) {
         const indexArray = times(dimensionality);
         const sliceEnd = rowCount + columnCount;
-        const columnIndexes = slice(indexArray, rowCount, sliceEnd);
-        return columnIndexes;
+        return slice(indexArray, rowCount, sliceEnd);
     }
     return [];
 }
@@ -247,6 +234,7 @@ export const validatePivotRowsAndColumns = (rows, cols, size) => {
     if (rowColSize > size) {
         throw Error(`Error for component vdlx-pivotgrid: The sum of row and column sizes ${rowColSize}, exceed the dimensionality of the data ${size}`);
     }
+    return true;
 }
 
 
@@ -263,22 +251,23 @@ export const calculatePivotDisplayCalcs = (displayRowCal, displayColumnCalc) => 
         return PIVOT_TOTALS_DISPLAY_TYPES.COLS;
     } else if (!rowCalc && !columnCalc) {
         return PIVOT_TOTALS_DISPLAY_TYPES.NONE;
-    } else {
-        return PIVOT_TOTALS_DISPLAY_TYPES.ALL;
     }
 }
 
-export const createPivotIndexes = (dimensions) => {
-    let count;
-    if (isArrayLike(dimensions)) {
-        count = size(dimensions);
-    } else if (isNumber(toNumber(dimensions))) {
-        count = dimensions;
+/**
+ * the dimensions can either be a number, or an array
+ * @param dimensions
+ * @returns {*}
+ */
+export const countDimensions = (dimensions) => {
+    if (isArray(dimensions)) {
+        return size(dimensions);
+    } else if (!isNaN(toNumber(dimensions))) {
+        return dimensions;
     } else {
-        // throw error
-        debugger
+        throw Error('Error for component vdlx-pivotgrid: invalid row-dimensions or column-dimensions.  Supported format: An array of column group headings ' +
+            '["pivot a", "pivot b"], or a number representing the number of dimensions.');
     }
-    return count;
 }
 
 export const extractLabels = (dimensions) => {
