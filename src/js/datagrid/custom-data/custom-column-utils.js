@@ -43,6 +43,9 @@ import isArrayLike from "lodash/isArrayLike";
 import isNaN from "lodash/isNaN";
 import size from "lodash/size";
 import slice from "lodash/slice";
+import uniq from "lodash/uniq";
+import concat from "lodash/concat";
+import forEach from "lodash/forEach";
 
 /**
  * create column properties that are data value type related
@@ -228,12 +231,19 @@ export const pivotColumnSizeToIndex = (dimensionality, rowCount, columnCount) =>
     return [];
 }
 
-/// todo - extend to validate positions?
-export const validatePivotRowsAndColumns = (rows, cols, size) => {
-    const rowColSize = (rows.length + cols.length);
-    if (rowColSize > size) {
-        throw Error(`Error for component vdlx-pivotgrid: The sum of row and column sizes ${rowColSize}, exceed the dimensionality of the data ${size}`);
+
+export const validatePivotRowsAndColumns = (rows, cols, dimensionality) => {
+    const uniqueValues = uniq(concat(rows, cols));
+    const rowColSize = size(uniqueValues);
+    // compare against length of unique values in case rows and cols share the same vals
+    if (rowColSize > dimensionality) {
+        throw Error(`Error for component vdlx-pivotgrid: The sum of row and column sizes ${rowColSize}, exceeds the dimensionality of the data ${dimensionality}`);
     }
+    forEach(uniqueValues, (pos) => {
+        if (pos > dimensionality) {
+            throw Error(`Error for component vdlx-pivotgrid: The row or column position ${pos} must not exceed the dimensionality of the data ${dimensionality}`);
+        }
+    })
     return true;
 }
 
@@ -275,4 +285,17 @@ export const extractLabels = (dimensions) => {
         return dimensions;
     }
     return [];
+}
+
+export const convertAllToNumber = (arr, dimensionality) => {
+    const asNumbers = map(arr, (val) => {
+        const num = toNumber(val);
+        if (isNaN(num)) {
+            throw Error('Error for component vdlx-pivotgrid: invalid row-set-position or column-set-position be either a number, or an array of numbers.');
+        } else {
+            return num;
+        }
+
+    });
+    return asNumbers;
 }
