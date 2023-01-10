@@ -410,10 +410,23 @@ describe('custom column utils', () => {
             it('calculate position of single column', () => {
                 expect(validatePivotRowsAndColumns(3, 2, 5)).toEqual(true);
             });
+            it('ignores duplicate vals', () => {
+                expect(validatePivotRowsAndColumns([0,1,2], [0,1,2], 5)).toEqual(true);
+            });
             it('throws error when col and row count exceeds size', () => {
                 expect(() => {
                     expect(validatePivotRowsAndColumns([0, 1, 2, 3, 4], [5, 6, 7, 8, 9], 2)).toEqual(true);
-                }).toThrow('Error for component vdlx-pivotgrid: The sum of row and column sizes 10, exceed the dimensionality of the data 2');
+                }).toThrow('Error for component vdlx-pivotgrid: The sum of row and column sizes 10, exceeds the dimensionality of the data 2');
+            });
+            it('throws error when row value exceeds size', () => {
+                expect(() => {
+                    expect(validatePivotRowsAndColumns([10], [0,2,3], 5)).toEqual(true);
+                }).toThrow('Error for component vdlx-pivotgrid: The row or column position 10 must not exceed the dimensionality of the data 5');
+            });
+            it('throws error when colum value exceeds size', () => {
+                expect(() => {
+                    expect(validatePivotRowsAndColumns([0,1,2], [10], 5)).toEqual(true);
+                }).toThrow('Error for component vdlx-pivotgrid: The row or column position 10 must not exceed the dimensionality of the data 5');
             });
         });
 

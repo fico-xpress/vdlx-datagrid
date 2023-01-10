@@ -24,6 +24,7 @@ import {
     convertObjectColDefinitions,
     createBasicColumnDefinition,
     countDimensions,
+    convertAllToNumber,
     extractLabels,
     pivotColumnSizeToIndex,
     pivotRowSizeToIndex,
@@ -31,7 +32,11 @@ import {
     validateObjectColDefinitions,
     validatePivotRowsAndColumns, calculatePivotDisplayCalcs
 } from './custom-column-utils';
-import {convertCustomDataToObjectData, convertObjectDataToLabelData, createLabelsConfig} from './custom-data-utils';
+import {
+    convertCustomDataToObjectData,
+    convertObjectDataToLabelData,
+    createLabelsConfig
+} from './custom-data-utils';
 import {
     checkboxFilterFunc,
     FILTER_PLACEHOLDER_TEXT,
@@ -49,6 +54,7 @@ import map from "lodash/map";
 import head from "lodash/head";
 import isUndefined from "lodash/isUndefined";
 import concat from "lodash/concat";
+import isArray from "lodash/isArray";
 
 /**
  * creates config object containing data and columns
@@ -84,12 +90,13 @@ export const createCustomConfig = (gridOptions) => {
         case CUSTOM_COLUMN_DEFINITION.PIVOT:
             // take the first row of the data and count the dimensions
             const dimensionality = data[0].key ? data[0].key.length : 0;
-            const rowPositions = gridOptions.pivotRowPositions;
+
+            let rowPositions = gridOptions.pivotRowPositions;
             const rowDimensions = gridOptions.pivotRowDimensions;
             const rowLabels = gridOptions.pivotRowTitles;
             const displayPivotRowCalc = gridOptions.displayPivotRowCalc;
 
-            const columnPositions = gridOptions.pivotColumnPositions;
+            let columnPositions = gridOptions.pivotColumnPositions;
             const columnDimensions = gridOptions.pivotColumnDimensions;
             const columnLabels = gridOptions.pivotColumnTitles;
             const displayPivotColumnCalc = gridOptions.displayPivotColumnCalc;
@@ -98,7 +105,10 @@ export const createCustomConfig = (gridOptions) => {
 
             let rowsIndexes;
             if (rowPositions) {
-                rowsIndexes = rowPositions;
+                if (!isArray(rowPositions)) {
+                    rowPositions = [rowPositions];
+                }
+                rowsIndexes = convertAllToNumber(rowPositions);
             } else {
                 const rowCount = countDimensions(rowDimensions);
                 rowsIndexes = pivotRowSizeToIndex(rowCount);
@@ -106,7 +116,10 @@ export const createCustomConfig = (gridOptions) => {
 
             let columnIndexes;
             if (columnPositions) {
-                columnIndexes = rowPositions;
+                if (!isArray(columnPositions)) {
+                    columnPositions = [columnPositions];
+                }
+                columnIndexes = convertAllToNumber(columnPositions);
             } else {
                 const columnCount = countDimensions(columnDimensions);
                 columnIndexes = pivotColumnSizeToIndex(dimensionality, size(rowsIndexes), columnCount);
@@ -120,7 +133,7 @@ export const createCustomConfig = (gridOptions) => {
                 aggregationType: 'sum',
                 enableTotals: enableTotals
             };
-            // todo - does it need both row AND column labels
+
             if (!isUndefined(rowLabels) || !isUndefined(columnLabels)) {
                 const labelConfig = createLabelsConfig(rowLabels, columnLabels);
                 if (size(labelConfig)) {
@@ -132,7 +145,6 @@ export const createCustomConfig = (gridOptions) => {
             if (size(pivotHeaders)) {
                 pivotConfig.header = pivotHeaders;
             }
-
             const pivotData = createPivotConfig(data, pivotConfig);
             datagridData = pivotData.data;
             columnDefinitions = pivotData.cols;
