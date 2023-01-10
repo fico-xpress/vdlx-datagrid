@@ -47,11 +47,13 @@ const constValues = {totals: "__totals"}
 const cssInternals = {pivotHeader: "pivot-row-header"}
 
 function isValue(a) {
-    return a!==undefined && a!==null
+    return a !== undefined && a !== null
 }
+
 function isNumber(a) {
     return isValue(a) && !isNaN(a)
 }
+
 function _countIfNotEmpty(a) {
     return isNumber(a) ? 1 : 0
 }
@@ -62,10 +64,10 @@ function _countIfNotEmpty(a) {
  * @type {{min: (function(*, *): *), max: (function(*, *): *), count: (function(*, *): *), sum: (function(*, *): *)}}
  */
 export const totalsFun = {
-    "sum":   (a, b) => (isNumber(b)) ? (isNumber(a)) ? a + b : b : a,
-    "min":   (a, b) => (isNumber(b)) ? (isNumber(a)) ? ((a <= b) ? a : b) : b : a,
-    "max":   (a, b) => (isNumber(b)) ? (isNumber(a)) ? ((a >= b) ? a : b) : b : a,
-    "count": (a, b) => (isValue(b))  ? isNumber(a)   ? a + _countIfNotEmpty(b) : _countIfNotEmpty(b) : a
+    "sum": (a, b) => (isNumber(b)) ? (isNumber(a)) ? a + b : b : a,
+    "min": (a, b) => (isNumber(b)) ? (isNumber(a)) ? ((a <= b) ? a : b) : b : a,
+    "max": (a, b) => (isNumber(b)) ? (isNumber(a)) ? ((a >= b) ? a : b) : b : a,
+    "count": (a, b) => (isValue(b)) ? isNumber(a) ? a + _countIfNotEmpty(b) : _countIfNotEmpty(b) : a
 }
 
 const OptionEnums = {
@@ -126,8 +128,8 @@ class Options {
          * @type {(string)[]} */
         this.header = []
 
-        if (o!==undefined) {
-            Object.assign(this,o)
+        if (o !== undefined) {
+            Object.assign(this, o)
         }
     }
 }
@@ -139,6 +141,7 @@ export class PivotContext {
         this.colDef = []
     }
 }
+
 /**
  * This class represent an actual column data and is associated to a column in the
  * dataset.
@@ -189,8 +192,8 @@ class ColGroupDefinition {
  * @param e
  * @returns {*}
  */
-function getColumnName(ar,e) {
-    if (ar !== undefined ) {
+function getColumnName(ar, e) {
+    if (ar !== undefined) {
         if (ar[e] !== undefined) {
             return ar[e]
         }
@@ -206,7 +209,7 @@ function getColumnName(ar,e) {
  */
 function getSlice(ar, e) {
     let ret = []
-    ar.forEach( (i) => {
+    ar.forEach((i) => {
         ret.push(e.key[i])
     })
     return ret;
@@ -219,7 +222,7 @@ function getSlice(ar, e) {
  * @returns {{value: (numeric|string)[], label: string}} The string label if found or values[i] if not found
  */
 export function getLabelByProperty(labels, keyVal) {
-    if (labels!==undefined && labels[keyVal]!==undefined) {
+    if (labels !== undefined && labels[keyVal] !== undefined) {
         return labels[keyVal]
     }
     return keyVal
@@ -263,8 +266,8 @@ export class ColHashMap {
      */
     get(k) {
         let ar = this.buckets[k]
-        if (ar !== undefined ) {
-            let e = ar.find( v => v.key.every((e,i) => e === k[i]) )
+        if (ar !== undefined) {
+            let e = ar.find(v => v.key.every((e, i) => e === k[i]))
             if (e !== undefined) {
                 return e
             }
@@ -301,12 +304,12 @@ function _createColDef(data, config) {
     const pivotContext = new PivotContext();
 
     // Collect the key values
-    data.forEach( (e,i) => {
-            let rIds = getSlice(rows,e)
-            pivotContext.rowMap.add(rIds)
+    data.forEach((e, i) => {
+        let rIds = getSlice(rows, e)
+        pivotContext.rowMap.add(rIds)
 
-            let cIds = getSlice(cols,e)
-            pivotContext.colMap.add(cIds)
+        let cIds = getSlice(cols, e)
+        pivotContext.colMap.add(cIds)
     })
 
 
@@ -314,15 +317,15 @@ function _createColDef(data, config) {
      * Create the column definition for the columns key (group) and for the rows key (simple)
      */
     let lastCol = pivotContext.colDef
-    cols.forEach( (e,lvl) => {
-        let newCol = new ColGroupDefinition(getColumnName(header,e), lvl)
+    cols.forEach((e, lvl) => {
+        let newCol = new ColGroupDefinition(getColumnName(header, e), lvl)
         lastCol.push(newCol)
         lastCol = newCol.columns;
     })
 
-    rows.forEach( (e,field) =>
+    rows.forEach((e, field) =>
         // first time we hit this value for the column, let's store it
-        lastCol.push( Object.assign( new ColSimpleDefinition(getColumnName(header,e), field), { cssClass: cssInternals.pivotHeader } ) )
+        lastCol.push(Object.assign(new ColSimpleDefinition(getColumnName(header, e), field), {cssClass: cssInternals.pivotHeader}))
     )
 
     let colMap = {}
@@ -331,23 +334,23 @@ function _createColDef(data, config) {
      * Extend the column group for columns keys with new column for each possible value of the column keys
      */
     Object.values(pivotContext.colMap.buckets).forEach((e) => {
-        e.forEach( (v) => {
+        e.forEach((v) => {
             let key = v.key
             let idx = v.idx
             let pivotDataColId = idx + nRowKey
             let r = pivotContext.colDef
             let m = colMap
             let nColKey = key.length - 1
-            key.forEach((cId,lvl) => {
+            key.forEach((cId, lvl) => {
                 if (m[cId] === undefined) {
                     m[cId] = {colId: r.length, next: {}}
-                    const myTitle = getLabelByProperty(labels[cols[lvl]],cId)
+                    const myTitle = getLabelByProperty(labels[cols[lvl]], cId)
                     if (lvl < nColKey) {
-                        let newCol = new ColGroupDefinition(myTitle,lvl)
+                        let newCol = new ColGroupDefinition(myTitle, lvl)
                         r.push(newCol)
                         r = newCol.columns
                     } else {
-                        let newCol = new ColSimpleDefinition(myTitle,pivotDataColId)
+                        let newCol = new ColSimpleDefinition(myTitle, pivotDataColId)
                         r.push(newCol)
                         r = undefined
                     }
@@ -439,8 +442,8 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
         pivotData.filter(row => row[constValues.totals] === undefined)
             .forEach(row => {
                 totals.row = undefined
-                for(let k in row) {
-                    if (k>=nRowKey) {
+                for (let k in row) {
+                    if (k >= nRowKey) {
                         fTotal.forEach((f) => f(row[k], k))
                     }
                 }
@@ -481,15 +484,15 @@ function _createObject(data, pivotOptions, pivotContext) {
     const colMap = pivotContext.colMap
 
     let pivotData = []
-    data.forEach( (e,i) => {
-        let rowKeys = getSlice(rows,e)
-        let colKeys = getSlice(cols,e)
+    data.forEach((e, i) => {
+        let rowKeys = getSlice(rows, e)
+        let colKeys = getSlice(cols, e)
         let rId = rowMap.get(rowKeys).idx
         let cId = colMap.get(colKeys).idx + nRowKey
         let value = e.value;
         if (pivotData[rId] === undefined) {
             pivotData[rId] = {}
-            rowKeys.forEach( (v,i) => {
+            rowKeys.forEach((v, i) => {
                 pivotData[rId][i] = getLabelByProperty(labels[i], v)
             })
         }
@@ -507,7 +510,7 @@ function _createObject(data, pivotOptions, pivotContext) {
 
 /** Array based representation of the pivot data. Kept here as reference but
  * not compatible with tabulator.js internal data representation.
-function _createArray(data) {
+ function _createArray(data) {
     const nRowKey =
     // now we are ready to populate the table
     let pivotData = new Array(pivotContext.rowMap.keySet.length);
@@ -556,8 +559,8 @@ function _sanitizeConfig(config) {
  */
 const run = (data, config) => {
     let sanitizedConfig = _sanitizeConfig(config);
-    let pivotContext = _createColDef(data,sanitizedConfig)
-    let pivotData  = _createObject(data,sanitizedConfig,pivotContext)
+    let pivotContext = _createColDef(data, sanitizedConfig)
+    let pivotData = _createObject(data, sanitizedConfig, pivotContext)
 
     return {
         cols: pivotContext.colDef,
