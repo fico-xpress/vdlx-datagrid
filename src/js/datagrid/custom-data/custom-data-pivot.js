@@ -42,20 +42,20 @@
  * Some constants used internally and in tabulator
  * @type {{totals: string}}
  */
-const constValues = {totals: "__totals"}
+const constValues = {totals: '__totals'}
 
-const cssInternals = {pivotHeader: "pivot-row-header"}
+const cssInternals = {pivotHeader: 'pivot-row-header'}
 
 function isValue(a) {
-    return a !== undefined && a !== null
+    return a !== undefined && a !== null;
 }
 
 function isNumber(a) {
-    return isValue(a) && !isNaN(a)
+    return isValue(a) && !isNaN(a);
 }
 
 function _countIfNotEmpty(a) {
-    return isNumber(a) ? 1 : 0
+    return isNumber(a) ? 1 : 0;
 }
 
 /**
@@ -64,10 +64,10 @@ function _countIfNotEmpty(a) {
  * @type {{min: (function(*, *): *), max: (function(*, *): *), count: (function(*, *): *), sum: (function(*, *): *)}}
  */
 export const totalsFun = {
-    "sum": (a, b) => (isNumber(b)) ? (isNumber(a)) ? a + b : b : a,
-    "min": (a, b) => (isNumber(b)) ? (isNumber(a)) ? ((a <= b) ? a : b) : b : a,
-    "max": (a, b) => (isNumber(b)) ? (isNumber(a)) ? ((a >= b) ? a : b) : b : a,
-    "count": (a, b) => (isValue(b)) ? isNumber(a) ? a + _countIfNotEmpty(b) : _countIfNotEmpty(b) : a
+    'sum': (a, b) => (isNumber(b)) ? (isNumber(a)) ? a + b : b : a,
+    'min': (a, b) => (isNumber(b)) ? (isNumber(a)) ? ((a <= b) ? a : b) : b : a,
+    'max': (a, b) => (isNumber(b)) ? (isNumber(a)) ? ((a >= b) ? a : b) : b : a,
+    'count': (a, b) => (isValue(b)) ? isNumber(a) ? a + _countIfNotEmpty(b) : _countIfNotEmpty(b) : a
 }
 
 const OptionEnums = {
@@ -101,44 +101,44 @@ class Options {
          * totals.
          * @type {string}
          */
-        this.aggregationType = OptionEnums.AggregationTypes.Count
+        this.aggregationType = OptionEnums.AggregationTypes.Count;
 
         /**
          * The aggregation function used to calculate totals
          * See OptionEnums.EnableTotals for available options
          */
-        this.enableTotals = OptionEnums.EnableTotals.All
+        this.enableTotals = OptionEnums.EnableTotals.All;
 
         /**
          * The list of columns from the input data table that are used as row keys.
          * @type {(numeric)[]} */
-        this.rows = []
+        this.rows = [];
 
         /**
          * The list of columns from the input data table that are used column keys.
          * @type {(numeric)[]} */
-        this.cols = []
+        this.cols = [];
 
-        this.labels = []
+        this.labels = [];
 
         /**
          * An array containing header names. Index of this array maps to the
          * column index of the original data set. If header name is undefined
          * then a default name based on the column index is automatically generated.
          * @type {(string)[]} */
-        this.header = []
+        this.header = [];
 
         if (o !== undefined) {
-            Object.assign(this, o)
+            Object.assign(this, o);
         }
     }
 }
 
 export class PivotContext {
     constructor() {
-        this.rowMap = new ColHashMap()
-        this.colMap = new ColHashMap()
-        this.colDef = []
+        this.rowMap = new ColHashMap();
+        this.colMap = new ColHashMap();
+        this.colDef = [];
     }
 }
 
@@ -154,7 +154,7 @@ export class PivotContext {
  * with object attributes representing a column name _and_ a tabulator attribute.
  *
 
- * The "number as string" format is a constraint of vdlx-data-grid OR tabulator.js (to be
+ * The 'number as string' format is a constraint of vdlx-data-grid OR tabulator.js (to be
  * determined). While this format might not be the best from a memory consumption perspective
  * (storing object VS storing array values) it might offer faster rendering time.
  *
@@ -162,14 +162,14 @@ export class PivotContext {
 class ColSimpleDefinition {
     constructor(title, field) {
         // Column name
-        this.title = title
+        this.title = title;
         // Column index in the original data set
-        // Tabulator expects the field to be a string because of "nested field" feature
-        this.field = field.toString()
+        // Tabulator expects the field to be a string because of 'nested field' feature
+        this.field = field.toString();
         // Aggregation function used for bottom total
-        // this.bottomCalc = ""
+        // this.bottomCalc = ''
         // A CSS class to use for the labels
-        // this.cssClass = ""
+        // this.cssClass = ''
     }
 }
 
@@ -180,9 +180,9 @@ class ColSimpleDefinition {
  */
 class ColGroupDefinition {
     constructor(title, level) {
-        this.title = title
-        this.level = level
-        this.columns = []
+        this.title = title;
+        this.level = level;
+        this.columns = [];
     }
 }
 
@@ -195,7 +195,7 @@ class ColGroupDefinition {
 function getColumnName(ar, e) {
     if (ar !== undefined) {
         if (ar[e] !== undefined) {
-            return ar[e]
+            return ar[e];
         }
     }
     return ''
@@ -210,7 +210,7 @@ function getColumnName(ar, e) {
 function getSlice(ar, e) {
     let ret = []
     ar.forEach((i) => {
-        ret.push(e.key[i])
+        ret.push(e.key[i]);
     })
     return ret;
 }
@@ -223,21 +223,21 @@ function getSlice(ar, e) {
  */
 export function getLabelByProperty(labels, keyVal) {
     if (labels !== undefined && labels[keyVal] !== undefined) {
-        return labels[keyVal]
+        return labels[keyVal];
     }
-    return keyVal
+    return keyVal;
 }
 
 /**
  * A unidirectional hash map with bucket. The key is an array of simple types
- * ([ 1,"x" ]) and the value is a numerical value representing the position
+ * ([ 1,'x' ]) and the value is a numerical value representing the position
  * in a collection
  */
 export class ColHashMap {
 
     constructor() {
-        this.buckets = {}
-        this.length = 0
+        this.buckets = {};
+        this.length = 0;
     }
 
     /**
@@ -247,15 +247,15 @@ export class ColHashMap {
     add(k) {
         if (this.buckets[k] === undefined) {
             // First time the entry is found no possible collision
-            this.buckets[k] = [{key: k, idx: this.length}]
-            this.length++
+            this.buckets[k] = [{key: k, idx: this.length}];
+            this.length++;
         } else if (this.get(k) === undefined) {
             // The entry in the hashmap already exists. This is possible when
-            // there are hash collision (ex: [1,1] and [ "1,1" ] are converted to
-            // "1,1" by javascript.
+            // there are hash collision (ex: [1,1] and [ '1,1' ] are converted to
+            // '1,1' by javascript.
             // We simply add the new entry to the bucket.
-            this.buckets[k].push({key: k, idx: this.length})
-            this.length++
+            this.buckets[k].push({key: k, idx: this.length});
+            this.length++;
         }
     }
 
@@ -265,14 +265,14 @@ export class ColHashMap {
      * @return The object is one with the same key exist, undefined otherwise
      */
     get(k) {
-        let ar = this.buckets[k]
+        let ar = this.buckets[k];
         if (ar !== undefined) {
-            let e = ar.find(v => v.key.every((e, i) => e === k[i]))
+            let e = ar.find(v => v.key.every((e, i) => e === k[i]));
             if (e !== undefined) {
-                return e
+                return e;
             }
         }
-        return undefined
+        return undefined;
     }
 }
 
@@ -284,7 +284,7 @@ export class ColHashMap {
  * @returns {boolean}
  */
 function enabledBuiltinTotals(config) {
-    return config.enableTotals !== '' && config.aggregationType !== ''
+    return config.enableTotals !== '' && config.aggregationType !== '';
 }
 
 /**
@@ -296,8 +296,8 @@ function enabledBuiltinTotals(config) {
  * @private
  */
 function _createColDef(data, config) {
-    const rows = config.rows
-    const cols = config.cols
+    const rows = config.rows;
+    const cols = config.cols;
     const header = config.header;
     const labels = config.labels;
     const nRowKey = config.rows.length;
@@ -305,21 +305,21 @@ function _createColDef(data, config) {
 
     // Collect the key values
     data.forEach((e, i) => {
-        let rIds = getSlice(rows, e)
-        pivotContext.rowMap.add(rIds)
+        let rIds = getSlice(rows, e);
+        pivotContext.rowMap.add(rIds);
 
-        let cIds = getSlice(cols, e)
-        pivotContext.colMap.add(cIds)
+        let cIds = getSlice(cols, e);
+        pivotContext.colMap.add(cIds);
     })
 
 
     /**
      * Create the column definition for the columns key (group) and for the rows key (simple)
      */
-    let lastCol = pivotContext.colDef
+    let lastCol = pivotContext.colDef;
     cols.forEach((e, lvl) => {
-        let newCol = new ColGroupDefinition(getColumnName(header, e), lvl)
-        lastCol.push(newCol)
+        let newCol = new ColGroupDefinition(getColumnName(header, e), lvl);
+        lastCol.push(newCol);
         lastCol = newCol.columns;
     })
 
@@ -335,43 +335,43 @@ function _createColDef(data, config) {
      */
     Object.values(pivotContext.colMap.buckets).forEach((e) => {
         e.forEach((v) => {
-            let key = v.key
-            let idx = v.idx
-            let pivotDataColId = idx + nRowKey
-            let r = pivotContext.colDef
-            let m = colMap
-            let nColKey = key.length - 1
+            let key = v.key;
+            let idx = v.idx;
+            let pivotDataColId = idx + nRowKey;
+            let r = pivotContext.colDef;
+            let m = colMap;
+            let nColKey = key.length - 1;
             key.forEach((cId, lvl) => {
                 if (m[cId] === undefined) {
-                    m[cId] = {colId: r.length, next: {}}
-                    const myTitle = getLabelByProperty(labels[cols[lvl]], cId)
+                    m[cId] = {colId: r.length, next: {}};
+                    const myTitle = getLabelByProperty(labels[cols[lvl]], cId);
                     if (lvl < nColKey) {
-                        let newCol = new ColGroupDefinition(myTitle, lvl)
-                        r.push(newCol)
-                        r = newCol.columns
+                        let newCol = new ColGroupDefinition(myTitle, lvl);
+                        r.push(newCol);
+                        r = newCol.columns;
                     } else {
                         let newCol = new ColSimpleDefinition(myTitle, pivotDataColId)
-                        r.push(newCol)
-                        r = undefined
+                        r.push(newCol);
+                        r = undefined;
                     }
                 } else {
                     // lookup child columns
-                    r = r[m[cId].colId].columns
+                    r = r[m[cId].colId].columns;
                 }
-                m = m[cId].next
+                m = m[cId].next;
             })
         })
     })
 
     // Add the column definition for row totals
-    const enableAllTotals = (config.enableTotals == OptionEnums.EnableTotals.All)
-    const enableRowTotals = enableAllTotals || (config.enableTotals == OptionEnums.EnableTotals.Rows)
+    const enableAllTotals = (config.enableTotals == OptionEnums.EnableTotals.All);
+    const enableRowTotals = enableAllTotals || (config.enableTotals == OptionEnums.EnableTotals.Rows);
 
     if (enabledBuiltinTotals(config)) {
         if (enableAllTotals || enableRowTotals) {
             let newCol = new ColSimpleDefinition(`Totals (${config.aggregationType})`, constValues.totals);
-            newCol.cssClass = "tabulator-frozen"
-            pivotContext.colDef.push(newCol)
+            newCol.cssClass = 'tabulator-frozen';
+            pivotContext.colDef.push(newCol);
         }
     }
 
@@ -394,71 +394,73 @@ function _createColDef(data, config) {
  * passed as argument.
  *
  * The pivotData argument has the following structure:
- *   [ {"0": "a", "1": "x", "2": 1, "3": 2, "4": 2, "5": 2},
- *     {"0": "b", "1": "x", "2": 3},
- *     {"0": "b", "1": "y",                         "5": 4} ]
+ *   [ {'0': 'a', '1': 'x', '2': 1, '3': 2, '4': 2, '5': 2},
+ *     {'0': 'b', '1': 'x', '2': 3},
+ *     {'0': 'b', '1': 'y',                         '5': 4} ]
  *
  * @param { {}[] } pivotData
  * @param {Options} pivotOptions
  * @param {PivotContext} pivotContext
  */
 export function computeTotals(pivotData, pivotOptions, pivotContext) {
-    const rows = pivotOptions.rows
-    const nRowKey = rows.length
-    const cols = pivotOptions.cols
-    const nCols = cols.length + nRowKey
+    const rows = pivotOptions.rows;
+    const nRowKey = rows.length;
+    const cols = pivotOptions.cols;
+    const nCols = cols.length + nRowKey;
     const totalFun = totalsFun[pivotOptions.aggregationType];
-    let columnTotals = {}
-    let totals = {row: undefined, totalOf: undefined}
-    let hasColTotals = false
-    let hasRowTotals = false
-    let fTotal = []
+    let columnTotals = {};
+    let totals = {row: undefined, totalOf: undefined};
+    let hasColTotals = false;
+    let hasRowTotals = false;
+    let fTotal = [];
     /**
      * Verify arguments are valid
      */
     /**
      * Prepare aggregation function
      */
-    const enableAllTotals = (pivotOptions.enableTotals === OptionEnums.EnableTotals.All)
-    const enableRowTotals = (enableAllTotals || pivotOptions.enableTotals === OptionEnums.EnableTotals.Rows)
-    const enableColTotals = (enableAllTotals || pivotOptions.enableTotals === OptionEnums.EnableTotals.Cols)
+    const enableAllTotals = (pivotOptions.enableTotals === OptionEnums.EnableTotals.All);
+    const enableRowTotals = (enableAllTotals || pivotOptions.enableTotals === OptionEnums.EnableTotals.Rows);
+    const enableColTotals = (enableAllTotals || pivotOptions.enableTotals === OptionEnums.EnableTotals.Cols);
     if (enableRowTotals) {
         // Add row totals
-        hasRowTotals = true
-        fTotal.push((v) => totals.row = totalFun(totals.row, v))
+        hasRowTotals = true;
+        fTotal.push((v) => totals.row = totalFun(totals.row, v));
     }
     if (enableColTotals) {
         // Add column totals
-        hasColTotals = true
-        fTotal.push((v, i) => columnTotals[i] = totalFun(columnTotals[i], v))
+        hasColTotals = true;
+        fTotal.push((v, i) => columnTotals[i] = totalFun(columnTotals[i], v));
     }
     if (enableAllTotals) {
         // if row and column totals are enabled then we compute rowTotal of totals
-        fTotal.push((v) => totals.totalOf = totalFun(totals.totalOf, v))
+        fTotal.push((v) => totals.totalOf = totalFun(totals.totalOf, v));
     }
 
     if (hasRowTotals || hasColTotals) {
-        for (let i = nRowKey; i < nCols; ++i) columnTotals[i] = undefined
+        for (let i = nRowKey; i < nCols; ++i) columnTotals[i] = undefined;
         pivotData.filter(row => row[constValues.totals] === undefined)
             .forEach(row => {
-                totals.row = undefined
+                totals.row = undefined;
                 for (let k in row) {
                     if (k >= nRowKey) {
-                        fTotal.forEach((f) => f(row[k], k))
+                        fTotal.forEach((f) => f(row[k], k));
                     }
                 }
-                if (hasRowTotals)
-                    row[constValues.totals] = totals.row // totals.row
+                if (hasRowTotals) {
+                    row[constValues.totals] = totals.row; // totals.row
+                }
+
             })
         if (hasColTotals) {
-            const colDef = (pivotContext !== undefined) ? pivotContext.colDef : undefined
+            const colDef = (pivotContext !== undefined) ? pivotContext.colDef : undefined;
             if (colDef !== undefined && colDef[colDef.length - 1] !== undefined && colDef[colDef.length - 1].title !== undefined)
-                columnTotals[nRowKey - 1] = colDef[colDef.length - 1].title
+                columnTotals[nRowKey - 1] = colDef[colDef.length - 1].title;
             if (hasRowTotals) {
-                columnTotals[constValues.totals] = totals.totalOf
+                columnTotals[constValues.totals] = totals.totalOf;
             }
-            columnTotals.cssClass = "tabulator-calcs-bottom"
-            pivotData.push(columnTotals)
+            columnTotals.cssClass = 'tabulator-calcs-bottom';
+            pivotData.push(columnTotals);
         }
     }
 }
@@ -476,27 +478,27 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
  * @private
  */
 function _createObject(data, pivotOptions, pivotContext) {
-    const rows = pivotOptions.rows
-    const cols = pivotOptions.cols
-    const nRowKey = rows.length
-    const labels = pivotOptions.labels
-    const rowMap = pivotContext.rowMap
-    const colMap = pivotContext.colMap
+    const rows = pivotOptions.rows;
+    const cols = pivotOptions.cols;
+    const nRowKey = rows.length;
+    const labels = pivotOptions.labels;
+    const rowMap = pivotContext.rowMap;
+    const colMap = pivotContext.colMap;
 
     let pivotData = []
     data.forEach((e, i) => {
-        let rowKeys = getSlice(rows, e)
-        let colKeys = getSlice(cols, e)
-        let rId = rowMap.get(rowKeys).idx
-        let cId = colMap.get(colKeys).idx + nRowKey
+        let rowKeys = getSlice(rows, e);
+        let colKeys = getSlice(cols, e);
+        let rId = rowMap.get(rowKeys).idx;
+        let cId = colMap.get(colKeys).idx + nRowKey;
         let value = e.value;
         if (pivotData[rId] === undefined) {
-            pivotData[rId] = {}
+            pivotData[rId] = {};
             rowKeys.forEach((v, i) => {
-                pivotData[rId][i] = getLabelByProperty(labels[i], v)
+                pivotData[rId][i] = getLabelByProperty(labels[i], v);
             })
         }
-        pivotData[rId][cId] = value
+        pivotData[rId][cId] = value;
     })
 
     // if totals are required then we compute them. We don't override totals
@@ -505,7 +507,7 @@ function _createObject(data, pivotOptions, pivotContext) {
         computeTotals(pivotData, pivotOptions, pivotContext);
     }
 
-    return pivotData
+    return pivotData;
 }
 
 /** Array based representation of the pivot data. Kept here as reference but
@@ -545,9 +547,9 @@ function _sanitizeConfig(config) {
     // Set default options
     if (config) {
         // override default fields. Note this is a shallow copy...
-        return Object.assign(new Options(), config)
+        return Object.assign(new Options(), config);
     } else {
-        throw Error('Error for pivotDataModule: Configuration is unset.')
+        throw Error('Error for pivotDataModule: Configuration is unset.');
     }
 }
 
@@ -559,8 +561,8 @@ function _sanitizeConfig(config) {
  */
 const run = (data, config) => {
     let sanitizedConfig = _sanitizeConfig(config);
-    let pivotContext = _createColDef(data, sanitizedConfig)
-    let pivotData = _createObject(data, sanitizedConfig, pivotContext)
+    let pivotContext = _createColDef(data, sanitizedConfig);
+    let pivotData = _createObject(data, sanitizedConfig, pivotContext);
 
     return {
         cols: pivotContext.colDef,
