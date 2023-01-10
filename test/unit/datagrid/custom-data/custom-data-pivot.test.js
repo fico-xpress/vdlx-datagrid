@@ -367,7 +367,7 @@ describe('custom data pivot.js', function () {
                 config.header = undefined
                 const output = pivotDataModule.run(data, config)
                 const c = output.cols
-                const expHeader = [2,3,0,1,"c1","10","20","c2","10","20"]
+                const expHeader = ["","","","","c1","10","20","c2","10","20"]
                 const actualHeader = getHeaders(c)
                 expect(actualHeader).toEqual(expHeader)
             })
@@ -376,7 +376,7 @@ describe('custom data pivot.js', function () {
                 config.header = [undefined, "custom-header1", undefined, "custom-header2" ]
                 const output = pivotDataModule.run(data, config)
                 const c = output.cols
-                const expHeader = [2,"custom-header2",0,"custom-header1","c1","10","20","c2","10","20"]
+                const expHeader = ["","custom-header2","","custom-header1","c1","10","20","c2","10","20"]
                 const actualHeader = getHeaders(c)
                 expect(actualHeader).toEqual(expHeader)
             })

@@ -195,7 +195,7 @@ function getColumnName(ar,e) {
             return ar[e]
         }
     }
-    return e
+    return ''
 }
 
 /**
