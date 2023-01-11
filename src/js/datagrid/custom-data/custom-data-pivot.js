@@ -58,6 +58,41 @@ function _countIfNotEmpty(a) {
     return isNumber(a) ? 1 : 0;
 }
 
+const customSorterTotalsLast = (a, b, aRow, bRow, column, dir, sorterParams) => {
+    //a, b - the two values being compared
+    //aRow, bRow - the row components for the values being compared (useful if you need to access additional fields in the row data for the sort)
+    //column - the column component for the column being sorted
+    //dir - the direction of the sort ("asc" or "desc")
+    //sorterParams - sorterParams object from column definition array
+
+    const totalClassA = aRow.getData().cssClass;//aRow._row.data.cssClass;
+    const totalClassB = bRow.getData().cssClass;
+    const aMinusB = a - b;
+    console.log('--------------------------------------------');
+
+    console.log(`dir: ${dir}: a: ${a} - b: ${b} = ${aMinusB}`);
+
+    if (totalClassA || totalClassB) {
+        console.log(`totals row: returning NULL`);
+        return null;
+
+        //const aReturn = aMinusB * 100;
+        //console.log(`totals row: returning : ${aReturn}`);
+        // if (dir === 'desc') {
+        //     return Math.abs(aReturn);
+        // } else {
+        //     return aReturn;
+        // }
+
+    } else {
+        console.log(`ELSE: ${aMinusB}`);
+        return a - b; //you must return the difference between the two values
+    }
+
+
+}
+
+
 /**
  * The map of functions that can be used when calculating
  * aggregated values
@@ -170,6 +205,7 @@ class ColSimpleDefinition {
         // this.bottomCalc = ''
         // A CSS class to use for the labels
         // this.cssClass = ''
+        this.sorter = customSorterTotalsLast;
     }
 }
 
@@ -578,4 +614,3 @@ export const pivotDataModule = {
     Options: Options,
     OptionEnums: OptionEnums
 }
-
