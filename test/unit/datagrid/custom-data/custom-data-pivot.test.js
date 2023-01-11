@@ -148,14 +148,14 @@ describe('custom data pivot.js', function () {
             'count-Rows': [4,1,1],
         }
         const expColTotals = {
-            'min-All':  [1,2,2,2,1],
-            'min-Cols': [1,2,2,2],
-            'sum-All':  [4,2,2,6,14],
-            'sum-Cols': [4,2,2,6],
-            'max-All':  [3,2,2,4,4],
-            'max-Cols': [3,2,2,4],
-            'count-All':  [2,1,1,2,6],
-            'count-Cols': [2,1,1,2],
+            'min-All':  ["Totals (min)",1,2,2,2,1],
+            'min-Cols': ["Totals (min)",1,2,2,2],
+            'sum-All':  ["Totals (sum)",4,2,2,6,14],
+            'sum-Cols': ["Totals (sum)",4,2,2,6],
+            'max-All':  ["Totals (max)",3,2,2,4,4],
+            'max-Cols': ["Totals (max)",3,2,2,4],
+            'count-All':  ["Totals (count)",2,1,1,2,6],
+            'count-Cols': ["Totals (count)",2,1,1,2],
         }
 
         beforeEach( () => {
@@ -185,6 +185,7 @@ describe('custom data pivot.js', function () {
                         let k = `${f}-${o}`
                         let dd = [{msg: "row totals",    expected: expRowTotals, actual: rowTotals},
                                   {msg: "column totals", expected: expColTotals, actual: colTotals}]
+                        // Check the values are correct
                         dd.forEach(d => {
                             if (d.expected[k] !== undefined) {
                                 expect(d.actual).toEqual(d.expected[k])

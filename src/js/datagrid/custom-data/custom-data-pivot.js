@@ -187,6 +187,15 @@ class ColGroupDefinition {
 }
 
 /**
+ * Return the title for the totals title
+ * @param pivotOptions
+ * @returns {string}
+ */
+function getTitle(pivotOptions) {
+    return `Totals (${pivotOptions.aggregationType})`
+}
+
+/**
  * TODO
  * @param ar
  * @param e
@@ -410,8 +419,6 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
     const totalFun = totalsFun[pivotOptions.aggregationType];
     let columnTotals = {};
     let totals = {row: undefined, totalOf: undefined};
-    let hasColTotals = false;
-    let hasRowTotals = false;
     let fTotal = [];
     /**
      * Verify arguments are valid
@@ -424,7 +431,6 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
     const enableColTotals = (enableAllTotals || pivotOptions.enableTotals === OptionEnums.EnableTotals.Cols);
     if (enableRowTotals) {
         // Add row totals
-        hasRowTotals = true;
         fTotal.push((v) => totals.row = totalFun(totals.row, v));
     }
     if (enableColTotals) {
@@ -437,7 +443,7 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
         fTotal.push((v) => totals.totalOf = totalFun(totals.totalOf, v));
     }
 
-    if (hasRowTotals || hasColTotals) {
+    if (enableRowTotals || enableColTotals) {
         for (let i = nRowKey; i < nCols; ++i) columnTotals[i] = undefined;
         pivotData.filter(row => row[constValues.totals] === undefined)
             .forEach(row => {
@@ -447,19 +453,16 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
                         fTotal.forEach((f) => f(row[k], k));
                     }
                 }
-                if (hasRowTotals) {
-                    row[constValues.totals] = totals.row; // totals.row
-                }
-
+                if (enableRowTotals)
+                    row[constValues.totals] = totals.row; // totals.row;
             })
-        if (hasColTotals) {
-            const colDef = (pivotContext !== undefined) ? pivotContext.colDef : undefined;
-            if (colDef !== undefined && colDef[colDef.length - 1] !== undefined && colDef[colDef.length - 1].title !== undefined)
-                columnTotals[nRowKey - 1] = colDef[colDef.length - 1].title;
-            if (hasRowTotals) {
+        if (enableColTotals) {
+            if (enableAllTotals) {
+                // We also add the totals of totals to the bottom right cell
                 columnTotals[constValues.totals] = totals.totalOf;
             }
-            columnTotals.cssClass = 'tabulator-calcs-bottom';
+            columnTotals[nRowKey - 1] = getTitle(pivotOptions);
+            columnTotals.cssClass = "tabulator-calcs-bottom";
             pivotData.push(columnTotals);
         }
     }
