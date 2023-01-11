@@ -58,16 +58,37 @@ function _countIfNotEmpty(a) {
     return isNumber(a) ? 1 : 0;
 }
 
-const customSorterTotalsLast = (a, b, aRow, bRow, column, dir, sorterParams) => {
-    const totalClassA = aRow.getData().cssClass;
-    const totalClassB = bRow.getData().cssClass;
-    if (totalClassA || totalClassB) {
+/**
+ * custom Numeric value sorter that will ensure (if present) the totals row will remain last
+ * @param a - cell value
+ * @param b - cell value to compare with a
+ * @param aRow - row component for a
+ * @param bRow- row component for b
+ * @returns {difference between a and b}
+ */
+const customNumericSorter = (a, b, aRow, bRow) => {
+    if (aRow.getData().cssClass || bRow.getData().cssClass) {
         return null;
-    } else {
-        return a - b;
     }
+    return a - b;
 }
 
+/**
+ * custom String value sorter that will ensure (if present) the totals row will remain last
+ * @param a - cell value
+ * @param b - cell value to compare with a
+ * @param aRow - row component for a
+ * @param bRow- row component for b
+ * @returns {number}
+ */
+const customStringSorter = (a, b, aRow, bRow) => {
+    if (aRow.getData().cssClass || bRow.getData().cssClass) {
+        return null;
+    }
+    const x = a.toString().toUpperCase();
+    const y = b.toString().toUpperCase();
+    return x == y ? 0 : x > y ? 1 : -1;
+}
 
 /**
  * The map of functions that can be used when calculating
@@ -171,7 +192,7 @@ export class PivotContext {
  *
  */
 class ColSimpleDefinition {
-    constructor(title, field) {
+    constructor(title, field, sortingFunc) {
         // Column name
         this.title = title;
         // Column index in the original data set
@@ -181,7 +202,20 @@ class ColSimpleDefinition {
         // this.bottomCalc = ''
         // A CSS class to use for the labels
         // this.cssClass = ''
-        this.sorter = customSorterTotalsLast;
+        if (sortingFunc) {
+            this.sorter = sortingFunc;
+        } else {
+            this.sorter = customNumericSorter;
+        }
+    }
+}
+
+/**
+ * ColSimpleDefinition, but with string sorter
+ */
+class StringColSimpleDefinition extends ColSimpleDefinition {
+    constructor(title, field) {
+        super(title, field, customStringSorter);
     }
 }
 
@@ -323,6 +357,9 @@ function _createColDef(data, config) {
     const labels = config.labels;
     const nRowKey = config.rows.length;
     const pivotContext = new PivotContext();
+    // Add the column definition for row totals
+    const enableAllTotals = (config.enableTotals == OptionEnums.EnableTotals.All);
+    const enableRowTotals = enableAllTotals || (config.enableTotals == OptionEnums.EnableTotals.Rows);
 
     // Collect the key values
     data.forEach((e, i) => {
@@ -346,7 +383,7 @@ function _createColDef(data, config) {
 
     rows.forEach((e, field) =>
         // first time we hit this value for the column, let's store it
-        lastCol.push(Object.assign(new ColSimpleDefinition(getColumnName(header, e), field), {cssClass: cssInternals.pivotHeader}))
+        lastCol.push(Object.assign(new StringColSimpleDefinition(getColumnName(header, e), field), {cssClass: cssInternals.pivotHeader}))
     )
 
     let colMap = {}
@@ -382,11 +419,7 @@ function _createColDef(data, config) {
                 m = m[cId].next;
             })
         })
-    })
-
-    // Add the column definition for row totals
-    const enableAllTotals = (config.enableTotals == OptionEnums.EnableTotals.All);
-    const enableRowTotals = enableAllTotals || (config.enableTotals == OptionEnums.EnableTotals.Rows);
+    });
 
     if (enabledBuiltinTotals(config)) {
         if (enableAllTotals || enableRowTotals) {
