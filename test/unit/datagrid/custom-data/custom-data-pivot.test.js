@@ -2,7 +2,7 @@ import {
     pivotDataModule,
     ColHashMap,
     getLabelByProperty,
-    computeTotals
+    computeTotals, customNumericSorter, customStringSorter, isTotalsRowComponent
 } from '../../../../src/js/datagrid/custom-data/custom-data-pivot';
 import _ from "lodash";
 
@@ -441,5 +441,94 @@ describe('custom data pivot.js', function () {
             })
         })
 
-    })
+    });
+
+
+    describe(`custom sorting functions`,() => {
+
+        let totalRowSingleClass;
+        let totalRowMultipleClass;
+        let dataRow;
+        let otherRow;
+
+        beforeEach( () => {
+            totalRowSingleClass = {
+                getData: () => {
+                    return {cssClass: 'tabulator-calcs-bottom'};
+                }
+            };
+            totalRowMultipleClass = {
+                getData: () => {
+                    return {cssClass: 'tabulator-calcs-bottom another-class'};
+                }
+            };
+            dataRow = {
+                getData: () => {
+                    return {cssClass: ''};
+                }
+            };
+            otherRow = {
+                getData: () => {
+                    return {cssClass: 'a b c d'};
+                }
+            };
+        });
+
+        describe(`isTotalsRowComponent`,() => {
+            it('returns true when css-class is string', function() {
+                expect(isTotalsRowComponent(totalRowSingleClass)).toBeTruthy();
+            });
+            it('returns true when css-class is space delimited list', function() {
+                expect(isTotalsRowComponent(totalRowMultipleClass)).toBeTruthy();
+            });
+            it('returns false when css is empty', function() {
+                expect(isTotalsRowComponent(dataRow)).toBeFalsy();
+            });
+            it('returns false when css is list but total not present', function() {
+                expect(isTotalsRowComponent(otherRow)).toBeFalsy();
+            });
+        });
+
+        describe(`numeric sorting`,() => {
+            it('does not sort total row a - single css', function() {
+                expect(customNumericSorter(100, 200, totalRowSingleClass, dataRow)).toBeNull();
+            });
+            it('does not sort total row b - single css', function() {
+                expect(customNumericSorter(100, 200, dataRow, totalRowSingleClass)).toBeNull();
+            });
+            it('does not sort total row a - multi css', function() {
+                expect(customNumericSorter(100, 200, totalRowMultipleClass, dataRow)).toBeNull();
+            });
+            it('does not sort total row b- multi css', function() {
+                expect(customNumericSorter(100, 200, dataRow, totalRowMultipleClass)).toBeNull();
+            });
+            it('sorts non total rows no css', function() {
+                expect(customNumericSorter(100, 200, dataRow, dataRow)).not.toBeNull();
+            });
+            it('sorts non total rows contains css', function() {
+                expect(customNumericSorter(100, 200, otherRow, otherRow)).not.toBeNull();
+            });
+        });
+
+        describe(`string sorting`,() => {
+            it('does not sort total row a - single css', function() {
+                expect(customStringSorter('a', 'b', totalRowSingleClass, dataRow)).toBeNull();
+            });
+            it('does not sort total row b - single css', function() {
+                expect(customStringSorter('a', 'b', dataRow, totalRowSingleClass)).toBeNull();
+            });
+            it('does not sort total row a - multi css', function() {
+                expect(customStringSorter('a', 'b', totalRowMultipleClass, dataRow)).toBeNull();
+            });
+            it('does not sort total row b- multi css', function() {
+                expect(customStringSorter('a', 'b', dataRow, totalRowMultipleClass)).toBeNull();
+            });
+            it('sorts non total rows', function() {
+                expect(customStringSorter('a', 'b', dataRow, dataRow)).not.toBeNull();
+            });
+            it('sorts non total rows contains css', function() {
+                expect(customStringSorter('a', 'b', otherRow, otherRow)).not.toBeNull();
+            });
+        });
+    });
 })

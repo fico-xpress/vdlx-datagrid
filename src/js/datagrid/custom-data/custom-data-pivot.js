@@ -44,7 +44,10 @@
  */
 const constValues = {totals: '__totals'}
 
-const cssInternals = {pivotHeader: 'pivot-row-header'}
+const cssInternals = {
+    pivotHeader: 'pivot-row-header',
+    tabulatorCalcsBottom: 'tabulator-calcs-bottom'
+}
 
 function isValue(a) {
     return a !== undefined && a !== null;
@@ -58,16 +61,27 @@ function _countIfNotEmpty(a) {
     return isNumber(a) ? 1 : 0;
 }
 
+export const isTotalsRowComponent = (row) => {
+    const rowCssClass = row.getData().cssClass;
+    if (rowCssClass) {
+        const classes = rowCssClass.split(' ');
+        if (classes.includes(cssInternals.tabulatorCalcsBottom)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /**
  * custom Numeric value sorter that will ensure (if present) the totals row will remain last
  * @param a - cell value
  * @param b - cell value to compare with a
- * @param aRow - row component for a
- * @param bRow- row component for b
+ * @param rowA - row component for a
+ * @param rowB- row component for b
  * @returns {difference between a and b}
  */
-const customNumericSorter = (a, b, aRow, bRow) => {
-    if (aRow.getData().cssClass || bRow.getData().cssClass) {
+export const customNumericSorter = (a, b, rowA, rowB) => {
+    if (isTotalsRowComponent(rowA) || isTotalsRowComponent(rowB)) {
         return null;
     }
     return a - b;
@@ -77,12 +91,12 @@ const customNumericSorter = (a, b, aRow, bRow) => {
  * custom String value sorter that will ensure (if present) the totals row will remain last
  * @param a - cell value
  * @param b - cell value to compare with a
- * @param aRow - row component for a
- * @param bRow- row component for b
+ * @param rowA - row component for a
+ * @param rowB- row component for b
  * @returns {number}
  */
-const customStringSorter = (a, b, aRow, bRow) => {
-    if (aRow.getData().cssClass || bRow.getData().cssClass) {
+export const customStringSorter = (a, b, rowA, rowB) => {
+    if (isTotalsRowComponent(rowA) || isTotalsRowComponent(rowB)) {
         return null;
     }
     const x = a.toString().toUpperCase();
@@ -506,7 +520,7 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
                 columnTotals[constValues.totals] = totals.totalOf;
             }
             columnTotals[nRowKey - 1] = getTitle(pivotOptions);
-            columnTotals.cssClass = "tabulator-calcs-bottom";
+            columnTotals.cssClass = cssInternals.tabulatorCalcsBottom;
             pivotData.push(columnTotals);
         }
     }
