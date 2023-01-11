@@ -435,7 +435,6 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
     }
     if (enableColTotals) {
         // Add column totals
-        hasColTotals = true;
         fTotal.push((v, i) => columnTotals[i] = totalFun(columnTotals[i], v));
     }
     if (enableAllTotals) {
