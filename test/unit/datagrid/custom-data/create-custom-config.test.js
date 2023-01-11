@@ -14,7 +14,7 @@ import * as gridFilters from "../../../../src/js/datagrid/grid-filters";
 import * as colUtils from "../../../../src/js/datagrid/custom-data/custom-column-utils";
 import {
     convertObjectColDefinitions,
-    createBasicColumnDefinition, countDimensions, extractLabels, pivotColumnSizeToIndex,
+    createBasicColumnDefinition, validateDimensions, extractLabels, pivotColumnSizeToIndex,
     validateLabelsData,
     validateObjectColDefinitions, validatePivotRowsAndColumns
 } from "../../../../src/js/datagrid/custom-data/custom-column-utils";
@@ -112,7 +112,7 @@ describe('createCustomConfig module', () => {
             const pivotedData = [{data:'pivotedData'}];
 
             let validatePivotRowsAndColumnsSpy;
-            let createPivotIndexesSpy;
+            let validateDimensionsSpy;
             let pivotColumnSizeToIndexSpy;
             let createPivotDisplayCalcsSpy;
             let extractLabelsSpy;
@@ -121,7 +121,7 @@ describe('createCustomConfig module', () => {
 
             beforeEach(() => {
                 validatePivotRowsAndColumnsSpy = jest.spyOn(colUtils, 'validatePivotRowsAndColumns').mockReturnValue(resultData);
-                createPivotIndexesSpy = jest.spyOn(colUtils, 'countDimensions').mockReturnValue(resultData);
+                validateDimensionsSpy = jest.spyOn(colUtils, 'validateDimensions').mockReturnValue(resultData);
                 pivotColumnSizeToIndexSpy = jest.spyOn(colUtils, 'pivotColumnSizeToIndex').mockReturnValue(resultData);
                 createPivotDisplayCalcsSpy = jest.spyOn(colUtils, 'calculatePivotDisplayCalcs').mockReturnValue('all');
                 extractLabelsSpy = jest.spyOn(colUtils, 'extractLabels').mockReturnValue('all');
@@ -131,7 +131,7 @@ describe('createCustomConfig module', () => {
 
             afterEach(() => {
                 colUtils.validatePivotRowsAndColumns.mockRestore();
-                colUtils.countDimensions.mockRestore();
+                colUtils.validateDimensions.mockRestore();
                 colUtils.pivotColumnSizeToIndex.mockRestore();
                 createPivotConfigModule.createPivotConfig.mockRestore();
                 colUtils.calculatePivotDisplayCalcs.mockRestore();
@@ -155,7 +155,7 @@ describe('createCustomConfig module', () => {
 
                 expect(createPivotDisplayCalcsSpy).toHaveBeenCalled();
                 // not
-                expect(createPivotIndexesSpy).not.toHaveBeenCalled();
+                expect(validateDimensionsSpy).not.toHaveBeenCalled();
                 expect(pivotColumnSizeToIndexSpy).not.toHaveBeenCalled();
                 expect(createLabelsConfigSpy).not.toHaveBeenCalled();
                 expect(extractLabelsSpy).toHaveBeenCalledTimes(2);
@@ -178,7 +178,7 @@ describe('createCustomConfig module', () => {
                 createCustomConfig(pivotGridOptions);
 
                 expect(createPivotDisplayCalcsSpy).toHaveBeenCalled();
-                expect(createPivotIndexesSpy).toHaveBeenCalled();
+                expect(validateDimensionsSpy).toHaveBeenCalled();
                 expect(pivotColumnSizeToIndexSpy).toHaveBeenCalled();
                 expect(validatePivotRowsAndColumnsSpy).toHaveBeenCalled();
                 expect(extractLabelsSpy).toHaveBeenCalledTimes(2);
@@ -203,7 +203,7 @@ describe('createCustomConfig module', () => {
                 createCustomConfig(pivotGridOptions);
 
                 expect(createPivotDisplayCalcsSpy).toHaveBeenCalled();
-                expect(createPivotIndexesSpy).toHaveBeenCalled();
+                expect(validateDimensionsSpy).toHaveBeenCalled();
                 expect(pivotColumnSizeToIndexSpy).toHaveBeenCalled();
                 expect(validatePivotRowsAndColumnsSpy).toHaveBeenCalled();
                 expect(extractLabelsSpy).toHaveBeenCalledTimes(2);

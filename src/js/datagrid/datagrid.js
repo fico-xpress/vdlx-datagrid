@@ -224,7 +224,8 @@ class Datagrid {
                         );
                     }
                     return undefined;
-                })
+                    //todo - experiment with extend and throttle
+                }).extend({ throttle: 500 })
                 .subscribe(noop)
         ]);
     }

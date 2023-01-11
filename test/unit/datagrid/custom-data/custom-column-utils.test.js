@@ -1,6 +1,6 @@
 import {
     calculatePivotDisplayCalcs,
-    convertObjectColDefinitions, countDimensions,
+    convertObjectColDefinitions, validateDimensions,
     createBasicColumnDefinition,
     createCustomColumnSortOrder,
     createValueTypedColumnProperties, extractLabels,
@@ -450,18 +450,20 @@ describe('custom column utils', () => {
 
         describe('countDimensions', () => {
             it('array of numbers', () => {
-                expect(countDimensions([1, 2])).toEqual(2);
+                expect(validateDimensions([1, 2], 'row')).toEqual(2);
             });
             it('array of strings', () => {
-                expect(countDimensions(['1', '2'])).toEqual(2);
+                expect(validateDimensions(['1', '2'], 'row')).toEqual(2);
             });
             it('returns number', () => {
-                expect(countDimensions(2)).toEqual(2);
+                expect(validateDimensions(2, 'row')).toEqual(2);
             });
             it('throws error', () => {
+                const val = 'invalid value';
+                const dimensionName = 'row';
                 expect(() => {
-                    expect(countDimensions('invalid value')).toEqual(true);
-                }).toThrow('Error for component vdlx-pivotgrid: invalid row-dimensions or column-dimensions.  Supported format: An array of column group headings ["pivot a", "pivot b"], or a number representing the number of dimensions.');
+                    expect(validateDimensions(val, dimensionName)).toEqual(true);
+                }).toThrow(`Error for component vdlx-pivotgrid: Invalid ${dimensionName}-dimensions.  Supported format: An array of ${dimensionName} group headings [headingOne, headingTwo], or a number representing the required amount of ${dimensionName}s.`);
             });
         });
 

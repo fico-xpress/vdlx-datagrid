@@ -23,8 +23,8 @@ import {chooseColumnFilter} from "../grid-filters";
 import {
     convertObjectColDefinitions,
     createBasicColumnDefinition,
-    countDimensions,
-    convertAllToNumber,
+    validateDimensions,
+    validateSetPosition,
     extractLabels,
     pivotColumnSizeToIndex,
     pivotRowSizeToIndex,
@@ -108,9 +108,9 @@ export const createCustomConfig = (gridOptions) => {
                 if (!isArray(rowPositions)) {
                     rowPositions = [rowPositions];
                 }
-                rowsIndexes = convertAllToNumber(rowPositions);
+                rowsIndexes = validateSetPosition(rowPositions, 'row-set-position');
             } else {
-                const rowCount = countDimensions(rowDimensions);
+                const rowCount = validateDimensions(rowDimensions, 'row');
                 rowsIndexes = pivotRowSizeToIndex(rowCount);
             }
 
@@ -119,9 +119,9 @@ export const createCustomConfig = (gridOptions) => {
                 if (!isArray(columnPositions)) {
                     columnPositions = [columnPositions];
                 }
-                columnIndexes = convertAllToNumber(columnPositions);
+                columnIndexes = validateSetPosition(columnPositions, 'column-set-position');
             } else {
-                const columnCount = countDimensions(columnDimensions);
+                const columnCount = validateDimensions(columnDimensions, 'column');
                 columnIndexes = pivotColumnSizeToIndex(dimensionality, size(rowsIndexes), columnCount);
             }
 
@@ -253,7 +253,6 @@ export const addGridOptionsProps = (gridOptions, columns) => {
 export const configureColumnFilter = (col) => {
 
     const getHeaderFilter = () => {
-
         if (col.editor === EDITOR_TYPES.checkbox) {
             return EDITOR_TYPES.select;
         }
@@ -261,7 +260,6 @@ export const configureColumnFilter = (col) => {
     };
 
     const getHeaderFilterFn = (column) => {
-
         if (column.editor === EDITOR_TYPES.checkbox) {
             return checkboxFilterFunc;
         }

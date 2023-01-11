@@ -269,14 +269,13 @@ export const calculatePivotDisplayCalcs = (displayRowCal, displayColumnCalc) => 
  * @param dimensions
  * @returns {*}
  */
-export const countDimensions = (dimensions) => {
+export const validateDimensions = (dimensions, dimensionName) => {
     if (isArray(dimensions)) {
         return size(dimensions);
     } else if (!isNaN(toNumber(dimensions))) {
         return dimensions;
     } else {
-        throw Error('Error for component vdlx-pivotgrid: invalid row-dimensions or column-dimensions.  Supported format: An array of column group headings ' +
-            '["pivot a", "pivot b"], or a number representing the number of dimensions.');
+        throw Error(`Error for component vdlx-pivotgrid: Invalid ${dimensionName}-dimensions.  Supported format: An array of ${dimensionName} group headings [headingOne, headingTwo], or a number representing the required amount of ${dimensionName}s.`);
     }
 }
 
@@ -287,15 +286,14 @@ export const extractLabels = (dimensions) => {
     return [];
 }
 
-export const convertAllToNumber = (arr, dimensionality) => {
+export const validateSetPosition = (arr, attrName) => {
     const asNumbers = map(arr, (val) => {
         const num = toNumber(val);
         if (isNaN(num)) {
-            throw Error('Error for component vdlx-pivotgrid: invalid row-set-position or column-set-position be either a number, or an array of numbers.');
+            throw Error(`Error for component vdlx-pivotgrid: ${val} is not a valid ${attrName}, it must be either a number, or an array of numbers.`);
         } else {
             return num;
         }
-
     });
     return asNumbers;
 }
