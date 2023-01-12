@@ -289,6 +289,79 @@ describe('custom data pivot.js', function () {
 
         })
 
+        describe('layout', function () {
+
+            it('compact layout no totals', function () {
+                let output
+                config.aggregationTotals = ''
+                config.layout = 'compact'
+                output = pivotDataModule.run(data, config)
+                const expColDef = [
+                    {
+                        "title": "ColKey1", "level": 0, "columns": [
+                            {
+                                "title": "ColKey2", "level": 1, "columns": [
+                                    {"title": "RowKey1", "field": "0", "cssClass": "pivot-row-header"},
+                                    {"title": "RowKey2", "field": "1", "cssClass": "pivot-row-header"}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "c1", "level": 0, "columns": [
+                            {"title": "10", "field": "2"},
+                            {"title": "20", "field": "3"}
+                        ]
+                    },
+                    {
+                        "title": "c2", "level": 0, "columns": [
+                            {"title": "10", "field": "4"},
+                            {"title": "20", "field": "5"}
+                        ]
+                    }
+                ]
+                const expData = [
+                    {"0": "a", "1": "x", "2": 1, "3": 2, "4": 2, "5": 2},
+                    {"0": "b", "1": "x", "2": 3},
+                    {"0": "b", "1": "y", "5": 4},
+                ]
+
+                const actualColDef = output.cols
+                expect(JSON.stringify(actualColDef)).toEqual(JSON.stringify(expColDef))
+
+                const actualData = output.data
+                expect(JSON.stringify(actualData)).toEqual(JSON.stringify(expData))
+            })
+
+            it('normal layout no totals', function () {
+                let output
+                config.aggregationTotals = ''
+                config.layout = 'normal' // any...
+                output = pivotDataModule.run(data, config)
+                const expColDef = [
+                    { title: "", level: 0, columns: [
+                            {title: "RowKey1", field: "0", cssClass: "pivot-row-header"},
+                            {title: "RowKey2", field: "1", cssClass: "pivot-row-header"}
+                        ] },
+                    { title: "ColKey1", level: 0, columns: [ {title: "ColKey2", level: 1, columns: []} ] },
+                    { title: "c1", level: 0, columns: [ {title: "10", field: "2"}, {title: "20", field: "3"} ] },
+                    { title: "c2", level: 0, columns: [ {title: "10", field: "4"}, {title: "20", field: "5"} ] }
+                ]
+                const expData = [
+                    {"0": "a", "1": "x", "2": 1, "3": 2, "4": 2, "5": 2},
+                    {"0": "b", "1": "x", "2": 3},
+                    {"0": "b", "1": "y", "5": 4},
+                ]
+
+                const actualColDef = output.cols
+                expect(JSON.stringify(actualColDef)).toEqual(JSON.stringify(expColDef))
+
+                const actualData = output.data
+                expect(JSON.stringify(actualData)).toEqual(JSON.stringify(expData))
+            })
+
+        })
+
         describe('complete configuration with builtin totals calculation', function () {
 
             let output
@@ -466,6 +539,7 @@ describe('custom data pivot.js', function () {
 
         let totalRowSingleClass;
         let totalRowMultipleClass;
+        let totalRowSingleClassBadSyntax;
         let dataRow;
         let otherRow;
 
@@ -478,6 +552,11 @@ describe('custom data pivot.js', function () {
             totalRowMultipleClass = {
                 getData: () => {
                     return {cssClass: 'tabulator-calcs-bottom another-class'};
+                }
+            };
+            totalRowSingleClassBadSyntax = {
+                getData: () => {
+                    return {cssClass: 'tabulator-calcs-bottom-'};
                 }
             };
             dataRow = {

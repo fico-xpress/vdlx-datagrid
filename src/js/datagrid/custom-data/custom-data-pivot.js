@@ -49,7 +49,8 @@ const PIVOT_CONST_VALUES = {
 
 const CSS_INTERNALS = {
     pivotHeader: 'pivot-row-header',
-    tabulatorCalcsBottom: 'tabulator-calcs-bottom'
+    tabulatorCalcsBottom: 'tabulator-calcs-bottom',
+    rowFrozen: 'tabulator-frozen'
 }
 
 function isValue(a) {
@@ -64,13 +65,11 @@ function _countIfNotEmpty(a) {
     return isNumber(a) ? 1 : 0;
 }
 
+const re = new RegExp(`\\b${CSS_INTERNALS.tabulatorCalcsBottom}\\b`)
 export const isTotalsRowComponent = (row) => {
     const rowCssClass = row.getData().cssClass;
     if (rowCssClass) {
-        const classes = rowCssClass.split(' ');
-        if (classes.includes(CSS_INTERNALS.tabulatorCalcsBottom)) {
-            return true;
-        }
+        return re.test(rowCssClass);
     }
     return false;
 }
@@ -186,6 +185,14 @@ class Options {
         this.labels = [];
 
         /**
+         * The layout of the column definition. Can be one of the following:
+         * - compact
+         * - normal
+         * @type {{string}}
+         */
+        this.layout = "compact";
+
+        /**
          * An array containing header names. Index of this array maps to the
          * column index of the original data set. If header name is undefined
          * then a default name based on the column index is automatically generated.
@@ -258,6 +265,7 @@ class StringColSimpleDefinition extends ColSimpleDefinition {
  * This class represent a logical column group. It is not associated to an actual
  * column in the dataset, it is only used during table rendering to create a oabels
  * and group columns together
+ * @param level Starts at 0
  */
 class ColGroupDefinition {
     constructor(title, level) {
@@ -392,6 +400,7 @@ function _createColDef(data, config) {
     const labels = config.labels;
     const nRowKey = config.rows.length;
     const pivotContext = new PivotContext();
+    const layout = config.layout;
     // Add the column definition for row totals
     const enableAllTotals = (config.enableTotals == OptionEnums.EnableTotals.All);
     const enableRowTotals = enableAllTotals || (config.enableTotals == OptionEnums.EnableTotals.Rows);
@@ -410,16 +419,35 @@ function _createColDef(data, config) {
      * Create the column definition for the columns key (group) and for the rows key (simple)
      */
     let lastCol = pivotContext.colDef;
-    cols.forEach((e, lvl) => {
-        let newCol = new ColGroupDefinition(getColumnName(header, e), lvl);
+    let generateColKey = () => cols.forEach( (e, lvl) => {
+        const newCol = new ColGroupDefinition(getColumnName(header, e), lvl);
         lastCol.push(newCol);
         lastCol = newCol.columns;
-    })
-
-    rows.forEach((e, field) =>
-        // first time we hit this value for the column, let's store it
+    });
+    let generateRowKey = () => rows.forEach((e, field) =>
         lastCol.push(Object.assign(new StringColSimpleDefinition(getColumnName(header, e), field), {cssClass: CSS_INTERNALS.pivotHeader}))
-    )
+    );
+
+    if (layout === 'compact') {
+        /**
+         * |       RevenueBins     |
+         * |        CostBins       |
+         * |  RegionBins | AgeBins |
+         */
+        generateColKey();
+        generateRowKey();
+    } else {
+        /**
+         * |                       | RevenueBins |
+         * |                       | CostBins    |
+         * |  RegionBins | AgeBins |             |
+         */
+        let rowColGroup = new ColGroupDefinition("", 0);
+        lastCol.push(rowColGroup);
+        generateColKey();
+        lastCol = rowColGroup.columns;
+        generateRowKey();
+    }
 
     let colMap = {}
 
@@ -459,7 +487,7 @@ function _createColDef(data, config) {
     if (enabledBuiltinTotals(config)) {
         if (enableAllTotals || enableRowTotals) {
             let newCol = new ColSimpleDefinition(`Totals (${config.aggregationTotals})`, PIVOT_CONST_VALUES.totals);
-            newCol.cssClass = 'tabulator-frozen';
+            newCol.cssClass = CSS_INTERNALS.rowFrozen;
             pivotContext.colDef.push(newCol);
         }
     }
@@ -467,7 +495,7 @@ function _createColDef(data, config) {
     /**
      * Columns definition content is done.
      */
-    // TODO Apply sorting here
+    // FIXME Apply sorting here
 
     return pivotContext
 }
