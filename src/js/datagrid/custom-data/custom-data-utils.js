@@ -35,10 +35,11 @@ import isBoolean from "lodash/isBoolean";
 import cloneDeep from "lodash/cloneDeep";
 import toString from "lodash/toString";
 import size from "lodash/size";
-import concat from "lodash/concat";
 import isString from "lodash/isString";
 import isNumber from "lodash/isNumber";
-import isUndefined from "lodash/isUndefined";
+import times from "lodash/times";
+import merge from "lodash/merge";
+
 
 /**
  * if a string can be converted to numeric then it will return INTEGER
@@ -134,65 +135,51 @@ export const convertObjectDataToLabelData = (data) => {
 }
 
 /**
- * converts arrays of primitive arrays to scenario data label array format
- * @param allArrays
- * @returns {(*)[]|*}
- */
-export const convertPrimitiveArraysToLabelArrays = (allArrays) => {
-    if (isArray(allArrays[0])) {
-        return map(allArrays, (arr) => convertPrimitiveArrayToLabelArray(arr));
-    } else {
-        return [convertPrimitiveArrayToLabelArray(allArrays)];
-    }
-}
-
-/**
- * convert an array of primitives to scenario data label array format
- * @param arr
+ * converts either a label array, or a array of primitives into a keyed object
+ * @param labels
  * @returns {*}
  */
-export const convertPrimitiveArrayToLabelArray = (arr) => {
-    // check first row only
-    if (isString(arr[0]) || isNumber(arr[0])){
-        return  map(arr, (datum, index) => ({value:index, label:toString(datum)}));
+export const convertLabels = (labels) => {
+    if (isString(labels[0]) || isNumber(labels[0])) {
+        const objectFromPrimitiveArray = reduce(labels, (memo, value, index) => {
+            memo = assign(memo, {[index]: value});
+            return memo;
+        }, {});
+        return objectFromPrimitiveArray;
+    } else {
+        const objectFromPrimitiveArray = reduce(labels, (memo, labObject) => {
+            memo = assign(memo, {[labObject.value]: labObject.label});
+            return memo;
+        }, {});
+        return objectFromPrimitiveArray;
     }
-    return arr;
+}
+
+export const createLabelObject = (start, indexes, labels) => {
+    let key = start;
+    const indexSize = size(indexes);
+    let labelObject = {};
+    times(indexSize, (index) => {
+        const passedLabel = labels[index];
+        assign(labelObject, {[key]: passedLabel ? convertLabels(passedLabel) : {}});
+        key++;
+    });
+    return labelObject;
 }
 
 /**
- * convert multiple arrays of labels into a single array object
+ * convert multiple arrays of labels into a single object
+ *
+ * each dimension is given a key and label array regardless of if the dimension has no labels
+ *
+ * the keys relate to rows and then cols
+ *
  * @param rowLabels
  * @param columnLabels
  * @returns {{}|*}
  */
-export const createLabelsConfig = (rowLabels, columnLabels) => {
-
-    // if arrays contain primitive values convert to label array format
-    let convertedRowLabels = [];
-    if (rowLabels) {
-        convertedRowLabels = convertPrimitiveArraysToLabelArrays(rowLabels);
-    }
-
-    let convertedColumnLabels = [];
-    if (columnLabels) {
-        convertedColumnLabels = convertPrimitiveArraysToLabelArrays(columnLabels);
-    }
-
-    const labelArrays = concat(convertedRowLabels, convertedColumnLabels);
-
-    if (size(labelArrays)) {
-        return reduce(labelArrays, (memo, labArray, index) => {
-            const labelConfig = reduce(labArray, (innerMemo, labObject) => {
-                innerMemo = assign(innerMemo, {[labObject.value]: labObject.label});
-                return innerMemo;
-            }, {});
-
-            memo = assign(memo, {[index]: labelConfig});
-            return memo;
-        }, {});
-
-    } else {
-        return {};
-    }
-
+export const createLabelsConfig = (rowLabels, columnLabels, rowIndexes, columnIndexes) => {
+    const rowObject = createLabelObject(0, rowIndexes, rowLabels || []);
+    const columnObject = createLabelObject(size(rowIndexes), columnIndexes, columnLabels || []);
+    return merge(rowObject, columnObject);
 }

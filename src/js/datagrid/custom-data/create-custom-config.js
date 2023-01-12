@@ -21,22 +21,19 @@
 import {CUSTOM_COLUMN_DEFINITION, EDITOR_TYPES} from "../../constants";
 import {chooseColumnFilter} from "../grid-filters";
 import {
+    calculatePivotDisplayCalcs,
     convertObjectColDefinitions,
     createBasicColumnDefinition,
-    validateDimensions,
-    validateSetPosition,
     extractLabels,
     pivotColumnSizeToIndex,
     pivotRowSizeToIndex,
+    validateDimensions,
     validateLabelsData,
     validateObjectColDefinitions,
-    validatePivotRowsAndColumns, calculatePivotDisplayCalcs
+    validatePivotRowsAndColumns,
+    validateSetPosition
 } from './custom-column-utils';
-import {
-    convertCustomDataToObjectData,
-    convertObjectDataToLabelData,
-    createLabelsConfig
-} from './custom-data-utils';
+import {convertCustomDataToObjectData, convertObjectDataToLabelData, createLabelsConfig} from './custom-data-utils';
 import {
     checkboxFilterFunc,
     FILTER_PLACEHOLDER_TEXT,
@@ -93,12 +90,26 @@ export const createCustomConfig = (gridOptions) => {
 
             let rowPositions = gridOptions.pivotRowPositions;
             const rowDimensions = gridOptions.pivotRowDimensions;
-            const rowLabels = gridOptions.pivotRowTitles;
+
+            let rowLabels = gridOptions.pivotRowTitles;
+            // must be an array of arrays, not a single array
+            if (rowLabels) {
+                if (!isArray(rowLabels[0])) {
+                    rowLabels = [rowLabels];
+                }
+            }
             const displayPivotRowCalc = gridOptions.displayPivotRowCalc;
 
             let columnPositions = gridOptions.pivotColumnPositions;
             const columnDimensions = gridOptions.pivotColumnDimensions;
-            const columnLabels = gridOptions.pivotColumnTitles;
+
+            let columnLabels = gridOptions.pivotColumnTitles;
+            if (columnLabels) {
+                if (!isArray(columnLabels[0])) {
+                    columnLabels = [columnLabels];
+                }
+            }
+
             const displayPivotColumnCalc = gridOptions.displayPivotColumnCalc;
 
             const enableTotals = calculatePivotDisplayCalcs(displayPivotRowCalc, displayPivotColumnCalc);
@@ -135,7 +146,7 @@ export const createCustomConfig = (gridOptions) => {
             };
 
             if (!isUndefined(rowLabels) || !isUndefined(columnLabels)) {
-                const labelConfig = createLabelsConfig(rowLabels, columnLabels);
+                const labelConfig = createLabelsConfig(rowLabels, columnLabels, rowsIndexes, columnIndexes);
                 if (size(labelConfig)) {
                     pivotConfig.labels = labelConfig;
                 }
