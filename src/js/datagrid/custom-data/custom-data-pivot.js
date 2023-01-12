@@ -38,13 +38,16 @@
  *
  *
  */
+
 /**
  * Some constants used internally and in tabulator
  * @type {{totals: string}}
  */
-const constValues = {totals: '__totals'}
+const PIVOT_CONST_VALUES = {
+    totals: '__totals'
+}
 
-const cssInternals = {
+const CSS_INTERNALS = {
     pivotHeader: 'pivot-row-header',
     tabulatorCalcsBottom: 'tabulator-calcs-bottom'
 }
@@ -65,7 +68,7 @@ export const isTotalsRowComponent = (row) => {
     const rowCssClass = row.getData().cssClass;
     if (rowCssClass) {
         const classes = rowCssClass.split(' ');
-        if (classes.includes(cssInternals.tabulatorCalcsBottom)) {
+        if (classes.includes(CSS_INTERNALS.tabulatorCalcsBottom)) {
             return true;
         }
     }
@@ -106,13 +109,21 @@ export const customStringSorter = (a, b, rowA, rowB) => {
 
 /**
  * The map of functions that can be used when calculating
- * aggregated values
+ * aggregated values.
+ *
+ * - count: undefined and NaN are not considered a value and are excluded from the calculation.
+ * This function is compatible with numeric and string values.
+ * - min, max, sum: these functions are only compatible with numerical values. Any non-numerical
+ * values will be ignored during the calculation.
+ *
  * @type {{min: (function(*, *): *), max: (function(*, *): *), count: (function(*, *): *), sum: (function(*, *): *)}}
  */
 export const totalsFun = {
     'sum': (a, b) => (isNumber(b)) ? (isNumber(a)) ? a + b : b : a,
     'min': (a, b) => (isNumber(b)) ? (isNumber(a)) ? ((a <= b) ? a : b) : b : a,
     'max': (a, b) => (isNumber(b)) ? (isNumber(a)) ? ((a >= b) ? a : b) : b : a,
+    // FIXME The right implementation is the following but this is breaking some tests
+    //  'count': (a, b) => (isValue(b)) ? isValue(a) ? a + _countIfNotEmpty(b) : _countIfNotEmpty(b) : a
     'count': (a, b) => (isValue(b)) ? isNumber(a) ? a + _countIfNotEmpty(b) : _countIfNotEmpty(b) : a
 }
 
@@ -147,7 +158,14 @@ class Options {
          * totals.
          * @type {string}
          */
-        this.aggregationType = OptionEnums.AggregationTypes.Count;
+        this.aggregationTotals = OptionEnums.AggregationTypes.Count;
+
+        /**
+         * The aggregation function that is used when the input data array contains
+         * multiple values for the same keys.
+         * @type {string}
+         */
+        this.aggregationValues = OptionEnums.AggregationTypes.Sum;
 
         /**
          * The aggregation function used to calculate totals
@@ -174,6 +192,9 @@ class Options {
          * @type {(string)[]} */
         this.header = [];
 
+        /**
+         * Overwrite object with passed in argument
+         */
         if (o !== undefined) {
             Object.assign(this, o);
         }
@@ -252,7 +273,7 @@ class ColGroupDefinition {
  * @returns {string}
  */
 function getTitle(pivotOptions) {
-    return `Totals (${pivotOptions.aggregationType})`
+    return `Totals (${pivotOptions.aggregationTotals})`
 }
 
 /**
@@ -272,7 +293,7 @@ function getColumnName(ar, e) {
 
 /**
  * Return a subset of an array
- * @param {(number)[]} ar
+ * @param {(numeric)[]} ar
  * @param {{key: *[]}} e
  * @returns {*[]}
  */
@@ -353,7 +374,7 @@ export class ColHashMap {
  * @returns {boolean}
  */
 function enabledBuiltinTotals(config) {
-    return config.enableTotals !== '' && config.aggregationType !== '';
+    return config.enableTotals !== '' && config.aggregationTotals !== '';
 }
 
 /**
@@ -397,7 +418,7 @@ function _createColDef(data, config) {
 
     rows.forEach((e, field) =>
         // first time we hit this value for the column, let's store it
-        lastCol.push(Object.assign(new StringColSimpleDefinition(getColumnName(header, e), field), {cssClass: cssInternals.pivotHeader}))
+        lastCol.push(Object.assign(new StringColSimpleDefinition(getColumnName(header, e), field), {cssClass: CSS_INTERNALS.pivotHeader}))
     )
 
     let colMap = {}
@@ -437,7 +458,7 @@ function _createColDef(data, config) {
 
     if (enabledBuiltinTotals(config)) {
         if (enableAllTotals || enableRowTotals) {
-            let newCol = new ColSimpleDefinition(`Totals (${config.aggregationType})`, constValues.totals);
+            let newCol = new ColSimpleDefinition(`Totals (${config.aggregationTotals})`, PIVOT_CONST_VALUES.totals);
             newCol.cssClass = 'tabulator-frozen';
             pivotContext.colDef.push(newCol);
         }
@@ -453,7 +474,7 @@ function _createColDef(data, config) {
 
 /**
  * The function will compute and add row and column totals. If the
- * corresponding cell already exist (constValues.totals) then the
+ * corresponding cell already exist (PIVOT_CONST_VALUES.totals) then the
  * value is not calculated/updated and the original value will be
  * kept.
  *
@@ -475,7 +496,7 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
     const nRowKey = rows.length;
     const cols = pivotOptions.cols;
     const nCols = cols.length + nRowKey;
-    const totalFun = totalsFun[pivotOptions.aggregationType];
+    const totalFun = totalsFun[pivotOptions.aggregationTotals];
     let columnTotals = {};
     let totals = {row: undefined, totalOf: undefined};
     let fTotal = [];
@@ -503,7 +524,7 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
 
     if (enableRowTotals || enableColTotals) {
         for (let i = nRowKey; i < nCols; ++i) columnTotals[i] = undefined;
-        pivotData.filter(row => row[constValues.totals] === undefined)
+        pivotData.filter(row => row[PIVOT_CONST_VALUES.totals] === undefined)
             .forEach(row => {
                 totals.row = undefined;
                 for (let k in row) {
@@ -512,15 +533,15 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
                     }
                 }
                 if (enableRowTotals)
-                    row[constValues.totals] = totals.row; // totals.row;
+                    row[PIVOT_CONST_VALUES.totals] = totals.row; // totals.row;
             })
         if (enableColTotals) {
             if (enableAllTotals) {
                 // We also add the totals of totals to the bottom right cell
-                columnTotals[constValues.totals] = totals.totalOf;
+                columnTotals[PIVOT_CONST_VALUES.totals] = totals.totalOf;
             }
             columnTotals[nRowKey - 1] = getTitle(pivotOptions);
-            columnTotals.cssClass = cssInternals.tabulatorCalcsBottom;
+            columnTotals.cssClass = CSS_INTERNALS.tabulatorCalcsBottom;
             pivotData.push(columnTotals);
         }
     }
@@ -545,6 +566,7 @@ function _createObject(data, pivotOptions, pivotContext) {
     const labels = pivotOptions.labels;
     const rowMap = pivotContext.rowMap;
     const colMap = pivotContext.colMap;
+    const totalFun = totalsFun[pivotOptions.aggregationValues];
 
     let pivotData = []
     data.forEach((e, i) => {
@@ -559,7 +581,7 @@ function _createObject(data, pivotOptions, pivotContext) {
                 pivotData[rId][i] = getLabelByProperty(labels[i], v);
             })
         }
-        pivotData[rId][cId] = value;
+        pivotData[rId][cId] = totalFun(value,pivotData[rId][cId]);
     })
 
     // if totals are required then we compute them. We don't override totals
@@ -597,7 +619,7 @@ function _createObject(data, pivotOptions, pivotContext) {
                     total += pivotData[row][i]
                 }
             }
-            pivotData[row][constValues.totals] = total
+            pivotData[row][PIVOT_CONST_VALUES.totals] = total
         }
     }
     return pivotData

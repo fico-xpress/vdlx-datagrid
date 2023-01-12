@@ -9,9 +9,9 @@ import _ from "lodash";
 describe('custom data pivot.js', function () {
 
     describe('error handling', () => {
-        //expect(pivotDataModule.run).toBeInstanceOf(Function)
 
         it("error thrown when calling run without configuration options", () => {
+            expect(pivotDataModule.run).toBeInstanceOf(Function)
             expect(() => {
                 pivotDataModule.run();
             }).toThrow('Error for pivotDataModule: Configuration is unset.');
@@ -94,7 +94,7 @@ describe('custom data pivot.js', function () {
         it('should have default options as expected', function () {
             const config = new pivotDataModule.Options()
             expect(config.enableTotals).toEqual(pivotDataModule.OptionEnums.EnableTotals.All)
-            expect(config.aggregationType).toEqual(pivotDataModule.totalsFun.count.name)
+            expect(config.aggregationTotals).toEqual(pivotDataModule.totalsFun.count.name)
         })
 
         it('should calculate totals of totals only if rows and cols totals are available', function () {
@@ -177,7 +177,7 @@ describe('custom data pivot.js', function () {
                 it(`should calculate valid ${o} totals with ${f}`,
                     function () {
                         pivotOptions.enableTotals = pivotDataModule.OptionEnums.EnableTotals[o]
-                        pivotOptions.aggregationType = f
+                        pivotOptions.aggregationTotals = f
                         computeTotals(pivotData, pivotOptions,undefined)
                         // extract only the totals
                         let rowTotals = pivotData.map(e => e.__totals)
@@ -224,7 +224,6 @@ describe('custom data pivot.js', function () {
                 { key: ["a","x","c1","20"], value: 2},
                 { key: ["a","x","c2","10"], value: 2},
                 { key: ["a","x","c2","20"], value: 2},
-                { key: ["a","x","c2","20"], value: 2},
                 { key: ["b","x","c1","10"], value: 3},
                 { key: ["b","y","c2","20"], value: 4} ];
 
@@ -245,7 +244,7 @@ describe('custom data pivot.js', function () {
         describe('complete configuration without totals calculation', function () {
             let output
             beforeAll( () => {
-                config.aggregationType = ''
+                config.aggregationTotals = ''
                 output = pivotDataModule.run(data, config)
             } )
 
@@ -294,7 +293,7 @@ describe('custom data pivot.js', function () {
 
             let output
             beforeAll( () => {
-                expect(config.aggregationType).toEqual('count')
+                expect(config.aggregationTotals).toEqual('count')
                 expect(config.enableTotals).toEqual('all')
                 output = pivotDataModule.run(data, config)
             } )
@@ -347,6 +346,25 @@ describe('custom data pivot.js', function () {
                 const actualData = output.data
                 expect(JSON.stringify(actualData)).toEqual(JSON.stringify(expResult))
             })
+        })
+
+        describe('complete configuration with duplicate keys', function() {
+
+            it('can pivot the original data', function () {
+                data.push( data[0] );
+                // sum: 2+5 = 6
+                config.aggregationTotals = ''
+                config.aggregationValues = 'sum'
+                const output = pivotDataModule.run(data, config);
+                const expResult = [
+                    {"0": "a", "1": "x", "2": 2 /* was 1 */, "3": 2, "4": 2, "5": 2},
+                    {"0": "b", "1": "x", "2": 3},
+                    {"0": "b", "1": "y",                         "5": 4},
+                ]
+                const actualData = output.data
+                expect(JSON.stringify(actualData)).toEqual(JSON.stringify(expResult))
+            })
+
         })
 
         describe('row and column headers', function () {
@@ -425,7 +443,7 @@ describe('custom data pivot.js', function () {
             describe(`aggregation ${f}`, function () {
 
                 beforeEach( () => {
-                    config.aggregationType = f
+                    config.aggregationTotals = f
                     output = pivotDataModule.run(data, config)
                 } )
 
