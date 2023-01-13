@@ -1,10 +1,12 @@
 import {
     pivotDataModule,
-    ColHashMap,
     getLabelByProperty,
-    computeTotals, customNumericSorter, customStringSorter, isTotalsRowComponent
+    ColHashMap,
+    isTotalsRowComponent,
+    // used for mocking up internal functions
+    pivotDataUtils
 } from '../../../../src/js/datagrid/custom-data/custom-data-pivot';
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 
 describe('custom data pivot.js', function () {
 
@@ -178,13 +180,13 @@ describe('custom data pivot.js', function () {
                     function () {
                         pivotOptions.enableTotals = pivotDataModule.OptionEnums.EnableTotals[o]
                         pivotOptions.aggregationTotals = f
-                        computeTotals(pivotData, pivotOptions,undefined)
+                        pivotDataUtils.computeTotals(pivotData, pivotOptions,undefined)
                         // extract only the totals
                         let rowTotals = pivotData.map(e => e.__totals)
                         let colTotals = (pivotData[3] !== undefined) ? Object.values(pivotData[3]).slice(0,-1) : undefined
                         let k = `${f}-${o}`
                         let dd = [{msg: "row totals",    expected: expRowTotals, actual: rowTotals},
-                                  {msg: "column totals", expected: expColTotals, actual: colTotals}]
+                            {msg: "column totals", expected: expColTotals, actual: colTotals}]
                         // Check the values are correct
                         dd.forEach(d => {
                             if (d.expected[k] !== undefined) {
@@ -228,8 +230,8 @@ describe('custom data pivot.js', function () {
                 { key: ["b","y","c2","20"], value: 4} ];
 
             // so config and data can be used in beforeAll too...
-            config = _.cloneDeep(_config)
-            data = _.cloneDeep(_data)
+            config = cloneDeep(_config)
+            data = cloneDeep(_data)
 
             // check if the import worked correctly
             expect(pivotDataModule.run).toBeInstanceOf(Function)
@@ -237,39 +239,40 @@ describe('custom data pivot.js', function () {
         })
 
         beforeEach( () => {
-            config = _.cloneDeep(_config)
-            data = _.cloneDeep(_data)
+            config = cloneDeep(_config)
+            data = cloneDeep(_data)
         })
 
         describe('complete configuration without totals calculation', function () {
             let output
             beforeAll( () => {
                 config.aggregationTotals = ''
+                config.layout = 'compact'
                 output = pivotDataModule.run(data, config)
             } )
 
             it('can create default column definition', function () {
                 const expResult = [
                     {
-                        "title": "ColKey1", "level": 0, "columns": [
+                        title: "ColKey1", level: 0, columns: [
                             {
-                                "title": "ColKey2", "level": 1, "columns": [
-                                    {"title": "RowKey1", "field": "0", "cssClass": "pivot-row-header"},
-                                    {"title": "RowKey2", "field": "1", "cssClass": "pivot-row-header"}
+                                title: "ColKey2", level: 1, columns: [
+                                    {title: "RowKey1", field: "0", cssClass: "pivot-row-header"},
+                                    {title: "RowKey2", field: "1", cssClass: "pivot-row-header"}
                                 ]
                             }
                         ]
                     },
                     {
-                        "title": "c1", "level": 0, "columns": [
-                            {"title": "10", "field": "2"},
-                            {"title": "20", "field": "3"}
+                        title: "c1", level: 0, columns: [
+                            {title: "10", field: "2"},
+                            {title: "20", field: "3"}
                         ]
                     },
                     {
-                        "title": "c2", "level": 0, "columns": [
-                            {"title": "10", "field": "4"},
-                            {"title": "20", "field": "5"}
+                        title: "c2", level: 0, columns: [
+                            {title: "10", field: "4"},
+                            {title: "20", field: "5"}
                         ]
                     }
                 ]
@@ -298,25 +301,25 @@ describe('custom data pivot.js', function () {
                 output = pivotDataModule.run(data, config)
                 const expColDef = [
                     {
-                        "title": "ColKey1", "level": 0, "columns": [
+                        title: "ColKey1", level: 0, columns: [
                             {
-                                "title": "ColKey2", "level": 1, "columns": [
-                                    {"title": "RowKey1", "field": "0", "cssClass": "pivot-row-header"},
-                                    {"title": "RowKey2", "field": "1", "cssClass": "pivot-row-header"}
+                                title: "ColKey2", level: 1, columns: [
+                                    {title: "RowKey1", field: "0", cssClass: "pivot-row-header"},
+                                    {title: "RowKey2", field: "1", cssClass: "pivot-row-header"}
                                 ]
                             }
                         ]
                     },
                     {
-                        "title": "c1", "level": 0, "columns": [
-                            {"title": "10", "field": "2"},
-                            {"title": "20", "field": "3"}
+                        title: "c1", level: 0, columns: [
+                            {title: "10", field: "2"},
+                            {title: "20", field: "3"}
                         ]
                     },
                     {
-                        "title": "c2", "level": 0, "columns": [
-                            {"title": "10", "field": "4"},
-                            {"title": "20", "field": "5"}
+                        title: "c2", level: 0, columns: [
+                            {title: "10", field: "4"},
+                            {title: "20", field: "5"}
                         ]
                     }
                 ]
@@ -366,36 +369,23 @@ describe('custom data pivot.js', function () {
 
             let output
             beforeAll( () => {
-                expect(config.aggregationTotals).toEqual('count')
-                expect(config.enableTotals).toEqual('all')
+                config.aggregationTotals = 'count'
+                config.enableTotals = 'all'
+                config.layout = 'compact'
                 output = pivotDataModule.run(data, config)
             } )
 
             it('can create default column definition', function () {
                 const expResult = [
-                    {
-                        "title": "ColKey1", "level": 0, "columns": [
-                            {
-                                "title": "ColKey2", "level": 1, "columns": [
-                                    {"title": "RowKey1", "field": "0", "cssClass": "pivot-row-header"},
-                                    {"title": "RowKey2", "field": "1", "cssClass": "pivot-row-header"}
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "title": "c1", "level": 0, "columns": [
-                            {"title": "10", "field": "2"},
-                            {"title": "20", "field": "3"}
-                        ]
-                    },
-                    {
-                        "title": "c2", "level": 0, "columns": [
-                            {"title": "10", "field": "4"},
-                            {"title": "20", "field": "5"}
-                        ]
-                    },
-                    {"title": "Totals (count)", "field": "__totals", "cssClass": "tabulator-frozen"}
+                    { title: "ColKey1", level: 0, columns: [ {
+                            title: "ColKey2", level: 1, columns: [
+                                {title: "RowKey1", field: "0", cssClass: "pivot-row-header"},
+                                {title: "RowKey2", field: "1", cssClass: "pivot-row-header"}
+                            ] }
+                        ] },
+                    { title: "c1", level: 0, columns: [ {title: "10", field: "2"}, {title: "20", field: "3"} ] },
+                    { title: "c2", level: 0, columns: [ {title: "10", field: "4"}, {title: "20", field: "5"} ] },
+                    { title: "Totals (count)", field: "__totals", cssClass: "tabulator-frozen" }
                 ]
                 const actualColDef = output.cols
                 expect(JSON.stringify(actualColDef)).toEqual(JSON.stringify(expResult))
@@ -413,7 +403,7 @@ describe('custom data pivot.js', function () {
                         "4": 1,
                         "5": 2,
                         "__totals": 6,
-                        "cssClass": "tabulator-calcs-bottom"
+                        cssClass: "tabulator-calcs-bottom"
                     }
                 ]
                 const actualData = output.data
@@ -428,6 +418,7 @@ describe('custom data pivot.js', function () {
                 // sum: 2+5 = 6
                 config.aggregationTotals = ''
                 config.aggregationValues = 'sum'
+                config.layout = 'compact'
                 const output = pivotDataModule.run(data, config);
                 const expResult = [
                     {"0": "a", "1": "x", "2": 2 /* was 1 */, "3": 2, "4": 2, "5": 2},
@@ -442,18 +433,22 @@ describe('custom data pivot.js', function () {
 
         describe('row and column headers', function () {
 
+            beforeEach( () => {
+                config.layout = 'compact'
+            })
+
             let getHeaders = (c) => [
-                    c[0].title, // 2
-                    c[0].columns[0].title, // 3
-                    c[0].columns[0].columns[0].title, // 0
-                    c[0].columns[0].columns[1].title, // 1
-                    c[1].title, // c1
-                    c[1].columns[0].title, // 10
-                    c[1].columns[1].title, // 20
-                    c[2].title, // c2
-                    c[2].columns[0].title, // 10
-                    c[2].columns[1].title, // 20
-                ]
+                c[0].title, // 2
+                c[0].columns[0].title, // 3
+                c[0].columns[0].columns[0].title, // 0
+                c[0].columns[0].columns[1].title, // 1
+                c[1].title, // c1
+                c[1].columns[0].title, // 10
+                c[1].columns[1].title, // 20
+                c[2].title, // c2
+                c[2].columns[0].title, // 10
+                c[2].columns[1].title, // 20
+            ]
 
             it('should generate default header when config.header is not set', function () {
                 config.header = undefined
@@ -475,27 +470,32 @@ describe('custom data pivot.js', function () {
         })
 
         describe('labels', function() {
+
+            beforeEach( () => {
+                config.layout = 'compact';
+            })
+
             it('should apply labels', function() {
                 config.labels = { 0: { "a": "Accept", "b": "Reject" },
-                        1: { "x": "X", "y": "Y" },
-                        3: { "10": "USD 10", "20": "USD 20"} }
+                    1: { "x": "X", "y": "Y" },
+                    3: { "10": "USD 10", "20": "USD 20"} }
                 const output = pivotDataModule.run(data, config)
                 const actualColDef = output.cols
                 const actualData = output.data
-                const expColDef = [ { "title":"ColKey1","level":0,"columns": [
-                        {"title":"ColKey2","level":1,"columns": [
-                                {"title":"RowKey1","field":"0","cssClass":"pivot-row-header"},
-                                {"title":"RowKey2","field":"1","cssClass":"pivot-row-header"}
+                const expColDef = [ { title:"ColKey1",level:0,columns: [
+                        {title:"ColKey2",level:1,columns: [
+                                {title:"RowKey1",field:"0",cssClass:"pivot-row-header"},
+                                {title:"RowKey2",field:"1",cssClass:"pivot-row-header"}
                             ] }
                     ] },
-                    {"title":"c1","level":0,"columns": [ {"title":"USD 10","field":"2"}, {"title":"USD 20","field":"3"} ] },
-                    {"title":"c2","level":0,"columns": [ {"title":"USD 10","field":"4"}, {"title":"USD 20","field":"5"} ] },
-                    {"title":"Totals (count)","field":"__totals","cssClass":"tabulator-frozen"}
+                    {title:"c1",level:0,columns: [ {title:"USD 10",field:"2"}, {title:"USD 20",field:"3"} ] },
+                    {title:"c2",level:0,columns: [ {title:"USD 10",field:"4"}, {title:"USD 20",field:"5"} ] },
+                    {title:"Totals (count)",field:"__totals",cssClass:"tabulator-frozen"}
                 ]
                 const expData = [{"0":"Accept","1":"X","2":1,"3":2,"4":2,"5":2,"__totals":4},
                     {"0":"Reject","1":"X","2":3,"__totals":1},
                     {"0":"Reject","1":"Y","5":4,"__totals":1},
-                    {"1":"Totals (count)","2":2,"3":1,"4":1,"5":2,"__totals":6,"cssClass":"tabulator-calcs-bottom"}]
+                    {"1":"Totals (count)","2":2,"3":1,"4":1,"5":2,"__totals":6,cssClass:"tabulator-calcs-bottom"}]
                 expect(JSON.stringify(actualData)).toEqual(JSON.stringify(expData))
                 expect(JSON.stringify(actualColDef)).toEqual(JSON.stringify(expColDef))
             })
@@ -517,6 +517,7 @@ describe('custom data pivot.js', function () {
 
                 beforeEach( () => {
                     config.aggregationTotals = f
+                    config.layout = 'compact'
                     output = pivotDataModule.run(data, config)
                 } )
 
@@ -534,98 +535,69 @@ describe('custom data pivot.js', function () {
 
     });
 
-
     describe(`custom sorting functions`,() => {
 
-        let totalRowSingleClass;
-        let totalRowMultipleClass;
-        let totalRowSingleClassBadSyntax;
-        let dataRow;
-        let otherRow;
-
-        beforeEach( () => {
-            totalRowSingleClass = {
-                getData: () => {
-                    return {cssClass: 'tabulator-calcs-bottom'};
-                }
-            };
-            totalRowMultipleClass = {
-                getData: () => {
-                    return {cssClass: 'tabulator-calcs-bottom another-class'};
-                }
-            };
-            totalRowSingleClassBadSyntax = {
-                getData: () => {
-                    return {cssClass: 'tabulator-calcs-bottom-'};
-                }
-            };
-            dataRow = {
-                getData: () => {
-                    return {cssClass: ''};
-                }
-            };
-            otherRow = {
-                getData: () => {
-                    return {cssClass: 'a b c d'};
-                }
-            };
-        });
+        const inputData = [
+            ['simple', 'tabulator-calcs-bottom', true],
+            ['multiple', 'tabulator-calcs-bottom another-class', true],
+            ['bad syntax begin hyphen', '-tabulator-calcs-bottom', false],
+            ['bad syntax end hyphen', 'tabulator-calcs-bottom-', false],
+            ['good syntax begin space', ' tabulator-calcs-bottom', true],
+            ['good syntax end space', 'tabulator-calcs-bottom ', true],
+            ['data row', '', false],
+            ['other row', 'a b c d', false]
+        ]
 
         describe(`isTotalsRowComponent`,() => {
-            it('returns true when css-class is string', function() {
-                expect(isTotalsRowComponent(totalRowSingleClass)).toBeTruthy();
-            });
-            it('returns true when css-class is space delimited list', function() {
-                expect(isTotalsRowComponent(totalRowMultipleClass)).toBeTruthy();
-            });
-            it('returns false when css is empty', function() {
-                expect(isTotalsRowComponent(dataRow)).toBeFalsy();
-            });
-            it('returns false when css is list but total not present', function() {
-                expect(isTotalsRowComponent(otherRow)).toBeFalsy();
-            });
-        });
+            inputData.forEach( (r) => {
+                it(`returns ${r[2]} when css-class is ${r[0]}`, function () {
+                    let row =  { getData: () => { return {cssClass: r[1]}} };
+                    expect(isTotalsRowComponent(row)).toBe(r[2]);
+                })
+            })
+        })
 
-        describe(`numeric sorting`,() => {
-            it('does not sort total row a - single css', function() {
-                expect(customNumericSorter(100, 200, totalRowSingleClass, dataRow)).toBeNull();
-            });
-            it('does not sort total row b - single css', function() {
-                expect(customNumericSorter(100, 200, dataRow, totalRowSingleClass)).toBeNull();
-            });
-            it('does not sort total row a - multi css', function() {
-                expect(customNumericSorter(100, 200, totalRowMultipleClass, dataRow)).toBeNull();
-            });
-            it('does not sort total row b- multi css', function() {
-                expect(customNumericSorter(100, 200, dataRow, totalRowMultipleClass)).toBeNull();
-            });
-            it('sorts non total rows no css', function() {
-                expect(customNumericSorter(100, 200, dataRow, dataRow)).not.toBeNull();
-            });
-            it('sorts non total rows contains css', function() {
-                expect(customNumericSorter(100, 200, otherRow, otherRow)).not.toBeNull();
-            });
-        });
+        /**
+         * Sorting only supported for data row. In these tests we will verify the
+         * custom sorting function only applies to row data.
+         */
+        let expInputDataSorting = [
+            [ true, true, false ],
+            [ true, false, false ],
+            [ false, true, false ],
+            [ false, false, true ]
+        ];
 
-        describe(`string sorting`,() => {
-            it('does not sort total row a - single css', function() {
-                expect(customStringSorter('a', 'b', totalRowSingleClass, dataRow)).toBeNull();
-            });
-            it('does not sort total row b - single css', function() {
-                expect(customStringSorter('a', 'b', dataRow, totalRowSingleClass)).toBeNull();
-            });
-            it('does not sort total row a - multi css', function() {
-                expect(customStringSorter('a', 'b', totalRowMultipleClass, dataRow)).toBeNull();
-            });
-            it('does not sort total row b- multi css', function() {
-                expect(customStringSorter('a', 'b', dataRow, totalRowMultipleClass)).toBeNull();
-            });
-            it('sorts non total rows', function() {
-                expect(customStringSorter('a', 'b', dataRow, dataRow)).not.toBeNull();
-            });
-            it('sorts non total rows contains css', function() {
-                expect(customStringSorter('a', 'b', otherRow, otherRow)).not.toBeNull();
-            });
+        let sortFunction = [
+            ['numeric', pivotDataUtils.customNumericSorter, [ [ 100, 200, -100],  [ 200, 100, 100] ] ],
+            ['string',  pivotDataUtils.customStringSorter,  [ [ 'a', 'b', -1 ], [ 'b', 'a', 1] ] ]
+        ];
+
+        sortFunction.forEach( (f) => {
+            describe(`${f[0]} sorting`,() => {
+                expInputDataSorting.forEach( (r) => {
+                    describe(`totals:${r[0]} | totals:${r[1]}`, () => {
+                        beforeEach( () => {
+                            jest.spyOn( pivotDataUtils, 'isTotalsRowComponent').mockImplementation( (arg) => {
+                                return (arg === 'left row') ? r[0] : r[1]
+                            })
+                        })
+                        f[2].forEach( (v) => {
+                            it(`compare ${v[0]} and ${v[1]} = ${v[2]}`, () => {
+                                let sortOk = r[2];
+                                let sortFn = f[1];
+                                let result = sortFn(v[0], v[1], 'left row', 'right row');
+                                if (sortOk) {
+                                    expect(result).not.toBeNull();
+                                    expect(result).toEqual(v[2]);
+                                } else {
+                                    expect(result).toBeNull();
+                                }
+                            })
+                        })
+                    })
+                })
+            })
         });
-    });
+    })
 })

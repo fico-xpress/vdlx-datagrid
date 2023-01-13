@@ -65,7 +65,7 @@ function _countIfNotEmpty(a) {
     return isNumber(a) ? 1 : 0;
 }
 
-const re = new RegExp(`\\b${CSS_INTERNALS.tabulatorCalcsBottom}\\b`)
+const re = new RegExp(`(\\s|^)${CSS_INTERNALS.tabulatorCalcsBottom}(\\s|$)`)
 export const isTotalsRowComponent = (row) => {
     const rowCssClass = row.getData().cssClass;
     if (rowCssClass) {
@@ -80,10 +80,10 @@ export const isTotalsRowComponent = (row) => {
  * @param b - cell value to compare with a
  * @param rowA - row component for a
  * @param rowB- row component for b
- * @returns {difference between a and b}
+ * @returns {number|null}
  */
 export const customNumericSorter = (a, b, rowA, rowB) => {
-    if (isTotalsRowComponent(rowA) || isTotalsRowComponent(rowB)) {
+    if (pivotDataUtils.isTotalsRowComponent(rowA) || pivotDataUtils.isTotalsRowComponent(rowB)) {
         return null;
     }
     return a - b;
@@ -95,10 +95,10 @@ export const customNumericSorter = (a, b, rowA, rowB) => {
  * @param b - cell value to compare with a
  * @param rowA - row component for a
  * @param rowB- row component for b
- * @returns {number}
+ * @returns {number|null}
  */
 export const customStringSorter = (a, b, rowA, rowB) => {
-    if (isTotalsRowComponent(rowA) || isTotalsRowComponent(rowB)) {
+    if (pivotDataUtils.isTotalsRowComponent(rowA) || pivotDataUtils.isTotalsRowComponent(rowB)) {
         return null;
     }
     const x = a.toString().toUpperCase();
@@ -190,7 +190,7 @@ class Options {
          * - normal
          * @type {{string}}
          */
-        this.layout = "compact";
+        this.layout = "normal";
 
         /**
          * An array containing header names. Index of this array maps to the
@@ -246,8 +246,6 @@ class ColSimpleDefinition {
         // this.cssClass = ''
         if (sortingFunc) {
             this.sorter = sortingFunc;
-        } else {
-            this.sorter = customNumericSorter;
         }
     }
 }
@@ -681,6 +679,21 @@ const run = (data, config) => {
     }
 }
 
+/**
+ * Mockable functions
+ */
+export const pivotDataUtils = {
+    isTotalsRowComponent: isTotalsRowComponent,
+    getLabelByProperty: getLabelByProperty,
+    computeTotals: computeTotals,
+    customNumericSorter: customNumericSorter,
+    customStringSorter: customStringSorter,
+    ColHashMap: ColHashMap
+}
+
+/**
+ * The API of the module. Mainly used by VDL component
+ */
 export const pivotDataModule = {
     run: run,
     totalsFun: totalsFun,
