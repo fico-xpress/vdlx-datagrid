@@ -234,19 +234,14 @@ export class PivotContext {
  *
  */
 class ColSimpleDefinition {
-    constructor(title, field, sortingFunc) {
+    constructor(title, field, sortingFunc = customNumericSorter) {
         // Column name
         this.title = title;
         // Column index in the original data set
         // Tabulator expects the field to be a string because of 'nested field' feature
         this.field = field.toString();
-        // Aggregation function used for bottom total
-        // this.bottomCalc = ''
-        // A CSS class to use for the labels
-        // this.cssClass = ''
-        if (sortingFunc) {
-            this.sorter = sortingFunc;
-        }
+        // required custom sorter to sort columns and data with totals at the bottom
+        this.sorter = sortingFunc;
     }
 }
 
