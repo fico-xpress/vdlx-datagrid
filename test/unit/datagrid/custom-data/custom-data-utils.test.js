@@ -322,14 +322,13 @@ describe('custom data utils', () => {
                     }
                 });
             });
-            it('creates empty objects for dimensions without labels', () => {
+            it('creates nothing for dimensions without labels', () => {
                 expect(createLabelObject(3, [0,1], [array1])).toEqual({
                     '3': {
                         '0': 'one',
                         '1': 'two',
                         '2': 'three'
-                    },
-                    '4': {}
+                    }
                 });
             });
 

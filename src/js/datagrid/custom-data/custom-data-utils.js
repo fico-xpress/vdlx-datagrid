@@ -161,7 +161,9 @@ export const createLabelObject = (start, indexes, labels) => {
     let labelObject = {};
     times(indexSize, (index) => {
         const passedLabel = labels[index];
-        assign(labelObject, {[key]: passedLabel ? convertLabels(passedLabel) : {}});
+        if (passedLabel){
+            assign(labelObject, {[key]: convertLabels(passedLabel)});
+        }
         key++;
     });
     return labelObject;
