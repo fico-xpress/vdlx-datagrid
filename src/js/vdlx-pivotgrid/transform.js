@@ -60,6 +60,11 @@ export default function transform(element, attributes, api) {
         }
     }
 
+    // throw error if there is no row configuration
+    if (!pivotRowPositions && !pivotRowDimensions) {
+        throw Error('Error for component vdlx-pivotgrid: Missing row configuration.  Please specify either "row-set-position" or "row-dimensions".');
+    }
+
     const pivotRowTitles = attributes['row-titles'];
     if (pivotRowTitles) {
         if (pivotRowTitles.expression.isString) {
@@ -79,11 +84,6 @@ export default function transform(element, attributes, api) {
     } else {
         paramsBuilder.addParam('displayPivotRowCalc', true, false);
     }
-
-    // todo this should validate that if pivotRowPositions && pivotRowDimensions both exist, that pivotRowDimensions is an array of strings
-    // if (pivotRowPositions && pivotRowDimensions) {
-    //     throw Error('Error for component vdlx-pivotgrid: "row-set-position" and "row-count" are mutually exclusive.');
-    // }
 
     const pivotColumnPositions = attributes['column-set-position'];
     if (pivotColumnPositions) {
@@ -121,10 +121,10 @@ export default function transform(element, attributes, api) {
         paramsBuilder.addParam('displayPivotColumnCalc', true, false);
     }
 
-    // todo this should validate that if pivotRowPositions && pivotRowDimensions both exist, that pivotRowDimensions is an array of strings
-    // if (pivotColumnPositions && pivotColumnDimensions) {
-    //     throw Error('Error for component vdlx-pivotgrid: "column-count" and "column-count" are mutually exclusive.');
-    // }
+    // there must be a column configuration
+    if (!pivotColumnPositions && !pivotColumnDimensions) {
+        throw Error('Error for component vdlx-pivotgrid: Missing column configuration.  Please specify either "column-set-position" or "column-dimensions".');
+    }
 
     const pageSize = attributes['page-size'];
     if (pageSize) {
@@ -176,7 +176,7 @@ export default function transform(element, attributes, api) {
     const rowFilter = attributes['row-filter'];
     if (rowFilter) {
         if (rowFilter.expression.isString) {
-            throw Error('The vdlx-pivotgrid "row-filter" attribute must be supplied as an expression');
+            throw Error('Error for component vdlx-pivotgrid: "row-filter" attribute must be supplied as an expression');
         }
 
         paramsBuilder.addFunctionOrExpressionParam('rowFilter', rowFilter.expression.value, ['rowData', 'indices']);
