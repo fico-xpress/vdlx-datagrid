@@ -580,7 +580,7 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
             // the totals label is set on the last column containing the row keys, for
             // the normal layout we use the empty column that contains the column keys.
             let colPos = (pivotOptions.layout=='compact') ? nRowKey - 1 : PIVOT_CONST_VALUES.emptyCol;
-            columnTotals[colPos] = getTitle(pivotOptions);
+            columnTotals[colPos] = getTotalsTitle(pivotOptions);
 
             columnTotals.cssClass = CSS_INTERNALS.tabulatorCalcsBottom;
             pivotData.push(columnTotals);
