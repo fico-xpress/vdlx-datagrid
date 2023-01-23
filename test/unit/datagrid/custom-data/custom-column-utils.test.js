@@ -1,14 +1,19 @@
 import {
     calculatePivotDisplayCalcs,
-    convertObjectColDefinitions, validateDimensions,
+    convertObjectColDefinitions,
     createBasicColumnDefinition,
     createCustomColumnSortOrder,
-    createValueTypedColumnProperties, extractLabels,
+    createValueTypedColumnProperties,
+    extractLabels,
     isLabelObjectValid,
     isObjectDefinitionColValid,
-    overrideCustomColumnAttributes, pivotColumnSizeToIndex, pivotRowSizeToIndex,
+    overrideCustomColumnAttributes,
+    pivotColumnSizeToIndex,
+    pivotRowSizeToIndex,
+    validateDimensions,
     validateLabelsData,
-    validateObjectColDefinitions, validatePivotRowsAndColumns
+    validateObjectColDefinitions,
+    validatePivotRowsAndColumns
 } from "../../../../src/js/datagrid/custom-data/custom-column-utils";
 import * as dataUtils from '../../../../src/js/datagrid/custom-data/custom-data-utils';
 
@@ -408,11 +413,21 @@ describe('custom column utils', () => {
 
         });
         describe('validatePivotRowsAndColumns', () => {
-            it('calculate position of single column', () => {
-                expect(validatePivotRowsAndColumns(3, 2, 5)).toEqual(true);
+            it('zero treated as a value not a boolean', () => {
+                expect(validatePivotRowsAndColumns([0], [0], 5)).toEqual(true);
             });
             it('ignores duplicate vals', () => {
                 expect(validatePivotRowsAndColumns([0,1,2], [0,1,2], 5)).toEqual(true);
+            });
+            it('throws error when row size is 0', () => {
+                expect(() => {
+                    expect(validatePivotRowsAndColumns([], [10], 5)).toEqual(true);
+                }).toThrow('Error for component vdlx-pivotgrid: Rows and Columns must be defined.');
+            });
+            it('throws error when column size is 0', () => {
+                expect(() => {
+                    expect(validatePivotRowsAndColumns([1], [], 5)).toEqual(true);
+                }).toThrow('Error for component vdlx-pivotgrid: Rows and Columns must be defined.');
             });
             it('throws error when col and row count exceeds size', () => {
                 expect(() => {
@@ -424,7 +439,7 @@ describe('custom column utils', () => {
                     expect(validatePivotRowsAndColumns([10], [0,2,3], 5)).toEqual(true);
                 }).toThrow('Error for component vdlx-pivotgrid: The row or column position 10 must not exceed the dimensionality of the data 5');
             });
-            it('throws error when colum value exceeds size', () => {
+            it('throws error when column value exceeds size', () => {
                 expect(() => {
                     expect(validatePivotRowsAndColumns([0,1,2], [10], 5)).toEqual(true);
                 }).toThrow('Error for component vdlx-pivotgrid: The row or column position 10 must not exceed the dimensionality of the data 5');

@@ -42,7 +42,6 @@ import concat from "lodash/concat";
  * @returns {{data: *[], cols}}
  */
 export const createPivotConfig = (gridOptions, data) => {
-
     // take the first row of the data and count the dimensions
     const dimensionality = data[0].key ? data[0].key.length : 0;
     /*
@@ -107,7 +106,6 @@ export const createPivotConfig = (gridOptions, data) => {
             rowLabels = [rowLabels];
         }
     }
-    const displayPivotRowCalc = gridOptions.displayPivotRowCalc;
 
     let columnLabels = gridOptions.pivotColumnTitles;
     if (columnLabels) {
@@ -116,8 +114,7 @@ export const createPivotConfig = (gridOptions, data) => {
         }
     }
 
-    const displayPivotColumnCalc = gridOptions.displayPivotColumnCalc;
-    const enableTotals = calculatePivotDisplayCalcs(displayPivotRowCalc, displayPivotColumnCalc);
+    const enableTotals = calculatePivotDisplayCalcs(gridOptions.displayPivotRowCalc, gridOptions.displayPivotColumnCalc);
 
     /**
      * @type {Options}
