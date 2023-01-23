@@ -127,8 +127,9 @@ class Datagrid {
     /**
      *
      * @param {Element} root
-     * @param {*} gridOptions$
-     * @param {*} columnOptions$
+     * @param {KnockoutObservable} gridOptions$
+     * @param {KnockoutObservable} columnOptions$
+     * @param {KnockoutObservable} filters$
      */
     constructor(root, gridOptions$, columnOptions$, filters$) {
         /** @type {Array<KnockoutSubscription>} */
@@ -329,6 +330,8 @@ class Datagrid {
                     }
                     return undefined;
                 })
+                // Reduce table redraws with a throttle
+                .extend({throttle: 50})
                 .subscribe(noop),
         ]);
     }
