@@ -273,7 +273,7 @@ class ColGroupDefinition {
  * @param pivotOptions
  * @returns {string}
  */
-function getTitle(pivotOptions) {
+function getTotalsTitle(pivotOptions) {
     return `Totals (${pivotOptions.aggregationTotals})`
 }
 
@@ -294,14 +294,14 @@ function getColumnName(ar, e) {
 
 /**
  * Return a subset of an array
- * @param {(numeric)[]} ar
- * @param {{key: *[]}} e
+ * @param {(numeric)[]} positions
+ * @param {{key: *[]}} datum
  * @returns {*[]}
  */
-function getSlice(ar, e) {
+function getSlice(positions, datum) {
     let ret = []
-    ar.forEach((i) => {
-        ret.push(e.key[i]);
+    positions.forEach((val) => {
+        ret.push(datum.key[val]);
     })
     return ret;
 }
@@ -576,7 +576,7 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
             }
             // Calculate column position based on selected layout
             let colPos = (pivotOptions.layout=='compact') ? nRowKey - 1 : nRowKey;
-            columnTotals[colPos] = getTitle(pivotOptions);
+            columnTotals[colPos] = getTotalsTitle(pivotOptions);
 
             columnTotals.cssClass = CSS_INTERNALS.tabulatorCalcsBottom;
             pivotData.push(columnTotals);
