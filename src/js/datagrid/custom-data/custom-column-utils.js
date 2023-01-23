@@ -234,6 +234,11 @@ export const pivotColumnSizeToIndex = (dimensionality, rowCount, columnCount) =>
 
 
 export const validatePivotRowsAndColumns = (rows, cols, dimensionality) => {
+    // first check there is a value for both rows and columns
+    if (!size(rows) || !size(cols)) {
+        throw Error('Error for component vdlx-pivotgrid: Rows and Columns must be defined.');
+    }
+
     const uniqueValues = uniq(concat(rows, cols));
     const rowColSize = size(uniqueValues);
     // compare against length of unique values - in case rows and cols share the same values
