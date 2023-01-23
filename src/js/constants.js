@@ -51,14 +51,3 @@ export const CUSTOM_COLUMN_DEFINITION = {
     OBJECT: 'object',
     PIVOT: 'pivot'
 };
-
-/**
- *
- * @type {{ALL: string, COLS: string, NONE: string, ROWS: string}}
- */
-export const PIVOT_TOTALS_DISPLAY_TYPES = {
-    ALL: 'all',
-    ROWS: 'row',
-    COLS: 'column',
-    NONE: 'none'
-}

@@ -11,7 +11,8 @@ import {
     validateObjectColDefinitions, validatePivotRowsAndColumns
 } from "../../../../src/js/datagrid/custom-data/custom-column-utils";
 import * as dataUtils from '../../../../src/js/datagrid/custom-data/custom-data-utils';
-import {PIVOT_TOTALS_DISPLAY_TYPES} from "../../../../src/js/constants";
+
+import {pivotDataModule} from "../../../../src/js/datagrid/custom-data/custom-data-pivot";
 
 describe('custom column utils', () => {
 
@@ -432,19 +433,19 @@ describe('custom column utils', () => {
 
         describe('calculatePivotDisplayCalcs', () => {
             it('rows and columns = all', () => {
-                expect(calculatePivotDisplayCalcs(true, true)).toEqual(PIVOT_TOTALS_DISPLAY_TYPES.ALL);
+                expect(calculatePivotDisplayCalcs(true, true)).toEqual(pivotDataModule.OptionEnums.EnableTotals.All);
             });
             it('rows and no columns = all', () => {
-                expect(calculatePivotDisplayCalcs(true, false)).toEqual(PIVOT_TOTALS_DISPLAY_TYPES.ROWS);
+                expect(calculatePivotDisplayCalcs(true, false)).toEqual(pivotDataModule.OptionEnums.EnableTotals.Rows);
             });
             it('no rows and columns = all', () => {
-                expect(calculatePivotDisplayCalcs(false, true)).toEqual(PIVOT_TOTALS_DISPLAY_TYPES.COLS);
+                expect(calculatePivotDisplayCalcs(false, true)).toEqual(pivotDataModule.OptionEnums.EnableTotals.Cols);
             });
             it('no rows and no columns = all', () => {
-                expect(calculatePivotDisplayCalcs(false, false)).toEqual(PIVOT_TOTALS_DISPLAY_TYPES.NONE);
+                expect(calculatePivotDisplayCalcs(false, false)).toEqual(pivotDataModule.OptionEnums.EnableTotals.None);
             });
             it('return all as a default value', () => {
-                expect(calculatePivotDisplayCalcs()).toEqual(PIVOT_TOTALS_DISPLAY_TYPES.NONE);
+                expect(calculatePivotDisplayCalcs()).toEqual(pivotDataModule.OptionEnums.EnableTotals.None);
             });
         });
 

@@ -21,7 +21,9 @@
     limitations under the License.
  */
 
-import {COLUMN_SORTERS, EDITOR_TYPES, PIVOT_TOTALS_DISPLAY_TYPES} from "../../constants";
+import {COLUMN_SORTERS, EDITOR_TYPES} from "../../constants";
+import {pivotDataModule} from "./custom-data-pivot";
+
 import {Enums} from "../grid-filters";
 import {getDataType} from "./custom-data-utils";
 import has from "lodash/has";
@@ -39,7 +41,6 @@ import isArray from "lodash/isArray";
 import toNumber from "lodash/toNumber";
 import toUpper from "lodash/toUpper";
 import times from "lodash/times";
-import isArrayLike from "lodash/isArrayLike";
 import isNaN from "lodash/isNaN";
 import size from "lodash/size";
 import slice from "lodash/slice";
@@ -250,17 +251,18 @@ export const validatePivotRowsAndColumns = (rows, cols, dimensionality) => {
 
 export const calculatePivotDisplayCalcs = (displayRowCal, displayColumnCalc) => {
 
+    const totalsEnum = pivotDataModule.OptionEnums.EnableTotals;
     const rowCalc = toUpper(displayRowCal) === 'TRUE';
     const columnCalc = toUpper(displayColumnCalc) === 'TRUE';
 
     if (rowCalc && columnCalc) {
-        return PIVOT_TOTALS_DISPLAY_TYPES.ALL;
+        return totalsEnum.All;
     } else if (rowCalc && !columnCalc) {
-        return PIVOT_TOTALS_DISPLAY_TYPES.ROWS;
+        return totalsEnum.Rows;
     } else if (!rowCalc && columnCalc) {
-        return PIVOT_TOTALS_DISPLAY_TYPES.COLS;
+        return totalsEnum.Cols;
     } else if (!rowCalc && !columnCalc) {
-        return PIVOT_TOTALS_DISPLAY_TYPES.NONE;
+        return totalsEnum.None;
     }
 }
 
