@@ -44,7 +44,8 @@
  * @type {{totals: string}}
  */
 const PIVOT_CONST_VALUES = {
-    totals: '__totals'
+    totals: '__totals',
+    emptyCol: '__empty'
 }
 
 const CSS_INTERNALS = {
@@ -450,7 +451,7 @@ function _createColDef(data, config) {
         generateRowKey();
         lastCol = pivotContext.colDef;
         generateColKey();
-        newCol.field = "__empty"
+        newCol.field = PIVOT_CONST_VALUES.emptyCol
         newCol.cssClass = CSS_INTERNALS.pivotHeader
         newCol.columns = undefined
     }
@@ -574,9 +575,12 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
                 // We also add the totals of totals to the bottom right cell
                 columnTotals[PIVOT_CONST_VALUES.totals] = totals.totalOf;
             }
-            // Calculate column position based on selected layout
-            let colPos = (pivotOptions.layout=='compact') ? nRowKey - 1 : nRowKey;
-            columnTotals[colPos] = getTotalsTitle(pivotOptions);
+
+            // Calculate column position based on selected layout. For compact layout
+            // the totals label is set on the last column containing the row keys, for
+            // the normal layout we use the empty column that contains the column keys.
+            let colPos = (pivotOptions.layout=='compact') ? nRowKey - 1 : PIVOT_CONST_VALUES.emptyCol;
+            columnTotals[colPos] = getTitle(pivotOptions);
 
             columnTotals.cssClass = CSS_INTERNALS.tabulatorCalcsBottom;
             pivotData.push(columnTotals);
