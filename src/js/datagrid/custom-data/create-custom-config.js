@@ -21,19 +21,12 @@
 import {CUSTOM_COLUMN_DEFINITION, EDITOR_TYPES} from "../../constants";
 import {chooseColumnFilter} from "../grid-filters";
 import {
-    calculatePivotDisplayCalcs,
     convertObjectColDefinitions,
     createBasicColumnDefinition,
-    extractLabels,
-    pivotColumnSizeToIndex,
-    pivotRowSizeToIndex,
-    validateDimensions,
     validateLabelsData,
-    validateObjectColDefinitions,
-    validatePivotRowsAndColumns,
-    validateSetPosition
+    validateObjectColDefinitions
 } from './custom-column-utils';
-import {convertCustomDataToObjectData, convertObjectDataToLabelData, createLabelsConfig} from './custom-data-utils';
+import {convertCustomDataToObjectData, convertObjectDataToLabelData} from './custom-data-utils';
 import {
     checkboxFilterFunc,
     FILTER_PLACEHOLDER_TEXT,
@@ -50,8 +43,6 @@ import size from "lodash/size";
 import map from "lodash/map";
 import head from "lodash/head";
 import isUndefined from "lodash/isUndefined";
-import concat from "lodash/concat";
-import isArray from "lodash/isArray";
 
 /**
  * creates config object containing data and columns
@@ -85,104 +76,7 @@ export const createCustomConfig = (gridOptions) => {
             columnDefinitions = createLabelsDefinitionColumns(data);
             break
         case CUSTOM_COLUMN_DEFINITION.PIVOT:
-
-            // todo - this is so big now - should it be moved into create-pivot-config.js?
-            // todo - pass the grid options into it
-            // take the first row of the data and count the dimensions
-            const dimensionality = data[0].key ? data[0].key.length : 0;
-            /*
-                row and column positions
-                The set position of the dimensions that are used to produce the rows/columns of the pivot grid. You can specify a single value or an array.
-                can be either a number or an array
-             */
-            let rowPositions = gridOptions.pivotRowPositions;
-            let columnPositions = gridOptions.pivotColumnPositions;
-
-            /*
-                row and column dimensions
-                An array of row/column group headings ["pivot column a", "pivot column b"]
-                a number representing the number of dimensions from the original data set that will be used as ]rows/columns in the pivot grid
-             */
-            let rowDimensions = gridOptions.pivotRowDimensions;
-            let columnDimensions = gridOptions.pivotColumnDimensions;
-
-            if (rowDimensions) {
-                rowDimensions = validateDimensions(rowDimensions, 'row');
-            }
-            if (columnDimensions) {
-                columnDimensions = validateDimensions(columnDimensions, 'column');
-            }
-
-            /*
-               row and column indexes drive the pivot table
-               they decide which indexes from the keyed data go on which dimension (row, column or both)
-               they are extracted from EITHER the row/column-positions OR the row/column-dimensions attributes
-               if both are present:
-               the row/column-positions attribute will be used for the indexes
-               and the row/column-dimensions attribute used for row/column group headings
-             */
-            let rowIndexes;
-            if (!isUndefined(rowPositions)) {
-                if (!isArray(rowPositions)) {
-                    rowPositions = [rowPositions];
-                }
-                rowIndexes = validateSetPosition(rowPositions, 'row-set-position');
-            } else {
-                const rowCount = isArray(rowDimensions) ? size(rowDimensions) : rowDimensions;
-                rowIndexes = pivotRowSizeToIndex(rowCount);
-            }
-
-            let columnIndexes;
-            if (!isUndefined(columnPositions)) {
-                if (!isArray(columnPositions)) {
-                    columnPositions = [columnPositions];
-                }
-                columnIndexes = validateSetPosition(columnPositions, 'column-set-position');
-            } else {
-                const columnCount = isArray(columnDimensions) ? size(columnDimensions) : columnDimensions;
-                columnIndexes = pivotColumnSizeToIndex(dimensionality, size(rowIndexes), columnCount);
-            }
-
-            validatePivotRowsAndColumns(rowIndexes, columnIndexes, dimensionality);
-
-            let rowLabels = gridOptions.pivotRowTitles;
-            // must be an array of arrays, not a single array
-            if (rowLabels) {
-                if (!isArray(rowLabels[0])) {
-                    rowLabels = [rowLabels];
-                }
-            }
-            const displayPivotRowCalc = gridOptions.displayPivotRowCalc;
-
-            let columnLabels = gridOptions.pivotColumnTitles;
-            if (columnLabels) {
-                if (!isArray(columnLabels[0])) {
-                    columnLabels = [columnLabels];
-                }
-            }
-
-            const displayPivotColumnCalc = gridOptions.displayPivotColumnCalc;
-            const enableTotals = calculatePivotDisplayCalcs(displayPivotRowCalc, displayPivotColumnCalc);
-
-            const pivotConfig = {
-                rows: rowIndexes,
-                cols: columnIndexes,
-                enableTotals: enableTotals
-            };
-
-            if (!isUndefined(rowLabels) || !isUndefined(columnLabels)) {
-                const labelConfig = createLabelsConfig(rowLabels, columnLabels, rowIndexes, columnIndexes);
-                if (size(labelConfig)) {
-                    pivotConfig.labels = labelConfig;
-                }
-            }
-
-            let pivotHeaders = concat(extractLabels(rowDimensions), extractLabels(columnDimensions));
-            if (size(pivotHeaders)) {
-                pivotConfig.header = pivotHeaders;
-            }
-
-            const pivotData = createPivotConfig(data, pivotConfig);
+            const pivotData = createPivotConfig(gridOptions, data);
             datagridData = pivotData.data;
             columnDefinitions = pivotData.cols;
             break

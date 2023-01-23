@@ -701,7 +701,7 @@ function _sanitizeConfig(config) {
 /**
  *
  * @param data
- * @param {Options} config
+ * @param config
  * @returns {{data: [], cols}}
  */
 const run = (data, config) => {
