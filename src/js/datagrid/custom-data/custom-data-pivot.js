@@ -458,7 +458,8 @@ function _createColDef(data, config) {
         lastCol = rowColGroup.columns;
         generateRowKey();
         lastCol = pivotContext.colDef;
-        /* let */ newCol = generateColKey();
+        // let newCol = generateColKey();
+        generateColKey();
         newCol.field = PIVOT_CONST_VALUES.emptyCol
         newCol.cssClass = CSS_INTERNALS.pivotHeader
         newCol.columns = undefined
