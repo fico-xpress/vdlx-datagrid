@@ -439,7 +439,7 @@ function _createColDef(data, config) {
         rows.forEach((e, i) => {
             let newRowColGroup = new ColGroupDefinition("", i);
             if (rowColGroup!==undefined) {
-                rowColGroup.columns = newRowColGroup;
+                rowColGroup.columns.push(newRowColGroup);
             } else {
                 lastCol.push(newRowColGroup)
             }
