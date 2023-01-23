@@ -416,6 +416,7 @@ function _createColDef(data, config) {
         const newCol = new ColGroupDefinition(getColumnName(header, e), lvl);
         lastCol.push(newCol);
         lastCol = newCol.columns;
+        return newCol
     });
     let generateRowKey = () => rows.forEach((e, field) =>
         lastCol.push(Object.assign(new StringColSimpleDefinition(getColumnName(header, e), field), {cssClass: CSS_INTERNALS.pivotHeader}))
@@ -448,7 +449,9 @@ function _createColDef(data, config) {
         lastCol = rowColGroup.columns;
         generateRowKey();
         lastCol = pivotContext.colDef;
-        generateColKey();
+        let c = generateColKey();
+        c.field = "__totals"
+        c.cssClass = "pivot-row-header"
     }
 
     let colMap = {};
