@@ -263,7 +263,7 @@ class StringColSimpleDefinition extends ColSimpleDefinition {
 class ColGroupDefinition {
     constructor(title, level) {
         this.title = title;
-        this.level = level;
+        // this.level = level;
         this.columns = [];
     }
 }
