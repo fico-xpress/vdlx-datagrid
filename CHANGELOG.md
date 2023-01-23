@@ -1,5 +1,9 @@
 # vdlx-datagrid changelog
 
+## v5.0.1
+
+- Fixed an issue where cells edits were being displayed as the previous value from the server when datagrid configuration changes.
+
 ## v5.0.0
 
 - Updated to VDL 5.0 compatibility.
