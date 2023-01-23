@@ -235,7 +235,7 @@ export const pivotColumnSizeToIndex = (dimensionality, rowCount, columnCount) =>
 export const validatePivotRowsAndColumns = (rows, cols, dimensionality) => {
     const uniqueValues = uniq(concat(rows, cols));
     const rowColSize = size(uniqueValues);
-    // compare against length of unique values in case rows and cols share the same vals
+    // compare against length of unique values - in case rows and cols share the same values
     if (rowColSize > dimensionality) {
         throw Error(`Error for component vdlx-pivotgrid: The sum of row and column sizes ${rowColSize}, exceeds the dimensionality of the data ${dimensionality}`);
     }
@@ -264,28 +264,56 @@ export const calculatePivotDisplayCalcs = (displayRowCal, displayColumnCalc) => 
     }
 }
 
+
+/**
+ * todo
+ * todo
+ *  --- todo standardise the error messages, they are inconsistent with each other
+ * todo
+ * todo
+ *
+ */
+
 /**
  * the dimensions can either be a number, or an array
+ * if array, contents can be strings or numbers
+ * if primitive, it must be a value that can be cast as a number
  * @param dimensions
  * @returns {*}
  */
 export const validateDimensions = (dimensions, dimensionName) => {
     if (isArray(dimensions)) {
-        return size(dimensions);
-    } else if (!isNaN(toNumber(dimensions))) {
         return dimensions;
+    } else if (!isNaN(toNumber(dimensions))) {
+        return toNumber(dimensions);
     } else {
         throw Error(`Error for component vdlx-pivotgrid: Invalid ${dimensionName}-dimensions.  Supported format: An array of ${dimensionName} group headings [headingOne, headingTwo], or a number representing the required amount of ${dimensionName}s.`);
     }
 }
 
+/**
+ * convert dimensions into array of strings
+ * @param dimensions
+ * @returns {*[]|*}
+ */
 export const extractLabels = (dimensions) => {
-    if (isArrayLike(dimensions)) {
-        return dimensions;
+    if (isUndefined(dimensions)) {
+        return [];
+    } else if (isArray(dimensions)) {
+        return map(dimensions, toString);
+    } else {
+        return [toString(dimensions)];
     }
-    return [];
 }
 
+/**
+ * the set position can be either an array or a single number
+ * if array, all values must be cast-able to numbers
+ * if not and array it must be a value that can be cast as a number
+ * @param arr
+ * @param attrName
+ * @returns {*}
+ */
 export const validateSetPosition = (arr, attrName) => {
     const asNumbers = map(arr, (val) => {
         const num = toNumber(val);

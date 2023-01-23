@@ -34,10 +34,8 @@ import toNumber from "lodash/toNumber";
 import isBoolean from "lodash/isBoolean";
 import cloneDeep from "lodash/cloneDeep";
 import toString from "lodash/toString";
-import size from "lodash/size";
 import isString from "lodash/isString";
 import isNumber from "lodash/isNumber";
-import times from "lodash/times";
 import merge from "lodash/merge";
 
 
@@ -129,7 +127,7 @@ export const convertPrimitiveArray = (data) => {
 export const convertObjectDataToLabelData = (data) => {
     // create a single object containing properties for each row
     return [reduce(data, function (memo, row, index) {
-        assign(memo, { [toString(index)]: row.value});
+        assign(memo, {[toString(index)]: row.value});
         return memo;
     }, {})];
 }
@@ -155,25 +153,8 @@ export const convertLabels = (labels) => {
     }
 }
 
-export const createLabelObject = (start, indexes, labels) => {
-    let key = start;
-    const indexSize = size(indexes);
-    let labelObject = {};
-    times(indexSize, (index) => {
-        const passedLabel = labels[index];
-        if (passedLabel){
-            assign(labelObject, {[key]: convertLabels(passedLabel)});
-        }
-        key++;
-    });
-    return labelObject;
-}
-
 /**
  * convert multiple arrays of labels into a single object
- *
- * each dimension is given a key and label array regardless of if the dimension has no labels
- *
  * the keys relate to rows and then cols
  *
  * @param rowLabels
@@ -181,7 +162,23 @@ export const createLabelObject = (start, indexes, labels) => {
  * @returns {{}|*}
  */
 export const createLabelsConfig = (rowLabels, columnLabels, rowIndexes, columnIndexes) => {
-    const rowObject = createLabelObject(0, rowIndexes, rowLabels || []);
-    const columnObject = createLabelObject(size(rowIndexes), columnIndexes, columnLabels || []);
-    return merge(rowObject, columnObject);
+
+    let rowLabObj = {};
+    let columnLabObj = {};
+    if (rowLabels) {
+        rowLabObj = createLabelObject(rowLabels, rowIndexes);
+    }
+    if (columnLabels) {
+        columnLabObj = createLabelObject(columnLabels, columnIndexes);
+    }
+     return merge(rowLabObj, columnLabObj);
+}
+
+export const createLabelObject = (labels, indexes) => {
+    return reduce(indexes, (memo, row, i) => {
+        if (labels[i]) {
+            assign(memo, {[row]: convertLabels(labels[i])});
+        }
+        return memo;
+    }, {});
 }
