@@ -413,17 +413,19 @@ function _createColDef(data, config) {
      * Create the column definition for the columns key (group) and for the rows key (simple)
      */
     let lastCol = pivotContext.colDef;
-    let newCol
-    // let generateColKey = () => cols.map( (e, lvl) => {
+    let generateColKey = () => cols.map( (e, lvl) => {
+        return new ColGroupDefinition(getColumnName(header, e), lvl) })
+        .reduce( (prev,cur,i) => {
+            lastCol.push(cur);
+            lastCol = cur.columns;
+            return cur
+        });
+
+    // let generateColKey = () => cols.forEach( (e, lvl) => {
     //     newCol = new ColGroupDefinition(getColumnName(header, e), lvl);
     //     lastCol.push(newCol);
     //     lastCol = newCol.columns;
     // });
-    let generateColKey = () => cols.forEach( (e, lvl) => {
-        newCol = new ColGroupDefinition(getColumnName(header, e), lvl);
-        lastCol.push(newCol);
-        lastCol = newCol.columns;
-    });
     let generateRowKey = () => rows.forEach((e, field) =>
         lastCol.push(Object.assign(new StringColSimpleDefinition(getColumnName(header, e), field), {cssClass: CSS_INTERNALS.pivotHeader}))
     );
@@ -455,7 +457,7 @@ function _createColDef(data, config) {
         lastCol = rowColGroup.columns;
         generateRowKey();
         lastCol = pivotContext.colDef;
-        generateColKey();
+        let newCol = generateColKey();
         newCol.field = PIVOT_CONST_VALUES.emptyCol
         newCol.cssClass = CSS_INTERNALS.pivotHeader
         newCol.columns = undefined
@@ -685,9 +687,9 @@ function _sanitizeConfig(config) {
         let res = Object.assign(new Options(), config);
         // check minimal set of options are set
         try {
-            let x = res.rows.length
-            let y = res.cols.length
-            return res
+            if (res.rows.length>0 && res.cols.length>0) {
+                return res
+            }
         } catch (e) {
         }
     }
