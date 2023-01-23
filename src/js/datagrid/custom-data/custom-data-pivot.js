@@ -414,6 +414,11 @@ function _createColDef(data, config) {
      */
     let lastCol = pivotContext.colDef;
     let newCol
+    // let generateColKey = () => cols.map( (e, lvl) => {
+    //     newCol = new ColGroupDefinition(getColumnName(header, e), lvl);
+    //     lastCol.push(newCol);
+    //     lastCol = newCol.columns;
+    // });
     let generateColKey = () => cols.forEach( (e, lvl) => {
         newCol = new ColGroupDefinition(getColumnName(header, e), lvl);
         lastCol.push(newCol);
@@ -438,7 +443,7 @@ function _createColDef(data, config) {
          * |  RegionBins | AgeBins |             |
          */
         let rowColGroup;
-        rows.forEach((e, i) => {
+        cols.forEach((e, i) => {
             let newRowColGroup = new ColGroupDefinition("", i);
             if (rowColGroup!==undefined) {
                 rowColGroup.columns.push(newRowColGroup);
