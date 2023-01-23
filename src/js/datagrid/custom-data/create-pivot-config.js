@@ -120,7 +120,7 @@ export const createPivotConfig = (gridOptions, data) => {
     const enableTotals = calculatePivotDisplayCalcs(displayPivotRowCalc, displayPivotColumnCalc);
 
     /**
-     *
+     * @type {Options}
      */
     const pivotConfig = {
         rows: rowIndexes,
