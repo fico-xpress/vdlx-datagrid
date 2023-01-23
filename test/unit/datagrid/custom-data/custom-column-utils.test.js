@@ -450,10 +450,10 @@ describe('custom column utils', () => {
 
         describe('countDimensions', () => {
             it('array of numbers', () => {
-                expect(validateDimensions([1, 2], 'row')).toEqual(2);
+                expect(validateDimensions([1, 2], 'row')).toEqual([1, 2]);
             });
             it('array of strings', () => {
-                expect(validateDimensions(['1', '2'], 'row')).toEqual(2);
+                expect(validateDimensions(['1', '2'], 'row')).toEqual(['1', '2']);
             });
             it('returns number', () => {
                 expect(validateDimensions(2, 'row')).toEqual(2);
@@ -472,10 +472,10 @@ describe('custom column utils', () => {
                 expect(extractLabels(['one', 'two'])).toEqual(['one', 'two']);
             });
             it('single string', () => {
-                expect(extractLabels('label')).toEqual('label');
+                expect(extractLabels('label')).toEqual(['label']);
             });
             it('number', () => {
-                expect(extractLabels(123)).toEqual([]);
+                expect(extractLabels(123)).toEqual(['123']);
             });
         });
 

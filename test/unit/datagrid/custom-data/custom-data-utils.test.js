@@ -308,28 +308,26 @@ describe('custom data utils', () => {
         });
 
         describe('createLabelObject', () => {
-            it('creates label object keyed with start and indexes', () => {
-                expect(createLabelObject(10, [0,1], [array1, labelArray1])).toEqual({
+            it('creates label object keyed from array of strings', () => {
+                expect(createLabelObject([array1], [10])).toEqual({
                     '10': {
                         '0': 'one',
                         '1': 'two',
                         '2': 'three'
-                    },
-                    '11': {
+                    }
+                });
+            });
+            it('creates label object from labels array', () => {
+                expect(createLabelObject([labelArray1], [3])).toEqual({
+                    '3': {
                         '1': 'label 1',
                         '2': 'label 2',
                         '3': 'label 3'
                     }
                 });
             });
-            it('creates nothing for dimensions without labels', () => {
-                expect(createLabelObject(3, [0,1], [array1])).toEqual({
-                    '3': {
-                        '0': 'one',
-                        '1': 'two',
-                        '2': 'three'
-                    }
-                });
+            it('returns empty object when passed nothing', () => {
+                expect(createLabelObject([], [])).toEqual({});
             });
 
         });

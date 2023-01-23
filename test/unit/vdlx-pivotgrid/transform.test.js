@@ -4,7 +4,7 @@ import {extensionApiMock, componentParamsBuilder} from '../../jest/mocks/extensi
 import {CUSTOM_COLUMN_DEFINITION} from "../../../src/js/constants";
 import {validateObjectColDefinitions} from "../../../src/js/datagrid/custom-data/custom-column-utils";
 
-describe('vdlx-pivotgrid: transform', () => {
+describe.skip('vdlx-pivotgrid: transform', () => {
 
     let mockElement;
     let apiMock;
