@@ -435,14 +435,23 @@ function _createColDef(data, config) {
          * |                       | CostBins    |
          * |  RegionBins | AgeBins |             |
          */
-        let rowColGroup = new ColGroupDefinition("", 0);
-        lastCol.push(rowColGroup);
-        generateColKey();
+        let rowColGroup;
+        rows.forEach((e, i) => {
+            let newRowColGroup = new ColGroupDefinition("", i);
+            if (rowColGroup!==undefined) {
+                rowColGroup.columns = newRowColGroup;
+            } else {
+                lastCol.push(newRowColGroup)
+            }
+            rowColGroup = newRowColGroup;
+        })
         lastCol = rowColGroup.columns;
         generateRowKey();
+        lastCol = pivotContext.colDef;
+        generateColKey();
     }
 
-    let colMap = {}
+    let colMap = {};
 
     /**
      * Extend the column group for columns keys with new column for each possible value of the column keys
