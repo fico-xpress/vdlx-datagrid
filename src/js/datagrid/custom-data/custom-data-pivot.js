@@ -451,7 +451,7 @@ function _createColDef(data, config) {
         lastCol = pivotContext.colDef;
         generateColKey();
         newCol.field = "__empty"
-        newCol.cssClass = "pivot-row-header"
+        newCol.cssClass = CSS_INTERNALS.pivotHeader
         newCol.columns = undefined
     }
 
@@ -574,11 +574,10 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
                 // We also add the totals of totals to the bottom right cell
                 columnTotals[PIVOT_CONST_VALUES.totals] = totals.totalOf;
             }
-            if (pivotOptions.layout=='compact') {
-                columnTotals[nRowKey - 1] = getTitle(pivotOptions);
-            } else {
-                columnTotals[nRowKey] = getTitle(pivotOptions);
-            }
+            // Calculate column position based on selected layout
+            let colPos = (pivotOptions.layout=='compact') ? nRowKey - 1 : nRowKey;
+            columnTotals[colPos] = getTitle(pivotOptions);
+
             columnTotals.cssClass = CSS_INTERNALS.tabulatorCalcsBottom;
             pivotData.push(columnTotals);
         }
