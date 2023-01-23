@@ -53,10 +53,19 @@ export const withEqualityComparer = function (f, obs) {
 };
 
 /**
- * Sets equalityComparer on the observable
+ * Sets deep equals on the observable value.
+ *
+ * @param {KnockoutObservable} obs
+ * @returns {KnockoutObservable}
  */
-
 export const withDeepEquals = obs => withEqualityComparer(isEqual, obs);
+
+/**
+ * Sets shallow equals on the observable value.
+ *
+ * @param {KnockoutObservable} obs
+ * @returns {KnockoutObservable}
+ */
 export const withEquals = obs => withEqualityComparer(eq, obs);
 
 export const createMutationObservable = (
