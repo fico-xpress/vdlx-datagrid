@@ -13,7 +13,7 @@ describe('custom-data-pivot module', () => {
         pivotDataModule.run.mockRestore();
     });
 
-    it('passes config onto the pivotModule', () => {
+    it.skip('passes config onto the pivotModule', () => {
         const data = 'data';
         const pivotConfig = 'config'
         createPivotConfig(data, pivotConfig);

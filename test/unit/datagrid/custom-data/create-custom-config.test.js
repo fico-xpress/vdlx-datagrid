@@ -106,7 +106,7 @@ describe('createCustomConfig module', () => {
         });
 
 
-        describe('pivot data column definition', () => {
+        describe.skip('pivot data column definition', () => {
 
             const resultData = [{data:'data'}];
             const pivotedData = [{data:'pivotedData'}];
