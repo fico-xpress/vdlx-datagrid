@@ -450,7 +450,7 @@ function _createColDef(data, config) {
         generateRowKey();
         lastCol = pivotContext.colDef;
         generateColKey();
-        newCol.field = "__totals"
+        newCol.field = "__empty"
         newCol.cssClass = "pivot-row-header"
         newCol.columns = undefined
     }
@@ -574,7 +574,11 @@ export function computeTotals(pivotData, pivotOptions, pivotContext) {
                 // We also add the totals of totals to the bottom right cell
                 columnTotals[PIVOT_CONST_VALUES.totals] = totals.totalOf;
             }
-            columnTotals[nRowKey - 1] = getTitle(pivotOptions);
+            if (pivotOptions.layout=='compact') {
+                columnTotals[nRowKey - 1] = getTitle(pivotOptions);
+            } else {
+                columnTotals[nRowKey] = getTitle(pivotOptions);
+            }
             columnTotals.cssClass = CSS_INTERNALS.tabulatorCalcsBottom;
             pivotData.push(columnTotals);
         }
