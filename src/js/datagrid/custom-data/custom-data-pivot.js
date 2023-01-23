@@ -158,7 +158,7 @@ class Options {
          * totals.
          * @type {string}
          */
-        this.aggregationTotals = OptionEnums.AggregationTypes.Count;
+        this.aggregationTotals = OptionEnums.AggregationTypes.Sum;
 
         /**
          * The aggregation function that is used when the input data array contains
@@ -667,14 +667,26 @@ function _createObject(data, pivotOptions, pivotContext) {
 }
  */
 
+/**
+ *
+ * @param {Options} config
+ * @returns {Options}
+ * @private
+ */
 function _sanitizeConfig(config) {
     // Set default options
     if (config) {
         // override default fields. Note this is a shallow copy...
-        return Object.assign(new Options(), config);
-    } else {
-        throw Error('Error for pivotDataModule: Configuration is unset.');
+        let res = Object.assign(new Options(), config);
+        // check minimal set of options are set
+        try {
+            let x = res.rows.length
+            let y = res.cols.length
+            return res
+        } catch (e) {
+        }
     }
+    throw Error('Error for pivotDataModule: Configuration is unset.');
 }
 
 /**
