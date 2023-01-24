@@ -421,6 +421,13 @@ function _createColDef(data, config) {
     //         return cur
     //     });
 
+    // let generateColKey = (cols) => cols.map( (e, lvl) => {
+    //     return new ColGroupDefinition(getColumnName(header, e), lvl); })
+    //     .reduce( (prev,cur) => {
+    //         prev.push(cur);
+    //         return cur.columns;
+    //     },cols) ;
+
     let newCol;
     let generateColKey = () => cols.forEach( (e, lvl) => {
         newCol = new ColGroupDefinition(getColumnName(header, e), lvl);
@@ -437,7 +444,7 @@ function _createColDef(data, config) {
          * |        CostBins       |
          * |  RegionBins | AgeBins |
          */
-        generateColKey();
+        generateColKey(lastCol);
         generateRowKey();
     } else {
         /**
@@ -460,9 +467,9 @@ function _createColDef(data, config) {
         lastCol = pivotContext.colDef;
         // let newCol = generateColKey();
         generateColKey();
-        newCol.field = PIVOT_CONST_VALUES.emptyCol
-        newCol.cssClass = CSS_INTERNALS.pivotHeader
-        newCol.columns = undefined
+        let c = new StringColSimpleDefinition("", PIVOT_CONST_VALUES.emptyCol)
+        c.cssClass = CSS_INTERNALS.pivotHeader
+        newCol.columns.push(c)
     }
 
     let colMap = {};
@@ -628,6 +635,7 @@ function _createObject(data, pivotOptions, pivotContext) {
         if (pivotData[rId] === undefined) {
             pivotData[rId] = {};
             rowKeys.forEach((v, i) => {
+                // pivotData[rId][i] = getLabelByProperty(labels[rows[i]], v);
                 pivotData[rId][i] = getLabelByProperty(labels[i], v);
             })
         }
