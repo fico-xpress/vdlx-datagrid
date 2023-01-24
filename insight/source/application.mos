@@ -128,7 +128,8 @@ model "vdlx-datagrid examples"
 
     StatTypeLabels: array(StatTypes) of string
 
-    CountryStats: dynamic array(CountryCodes, StatTypes) of real
+    Matches: range
+    CountryStats: dynamic array(CountryCodes, StatTypes, Matches) of real
 
 
     SupportLevelNames: array(SupportLevels) of string ! Support level names
@@ -553,17 +554,18 @@ model "vdlx-datagrid examples"
     CountryCodesLabel('IT') := 'Italy'
     CountryCodesLabel('USA') := 'United States'
 
-    StatTypes := {'S1','S2','S3', 'S4', 'S5'}
+    StatTypes := {'1','2','3','4','5'}
 
-    StatTypeLabels('S1') := 'Stat 1'
-    StatTypeLabels('S2') := 'Stat 2'
-    StatTypeLabels('S3') := 'Stat 3'
-    StatTypeLabels('S4') := 'Stat 4'
-    StatTypeLabels('S5') := 'Stat 5'
+    StatTypeLabels('1') := 'Goals For'
+    StatTypeLabels('2') := 'Goals Against'
+    StatTypeLabels('3') := 'Shots For'
+    StatTypeLabels('4') := 'Shots Against'
+    StatTypeLabels('5') := 'Possession'
 
+    Matches := 1..6
 
-    forall(a in CountryCodes, b in StatTypes) do
-      CountryStats(a,b) := integer(round((100*random)+0.5))
+    forall(a in CountryCodes, b in StatTypes, c in Matches) do
+      CountryStats(a,b,c) := integer(round((100*random)+0.5))
     end-do
 
   end-procedure
