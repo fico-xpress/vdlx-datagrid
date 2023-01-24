@@ -354,7 +354,8 @@ describe('custom data pivot.js', function () {
                         ]
                     },
                     { title: "ColKey1",
-                        columns: [ {title: "ColKey2", field: "__empty", cssClass: "pivot-row-header"} ] },
+                        columns: [ {title: "ColKey2", columns: [
+                                {title: "", field: "__empty", cssClass: "pivot-row-header", headerSort: false} ] } ] },
                     { title: "c1", columns: [ {title: "10", field: "2"}, {title: "20", field: "3"} ] },
                     { title: "c2", columns: [ {title: "10", field: "4"}, {title: "20", field: "5"} ] }
                 ]
