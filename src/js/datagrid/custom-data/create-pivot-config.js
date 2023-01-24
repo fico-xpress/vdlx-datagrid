@@ -61,10 +61,10 @@ export const createPivotConfig = (gridOptions, data) => {
     let columnDimensions = gridOptions.pivotColumnDimensions;
 
     if (rowDimensions) {
-        rowDimensions = validateDimensions(rowDimensions, 'row');
+        rowDimensions = validateDimensions(rowDimensions, 'row-dimensions');
     }
     if (columnDimensions) {
-        columnDimensions = validateDimensions(columnDimensions, 'column');
+        columnDimensions = validateDimensions(columnDimensions, 'column-dimensions');
     }
 
     /*

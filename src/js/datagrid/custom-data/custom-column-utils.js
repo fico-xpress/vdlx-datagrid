@@ -271,16 +271,6 @@ export const calculatePivotDisplayCalcs = (displayRowCal, displayColumnCalc) => 
     }
 }
 
-
-/**
- * todo
- * todo
- *  --- todo standardise the error messages, they are inconsistent with each other
- * todo
- * todo
- *
- */
-
 /**
  * the dimensions can either be a number, or an array
  * if array, contents can be strings or numbers
@@ -294,7 +284,7 @@ export const validateDimensions = (dimensions, dimensionName) => {
     } else if (!isNaN(toNumber(dimensions))) {
         return toNumber(dimensions);
     } else {
-        throw Error(`Error for component vdlx-pivotgrid: Invalid ${dimensionName}-dimensions.  Supported format: An array of ${dimensionName} group headings [headingOne, headingTwo], or a number representing the required amount of ${dimensionName}s.`);
+        throw Error(`Error for component vdlx-pivotgrid: ${dimensions} is not a valid ${dimensionName}.  Supported format: An array of group headings [headingOne, headingTwo], or a number representing the required amount of headings.`);
     }
 }
 
@@ -325,7 +315,7 @@ export const validateSetPosition = (arr, attrName) => {
     const asNumbers = map(arr, (val) => {
         const num = toNumber(val);
         if (isNaN(num)) {
-            throw Error(`Error for component vdlx-pivotgrid: ${val} is not a valid ${attrName}, it must be either a number, or an array of numbers.`);
+            throw Error(`Error for component vdlx-pivotgrid: ${val} is not a valid ${attrName}, Supported format: A number, or an array of numbers representing the position of the key or keys you wish to pivot data by.`);
         } else {
             return num;
         }

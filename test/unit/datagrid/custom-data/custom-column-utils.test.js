@@ -13,7 +13,7 @@ import {
     validateDimensions,
     validateLabelsData,
     validateObjectColDefinitions,
-    validatePivotRowsAndColumns
+    validatePivotRowsAndColumns, validateSetPosition
 } from "../../../../src/js/datagrid/custom-data/custom-column-utils";
 import * as dataUtils from '../../../../src/js/datagrid/custom-data/custom-data-utils';
 
@@ -464,7 +464,7 @@ describe('custom column utils', () => {
             });
         });
 
-        describe('countDimensions', () => {
+        describe('validateDimensions', () => {
             it('array of numbers', () => {
                 expect(validateDimensions([1, 2], 'row')).toEqual([1, 2]);
             });
@@ -476,10 +476,33 @@ describe('custom column utils', () => {
             });
             it('throws error', () => {
                 const val = 'invalid value';
-                const dimensionName = 'row';
+                const dimensionName = 'row-dimensions';
                 expect(() => {
                     expect(validateDimensions(val, dimensionName)).toEqual(true);
-                }).toThrow(`Error for component vdlx-pivotgrid: Invalid ${dimensionName}-dimensions.  Supported format: An array of ${dimensionName} group headings [headingOne, headingTwo], or a number representing the required amount of ${dimensionName}s.`);
+                }).toThrow(`Error for component vdlx-pivotgrid: ${val} is not a valid ${dimensionName}.  Supported format: An array of group headings [headingOne, headingTwo], or a number representing the required amount of headings.`);
+            });
+        });
+
+        describe('validateSetPosition', () => {
+            it('array of numbers', () => {
+                expect(validateSetPosition([1, 2], 'row')).toEqual([1, 2]);
+            });
+            it('array of strings', () => {
+                expect(validateSetPosition(['1', '2'], 'row')).toEqual([1, 2]);
+            });
+            it('throws error when passed string', () => {
+                const val = 'invalid value';
+                const attrName = 'row';
+                expect(() => {
+                    expect(validateSetPosition(val, attrName)).toEqual(true);
+                }).toThrow(`Error for component vdlx-pivotgrid: i is not a valid ${attrName}, Supported format: A number, or an array of numbers representing the position of the key or keys you wish to pivot data by.`);
+            });
+            it('throws error when passed array containing stings that cannot be cast to a number', () => {
+                const val = [1, 'one'];
+                const attrName = 'row';
+                expect(() => {
+                    expect(validateSetPosition(val, attrName)).toEqual(true);
+                }).toThrow(`Error for component vdlx-pivotgrid: one is not a valid ${attrName}, Supported format: A number, or an array of numbers representing the position of the key or keys you wish to pivot data by.`);
             });
         });
 
@@ -493,8 +516,10 @@ describe('custom column utils', () => {
             it('number', () => {
                 expect(extractLabels(123)).toEqual(['123']);
             });
+            it('undefined', () => {
+                expect(extractLabels(undefined)).toEqual([]);
+            });
         });
-
 
     });
 

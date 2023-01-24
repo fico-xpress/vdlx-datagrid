@@ -92,11 +92,11 @@ describe('custom-data-pivot module', () => {
 
             const validatingRowCalls = validateDimensionsSpy.mock.calls[0];
             expect(validatingRowCalls[0]).toEqual(gridOptions.pivotRowDimensions);
-            expect(validatingRowCalls[1]).toEqual('row');
+            expect(validatingRowCalls[1]).toEqual('row-dimensions');
 
             const validatingColumnCalls = validateDimensionsSpy.mock.calls[1];
             expect(validatingColumnCalls[0]).toEqual(gridOptions.pivotColumnDimensions);
-            expect(validatingColumnCalls[1]).toEqual('column');
+            expect(validatingColumnCalls[1]).toEqual('column-dimensions');
 
             expect(pivotRowSizeToIndexSpy).toHaveBeenCalledTimes(1);
             expect(pivotRowSizeToIndexSpy).toHaveBeenCalledWith(1);
