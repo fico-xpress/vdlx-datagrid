@@ -161,7 +161,7 @@
 
     </ul>
     <div class="copyright">
-        © 2022 Fair Isaac Corporation. All rights reserved.
+        © 2023 Fair Isaac Corporation. All rights reserved.
     </div>
 </div>
 
@@ -1623,7 +1623,7 @@
                     row-dimensions
                 </th>
                 <td>
-                    Used to define the dimensions pivoted onto the rows.  Supported format: An array of row group headings ["pivot row a", "pivot row b"], or a the of row group headings "2". Both would result in two row groups, but only the array of strings would result in the rows having headings. Pivoting will always be done by row first, then by column.  Only an array of strings is valid when used in conjunction with "row-set-positions".
+                    Used to define the dimensions pivoted onto the rows. Supported format: An array of row group headings ["pivot column a", "pivot column b"], or a number representing the number of dimensions from the original data set that will be used as rows in the pivot grid. Both would result in two row groups, but only the array of strings would result in the groups having headings. Pivoting will always be done by row first, then by column. Only an array of strings is valid when used in conjunction with "row-set-positions".
 
                     <div>
                     </div>
@@ -1636,6 +1636,50 @@
                         <span class="label label-primary">accepts expression</span>
                                             </div>
 
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    row-filter
+                </th>
+                <td>
+                    Expression to be used for filtering the rows of a &lt;vdl-datagrid&gt;. This must be an expression and should resolve to either a function or a boolean value. If a function it will be executed when grid updates. The function will have the following signature (rowData, indices) and should return a boolean.
+
+                    <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                    <table class="table table-condensed table-bordered attribute-vars-table">
+                        <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>rowData</td>
+                            <td>
+                                The values from each cell in the current row. The order of the row data reflects the underlying order of the array indices rather than the display order.
+                                <div><code>Array.&lt;(string|boolean|number)&gt;</code></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>indices</td>
+                            <td>
+                                Data for the index columns of the row
+                                <div><code>Array.&lt;(string|boolean|number)&gt;</code></div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </td>
             </tr>
             <tr>
@@ -1667,6 +1711,48 @@
                     An array of arrays used to decorate the row titles, supported formats are; Array of strings ["Column 1", "Column 2"], or an array of value/label objects: [{value:x label: "x label"}].  One array per dimension.
 
                     <div>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    show-column-calc
+                </th>
+                <td>
+                    Display a calculated cell displaying the total for each column.
+
+                    <div>
+                        <span><strong>Default value</strong>: "true"</span>
+                    </div>
+
+                    <div>
+                    </div>
+
+                    <div>
+
+                        <span class="label label-primary">accepts expression</span>
+                                            </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    show-row-calc
+                </th>
+                <td>
+                    Display a calculated cell displaying the total for each row.
+
+                    <div>
+                        <span><strong>Default value</strong>: "true"</span>
                     </div>
 
                     <div>
