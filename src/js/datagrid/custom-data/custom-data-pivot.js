@@ -642,7 +642,7 @@ function _createObject(data, pivotOptions, pivotContext) {
             pivotData[rId] = {};
             rowKeys.forEach((v, i) => {
                 // pivotData[rId][i] = getLabelByProperty(labels[rows[i]], v);
-                pivotData[rId][i] = getLabelByProperty(labels[i], v);
+                pivotData[rId][i] = getLabelByProperty(labels[rows[i]], v);
             })
         }
         pivotData[rId][cId] = totalFun(value,pivotData[rId][cId]);
