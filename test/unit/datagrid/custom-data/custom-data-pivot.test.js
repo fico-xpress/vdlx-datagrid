@@ -8,7 +8,7 @@ import {
 } from '../../../../src/js/datagrid/custom-data/custom-data-pivot';
 import cloneDeep from "lodash/cloneDeep";
 
-describe.skip('custom data pivot.js', function () {
+describe('custom data pivot.js', function () {
 
     describe('error handling', () => {
 
@@ -95,8 +95,10 @@ describe.skip('custom data pivot.js', function () {
     describe('totalsFun', function() {
         it('should have default options as expected', function () {
             const config = new pivotDataModule.Options()
+            // default computes aggregation for cols and rows
             expect(config.enableTotals).toEqual(pivotDataModule.OptionEnums.EnableTotals.All)
-            expect(config.aggregationTotals).toEqual(pivotDataModule.totalsFun.count.name)
+            // default aggregation function is sum
+            expect(config.aggregationTotals).toEqual(pivotDataModule.totalsFun.sum.name)
         })
 
         it('should calculate totals of totals only if rows and cols totals are available', function () {
@@ -150,14 +152,14 @@ describe.skip('custom data pivot.js', function () {
             'count-Rows': [4,1,1],
         }
         const expColTotals = {
-            'min-All':  ["Totals (min)",1,2,2,2,1],
-            'min-Cols': ["Totals (min)",1,2,2,2],
-            'sum-All':  ["Totals (sum)",4,2,2,6,14],
-            'sum-Cols': ["Totals (sum)",4,2,2,6],
-            'max-All':  ["Totals (max)",3,2,2,4,4],
-            'max-Cols': ["Totals (max)",3,2,2,4],
-            'count-All':  ["Totals (count)",2,1,1,2,6],
-            'count-Cols': ["Totals (count)",2,1,1,2],
+            'min-All':    [1,2,2,2,1,"Totals (min)"],
+            'min-Cols':   [1,2,2,2,"Totals (min)"],
+            'sum-All':    [4,2,2,6,14,"Totals (sum)"],
+            'sum-Cols':   [4,2,2,6,"Totals (sum)"],
+            'max-All':    [3,2,2,4,4,"Totals (max)"],
+            'max-Cols':   [3,2,2,4,"Totals (max)"],
+            'count-All':  [2,1,1,2,6,"Totals (count)"],
+            'count-Cols': [2,1,1,2,"Totals (count)"],
         }
 
         beforeEach( () => {
@@ -254,9 +256,9 @@ describe.skip('custom data pivot.js', function () {
             it('can create default column definition', function () {
                 const expResult = [
                     {
-                        title: "ColKey1", level: 0, columns: [
+                        title: "ColKey1",  columns: [
                             {
-                                title: "ColKey2", level: 1, columns: [
+                                title: "ColKey2",  columns: [
                                     {title: "RowKey1", field: "0", cssClass: "pivot-row-header"},
                                     {title: "RowKey2", field: "1", cssClass: "pivot-row-header"}
                                 ]
@@ -264,13 +266,13 @@ describe.skip('custom data pivot.js', function () {
                         ]
                     },
                     {
-                        title: "c1", level: 0, columns: [
+                        title: "c1",  columns: [
                             {title: "10", field: "2"},
                             {title: "20", field: "3"}
                         ]
                     },
                     {
-                        title: "c2", level: 0, columns: [
+                        title: "c2",  columns: [
                             {title: "10", field: "4"},
                             {title: "20", field: "5"}
                         ]
@@ -301,9 +303,9 @@ describe.skip('custom data pivot.js', function () {
                 output = pivotDataModule.run(data, config)
                 const expColDef = [
                     {
-                        title: "ColKey1", level: 0, columns: [
+                        title: "ColKey1",  columns: [
                             {
-                                title: "ColKey2", level: 1, columns: [
+                                title: "ColKey2",  columns: [
                                     {title: "RowKey1", field: "0", cssClass: "pivot-row-header"},
                                     {title: "RowKey2", field: "1", cssClass: "pivot-row-header"}
                                 ]
@@ -311,13 +313,13 @@ describe.skip('custom data pivot.js', function () {
                         ]
                     },
                     {
-                        title: "c1", level: 0, columns: [
+                        title: "c1",  columns: [
                             {title: "10", field: "2"},
                             {title: "20", field: "3"}
                         ]
                     },
                     {
-                        title: "c2", level: 0, columns: [
+                        title: "c2",  columns: [
                             {title: "10", field: "4"},
                             {title: "20", field: "5"}
                         ]
@@ -342,13 +344,19 @@ describe.skip('custom data pivot.js', function () {
                 config.layout = 'normal' // any...
                 output = pivotDataModule.run(data, config)
                 const expColDef = [
-                    { title: "", level: 0, columns: [
-                            {title: "RowKey1", field: "0", cssClass: "pivot-row-header"},
-                            {title: "RowKey2", field: "1", cssClass: "pivot-row-header"}
-                        ] },
-                    { title: "ColKey1", level: 0, columns: [ {title: "ColKey2", level: 1, columns: []} ] },
-                    { title: "c1", level: 0, columns: [ {title: "10", field: "2"}, {title: "20", field: "3"} ] },
-                    { title: "c2", level: 0, columns: [ {title: "10", field: "4"}, {title: "20", field: "5"} ] }
+                    { title: "", columns: [
+                            {
+                                title: "", columns: [
+                                    {title: "RowKey1", field: "0", cssClass: "pivot-row-header"},
+                                    {title: "RowKey2", field: "1", cssClass: "pivot-row-header"},
+                                ]
+                            }
+                        ]
+                    },
+                    { title: "ColKey1",
+                        columns: [ {title: "ColKey2", field: "__empty", cssClass: "pivot-row-header"} ] },
+                    { title: "c1", columns: [ {title: "10", field: "2"}, {title: "20", field: "3"} ] },
+                    { title: "c2", columns: [ {title: "10", field: "4"}, {title: "20", field: "5"} ] }
                 ]
                 const expData = [
                     {"0": "a", "1": "x", "2": 1, "3": 2, "4": 2, "5": 2},
@@ -377,21 +385,21 @@ describe.skip('custom data pivot.js', function () {
 
             it('can create default column definition', function () {
                 const expResult = [
-                    { title: "ColKey1", level: 0, columns: [ {
-                            title: "ColKey2", level: 1, columns: [
+                    { title: "ColKey1", columns: [ {
+                            title: "ColKey2",  columns: [
                                 {title: "RowKey1", field: "0", cssClass: "pivot-row-header"},
                                 {title: "RowKey2", field: "1", cssClass: "pivot-row-header"}
                             ] }
                         ] },
-                    { title: "c1", level: 0, columns: [ {title: "10", field: "2"}, {title: "20", field: "3"} ] },
-                    { title: "c2", level: 0, columns: [ {title: "10", field: "4"}, {title: "20", field: "5"} ] },
+                    { title: "c1",  columns: [ {title: "10", field: "2"}, {title: "20", field: "3"} ] },
+                    { title: "c2",  columns: [ {title: "10", field: "4"}, {title: "20", field: "5"} ] },
                     { title: "Totals (count)", field: "__totals", cssClass: "tabulator-frozen" }
                 ]
                 const actualColDef = output.cols
                 expect(JSON.stringify(actualColDef)).toEqual(JSON.stringify(expResult))
             })
 
-            it('can pivot the original data', function () {
+            it('can pivot the original data (count)', function () {
                 const expResult = [
                     {"0": "a", "1": "x", "2": 1, "3": 2, "4": 2, "5": 2, "__totals": 4},
                     {"0": "b", "1": "x", "2": 3,                         "__totals": 1},
@@ -413,7 +421,7 @@ describe.skip('custom data pivot.js', function () {
 
         describe('complete configuration with duplicate keys', function() {
 
-            it('can pivot the original data', function () {
+            it('can pivot the original data (sum)', function () {
                 data.push( data[0] );
                 // sum: 2+5 = 6
                 config.aggregationTotals = ''
@@ -482,20 +490,21 @@ describe.skip('custom data pivot.js', function () {
                 const output = pivotDataModule.run(data, config)
                 const actualColDef = output.cols
                 const actualData = output.data
-                const expColDef = [ { title:"ColKey1",level:0,columns: [
-                        {title:"ColKey2",level:1,columns: [
+                const expColDef = [ { title:"ColKey1",columns: [
+                        {title:"ColKey2",columns: [
                                 {title:"RowKey1",field:"0",cssClass:"pivot-row-header"},
                                 {title:"RowKey2",field:"1",cssClass:"pivot-row-header"}
                             ] }
                     ] },
-                    {title:"c1",level:0,columns: [ {title:"USD 10",field:"2"}, {title:"USD 20",field:"3"} ] },
-                    {title:"c2",level:0,columns: [ {title:"USD 10",field:"4"}, {title:"USD 20",field:"5"} ] },
-                    {title:"Totals (count)",field:"__totals",cssClass:"tabulator-frozen"}
+                    {title:"c1",columns: [ {title:"USD 10",field:"2"}, {title:"USD 20",field:"3"} ] },
+                    {title:"c2",columns: [ {title:"USD 10",field:"4"}, {title:"USD 20",field:"5"} ] },
+                    {title:"Totals (sum)",field:"__totals",cssClass:"tabulator-frozen"}
                 ]
-                const expData = [{"0":"Accept","1":"X","2":1,"3":2,"4":2,"5":2,"__totals":4},
-                    {"0":"Reject","1":"X","2":3,"__totals":1},
-                    {"0":"Reject","1":"Y","5":4,"__totals":1},
-                    {"1":"Totals (count)","2":2,"3":1,"4":1,"5":2,"__totals":6,cssClass:"tabulator-calcs-bottom"}]
+                const expData = [
+                    {"0":"Accept","1":"X","2":1,"3":2,"4":2,"5":2,"__totals":7},
+                    {"0":"Reject","1":"X","2":3,"__totals":3},
+                    {"0":"Reject","1":"Y","5":4,"__totals":4},
+                    {"1":"Totals (sum)","2":4,"3":2,"4":2,"5":6,"__totals":14,cssClass:"tabulator-calcs-bottom"}]
                 expect(JSON.stringify(actualData)).toEqual(JSON.stringify(expData))
                 expect(JSON.stringify(actualColDef)).toEqual(JSON.stringify(expColDef))
             })
