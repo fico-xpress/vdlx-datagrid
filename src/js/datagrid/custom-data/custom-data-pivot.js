@@ -255,6 +255,12 @@ class StringColSimpleDefinition extends ColSimpleDefinition {
     }
 }
 
+class NoSortColSimpleDefinition extends ColSimpleDefinition {
+    constructor(title, field) {
+        super(title, field, undefined);
+        this.headerSort = false;
+    }
+}
 /**
  * This class represent a logical column group. It is not associated to an actual
  * column in the dataset, it is only used during table rendering to create a oabels
@@ -467,9 +473,8 @@ function _createColDef(data, config) {
         lastCol = pivotContext.colDef;
         // let newCol = generateColKey();
         generateColKey();
-        let c = new StringColSimpleDefinition("", PIVOT_CONST_VALUES.emptyCol)
+        let c = new NoSortColSimpleDefinition("", PIVOT_CONST_VALUES.emptyCol)
         c.cssClass = CSS_INTERNALS.pivotHeader
-        c.headerSort = false
         newCol.columns.push(c)
     }
 
