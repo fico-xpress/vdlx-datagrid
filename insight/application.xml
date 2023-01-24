@@ -48,5 +48,8 @@
             <vdl-view title="Big Data 1M rows" path="big-data/datagrid-bd5.vdl" />
             <vdl-view title="Simulated Arrays (61740 rows)" path="big-data/simulatedArrays.vdl" />
         </view-group>
+        <view-group title="vdlx-pivotgrid">
+            <vdl-view title="simple pivot table" path="pivot/simple-pivot-table.vdl" />
+        </view-group>
     </client>
 </model-companion>

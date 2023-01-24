@@ -1,0 +1,87 @@
+<vdl version="5.0">
+    <vdl-page>
+        <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
+        <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+        <vdl-header>
+          <script>
+              setTimeout((function() {
+                    actions.getData(undefined, undefined, '');
+                }), 500)
+          </script>
+            <vdl-var name="groupedData" value="=[]"></vdl-var>
+            <vdl-var name="indexSetNames" value="=[]"></vdl-var>
+            <vdl-var name="labelArrays" value="=[]"></vdl-var>
+            
+            <vdl-action-group name="getData">
+                <vdl-action-get-entity-data entity="CountryStats"></vdl-action-get-entity-data>
+                <vdl-action-group-by set-position="=[2,0,1]"></vdl-action-group-by>
+                <vdl-action-aggregate></vdl-action-aggregate>
+                <vdl-action-set-var var="groupedData"></vdl-action-set-var>
+                 <vdl-action-get-index-sets entity="CountryStats"></vdl-action-get-index-sets>
+                <vdl-action-set-var var="indexSetNames"></vdl-action-set-var>
+                <vdl-action command="getLabelArray" vdl-repeat="=name in vars.indexSetNames" value="=name"></vdl-action>
+            </vdl-action-group>
+
+             <vdl-action-group name="getLabelArray">
+                <vdl-action-get-entity-data entity="=value" with-labels="true"></vdl-action-get-entity-data>
+                <vdl-action-array-push var="labelArrays"></vdl-action-array-push>
+            </vdl-action-group>
+
+        </vdl-header>
+        <vdl-section heading="pivot table">
+        <vdl-row>
+            <vdl-column size="4" heading="placeholder Pivot table Example">
+                <h3>This is a placeholder example only</h3>
+                <br>
+                This example creates a pivot table using vdl-actions to fetch and manipulate data from the CountryStats.
+                The rows and columns are hardcoded.
+            </vdl-column>
+            <vdl-column heading="VDL source:" size="8">
+                <code-panel>
+&lt;script&gt;
+    setTimeout((function() {
+        actions.getData(undefined, undefined, &#39;&#39;);
+    }), 500)
+&lt;/script&gt;
+
+&lt;vdl-var name=&quot;groupedData&quot; value=&quot;=[]&quot;&gt;&lt;/vdl-var&gt;
+&lt;vdl-var name=&quot;indexSetNames&quot; value=&quot;=[]&quot;&gt;&lt;/vdl-var&gt;
+&lt;vdl-var name=&quot;labelArrays&quot; value=&quot;=[]&quot;&gt;&lt;/vdl-var&gt;
+
+&lt;vdl-action-group name=&quot;getData&quot;&gt;
+    &lt;vdl-action-get-entity-data entity=&quot;CountryStats&quot;&gt;&lt;/vdl-action-get-entity-data&gt;
+    &lt;vdl-action-group-by set-position=&quot;=[2,0,1]&quot;&gt;&lt;/vdl-action-group-by&gt;
+    &lt;vdl-action-aggregate&gt;&lt;/vdl-action-aggregate&gt;
+    &lt;vdl-action-set-var var=&quot;groupedData&quot;&gt;&lt;/vdl-action-set-var&gt;
+    &lt;vdl-action-get-index-sets entity=&quot;CountryStats&quot;&gt;&lt;/vdl-action-get-index-sets&gt;
+    &lt;vdl-action-set-var var=&quot;indexSetNames&quot;&gt;&lt;/vdl-action-set-var&gt;
+    &lt;vdl-action command=&quot;getLabelArray&quot; vdl-repeat=&quot;=name in vars.indexSetNames&quot; value=&quot;=name&quot;&gt;&lt;/vdl-action&gt;
+&lt;/vdl-action-group&gt;
+
+&lt;vdl-action-group name=&quot;getLabelArray&quot;&gt;
+    &lt;vdl-action-get-entity-data entity=&quot;=value&quot; with-labels=&quot;true&quot;&gt;&lt;/vdl-action-get-entity-data&gt;
+    &lt;vdl-action-array-push var=&quot;labelArrays&quot;&gt;&lt;/vdl-action-array-push&gt;
+&lt;/vdl-action-group&gt;
+
+&lt;vdlx-pivotgrid
+    data=&quot;=vars.groupedData&quot;
+    row-dimensions=&quot;=[&#39;Match&#39;]&quot;
+    column-dimensions=&quot;=[&#39;Country&#39;, &#39;Stat&#39;]&quot;
+    column-titles=&quot;=[vars.labelArrays[0],vars.labelArrays[1]]&quot;&gt;&lt;/vdlx-pivotgrid&gt;
+
+                </code-panel>
+            </vdl-column>
+        </vdl-row>
+            <vdl-row>
+                <vdl-column size="12">
+                    <vdlx-pivotgrid
+                            data="=vars.groupedData"
+                            row-dimensions="=['Match']"
+                            column-dimensions="=['Country', 'Stat']"
+                            column-titles="=[vars.labelArrays[0],vars.labelArrays[1]]"
+                    ></vdlx-pivotgrid>
+                </vdl-column>
+            </vdl-row>
+        </vdl-section>
+    </vdl-page>
+</vdl>
