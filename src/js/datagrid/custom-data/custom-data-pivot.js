@@ -469,6 +469,7 @@ function _createColDef(data, config) {
         generateColKey();
         let c = new StringColSimpleDefinition("", PIVOT_CONST_VALUES.emptyCol)
         c.cssClass = CSS_INTERNALS.pivotHeader
+        c.headerSort = false
         newCol.columns.push(c)
     }
 
