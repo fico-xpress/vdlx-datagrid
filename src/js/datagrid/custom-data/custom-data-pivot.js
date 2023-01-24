@@ -305,7 +305,7 @@ function getColumnName(ar, e) {
  * @param {{key: *[]}} datum
  * @returns {*[]}
  */
-function getSlice(positions, datum) {
+function getElements(positions, datum) {
     let ret = []
     positions.forEach((val) => {
         ret.push(datum.key[val]);
@@ -407,10 +407,10 @@ function _createColDef(data, config) {
 
     // Collect the key values
     data.forEach((e, i) => {
-        let rIds = getSlice(rows, e);
+        let rIds = getElements(rows, e);
         pivotContext.rowMap.add(rIds);
 
-        let cIds = getSlice(cols, e);
+        let cIds = getElements(cols, e);
         pivotContext.colMap.add(cIds);
     })
 
@@ -633,8 +633,8 @@ function _createObject(data, pivotOptions, pivotContext) {
 
     let pivotData = []
     data.forEach((e, i) => {
-        let rowKeys = getSlice(rows, e);
-        let colKeys = getSlice(cols, e);
+        let rowKeys = getElements(rows, e);
+        let colKeys = getElements(cols, e);
         let rId = rowMap.get(rowKeys).idx;
         let cId = colMap.get(colKeys).idx + nRowKey;
         let value = e.value;
@@ -666,8 +666,8 @@ function _createObject(data, pivotOptions, pivotContext) {
     for (let i in pivotContext.rowMap.keySet)
         pivotData[i] = new Array(pivotContext.colMap.keySet.length + nRowKey) // also add totals?
     for (let o in data) {
-        const rowKey = getSlice(rows,data[o])
-        const colKey = getSlice(cols,data[o])
+        const rowKey = getElements(rows,data[o])
+        const colKey = getElements(cols,data[o])
         const rId = pivotContext.rowMap.c[rowKey]
         const cId = pivotContext.colMap.c[colKey][0].idx + nRowKey
         const value = data[o].value;
