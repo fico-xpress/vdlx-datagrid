@@ -39,6 +39,8 @@
  *
  */
 
+import * as assert from "assert";
+
 /**
  * Some constants used internally and in tabulator
  * @type {{totals: string}}
@@ -255,6 +257,12 @@ class StringColSimpleDefinition extends ColSimpleDefinition {
     }
 }
 
+/**
+ * This class is used to represent a column that does not support
+ * sorting. This is usually used to create the empty colum
+ * in the "normal" layout that contains the column key name and
+ * as the "totals" as last element.
+ */
 class NoSortColSimpleDefinition extends ColSimpleDefinition {
     constructor(title, field) {
         super(title, field, undefined);
@@ -272,6 +280,95 @@ class ColGroupDefinition {
         this.title = title;
         // this.level = level;
         this.columns = [];
+    }
+}
+
+/**
+ * This class is used to generate the column header for the columns that actually
+ * contains the data.
+ */
+export class DataColGenerator {
+    /**
+     * Collect the key values and sort them
+     */
+    constructor() {
+        this.nColKey = 0;
+        this.keyTree = {};
+        this.origColId = {};
+    }
+
+    /**
+     * @param { {[]} } keys
+     */
+    createTreeKey(keys,nRowKey) {
+        this.keyTree = this._createTreeKey(keys,(nRowKey) ? nRowKey : 0);
+    }
+
+    _createTreeKey(keys,nRowKey) {
+        let keyTree = {}
+        Object.values(keys)
+            .forEach((e) => {
+                e.forEach((v) => {
+                    let key = v.key;
+                    this.nColKey = key.length - 1
+                    key.forEach((v, i) => {
+                        if (!keyTree[i]) {
+                            keyTree[i] = {}
+                        } else {
+                            if (!keyTree[i][v]) {
+                                keyTree[i][v] = v // the rank id
+                            }
+                        }
+                    })
+                    this.origColId[key] = v.idx + nRowKey
+                })
+            })
+        return keyTree
+    }
+
+    recurse(labels,cols) {
+        let res = []
+        this.labels = labels
+        this.cols = cols
+        // init phase - iterate of the elements of the first level
+        // of the key tree
+        Object.entries(this.keyTree[0])
+            .sort(DataColGenerator._sortKeys)
+            .forEach(a => this._recurse(res, a[0], a[1], 0, [a[0]]))
+        return res;
+    }
+
+    _getLabelByProperty(lvl,val) {
+        return getLabelByProperty(this.labels[this.cols[lvl]], val);
+    }
+
+    static _sortKeys(a,b) {
+        return (a[0] > b[0]) ? 1 : -1
+    }
+
+    /**
+     *
+     * @param [] colDef The column definition
+     * @param {string|number} val The current label (key) top node of the subtree
+     * @param {} obj The current object representing the top node of the substree
+     * @param {number} lvl The current depth
+     * @param {[{string|number}]} key The current collection of key values
+     * @private
+     */
+    _recurse(colDef,val,obj,lvl,key) {
+        const myTitle = this._getLabelByProperty(lvl,val);
+        if (lvl < this.nColKey) {
+            let newCol = new ColGroupDefinition(myTitle, lvl);
+            colDef.push(newCol);
+            colDef = newCol.columns;
+            Object.entries(this.keyTree[lvl+1])
+                .sort(DataColGenerator._sortKeys)
+                .forEach(a => this._recurse(colDef, a[0], a[1], lvl + 1, key.concat([a[0]])));
+        } else {
+            let field = this.origColId[key];
+            let newCol = new ColSimpleDefinition(myTitle, field);
+            colDef.push(newCol);
+        }
     }
 }
 
@@ -478,41 +575,12 @@ function _createColDef(data, config) {
         newCol.columns.push(c)
     }
 
-    let colMap = {};
+    // Add the columns corresponding to the original data columns
+    let dataCols = new DataColGenerator();
+    dataCols.createTreeKey(pivotContext.colMap.buckets,nRowKey)
+    pivotContext.colDef = pivotContext.colDef.concat(dataCols.recurse(labels,cols))
 
-    /**
-     * Extend the column group for columns keys with new column for each possible value of the column keys
-     */
-    Object.values(pivotContext.colMap.buckets).forEach((e) => {
-        e.forEach((v) => {
-            let key = v.key;
-            let idx = v.idx;
-            let pivotDataColId = idx + nRowKey;
-            let r = pivotContext.colDef;
-            let m = colMap;
-            let nColKey = key.length - 1;
-            key.forEach((cId, lvl) => {
-                if (m[cId] === undefined) {
-                    m[cId] = {colId: r.length, next: {}};
-                    const myTitle = getLabelByProperty(labels[cols[lvl]], cId);
-                    if (lvl < nColKey) {
-                        let newCol = new ColGroupDefinition(myTitle, lvl);
-                        r.push(newCol);
-                        r = newCol.columns;
-                    } else {
-                        let newCol = new ColSimpleDefinition(myTitle, pivotDataColId)
-                        r.push(newCol);
-                        r = undefined;
-                    }
-                } else {
-                    // lookup child columns
-                    r = r[m[cId].colId].columns;
-                }
-                m = m[cId].next;
-            })
-        })
-    });
-
+    // Add last column totals
     if (enabledBuiltinTotals(config)) {
         if (enableAllTotals || enableRowTotals) {
             let newCol = new ColSimpleDefinition(`Totals (${config.aggregationTotals})`, PIVOT_CONST_VALUES.totals);

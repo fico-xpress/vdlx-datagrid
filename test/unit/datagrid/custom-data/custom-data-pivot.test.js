@@ -4,7 +4,7 @@ import {
     ColHashMap,
     isTotalsRowComponent,
     // used for mocking up internal functions
-    pivotDataUtils
+    pivotDataUtils, DataColGenerator
 } from '../../../../src/js/datagrid/custom-data/custom-data-pivot';
 import cloneDeep from "lodash/cloneDeep";
 
@@ -19,6 +19,46 @@ describe('custom data pivot.js', function () {
             }).toThrow('Error for pivotDataModule: Configuration is unset.');
         })
 
+    })
+
+    describe("DataColGenerator", function () {
+
+        let dataKeys = [ ["a","c2"], ["a","c1"], ["b","c2"], ["b","c1"] ]
+        let keys = {  }
+
+        beforeEach( () => {
+                dataKeys.forEach((l,i) => keys[l] = [ {key: l, idx: i} ])
+            }
+        )
+
+        it("sort", () => {
+            let colSorter = new DataColGenerator();
+            let labels = []
+            let cols = []
+            let expRes = [ {title:"a", columns: [
+                { title: "c1", field: "1"}, {title: "c2", field: "0"} ] },
+                { title: "b", columns: [
+                    {title: "c1", field: "3"}, {title: "c2", field: "2" } ]
+                } ]
+            colSorter._getLabelByProperty = (lvl,val) => val
+            colSorter.createTreeKey(keys)
+            let res = colSorter.recurse()
+            expect(JSON.stringify(res)).toEqual(JSON.stringify(expRes));
+        })
+
+        it("labeling", () => {
+            let colSorter = new DataColGenerator();
+            let labels = { Key_ab: { "c1": "C1", "c2": "C2"}, Key_01: { "a": "AA", "b": "BB"} }
+            let cols = [ "Key_01", "Key_ab" ]
+            let expRes = [ {title:"AA", columns: [
+                { title: "C1", field: "1"}, {title: "C2", field: "0"} ] },
+                { title: "BB", columns: [
+                    {title: "C1", field: "3"}, {title: "C2", field: "2" } ]
+                } ]
+            colSorter.createTreeKey(keys)
+            let res = colSorter.recurse(labels,cols)
+            expect(JSON.stringify(res)).toEqual(JSON.stringify(expRes));
+        })
     })
 
     /**
