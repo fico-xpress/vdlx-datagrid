@@ -23,7 +23,7 @@ describe('custom data pivot.js', function () {
 
     describe("DataColGenerator", function () {
 
-        let dataKeys = [ ["a","c2"], ["a","c1"], ["b","c2"], ["b","c1"] ]
+        let dataKeys = [ ["b","c2"], ["a","c1"], ["a","c2"], ["b","c1"] ]
         let keys = {  }
 
         beforeEach( () => {
@@ -36,9 +36,9 @@ describe('custom data pivot.js', function () {
             let labels = []
             let cols = []
             let expRes = [ {title:"a", columns: [
-                { title: "c1", field: "1"}, {title: "c2", field: "0"} ] },
+                { title: "c1", field: "1"}, {title: "c2", field: "2"} ] },
                 { title: "b", columns: [
-                    {title: "c1", field: "3"}, {title: "c2", field: "2" } ]
+                    {title: "c1", field: "3"}, {title: "c2", field: "0" } ]
                 } ]
             colSorter._getLabelByProperty = (lvl,val) => val
             colSorter.createTreeKey(keys)
@@ -48,15 +48,27 @@ describe('custom data pivot.js', function () {
 
         it("labeling", () => {
             let colSorter = new DataColGenerator();
+            colSorter.createTreeKey(keys)
+
             let labels = { Key_ab: { "c1": "C1", "c2": "C2"}, Key_01: { "a": "AA", "b": "BB"} }
             let cols = [ "Key_01", "Key_ab" ]
             let expRes = [ {title:"AA", columns: [
-                { title: "C1", field: "1"}, {title: "C2", field: "0"} ] },
+                { title: "C1", field: "1"}, {title: "C2", field: "2"} ] },
                 { title: "BB", columns: [
-                    {title: "C1", field: "3"}, {title: "C2", field: "2" } ]
+                    {title: "C1", field: "3"}, {title: "C2", field: "0" } ]
                 } ]
-            colSorter.createTreeKey(keys)
             let res = colSorter.recurse(labels,cols)
+            expect(JSON.stringify(res)).toEqual(JSON.stringify(expRes));
+
+            // Shuffling the labels do not change the ordering because ordering is based
+            // on the key, not the label
+            labels = { Key_ab: { "c1": "C2", "c2": "C1"}, Key_01: { "a": "BB", "b": "AA"} }
+            expRes = [ {title:"BB", columns: [
+                    { title: "C2", field: "1"}, {title: "C1", field: "2"} ] },
+                { title: "AA", columns: [
+                        {title: "C2", field: "3"}, {title: "C1", field: "0" } ]
+                } ]
+            res = colSorter.recurse(labels,cols)
             expect(JSON.stringify(res)).toEqual(JSON.stringify(expRes));
         })
     })
