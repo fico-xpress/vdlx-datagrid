@@ -864,20 +864,20 @@ class Datagrid {
                 const value = cell.getValue();
                 const validationResult = validateAndStyle(cell, value);
 
-                if (!validationResult.isValid && !validationResult.allowSave) {
-                    cell.restoreOldValue();
-                    validateAndStyle(cell, cell.getValue());
-                    dialogs.alert(validationResult.errorMessage, VALIDATION_ERROR_TITLE, () => {
-                        defer(() => {
-                            // Check the cell element still exists, the validation dialog can be invoked when the table redraws
-                            if (cell.getElement()) {
-                                cell.edit(true)
-                            }
+                if (value !== String(oldValue)) {
+                    if (!validationResult.isValid && !validationResult.allowSave) {
+                        cell.restoreOldValue();
+                        validateAndStyle(cell, cell.getValue());
+                        dialogs.alert(validationResult.errorMessage, VALIDATION_ERROR_TITLE, () => {
+                            defer(() => {
+                                // Check the cell element still exists, the validation dialog can be invoked when the table redraws
+                                if (cell.getElement()) {
+                                    cell.edit(true)
+                                }
+                            });
                         });
-                    });
-                    this.savingPromise = Promise.reject({message: validationResult.errorMessage});
-                } else {
-                    if (value !== oldValue) {
+                        this.savingPromise = Promise.reject({message: validationResult.errorMessage});
+                    } else {
                         if (isUndefined(value) || value === '') {
                             this.savingPromise = removeValue(cell.getData()).catch((err) => {
                                 cell.restoreOldValue();
