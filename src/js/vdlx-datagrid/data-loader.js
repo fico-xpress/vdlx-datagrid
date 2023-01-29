@@ -175,6 +175,8 @@ const getScenarioData = (config$, filters$) => {
         const scenarioList = ko.unwrap(scenarioList$);
         const entities = ko.unwrap(autotableEntities$);
         const filters = ko.unwrap(filters$);
+        // Depend on datagrid config, recreate scenarioObserver$ if this changes
+        config$();
 
         const modelSchema = view.getApp().getModelSchema();
         scenarios$([]);

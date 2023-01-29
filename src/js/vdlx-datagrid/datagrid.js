@@ -127,8 +127,9 @@ class Datagrid {
     /**
      *
      * @param {Element} root
-     * @param {*} gridOptions$
-     * @param {*} columnOptions$
+     * @param {KnockoutObservable} gridOptions$
+     * @param {KnockoutObservable} columnOptions$
+     * @param {KnockoutObservable} filters$
      */
     constructor(root, gridOptions$, columnOptions$, filters$) {
         /** @type {Array<KnockoutSubscription>} */
@@ -329,6 +330,8 @@ class Datagrid {
                     }
                     return undefined;
                 })
+                // Reduce table redraws with a throttle
+                .extend({throttle: 50})
                 .subscribe(noop),
         ]);
     }
@@ -408,12 +411,16 @@ class Datagrid {
             resizableColumns: false,
             dataFiltered: saveState,
             dataSorting: () => {
+                const lockedBeforeSort = this.tableLock && this.tableLock.isLocked();
                 this.tableLock && this.tableLock.lock();
                 sortPromise = new Promise((resolve) => {
                     sortPromiseResolve = resolve;
                 });
                 perf('datagrid sorting', constant(sortPromise));
-                saveState();
+                // Only save state if table was not locked before sorting
+                if (!lockedBeforeSort) {
+                    saveState();
+                }
             },
             dataSorted: () => {
                 sortPromiseResolve();
