@@ -242,7 +242,8 @@ class ColSimpleDefinition {
         this.title = title;
         // Column index in the original data set
         // Tabulator expects the field to be a string because of 'nested field' feature
-        this.field = field.toString();
+        // In case the original header/labels is set to undefined we assign empty string
+        this.field = (field!==undefined) ? field.toString() : "";
         // required custom sorter to sort columns and data with totals at the bottom
         this.sorter = sortingFunc;
     }
@@ -366,13 +367,11 @@ export class DataColGenerator {
                 .forEach(a => this._recurse(colDef, a[0], a[1], lvl + 1, key.concat([a[0]])));
         } else {
             let field = this.origColId[key];
-            if (field!==undefined) {
-                // We only show the columns that are associated to a column in the
-                // original data. If a column does not have any values, then we skip
-                // it entirely.
-                let newCol = new ColSimpleDefinition(myTitle, field);
-                colDef.push(newCol);
-            }
+            // We only show the columns that are associated to a column in the
+            // original data. If a column does not have any values, then we skip
+            // it entirely.
+            let newCol = new ColSimpleDefinition(myTitle, field);
+            colDef.push(newCol);
         }
     }
 }

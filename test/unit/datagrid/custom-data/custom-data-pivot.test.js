@@ -23,54 +23,93 @@ describe('custom data pivot.js', function () {
 
     describe("DataColGenerator", function () {
 
-        let dataKeys = [ ["b","c2"], ["a","c1"], ["a","c2"], ["b","c1"] ]
-        let keys = {  }
+        let keys;
+        let colSorter;
 
         beforeEach( () => {
-                dataKeys.forEach((l,i) => keys[l] = [ {key: l, idx: i} ])
+                keys = {  };
+                colSorter = new DataColGenerator();
             }
         )
 
-        it("sort", () => {
-            let colSorter = new DataColGenerator();
-            let labels = []
-            let cols = []
-            let expRes = [ {title:"a", columns: [
-                { title: "c1", field: "1"}, {title: "c2", field: "2"} ] },
-                { title: "b", columns: [
-                    {title: "c1", field: "3"}, {title: "c2", field: "0" } ]
-                } ]
-            colSorter._getLabelByProperty = (lvl,val) => val
-            colSorter.createTreeKey(keys)
-            let res = colSorter.recurse()
-            expect(JSON.stringify(res)).toEqual(JSON.stringify(expRes));
+        describe("full data set", function () {
+
+            let dataKeys = [["b", "c2"], ["a", "c1"], ["a", "c2"], ["b", "c1"]];
+
+            beforeEach(() => {
+                    dataKeys.forEach((l, i) => keys[l] = [{key: l, idx: i}]);
+                    colSorter.createTreeKey(keys, undefined)
+                }
+            )
+
+            it("sort", () => {
+                let expRes = [{
+                    title: "a", columns: [
+                        {title: "c1", field: "1"}, {title: "c2", field: "2"}]
+                },
+                    {
+                        title: "b", columns: [
+                            {title: "c1", field: "3"}, {title: "c2", field: "0"}]
+                    }]
+                colSorter._getLabelByProperty = (lvl, val) => val
+                let res = colSorter.recurse()
+                expect(JSON.stringify(res)).toEqual(JSON.stringify(expRes));
+            })
+
+            it("labeling", () => {
+                let labels = {Key_ab: {"c1": "C1", "c2": "C2"}, Key_01: {"a": "AA", "b": "BB"}}
+                let cols = ["Key_01", "Key_ab"]
+                let expRes = [{
+                    title: "AA", columns: [
+                        {title: "C1", field: "1"}, {title: "C2", field: "2"}]
+                },
+                    {
+                        title: "BB", columns: [
+                            {title: "C1", field: "3"}, {title: "C2", field: "0"}]
+                    }]
+                let res = colSorter.recurse(labels, cols)
+                expect(JSON.stringify(res)).toEqual(JSON.stringify(expRes));
+
+                // Shuffling the labels do not change the ordering because ordering is based
+                // on the key, not the label
+                labels = {Key_ab: {"c1": "C2", "c2": "C1"}, Key_01: {"a": "BB", "b": "AA"}}
+                expRes = [{
+                    title: "BB", columns: [
+                        {title: "C2", field: "1"}, {title: "C1", field: "2"}]
+                },
+                    {
+                        title: "AA", columns: [
+                            {title: "C2", field: "3"}, {title: "C1", field: "0"}]
+                    }]
+                res = colSorter.recurse(labels, cols)
+                expect(JSON.stringify(res)).toEqual(JSON.stringify(expRes));
+            })
         })
 
-        it("labeling", () => {
-            let colSorter = new DataColGenerator();
-            colSorter.createTreeKey(keys)
+        describe("incomplete data set", () => {
+            let dataKeys = [ ["b","c2"], ["a","c1"], ["b","c1"] ]
+            beforeEach(() => {
+                    dataKeys.forEach((l, i) => keys[l] = [{key: l, idx: i}]);
+                    colSorter.createTreeKey(keys,undefined)
+                }
+            )
 
-            let labels = { Key_ab: { "c1": "C1", "c2": "C2"}, Key_01: { "a": "AA", "b": "BB"} }
-            let cols = [ "Key_01", "Key_ab" ]
-            let expRes = [ {title:"AA", columns: [
-                { title: "C1", field: "1"}, {title: "C2", field: "2"} ] },
-                { title: "BB", columns: [
-                    {title: "C1", field: "3"}, {title: "C2", field: "0" } ]
-                } ]
-            let res = colSorter.recurse(labels,cols)
-            expect(JSON.stringify(res)).toEqual(JSON.stringify(expRes));
+            it("should skip empty data columns", () => {
 
-            // Shuffling the labels do not change the ordering because ordering is based
-            // on the key, not the label
-            labels = { Key_ab: { "c1": "C2", "c2": "C1"}, Key_01: { "a": "BB", "b": "AA"} }
-            expRes = [ {title:"BB", columns: [
-                    { title: "C2", field: "1"}, {title: "C1", field: "2"} ] },
-                { title: "AA", columns: [
-                        {title: "C2", field: "3"}, {title: "C1", field: "0" } ]
-                } ]
-            res = colSorter.recurse(labels,cols)
-            expect(JSON.stringify(res)).toEqual(JSON.stringify(expRes));
+                let labels = { Key_ab: { "c1": "C1", "c2": "C2"}, Key_01: { "a": "AA", "b": "BB"} }
+                let cols = [ "Key_01", "Key_ab" ]
+                let expRes = [
+                    {title:"AA", columns: [
+                        { title: "C1", field: "1"} ]
+                    },
+                    { title: "BB", columns: [
+                        {title: "C1", field: "2"}, {title: "C2", field: "0" } ]
+                    } ]
+                let res = colSorter.recurse(labels,cols)
+                expect(JSON.stringify(res)).toEqual(JSON.stringify(expRes));
+            })
         })
+
     })
 
     /**
@@ -537,8 +576,8 @@ describe('custom data pivot.js', function () {
             })
 
             it('should apply labels', function() {
-                config.labels = { 0: { "a": "Accept", "b": "Reject" },
-                    1: { "x": "X", "y": "Y" },
+                config.labels = { 0: { a: "Accept", b: "Reject" },
+                    1: { x: "X", y: "Y" },
                     3: { "10": "USD 10", "20": "USD 20"} }
                 const output = pivotDataModule.run(data, config)
                 const actualColDef = output.cols
