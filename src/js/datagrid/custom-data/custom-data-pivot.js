@@ -366,8 +366,13 @@ export class DataColGenerator {
                 .forEach(a => this._recurse(colDef, a[0], a[1], lvl + 1, key.concat([a[0]])));
         } else {
             let field = this.origColId[key];
-            let newCol = new ColSimpleDefinition(myTitle, field);
-            colDef.push(newCol);
+            if (field!==undefined) {
+                // We only show the columns that are associated to a column in the
+                // original data. If a column does not have any values, then we skip
+                // it entirely.
+                let newCol = new ColSimpleDefinition(myTitle, field);
+                colDef.push(newCol);
+            }
         }
     }
 }
