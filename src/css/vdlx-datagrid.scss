@@ -138,9 +138,11 @@ vdlx-datagrid, vdlx-pivotgrid {
         .tabulator-calcs-bottom {
           background-color: $color-table-header !important;
           font-weight: normal;
+
           .tabulator-cell {
             border-left: 1px solid $color-medium-grey;
             text-align: center;
+
             &.numeric {
               text-align: right;
             }
@@ -202,7 +204,7 @@ vdlx-datagrid, vdlx-pivotgrid {
           }
         }
 
-        &[aria-sort="asc"] {
+        &[aria-sort="ascending"] {
           .tabulator-col-content .tabulator-arrow {
             &:before {
               visibility: hidden;
@@ -215,7 +217,7 @@ vdlx-datagrid, vdlx-pivotgrid {
           }
         }
 
-        &[aria-sort="desc"] {
+        &[aria-sort="descending"] {
           .tabulator-col-content .tabulator-arrow {
             &:before {
               color: #6E6D6A;
@@ -323,7 +325,7 @@ vdlx-datagrid, vdlx-pivotgrid {
       .tabulator-page {
       }
 
-      .tabulator-tableHolder {
+      .tabulator-tableholder {
         .tabulator-cell {
           .checkbox-editor {
             text-align: center;
@@ -371,7 +373,7 @@ vdlx-datagrid, vdlx-pivotgrid {
       }
     }
 
-    &.table-condensed .tabulator-tableHolder .tabulator-table .tabulator-row {
+    &.table-condensed .tabulator-tableholder .tabulator-table .tabulator-row {
       &.highlight {
         background-color: $highlight-color !important;
       }
@@ -489,12 +491,16 @@ vdlx-datagrid, vdlx-pivotgrid {
   }
 }
 
-.tabulator.table-bordered .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+.tabulator.table-bordered .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell {
   border-color: $color-medium-grey;
 }
 
 vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col {
   //height: 100% !important;
+
+  &.tabulator-sortable.tabulator-col-sorter-element:hover {
+    background-color: #d2e9f4;
+  }
 
   .tabulator-col-content {
     padding: 0;
@@ -508,8 +514,8 @@ vdlx-pivotgrid .tabulator.table-striped .tabulator-header .tabulator-headers .ta
   }
 }
 
-.tabulator-edit-select-list {
-  .tabulator-edit-select-list-item {
+.tabulator-edit-list {
+  .tabulator-edit-list-item {
     &.active:not(:hover) {
       background-color: white;
       color: $black;

@@ -133,15 +133,11 @@ export default class AddRemove {
 
                 this.data = this.table.getData();
 
-                if (this.table.getPageMax() === false) {
+                if (!this.table.options.pagination) {
                     return this.table.scrollToRow(row).then(constant(row));
                 }
 
-                const position = row.getPosition(true);
-                const pageSize = this.table.getPageSize();
-                const page = Math.floor(position / pageSize) + 1;
-
-                this.table.setPage(page);
+                row.pageTo()
 
                 return row;
             })

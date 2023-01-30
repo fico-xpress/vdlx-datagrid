@@ -21,7 +21,7 @@
     limitations under the License.
  */
 import '../css/vdlx-datagrid.scss';
-import 'tabulator-tables/dist/css/bootstrap/tabulator_bootstrap.css';
+import 'tabulator-tables/dist/css/tabulator_bootstrap3.css';
 
 import './data-store-fix';
 import './vdlx-pivotgrid';
