@@ -100,11 +100,12 @@ describe('custom data pivot.js', function () {
                 let cols = [ "Key_01", "Key_ab" ]
                 let expRes = [
                     {title:"AA", columns: [
-                        { title: "C1", field: "1"} ]
+                        { title: "C1", field: "1"}, {title: "C2"} ]
                     },
                     { title: "BB", columns: [
                         {title: "C1", field: "2"}, {title: "C2", field: "0" } ]
                     } ]
+
                 let res = colSorter.recurse(labels,cols)
                 expect(JSON.stringify(res)).toEqual(JSON.stringify(expRes));
             })
