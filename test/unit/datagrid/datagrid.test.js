@@ -27,7 +27,7 @@ describe('datagrid getCssClasses', () => {
     describe('when column editor type is select', function () {
         beforeEach(function () {
             result = getCssClasses(
-                {editorType: EDITOR_TYPES.select},
+                {editorType: EDITOR_TYPES.list},
                 false);
         });
 
@@ -56,7 +56,7 @@ describe('datagrid getCssClasses', () => {
         beforeEach(function () {
             result = getCssClasses(
                 {
-                    editorType: EDITOR_TYPES.select,
+                    editorType: EDITOR_TYPES.list,
                     style: ' my-class-2    and-another-2  '
                 },
                 true,

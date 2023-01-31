@@ -114,7 +114,7 @@ export const getCssClasses = (columnOptions, isNumeric, isIndex = false) => {
     if (isNumeric) {
         classes.push('numeric');
     }
-    if (columnOptions.editorType === EDITOR_TYPES.select) {
+    if (columnOptions.editorType === EDITOR_TYPES.list) {
         classes.push('select-editor');
     }
     if (columnOptions.style) {
@@ -786,7 +786,7 @@ class Datagrid {
             };
 
             const getEditorParams = () => {
-                if (entityOptions.editorType === EDITOR_TYPES.select) {
+                if (entityOptions.editorType === EDITOR_TYPES.list) {
                     let getOptions;
                     if (entityOptions.editorOptionsSet) {
                         getOptions = flow(
@@ -853,7 +853,7 @@ class Datagrid {
             const title = get(entityOptions, 'title', entity.getAbbreviation() || name);
 
             const getCellEditingHandler = () => {
-                if (entityOptions.editorType !== EDITOR_TYPES.select) {
+                if (entityOptions.editorType !== EDITOR_TYPES.list) {
                     return (cell) => {
                         const element = cell.getElement();
                         $(element).on('keyup', (evt) => {
@@ -940,7 +940,7 @@ class Datagrid {
             if (gridOptions.columnFilter) {
                 const getHeaderFilter = () => {
                     if (column.editor === EDITOR_TYPES.checkbox) {
-                        return EDITOR_TYPES.select;
+                        return EDITOR_TYPES.list;
                     }
                     return EDITOR_TYPES.text;
                 };

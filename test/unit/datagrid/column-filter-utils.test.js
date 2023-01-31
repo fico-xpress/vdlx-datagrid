@@ -93,7 +93,7 @@ describe('column filter utils', () => {
                 expect(getHeaderFilterParams(column, {})).toEqual(undefined);
             });
             it('select editor', () => {
-                const column = {editor: EDITOR_TYPES.select};
+                const column = {editor: EDITOR_TYPES.list};
                 expect(getHeaderFilterParams(column, {})).toEqual(undefined);
             });
         });
@@ -118,7 +118,7 @@ describe('column filter utils', () => {
                 expect(getHeaderFilterEmptyCheckFn({editor: EDITOR_TYPES.text}, params)).toEqual(undefined);
             });
             it(' returns undefind for select column/editor', () => {
-                expect(getHeaderFilterEmptyCheckFn({editor: EDITOR_TYPES.select}, params)).toEqual(undefined);
+                expect(getHeaderFilterEmptyCheckFn({editor: EDITOR_TYPES.list}, params)).toEqual(undefined);
             });
 
             it('creates a function for a checkbox column/editor', () => {

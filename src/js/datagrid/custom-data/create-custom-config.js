@@ -185,7 +185,7 @@ export const configureColumnFilter = (col) => {
 
     const getHeaderFilter = () => {
         if (col.editor === EDITOR_TYPES.checkbox) {
-            return EDITOR_TYPES.select;
+            return EDITOR_TYPES.list;
         }
         return true;
     };
