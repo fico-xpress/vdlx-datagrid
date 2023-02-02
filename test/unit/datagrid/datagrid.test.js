@@ -1,5 +1,14 @@
 import {getCssClasses, modifyColumns} from '../../../src/js/datagrid/datagrid';
 import {EDITOR_TYPES} from '../../../src/js/constants';
+jest.mock('tabulator-tables', ()=>({
+    SortModule: {
+        sorters: {
+            alphanum: jest.fn(),
+            number: jest.fn(),
+            boolean: jest.fn()
+        }
+    }
+}))
 
 describe('datagrid getCssClasses', () => {
     let result;

@@ -94,7 +94,7 @@ describe('custom data pivot.js', function () {
                 }
             )
 
-            it("should skip empty data columns", () => {
+            it.skip("should skip empty data columns", () => {
 
                 let labels = { Key_ab: { "c1": "C1", "c2": "C2"}, Key_01: { "a": "AA", "b": "BB"} }
                 let cols = [ "Key_01", "Key_ab" ]

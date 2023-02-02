@@ -14,6 +14,15 @@ jest.mock('../../../src/js/ko-utils', () => {
         createMutationObservable: jest.fn(),
     };
 });
+jest.mock('tabulator-tables', ()=>({
+    SortModule: {
+        sorters: {
+            alphanum: jest.fn(),
+            number: jest.fn(),
+            boolean: jest.fn()
+        }
+    }
+}))
 
 describe('vdlx-datagrid view mode', () => {
     let viewModel;

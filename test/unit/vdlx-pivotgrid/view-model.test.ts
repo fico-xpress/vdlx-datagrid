@@ -3,6 +3,15 @@ import Datagrid from '../../../src/js/datagrid/datagrid';
 
 const DatagridMock = Datagrid as jest.MockedClass<typeof Datagrid>;
 jest.mock('../../../src/js/datagrid/datagrid');
+jest.mock('tabulator-tables', ()=>({
+    SortModule: {
+        sorters: {
+            alphanum: jest.fn(),
+            number: jest.fn(),
+            boolean: jest.fn()
+        }
+    }
+}))
 
 describe('vdlx-pivotgrid view mode', () => {
 
