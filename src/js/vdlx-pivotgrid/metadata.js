@@ -76,8 +76,6 @@ export default {
                 'Use this attribute to pass data directly to vdlx-pivotgrid. Supported formats: Array of key/value objects: [{key:[x,y] value: z}]',
             acceptsExpression: true
         },
-
-        // todo - update the descriptions to clarify how position and dimension attrs work together
         /*
              row and column indexes drive the pivot table
              they decide which indexes from the keyed data go on which dimension (row, column or both)
@@ -86,8 +84,6 @@ export default {
              the row/column-positions attribute will be used for the indexes
              and the row/column-dimensions attribute used for row/column group headings
            */
-
-
         {
             name: 'column-dimensions',
             description: 'Used to define the dimensions pivoted onto the columns. Supported format: An array of column group headings ' +

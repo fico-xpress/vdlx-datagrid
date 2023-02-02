@@ -21,11 +21,11 @@
     limitations under the License.
  */
 
-import {COLUMN_SORTERS, EDITOR_TYPES} from "../../constants";
+import {COLUMN_SORTERS, EDITOR_TYPES, ROW_DATA_TYPES} from "../../constants";
 import {pivotDataModule} from "./custom-data-pivot";
 
 import {Enums} from "../grid-filters";
-import {getDataType} from "./custom-data-utils";
+import {getDataType, getRowDataType} from "./custom-data-utils";
 import has from "lodash/has";
 import isUndefined from "lodash/isUndefined";
 import map from "lodash/map";
@@ -47,6 +47,7 @@ import slice from "lodash/slice";
 import uniq from "lodash/uniq";
 import concat from "lodash/concat";
 import forEach from "lodash/forEach";
+import every from "lodash/every";
 
 /**
  * create column properties that are data value type related
@@ -116,13 +117,13 @@ export const isObjectDefinitionColValid = (column) => {
 // check all definitions have the field attr
 export const validateObjectColDefinitions = (columnDefinitions, data) => {
 
-    // if (getRowDataType(data) !== ROW_DATA_TYPES.object) {
-    //     throw Error('Error for component vdlx-datagrid: Invalid column definition, data incompatible with column definition.');
-    // }
-    //
-    // if (!every(columnDefinitions, isObjectDefinitionColValid)) {
-    //     throw Error('Error for component vdlx-datagrid: Invalid column definition, the field attribute is missing or empty.');
-    // }
+    if (getRowDataType(data) !== ROW_DATA_TYPES.object) {
+        throw Error('Error for component vdlx-datagrid: Invalid column definition, data incompatible with column definition.');
+    }
+
+    if (!every(columnDefinitions, isObjectDefinitionColValid)) {
+        throw Error('Error for component vdlx-datagrid: Invalid column definition, the field attribute is missing or empty.');
+    }
 
     const props = keys(data);
     const fields = map(columnDefinitions, 'field');
@@ -161,9 +162,9 @@ export const isLabelObjectValid = (labelObject) => {
 //todo - disabled the validation - come back to this
 // check have the value and label attrs
 export const validateLabelsData = (columnDefinitions) => {
-    // if (!every(columnDefinitions, isLabelObjectValid)) {
-    //     throw Error('Error for component vdlx-datagrid: Invalid column definition, the value and/or label attribute is missing or empty.');
-    // }
+    if (!every(columnDefinitions, isLabelObjectValid)) {
+        throw Error('Error for component vdlx-datagrid: Invalid column definition, the value and/or label attribute is missing or empty.');
+    }
     return true;
 }
 

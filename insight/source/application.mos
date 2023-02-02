@@ -131,7 +131,6 @@ model "vdlx-datagrid examples"
     Matches: range
     CountryStats: dynamic array(CountryCodes, StatTypes, Matches) of real
 
-
     SupportLevelNames: array(SupportLevels) of string ! Support level names
     !@insight.alias Support Costs
     SupportCosts: array(SupportLevels) of real     ! Support level cost

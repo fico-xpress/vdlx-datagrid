@@ -243,7 +243,7 @@ class ColSimpleDefinition {
         // Column index in the original data set
         // Tabulator expects the field to be a string because of 'nested field' feature
         // In case the original header/labels is set to undefined we assign empty string
-        this.field = (field!==undefined) ? field.toString() : "";
+        this.field = (field!==undefined) ? field.toString() : undefined;
         // required custom sorter to sort columns and data with totals at the bottom
         this.sorter = sortingFunc;
     }
@@ -307,21 +307,27 @@ export class DataColGenerator {
 
     _createTreeKey(keys,nRowKey) {
         let keyTree = {}
+        this.origColId = {}
         Object.values(keys)
-            .forEach((e) => {
+            .forEach((e,j) => {
+                if (j===0) {
+                    // We retrieve the key length (number of key values)
+                    // from the first key in the collection
+                    this.nColKey = e[0].key.length - 1
+                }
                 e.forEach((v) => {
                     let key = v.key;
-                    this.nColKey = key.length - 1
-                    key.forEach((v, i) => {
-                        if (!keyTree[i]) {
-                            keyTree[i] = {}
-                        } else {
-                            if (!keyTree[i][v]) {
+                    if (this.origColId[key]===undefined) {
+                        key.forEach((v, i) => {
+                            if (keyTree[i] === undefined) {
+                                keyTree[i] = {}
+                            }
+                            if (keyTree[i][v] === undefined) {
                                 keyTree[i][v] = v // the rank id
                             }
-                        }
-                    })
-                    this.origColId[key] = v.idx + nRowKey
+                        })
+                        this.origColId[key] = v.idx + nRowKey
+                    }
                 })
             })
         return keyTree

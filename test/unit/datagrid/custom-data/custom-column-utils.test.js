@@ -145,7 +145,7 @@ describe('custom column utils', () => {
                 expect(isObjectDefinitionColValid({field: undefined})).toEqual(false);
             });
         });
-        describe.skip('validateObjectColDefinitions', () => {
+        describe('validateObjectColDefinitions', () => {
             it('returns true for single valid column', () => {
                 const colDefinitions = [{field: 'f1'}];
                 const rowOne = {'f1': 1};

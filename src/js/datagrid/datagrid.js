@@ -230,7 +230,7 @@ class Datagrid {
                         );
                     }
                     return undefined;
-                    //todo - experiment with extend and throttle
+                    // throttling table updates
                 }).extend({ throttle: 500 })
                 .subscribe(noop)
         ]);
