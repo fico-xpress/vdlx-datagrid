@@ -65,13 +65,9 @@ export default function transform(element, attributes, api) {
 
     var pageSize = attributes['page-size'];
     if (pageSize) {
-        if (pageSize.expression.isString) {
-            var pageSizeNum = parseInt(pageSize.rawValue);
-            if (!isNaN(pageSizeNum)) {
-                paramsBuilder.addParam('pageSize', pageSizeNum);
-            }
-        } else {
-            paramsBuilder.addParam('pageSize', pageSize.expression.value, true);
+        var pageSizeNum = parseInt(pageSize.rawValue);
+        if (!isNaN(pageSizeNum)) {
+            paramsBuilder.addParam('pageSize', pageSizeNum);
         }
     }
 

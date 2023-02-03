@@ -63,7 +63,6 @@ export default {
         {
             name: 'page-size',
             description: 'The number of rows to show per-page in paged mode.',
-            acceptsExpression: true,
             defaultValue: '50'
         },
         {
@@ -73,10 +72,10 @@ export default {
         },
         {
             name: 'height',
-            acceptsExpression: true,
+            acceptsExpression: false,
             description:
                 'Grid height, When page-mode is set to <em>scrolling</em> you can set the height of the grid to something other than the default.',
-            defaultValue: '600'
+            defaultValue: '600px'
         },
         {
             name: 'column-filter',
