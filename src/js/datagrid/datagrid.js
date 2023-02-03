@@ -813,6 +813,7 @@ class Datagrid {
                     }
 
                     return (cell) => ({
+                        emptyValue: cell.getValue(),
                         itemFormatter,
                         values: map(getOptions(cell.getValue(), getRowKey(cell.getData())), (option) => ({
                             value: option.key,
