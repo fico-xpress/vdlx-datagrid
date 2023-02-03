@@ -91,13 +91,15 @@ vdlx-datagrid, vdlx-pivotgrid {
       .tabulator-placeholder,
       .tabulator-placeholder[tabulator-render-mode=virtual] {
         position: relative;
-        padding-bottom: 9px;
+        min-height: unset;
 
-        span {
+        .tabulator-placeholder-contents {
           margin: 0 auto 0 0;
           color: $black;
           font-weight: normal;
           font-size: 14px;
+          text-align: left;
+          padding-top: 0px;
         }
       }
 

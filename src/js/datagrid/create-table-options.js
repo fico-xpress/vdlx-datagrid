@@ -52,7 +52,7 @@ export default params => {
         columnFilter: params.columnFilter,
         onError: bindKey(self, '_wrapAlert'),
         alwaysShowSelection: params.alwaysShowSelection,
-        gridHeight: params.gridHeight,
+        gridHeight: params.gridHeight || '600px',
         paginationSize: params.pageSize || DEFAULT_GRID_PAGE_SIZE,
         saveState: get(params, 'saveState', true),
         pageMode: params.pageMode,

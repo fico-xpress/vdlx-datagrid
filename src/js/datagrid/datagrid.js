@@ -356,13 +356,6 @@ class Datagrid {
         }
     }
 
-    updateHeight() {
-        const gridOptions = ko.unwrap(this.gridOptions$);
-        if (this.table && this.isTableBuilt && gridOptions) {
-            this.recalculateHeight(gridOptions);
-        }
-    }
-
     saveState() {
         if (this.stateManager && this.stateLoaded) {
             let sorters = map(this.table.getSorters(), (sorter) => ({dir: sorter.dir, column: sorter.field}));
@@ -423,13 +416,15 @@ class Datagrid {
             placeholder: 'No data available',
             groupStartOpen: false,
             dataLoader: true,
-            height: '100%',
             columnDefaults: {
                 resizable: 'false',
                 debugInvalidOptions: false,
             },
             debugInvalidOptions: false,
         };
+        if(!options.pagination){
+            tabulatorOptions.maxHeight = options.gridHeight
+        }
 
         const table = new Tabulator(`#${options.tableId}`, tabulatorOptions);
 
@@ -453,32 +448,8 @@ class Datagrid {
         table.on('rowClick', (e, row) => select(row));
         table.on('rowSelectionChanged', (data, rows) => this.setSelectedRow(first(rows)));
         table.on('renderComplete', () => this.updateLayout());
-        table.on('dataProcessed', () => this.updateHeight());
 
         return table
-    }
-
-    recalculateHeight(options) {
-        if (options.pageMode === 'scrolling') {
-            let height;
-            if (this.table && this.table.getDataCount() > options.paginationSize) {
-                height = options.gridHeight;
-                if (!height) {
-                    const row = this.table.getRowFromPosition(1);
-                    if (row) {
-                        height = $(row.getElement()).outerHeight(true) * options.paginationSize;
-                    } else {
-                        height = '100%';
-                    }
-                }
-            } else {
-                height = '100%';
-            }
-
-            this.table.setHeight(height);
-        } else if (options.pageMode === 'paged') {
-            this.table.setHeight('100%');
-        }
     }
 
     recalculateWidth() {
