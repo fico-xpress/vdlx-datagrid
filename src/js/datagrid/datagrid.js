@@ -859,12 +859,14 @@ class Datagrid {
                         if (isUndefined(value) || value === '') {
                             this.savingPromise = removeValue(cell.getData()).catch((err) => {
                                 cell.restoreOldValue();
+                                validateAndStyle(cell, cell.getValue());
                                 // TODO: message saying
                                 // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
                             });
                         } else {
                             this.savingPromise = saveValue(cell.getData(), value).catch((err) => {
                                 cell.restoreOldValue();
+                                validateAndStyle(cell, cell.getValue());
                                 // TODO: message saying
                                 // Could not save new value (4.444444444444444e+37) for entity FactoryDemand, indices [New York,January]. The display value will be reverted.
                             });
