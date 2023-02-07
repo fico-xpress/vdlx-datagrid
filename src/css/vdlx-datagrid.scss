@@ -498,6 +498,7 @@ vdlx-datagrid, vdlx-pivotgrid {
   border-color: $color-medium-grey;
 }
 
+vdlx-pivotgrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col,
 vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col {
   //height: 100% !important;
 
@@ -505,13 +506,6 @@ vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tab
     background-color: #d2e9f4;
   }
 
-  .tabulator-col-content {
-    padding: 0;
-  }
-}
-
-vdlx-pivotgrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col {
-  //height: 100% !important;
   .tabulator-col-content {
     padding: 0;
   }
