@@ -518,6 +518,8 @@ vdlx-pivotgrid .tabulator.table-striped .tabulator-header .tabulator-headers .ta
 }
 
 .tabulator-edit-list {
+  margin-left: 5px;
+  margin-top: -5px;
   .tabulator-edit-list-item {
     &.active:not(:hover) {
       background-color: white;
