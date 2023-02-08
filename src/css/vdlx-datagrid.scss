@@ -175,7 +175,9 @@ vdlx-datagrid, vdlx-pivotgrid {
 
       .tabulator-header-filter {
         background-color: white;
-        padding: 5px;
+        outline: 5px solid white;
+        margin-bottom: 5px;
+        padding-right: 5px;
       }
 
       .tabulator-sortable {
@@ -500,13 +502,16 @@ vdlx-datagrid, vdlx-pivotgrid {
 
 vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col {
   //height: 100% !important;
+  .tabulator-header-filter{
+    margin-top: 7px;
+  }
 
   &.tabulator-sortable.tabulator-col-sorter-element:hover {
     background-color: #d2e9f4;
   }
 
   .tabulator-col-content {
-    padding: 0;
+    padding: 0px 0px 0px 5px;
   }
 }
 
@@ -518,8 +523,6 @@ vdlx-pivotgrid .tabulator.table-striped .tabulator-header .tabulator-headers .ta
 }
 
 .tabulator-edit-list {
-  margin-left: 5px;
-  margin-top: -5px;
   .tabulator-edit-list-item {
     &.active:not(:hover) {
       background-color: white;
