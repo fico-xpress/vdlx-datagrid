@@ -47,7 +47,7 @@ limitations under the License.
                 </vdl-row>
 
                 <vdl-column size="6">
-                    <vdlx-datagrid page-size="10" page-mode="paged" show-filter="true">
+                    <vdlx-datagrid page-size="10" page-mode="paged">
                         <vdlx-datagrid-column entity="StockSizes" editable="true"
                                           editor-options-set="StockSizeValues"></vdlx-datagrid-column>
                     </vdlx-datagrid>
@@ -146,7 +146,7 @@ editor-options=&quot;=[{key: 0, value: 'first'}, {key: 1, value: 'second'}, {key
             </vdl-row>
 
             <vdl-column size="6">
-                <vdlx-datagrid page-size="10" page-mode="paged" show-filter="true">
+                <vdlx-datagrid page-size="10" page-mode="paged">
                     <vdlx-datagrid-column entity="StockSizes" editable="true" editor-options-set="StockSizeValues">
                     </vdlx-datagrid-column>
                     <vdlx-datagrid-column editable="true" editor-options="=[0,1,2]" entity="FactoryDemand">
@@ -156,7 +156,7 @@ editor-options=&quot;=[{key: 0, value: 'first'}, {key: 1, value: 'second'}, {key
             </vdl-column>
             <vdl-column size="6" heading="Source code">
                 <code-panel>
-&lt;vdlx-datagrid page-size=&quot;10&quot; page-mode=&quot;paged&quot; show-filter=&quot;true&quot;&gt;
+&lt;vdlx-datagrid page-size=&quot;10&quot; page-mode=&quot;paged&quot;&gt;
     &lt;vdlx-datagrid-column entity=&quot;StockSizes&quot; editable=&quot;true&quot; editor-type=&quot;select&quot;
         editor-options-set=&quot;StockSizeValues&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column editable=&quot;true&quot; editor-options=&quot;=[0,1,2]&quot; entity=&quot;FactoryDemand&quot;&gt;Factory

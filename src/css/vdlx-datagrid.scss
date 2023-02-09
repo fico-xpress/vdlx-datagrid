@@ -502,8 +502,8 @@ vdlx-datagrid, vdlx-pivotgrid {
 
 vdlx-pivotgrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col,
 vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col {
-  //height: 100% !important;
-  .tabulator-header-filter{
+
+  .tabulator-header-filter {
     margin-top: 7px;
   }
 
@@ -518,8 +518,14 @@ vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tab
 
 .tabulator-edit-list {
   .tabulator-edit-list-item {
-    &.active:not(:hover) {
-      background-color: white;
+    &.active {
+      background-color: #00629B;
+    }
+
+    &:hover:not(.active),
+    &.focused:not(.active) {
+      background-color: #F2F2F2;
+      outline: none;
       color: $black;
     }
 
