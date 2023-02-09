@@ -75,7 +75,7 @@
 
 &lt;vdlx-datagrid vdl-if=&quot;=vars.singleFilter&quot; height=&quot;400&quot;&gt;
     &lt;vdlx-datagrid-index-filter set=&quot;t3IndexA&quot; value=&quot;=vars.singleFilter&quot;&gt;&lt;/vdlx-datagrid-index-filter&gt;
-    &lt;vdlx-datagrid-column set=&quot;t3IndexA&quot; vdl-visible=&quot;=false&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column set=&quot;t3IndexA&quot; vdl-visible=&quot;=true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column entity=&quot;t3Col1&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column entity=&quot;t3Col3&quot;&gt;&lt;/vdlx-datagrid-column&gt;
 &lt;/vdlx-datagrid&gt;

@@ -109,7 +109,7 @@ limitations under the License.
             </vdl-row>
             <vdl-row>
                 <vdl-column heading="Simple datagrid with repeated index sets" size="6">
-                    <p>SImilat to Basic usage but with a repeated index set.</p>
+                    <p>Similar to Basic usage but with a repeated index set.</p>
                     <vdlx-datagrid id="basic-example-2" column-filter="true">
                         <vdlx-datagrid-column set="Factories" heading="Origin"></vdlx-datagrid-column>
                         <vdlx-datagrid-column set="Factories" heading="Destination"></vdlx-datagrid-column>
