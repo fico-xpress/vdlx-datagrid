@@ -140,7 +140,7 @@ limitations under the License.
                 <p>This example has a 'format' string applied to the column 'ShippingCosts'.</p>
                 <vdlx-datagrid column-filter="true">
                     <vdlx-datagrid-column entity="ShippingCosts" format="$#.0#"></vdlx-datagrid-column>
-                    <vdlx-datagrid-column entity="ShippingCosts">ShippingCostsF</vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="ShippingCosts">ShippingCosts</vdlx-datagrid-column>
 <!--                    <vdlx-datagrid-column entity="SupportCosts" format="$#,###.00"></vdlx-datagrid-column>-->
 <!--                    <vdlx-datagrid-column entity="ServiceLevelAgreements"></vdlx-datagrid-column>-->
                 </vdlx-datagrid>
@@ -187,14 +187,14 @@ limitations under the License.
             <vdl-column heading="Column filters" size="6" class="example-passed">
                 <vdlx-datagrid show-filter="true" column-filter="true">
                     <vdlx-datagrid-column entity="SupportCosts" heading="SUPPORT COSTS" editable="true"></vdlx-datagrid-column>
-                    <vdlx-datagrid-column entity="ServiceLevelAgreements" editable="truew">Agreements Custom Title</vdlx-datagrid-column>
+                    <vdlx-datagrid-column entity="ServiceLevelAgreements" editable="true">Agreements Custom Title</vdlx-datagrid-column>
                 </vdlx-datagrid>
             </vdl-column>
 
             <vdl-column heading="VDL source:" size="6">
                 <code-panel><pre>&lt;vdlx-datagrid show-filter=&quot;true&quot; column-filter=&quot;true&quot;&gt;
                     &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot; heading=&quot;SUPPORT COSTS&quot; editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
-                    &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot; editable=&quot;truew&quot;&gt;Agreements Custom Title&lt;/vdlx-datagrid-column&gt;
+                    &lt;vdlx-datagrid-column entity=&quot;ServiceLevelAgreements&quot; editable=&quot;true&quot;&gt;Agreements Custom Title&lt;/vdlx-datagrid-column&gt;
                 &lt;/vdlx-datagrid&gt;</pre>
                 </code-panel>
             </vdl-column>

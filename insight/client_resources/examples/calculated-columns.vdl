@@ -79,8 +79,8 @@ limitations under the License.
                         <vdlx-datagrid-column set="CITIES" set-position="1" sort-order="1">Destination</vdlx-datagrid-column>
                         <!-- Lookup country for the destination city -->
                         <vdlx-datagrid-column render="=scenario.entities.mapCity2Ctry(rowData[1]).value">Ctry of dest</vdlx-datagrid-column>
-                        <vdlx-datagrid-column set="PERIODS" position="" sort-order="2"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column entity="amount" editable="true"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="PERIODS" heading="Periods" position="" sort-order="2"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="amount" heading="Amount" editable="true"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column heading="VDL source:" size="5">
@@ -93,8 +93,8 @@ limitations under the License.
     &lt;vdlx-datagrid-column set=&quot;CITIES&quot; set-position=&quot;1&quot; sort-order=&quot;1&quot;&gt;Destination&lt;/vdlx-datagrid-column&gt;
     &lt;!-- Lookup country for the destination city --&gt;
     &lt;vdlx-datagrid-column render=&quot;=scenario.entities.mapCity2Ctry(rowData[1]).value&quot;&gt;Ctry of dest&lt;/vdlx-datagrid-column&gt;
-    &lt;vdlx-datagrid-column set=&quot;PERIODS&quot; position=&quot;&quot; sort-order=&quot;2&quot;&gt;&lt;/vdlx-datagrid-column&gt;
-    &lt;vdlx-datagrid-column entity=&quot;amount&quot; editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column set=&quot;PERIODS&quot; heading=&quot;Periods&quot; position=&quot;&quot; sort-order=&quot;2&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;amount&quot; heading=&quot;Amount&quot; editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
 &lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>
@@ -113,25 +113,25 @@ limitations under the License.
             <vdl-row>
                 <vdl-column size="7" heading="Calculated columns with reordered index columns">
                     <vdlx-datagrid>
-                        <vdlx-datagrid-column set="PERIODS" sort-order="2"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="PERIODS" heading="Periods" sort-order="2"></vdlx-datagrid-column>
                         <vdlx-datagrid-column set="CITIES" set-position="1" sort-order="1">Destination</vdlx-datagrid-column>
                         <vdlx-datagrid-column render="=scenario.entities.mapCity2Ctry(rowData[1]).value">Ctry of dest</vdlx-datagrid-column>
                         <vdlx-datagrid-column set="CITIES" set-position="0" sort-order="0">Origin</vdlx-datagrid-column>
                         <vdlx-datagrid-column render="=scenario.entities.mapCity2Ctry(rowData[0]).value">Ctry of orig</vdlx-datagrid-column>
                         <vdlx-datagrid-column render="=insight.Formatter.formatNumber(scenario.entities.distance(rowData[0],rowData[1]).value, '#,###.##')">Distance</vdlx-datagrid-column>
-                        <vdlx-datagrid-column entity="amount" editable="true"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column entity="amount" heading="Amount" editable="true"></vdlx-datagrid-column>
                     </vdlx-datagrid>
                 </vdl-column>
                 <vdl-column heading="VDL source:" size="5">
                     <code-panel>
 &lt;vdlx-datagrid&gt;
-    &lt;vdlx-datagrid-column set=&quot;PERIODS&quot; sort-order=&quot;2&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column set=&quot;PERIODS&quot; heading=&quot;Periods&quot; sort-order=&quot;2&quot;&gt;&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column set=&quot;CITIES&quot; set-position=&quot;1&quot; sort-order=&quot;1&quot;&gt;Destination&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column render=&quot;=scenario.entities.mapCity2Ctry(rowData[1]).value&quot;&gt;Ctry of dest&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column set=&quot;CITIES&quot; set-position=&quot;0&quot; sort-order=&quot;0&quot;&gt;Origin&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column render=&quot;=scenario.entities.mapCity2Ctry(rowData[0]).value&quot;&gt;Ctry of orig&lt;/vdlx-datagrid-column&gt;
     &lt;vdlx-datagrid-column render=&quot;=insight.Formatter.formatNumber(scenario.entities.distance(rowData[0],rowData[1]).value, '#,###.##')&quot;&gt;Distance&lt;/vdlx-datagrid-column&gt;
-    &lt;vdlx-datagrid-column entity=&quot;amount&quot; editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;amount&quot; heading=&quot;Amount&quot; editable=&quot;true&quot;&gt;&lt;/vdlx-datagrid-column&gt;
 &lt;/vdlx-datagrid&gt;
                     </code-panel>
                 </vdl-column>

@@ -52,7 +52,7 @@
 
                     <vdlx-datagrid vdl-if="=vars.singleFilter" height="250">
                         <vdlx-datagrid-index-filter set="t3IndexA" value="=vars.singleFilter"></vdlx-datagrid-index-filter>
-                        <vdlx-datagrid-column set="t3IndexA" vdl-visible="=false"></vdlx-datagrid-column>
+                        <vdlx-datagrid-column set="t3IndexA" vdl-visible="=true"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="t3Col1"></vdlx-datagrid-column>
                         <vdlx-datagrid-column entity="t3Col3"></vdlx-datagrid-column>
                     </vdlx-datagrid>
