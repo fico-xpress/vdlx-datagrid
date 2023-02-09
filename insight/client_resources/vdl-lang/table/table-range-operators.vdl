@@ -109,7 +109,7 @@ limitations under the License.
             </vdl-row>
             <vdl-row>
                 <vdl-column heading="Simple datagrid with repeated index sets" size="6">
-                    <p>SImilat to Basic usage but with a repeated index set.</p>
+                    <p>Similar to Basic usage but with a repeated index set.</p>
                     <vdlx-datagrid id="basic-example-2" column-filter="true">
                         <vdlx-datagrid-column set="Factories" heading="Origin"></vdlx-datagrid-column>
                         <vdlx-datagrid-column set="Factories" heading="Destination"></vdlx-datagrid-column>
@@ -141,22 +141,16 @@ limitations under the License.
                 <vdlx-datagrid column-filter="true">
                     <vdlx-datagrid-column entity="ShippingCosts" format="$#.0#"></vdlx-datagrid-column>
                     <vdlx-datagrid-column entity="ShippingCosts">ShippingCosts</vdlx-datagrid-column>
-<!--                    <vdlx-datagrid-column entity="SupportCosts" format="$#,###.00"></vdlx-datagrid-column>-->
-<!--                    <vdlx-datagrid-column entity="ServiceLevelAgreements"></vdlx-datagrid-column>-->
                 </vdlx-datagrid>
             </vdl-column>
-
             <vdl-column size="6" heading="VDL source">
                 <code-panel>
-                    <pre>&lt;vdlx-datagrid column-filter=&quot;true&quot;&gt;
-    &lt;vdlx-datagrid-column
-        set=&quot;SupportLevels&quot;&gt;Support L.&lt;/vdlx-datagrid-column&gt;
-    &lt;vdlx-datagrid-column
-        entity=&quot;SupportCosts&quot;
-        format=&quot;$#,###.00&quot;&gt;&lt;/vdlx-datagrid-column&gt;
-    &lt;vdlx-datagrid-column
-        entity=&quot;ServiceLevelAgreements&quot;&gt;&lt;/vdlx-datagrid-column&gt;
-&lt;/vdlx-datagrid&gt;</pre>
+                    <pre>
+&lt;vdlx-datagrid column-filter=&quot;true&quot;&gt;
+    &lt;vdlx-datagrid-column entity=&quot;ShippingCosts&quot; format=&quot;$#.0#&quot;&gt;&lt;/vdlx-datagrid-column&gt;
+    &lt;vdlx-datagrid-column entity=&quot;ShippingCosts&quot;&gt;ShippingCosts&lt;/vdlx-datagrid-column&gt;
+&lt;/vdlx-datagrid&gt;
+                    </pre>
                 </code-panel>
             </vdl-column>
 
