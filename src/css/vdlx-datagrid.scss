@@ -131,7 +131,7 @@ vdlx-datagrid, vdlx-pivotgrid {
 
             .tabulator-col-title {
               white-space: pre-wrap;
-              padding: 5px 19px 5px 5px;
+              padding: 5px 14px 5px 0px;
             }
           }
         }
@@ -177,7 +177,6 @@ vdlx-datagrid, vdlx-pivotgrid {
         background-color: white;
         outline: 5px solid white;
         margin-bottom: 5px;
-        padding-right: 5px;
       }
 
       .tabulator-sortable {
@@ -512,7 +511,7 @@ vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tab
   }
 
   .tabulator-col-content {
-    padding: 0px 0px 0px 5px;
+    padding: 0px 5px 0px 5px;
   }
 }
 
