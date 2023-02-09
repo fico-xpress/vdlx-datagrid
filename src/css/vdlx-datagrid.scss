@@ -94,12 +94,12 @@ vdlx-datagrid, vdlx-pivotgrid {
         min-height: unset;
 
         .tabulator-placeholder-contents {
-          margin: 0 auto 0 0;
+          margin: -15px auto 0 0;
           color: $black;
           font-weight: normal;
           font-size: 14px;
           text-align: left;
-          padding-top: 0px;
+          padding: 0px 0px 5px 9px;
         }
       }
 
