@@ -6,7 +6,7 @@
    ```````````````````````
    vdlx-datagrid main file.
 
-    (c) Copyright 2019 Fair Isaac Corporation
+    (c) Copyright 2023 Fair Isaac Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+import 'tabulator-tables/dist/css/tabulator_bootstrap3.css';
 import '../css/vdlx-datagrid.scss';
-import 'tabulator-tables/dist/css/bootstrap/tabulator_bootstrap.css';
 
 import './data-store-fix';
 import './vdlx-pivotgrid';

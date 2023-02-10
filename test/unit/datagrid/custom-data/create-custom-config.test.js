@@ -513,7 +513,7 @@ describe('createCustomConfig module', () => {
                     id: 'value',
                     sorter: 'boolean',
                     title: 'value',
-                    headerFilter: 'select',
+                    headerFilter: 'list',
                     headerFilterFunc: expect.any(Function),
                     headerFilterPlaceholder: 'No Filter',
                     headerFilterEmptyCheck: expect.any(Function),

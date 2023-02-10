@@ -6,7 +6,7 @@
    ```````````````````````
    vdlx-datagrid add remove rows.
 
-    (c) Copyright 2019 Fair Isaac Corporation
+    (c) Copyright 2023 Fair Isaac Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -133,15 +133,11 @@ export default class AddRemove {
 
                 this.data = this.table.getData();
 
-                if (this.table.getPageMax() === false) {
+                if (!this.table.options.pagination) {
                     return this.table.scrollToRow(row).then(constant(row));
                 }
 
-                const position = row.getPosition(true);
-                const pageSize = this.table.getPageSize();
-                const page = Math.floor(position / pageSize) + 1;
-
-                this.table.setPage(page);
+                row.pageTo()
 
                 return row;
             })

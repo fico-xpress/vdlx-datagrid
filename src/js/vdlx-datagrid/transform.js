@@ -6,7 +6,7 @@
    ```````````````````````
    vdlx-datagrid transform function for VDL extension.
 
-    (c) Copyright 2019 Fair Isaac Corporation
+    (c) Copyright 2023 Fair Isaac Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -65,13 +65,9 @@ export default function transform(element, attributes, api) {
 
     var pageSize = attributes['page-size'];
     if (pageSize) {
-        if (pageSize.expression.isString) {
-            var pageSizeNum = parseInt(pageSize.rawValue);
-            if (!isNaN(pageSizeNum)) {
-                paramsBuilder.addParam('pageSize', pageSizeNum);
-            }
-        } else {
-            paramsBuilder.addParam('pageSize', pageSize.expression.value, true);
+        var pageSizeNum = parseInt(pageSize.rawValue);
+        if (!isNaN(pageSizeNum)) {
+            paramsBuilder.addParam('pageSize', pageSizeNum);
         }
     }
 

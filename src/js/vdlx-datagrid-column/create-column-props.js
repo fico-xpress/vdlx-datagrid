@@ -79,7 +79,7 @@ export const createProps = (columnId, params, filters, element) => {
                 props.editorType = EDITOR_TYPES.checkbox;
             }
             if (props.editorOptions || props.editorOptionsSet) {
-                props.editorType = EDITOR_TYPES.select;
+                props.editorType = EDITOR_TYPES.list;
             }
         } else {
             props.editorType = EDITOR_TYPES[params.editorType];

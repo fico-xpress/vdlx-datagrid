@@ -6,7 +6,7 @@
    ```````````````````````
    vdlx-datagrid styling in SASS.
 
-    (c) Copyright 2019 Fair Isaac Corporation
+    (c) Copyright 2023 Fair Isaac Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -70,6 +70,7 @@ vdlx-datagrid, vdlx-pivotgrid {
 
   .tabulator {
     margin-bottom: 0;
+    width: 100%;
 
     &.table-striped {
       .tabulator-table {
@@ -90,13 +91,15 @@ vdlx-datagrid, vdlx-pivotgrid {
       .tabulator-placeholder,
       .tabulator-placeholder[tabulator-render-mode=virtual] {
         position: relative;
-        padding-bottom: 9px;
+        min-height: unset;
 
-        span {
-          margin: 0 auto 0 0;
+        .tabulator-placeholder-contents {
+          margin: -15px auto 0 0;
           color: $black;
           font-weight: normal;
           font-size: 14px;
+          text-align: left;
+          padding: 0px 0px 5px 9px;
         }
       }
 
@@ -128,7 +131,7 @@ vdlx-datagrid, vdlx-pivotgrid {
 
             .tabulator-col-title {
               white-space: pre-wrap;
-              padding: 5px 19px 5px 5px;
+              padding: 5px 14px 5px 0px;
             }
           }
         }
@@ -138,9 +141,11 @@ vdlx-datagrid, vdlx-pivotgrid {
         .tabulator-calcs-bottom {
           background-color: $color-table-header !important;
           font-weight: normal;
+
           .tabulator-cell {
             border-left: 1px solid $color-medium-grey;
             text-align: center;
+
             &.numeric {
               text-align: right;
             }
@@ -170,7 +175,8 @@ vdlx-datagrid, vdlx-pivotgrid {
 
       .tabulator-header-filter {
         background-color: white;
-        padding: 5px;
+        outline: 5px solid white;
+        margin-bottom: 5px;
       }
 
       .tabulator-sortable {
@@ -202,7 +208,7 @@ vdlx-datagrid, vdlx-pivotgrid {
           }
         }
 
-        &[aria-sort="asc"] {
+        &[aria-sort="ascending"] {
           .tabulator-col-content .tabulator-arrow {
             &:before {
               visibility: hidden;
@@ -215,7 +221,7 @@ vdlx-datagrid, vdlx-pivotgrid {
           }
         }
 
-        &[aria-sort="desc"] {
+        &[aria-sort="descending"] {
           .tabulator-col-content .tabulator-arrow {
             &:before {
               color: #6E6D6A;
@@ -323,7 +329,7 @@ vdlx-datagrid, vdlx-pivotgrid {
       .tabulator-page {
       }
 
-      .tabulator-tableHolder {
+      .tabulator-tableholder {
         .tabulator-cell {
           .checkbox-editor {
             text-align: center;
@@ -371,7 +377,7 @@ vdlx-datagrid, vdlx-pivotgrid {
       }
     }
 
-    &.table-condensed .tabulator-tableHolder .tabulator-table .tabulator-row {
+    &.table-condensed .tabulator-tableholder .tabulator-table .tabulator-row {
       &.highlight {
         background-color: $highlight-color !important;
       }
@@ -489,29 +495,36 @@ vdlx-datagrid, vdlx-pivotgrid {
   }
 }
 
-.tabulator.table-bordered .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+.tabulator.table-bordered .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell {
   border-color: $color-medium-grey;
 }
 
+vdlx-pivotgrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col,
 vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col {
-  //height: 100% !important;
+
+  .tabulator-header-filter {
+    margin-top: 7px;
+  }
+
+  &.tabulator-sortable.tabulator-col-sorter-element:hover {
+    background-color: #d2e9f4;
+  }
 
   .tabulator-col-content {
-    padding: 0;
+    padding: 0px 5px 0px 5px;
   }
 }
 
-vdlx-pivotgrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col {
-  //height: 100% !important;
-  .tabulator-col-content {
-    padding: 0;
-  }
-}
+.tabulator-edit-list {
+  .tabulator-edit-list-item {
+    &.active {
+      background-color: #00629B;
+    }
 
-.tabulator-edit-select-list {
-  .tabulator-edit-select-list-item {
-    &.active:not(:hover) {
-      background-color: white;
+    &:hover:not(.active),
+    &.focused:not(.active) {
+      background-color: #F2F2F2;
+      outline: none;
       color: $black;
     }
 

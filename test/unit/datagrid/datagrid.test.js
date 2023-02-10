@@ -1,5 +1,14 @@
 import {getCssClasses, modifyColumns} from '../../../src/js/datagrid/datagrid';
 import {EDITOR_TYPES} from '../../../src/js/constants';
+jest.mock('tabulator-tables', ()=>({
+    SortModule: {
+        sorters: {
+            alphanum: jest.fn(),
+            number: jest.fn(),
+            boolean: jest.fn()
+        }
+    }
+}))
 
 describe('datagrid getCssClasses', () => {
     let result;
@@ -27,7 +36,7 @@ describe('datagrid getCssClasses', () => {
     describe('when column editor type is select', function () {
         beforeEach(function () {
             result = getCssClasses(
-                {editorType: EDITOR_TYPES.select},
+                {editorType: EDITOR_TYPES.list},
                 false);
         });
 
@@ -56,7 +65,7 @@ describe('datagrid getCssClasses', () => {
         beforeEach(function () {
             result = getCssClasses(
                 {
-                    editorType: EDITOR_TYPES.select,
+                    editorType: EDITOR_TYPES.list,
                     style: ' my-class-2    and-another-2  '
                 },
                 true,
