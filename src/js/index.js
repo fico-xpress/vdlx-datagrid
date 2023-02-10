@@ -23,7 +23,6 @@
 import 'tabulator-tables/dist/css/tabulator_bootstrap3.css';
 import '../css/vdlx-datagrid.scss';
 
-import './data-store-fix';
 import './vdlx-pivotgrid';
 import './vdlx-datagrid';
 import './vdlx-datagrid-column';
