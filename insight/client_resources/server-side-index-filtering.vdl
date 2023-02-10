@@ -109,7 +109,6 @@
                                    label-size="3"
                                    size="5"
                                    options-set="MonthsOfYear"
-                                   options-include-empty="true"
                                    multiple="true"
                                    vdl-event="change: actions.updateMultiFilter"></vdl-field>
                     </vdl-form>
@@ -133,7 +132,6 @@
                label-size=&quot;3&quot;
                size=&quot;5&quot;
                options-set=&quot;MonthsOfYear&quot;
-               options-include-empty=&quot;true&quot;
                multiple=&quot;true&quot;
                vdl-event=&quot;change: actions.updateMultiFilter&quot;&gt;&lt;/vdl-field&gt;
 &lt;/vdl-form&gt;
