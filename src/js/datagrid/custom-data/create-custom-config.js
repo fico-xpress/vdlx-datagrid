@@ -4,7 +4,7 @@
 
    file vdlx-datagrid/custom-data/create-custom-config.js
 
-    (c) Copyright 2022 Fair Isaac Corporation
+    (c) Copyright 2023 Fair Isaac Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -185,7 +185,7 @@ export const configureColumnFilter = (col) => {
 
     const getHeaderFilter = () => {
         if (col.editor === EDITOR_TYPES.checkbox) {
-            return EDITOR_TYPES.select;
+            return EDITOR_TYPES.list;
         }
         return true;
     };

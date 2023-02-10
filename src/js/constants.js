@@ -6,7 +6,7 @@
    ```````````````````````
    vdlx-datagrid editor type constants.
 
-    (c) Copyright 2019 Fair Isaac Corporation
+    (c) Copyright 2023 Fair Isaac Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
 export const EDITOR_TYPES = {
     text: 'input',
     checkbox: 'checkbox',
-    select: 'select'
+    list: 'list',
 };
 
 export const COLUMN_SORTERS = {

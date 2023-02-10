@@ -11,6 +11,15 @@ jest.mock('../../../src/js/vdlx-datagrid/metadata', () => ({
 }));
 jest.mock('../../../src/js/vdlx-datagrid/transform');
 jest.mock('../../../src/js/vdlx-datagrid/view-model');
+jest.mock('tabulator-tables', ()=>({
+    SortModule: {
+        sorters: {
+            alphanum: jest.fn(),
+            number: jest.fn(),
+            boolean: jest.fn()
+        }
+    }
+}))
 
 describe('vdlx-datagrid', () => {
     it('calls VDL to register as an extension', () => {

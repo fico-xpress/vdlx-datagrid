@@ -4,17 +4,22 @@ import {
     getSetSorter
 } from '../../../src/js/datagrid/datagrid-sorter';
 import { enums, dataUtils, setSorter } from '../../../src/js/insight-modules';
+import {SortModule} from "tabulator-tables";
+
+jest.mock('tabulator-tables', ()=>({
+    SortModule: {
+        sorters: {
+            alphanum: jest.fn().mockReturnValue('tabulator-sorter-result'),
+            number: jest.fn(),
+            boolean: jest.fn()
+        }
+    }
+}))
 
 describe('datagrid-sorter', () => {
-    let tabulatorSortersMock;
     let entityMock;
 
     beforeEach(() => {
-        tabulatorSortersMock = {
-            alphanum: 'alphanum-sorter',
-            number: 'number-sorter',
-            boolean: 'boolean-sorter'
-        };
         entityMock = {
             getName: jest.fn(),
             getElementType: jest.fn()
@@ -47,7 +52,7 @@ describe('datagrid-sorter', () => {
             });
 
             it('returns the number sorter', () => {
-                expect(getSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.number);
+                expect(getSorter(entityMock)).toBe(SortModule.sorters.number);
             });
         });
 
@@ -58,7 +63,7 @@ describe('datagrid-sorter', () => {
             });
 
             it('returns the number sorter', () => {
-                expect(getSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.boolean);
+                expect(getSorter(entityMock)).toBe(SortModule.sorters.boolean);
             });
         });
 
@@ -69,7 +74,7 @@ describe('datagrid-sorter', () => {
             });
 
             it('returns the number sorter', () => {
-                expect(getSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.alphanum);
+                expect(getSorter(entityMock)).toBe(SortModule.sorters.alphanum);
             });
         });
 
@@ -80,7 +85,7 @@ describe('datagrid-sorter', () => {
             });
 
             it('returns the number sorter', () => {
-                expect(getSorter(entityMock, tabulatorSortersMock)).toBe(tabulatorSortersMock.number);
+                expect(getSorter(entityMock)).toBe(SortModule.sorters.number);
             });
         });
     });
@@ -98,8 +103,7 @@ describe('datagrid-sorter', () => {
 
         beforeEach(() => {
             formatterMock = jest.fn(cell => `formatted-${cell.getValue()}`);
-            tabulatorSortersMock.alphanum = jest.fn().mockReturnValue('tabulator-sorter-result');
-            sortCallback = createFormattedSorter('column-id-1', formatterMock, tabulatorSortersMock);
+            sortCallback = createFormattedSorter('column-id-1', formatterMock);
             aMock = 10;
             bMock = 20;
             aRowMock = {
@@ -133,7 +137,7 @@ describe('datagrid-sorter', () => {
             });
 
             it('should call the alphanum tabulator sorter with expected arguments', () => {
-                expect(tabulatorSortersMock.alphanum).toBeCalledWith(
+                expect(SortModule.sorters.alphanum).toBeCalledWith(
                     'formatted-10',
                     'formatted-20',
                     aRowMock,
@@ -155,10 +159,10 @@ describe('datagrid-sorter', () => {
 
             beforeEach(() => {
                 error = Error('sorter-error');
-                tabulatorSortersMock.alphanum.mockImplementation(() => {
+                SortModule.sorters.alphanum.mockImplementation(() => {
                     throw error;
                 });
-                sortCallback = createFormattedSorter('column-id-1', formatterMock, tabulatorSortersMock);
+                sortCallback = createFormattedSorter('column-id-1', formatterMock);
                 result = sortCallback(aMock, bMock, aRowMock, bRowMock, columnMock, dir, sorterParams);
             });
 

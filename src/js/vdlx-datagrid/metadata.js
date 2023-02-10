@@ -4,7 +4,7 @@
 
    file vdlx-datagrid/metadata.js
    ``````````````````````````````
-    (c) Copyright 2019 Fair Isaac Corporation
+    (c) Copyright 2023 Fair Isaac Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -63,7 +63,6 @@ export default {
         {
             name: 'page-size',
             description: 'The number of rows to show per-page in paged mode.',
-            acceptsExpression: true,
             defaultValue: '50'
         },
         {
@@ -73,10 +72,10 @@ export default {
         },
         {
             name: 'height',
-            acceptsExpression: true,
+            acceptsExpression: false,
             description:
                 'Grid height, When page-mode is set to <em>scrolling</em> you can set the height of the grid to something other than the default.',
-            defaultValue: '600'
+            defaultValue: '600px'
         },
         {
             name: 'column-filter',

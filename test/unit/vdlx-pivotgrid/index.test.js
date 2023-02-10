@@ -11,6 +11,15 @@ jest.mock('../../../src/js/vdlx-pivotgrid/metadata', () => ({
 }));
 jest.mock('../../../src/js/vdlx-pivotgrid/transform');
 jest.mock('../../../src/js/vdlx-pivotgrid/view-model');
+jest.mock('tabulator-tables', ()=>({
+    SortModule: {
+        sorters: {
+            alphanum: jest.fn(),
+            number: jest.fn(),
+            boolean: jest.fn()
+        }
+    }
+}))
 
 describe('vdlx-pivotgrid', () => {
     it('calls VDL to register as an extension', () => {

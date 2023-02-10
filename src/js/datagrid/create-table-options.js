@@ -6,7 +6,7 @@
    ```````````````````````
    vdlx-datagrid create-table-options.js
 
-    (c) Copyright 2022 Fair Isaac Corporation
+    (c) Copyright 2023 Fair Isaac Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ export default params => {
         columnFilter: params.columnFilter,
         onError: bindKey(self, '_wrapAlert'),
         alwaysShowSelection: params.alwaysShowSelection,
-        gridHeight: params.gridHeight,
+        gridHeight: params.gridHeight || '600px',
         paginationSize: params.pageSize || DEFAULT_GRID_PAGE_SIZE,
         saveState: get(params, 'saveState', true),
         pageMode: params.pageMode,
