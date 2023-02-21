@@ -136,7 +136,7 @@
         <div id="product-name" class="pull-left">FICO<sup>&reg;</sup> Xpress Insight</div>
         <div class="product-sub-title">
             <div class="product-title">vdlx-datagrid reference</div>
-            <div class="product-version">version 5.0.1</div>
+            <div class="product-version">version 5.1.0</div>
         </div>
     </div>
     <div id="main-nav">
@@ -395,7 +395,7 @@
                     Grid height, When page-mode is set to <em>scrolling</em> you can set the height of the grid to something other than the default.
 
                     <div>
-                        <span><strong>Default value</strong>: "600"</span>
+                        <span><strong>Default value</strong>: "600px"</span>
                     </div>
 
                     <div>
@@ -403,8 +403,7 @@
 
                     <div>
 
-                        <span class="label label-primary">accepts expression</span>
-                                            </div>
+                    </div>
 
                 </td>
             </tr>
@@ -462,8 +461,7 @@
 
                     <div>
 
-                        <span class="label label-primary">accepts expression</span>
-                                            </div>
+                    </div>
 
                 </td>
             </tr>
@@ -1405,7 +1403,20 @@
     <div class="vdl-extension-detail" id="vdlx-pivotgrid">
         <h2>vdlx-pivotgrid</h2>
         <p>
-            description required
+            The VDL Pivot Table component is a VDL Extension that provides an interface for users to create interactive pivot tables. 
+        Pivot tables are a powerful tool for analyzing and summarizing large datasets. The component allows users to visualize 
+        and manipulate data in a variety of ways, such as filtering, sorting, and aggregating data.
+        Pivot Table requires grouped data to be passed via the data attribute E.G: 
+        <br><br>
+[<br>
+&nbsp;&nbsp;{ key: [1, 1, 'UK'], value: 100},<br>
+&nbsp;&nbsp;{ key: [1, 2, 'USA'], value: 200},<br>
+&nbsp;&nbsp;{ key: [1, 2, 'FR'], value: 300},<br>
+&nbsp;&nbsp;...<br>
+]
+<br><br>
+VDL actions are available to fetch, group, aggregate and label data. 
+        
         </p>
 
 
@@ -1413,7 +1424,32 @@
 
         <h3>Example</h3>
         <div>
-            <pre><code>example required</code></pre>
+            <pre><code>
+&lt;vdl-var name&#x3D;&quot;groupedData&quot; value&#x3D;&quot;&#x3D;[]&quot;&gt;&lt;/vdl-var&gt;
+&lt;vdl-var name&#x3D;&quot;indexSetNames&quot; value&#x3D;&quot;&#x3D;[]&quot;&gt;&lt;/vdl-var&gt;
+&lt;vdl-var name&#x3D;&quot;labelArrays&quot; value&#x3D;&quot;&#x3D;[]&quot;&gt;&lt;/vdl-var&gt;
+
+&lt;vdl-action-group name&#x3D;&quot;getData&quot;&gt;
+    &lt;vdl-action-get-entity-data entity&#x3D;&quot;CountryStats&quot;&gt;&lt;/vdl-action-get-entity-data&gt;
+    &lt;vdl-action-group-by set-position&#x3D;&quot;&#x3D;[2,0,1]&quot;&gt;&lt;/vdl-action-group-by&gt;
+    &lt;vdl-action-aggregate&gt;&lt;/vdl-action-aggregate&gt;
+    &lt;vdl-action-set-var var&#x3D;&quot;groupedData&quot;&gt;&lt;/vdl-action-set-var&gt;
+    &lt;vdl-action-get-index-sets entity&#x3D;&quot;CountryStats&quot;&gt;&lt;/vdl-action-get-index-sets&gt;
+    &lt;vdl-action-set-var var&#x3D;&quot;indexSetNames&quot;&gt;&lt;/vdl-action-set-var&gt;
+    &lt;vdl-action command&#x3D;&quot;getLabelArray&quot; vdl-repeat&#x3D;&quot;&#x3D;name in vars.indexSetNames&quot; value&#x3D;&quot;&#x3D;name&quot;&gt;&lt;/vdl-action&gt;
+&lt;/vdl-action-group&gt;
+
+&lt;vdl-action-group name&#x3D;&quot;getLabelArray&quot;&gt;
+    &lt;vdl-action-get-entity-data entity&#x3D;&quot;&#x3D;value&quot; with-labels&#x3D;&quot;true&quot;&gt;&lt;/vdl-action-get-entity-data&gt;
+    &lt;vdl-action-array-push var&#x3D;&quot;labelArrays&quot;&gt;&lt;/vdl-action-array-push&gt;
+&lt;/vdl-action-group&gt;
+
+&lt;vdlx-pivotgrid
+    data&#x3D;&quot;&#x3D;vars.groupedData&quot;
+    row-dimensions&#x3D;&quot;&#x3D;[&#x27;Match&#x27;]&quot;
+    column-dimensions&#x3D;&quot;&#x3D;[&#x27;Country&#x27;, &#x27;Stat&#x27;]&quot;
+    column-titles&#x3D;&quot;&#x3D;[vars.labelArrays[0],vars.labelArrays[1]]&quot;&gt;&lt;/vdlx-pivotgrid&gt;        
+        </code></pre>
         </div>
 
         <h3>Attributes</h3>

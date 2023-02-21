@@ -22,9 +22,47 @@ export default {
     tag: 'vdlx-pivotgrid',
     modifiesDescendants: false,
     doc: {
-        description: `description required`,
+        description: `The VDL Pivot Table component is a VDL Extension that provides an interface for users to create interactive pivot tables. 
+        Pivot tables are a powerful tool for analyzing and summarizing large datasets. The component allows users to visualize 
+        and manipulate data in a variety of ways, such as filtering, sorting, and aggregating data.
+        Pivot Table requires grouped data to be passed via the data attribute E.G: 
+        <br><br>
+[<br>
+&nbsp;&nbsp;{ key: [1, 1, 'UK'], value: 100},<br>
+&nbsp;&nbsp;{ key: [1, 2, 'USA'], value: 200},<br>
+&nbsp;&nbsp;{ key: [1, 2, 'FR'], value: 300},<br>
+&nbsp;&nbsp;...<br>
+]
+<br><br>
+VDL actions are available to fetch, group, aggregate and label data. 
+        `,
         descriptionAsHtml: true,
-        example: `example required`
+        example: `
+<vdl-var name="groupedData" value="=[]"></vdl-var>
+<vdl-var name="indexSetNames" value="=[]"></vdl-var>
+<vdl-var name="labelArrays" value="=[]"></vdl-var>
+
+<vdl-action-group name="getData">
+    <vdl-action-get-entity-data entity="CountryStats"></vdl-action-get-entity-data>
+    <vdl-action-group-by set-position="=[2,0,1]"></vdl-action-group-by>
+    <vdl-action-aggregate></vdl-action-aggregate>
+    <vdl-action-set-var var="groupedData"></vdl-action-set-var>
+    <vdl-action-get-index-sets entity="CountryStats"></vdl-action-get-index-sets>
+    <vdl-action-set-var var="indexSetNames"></vdl-action-set-var>
+    <vdl-action command="getLabelArray" vdl-repeat="=name in vars.indexSetNames" value="=name"></vdl-action>
+</vdl-action-group>
+
+<vdl-action-group name="getLabelArray">
+    <vdl-action-get-entity-data entity="=value" with-labels="true"></vdl-action-get-entity-data>
+    <vdl-action-array-push var="labelArrays"></vdl-action-array-push>
+</vdl-action-group>
+
+<vdlx-pivotgrid
+    data="=vars.groupedData"
+    row-dimensions="=['Match']"
+    column-dimensions="=['Country', 'Stat']"
+    column-titles="=[vars.labelArrays[0],vars.labelArrays[1]]"></vdlx-pivotgrid>        
+        `
     },
     attributes: [
         {
