@@ -37,10 +37,10 @@ limitations under the License.
                 <vdl-column size="7" heading="Calculated columns">
                     <vdlx-datagrid column-filter="true">
                         <vdlx-datagrid-column entity="SupportCosts"></vdlx-datagrid-column>
-                        <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value">
+                        <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value" class="numeric">
                             ServiceLevelAgreements
                         </vdlx-datagrid-column>
-                        <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 2 + ''">
+                        <vdlx-datagrid-column render="=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 2 + ''" class="numeric">
                             ServiceLevelAgreements * 2
                         </vdlx-datagrid-column>
                     </vdlx-datagrid>
@@ -49,10 +49,10 @@ limitations under the License.
                     <code-panel>
 &lt;vdlx-datagrid column-filter=&quot;true&quot;&gt;
     &lt;vdlx-datagrid-column entity=&quot;SupportCosts&quot;&gt;&lt;/vdlx-datagrid-column&gt;
-    &lt;vdlx-datagrid-column render=&quot;=scenario.entities.ServiceLevelAgreements([rowData[0]]).value&quot;&gt;
+    &lt;vdlx-datagrid-column render=&quot;=scenario.entities.ServiceLevelAgreements([rowData[0]]).value&quot; class=&quot;numeric&quot;&gt;
         ServiceLevelAgreements
     &lt;/vdlx-datagrid-column&gt;
-    &lt;vdlx-datagrid-column render=&quot;=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 2 + ''&quot;&gt;
+    &lt;vdlx-datagrid-column render=&quot;=scenario.entities.ServiceLevelAgreements([rowData[0]]).value * 2 + &#39;&#39;&quot; class=&quot;numeric&quot;&gt;
         ServiceLevelAgreements * 2
     &lt;/vdlx-datagrid-column&gt;
 &lt;/vdlx-datagrid&gt;
