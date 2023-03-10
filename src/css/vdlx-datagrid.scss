@@ -61,7 +61,7 @@ $sorting-icon-right-offset: -4px;
   background-clip: padding-box;
 }
 
-vdlx-datagrid, vdlx-pivotgrid {
+vdlx-datagrid, vdlx-pivotgrid, vdlx-datatree {
   color: $black;
   user-select: none;
   display: inline-block;
@@ -500,6 +500,7 @@ vdlx-datagrid, vdlx-pivotgrid {
 }
 
 vdlx-pivotgrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col,
+vdlx-datatree .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col,
 vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tabulator-col {
 
   .tabulator-header-filter {
@@ -536,4 +537,45 @@ vdlx-datagrid .tabulator.table-striped .tabulator-header .tabulator-headers .tab
 
 .pivot-row-header {
   background-color: $color-table-header;
+}
+
+.vdlx-datatree {
+  .tabulator-data-tree-branch{
+    display: none;
+  }
+
+  .toggle-controls {
+    position: relative;
+    color: #787573;
+    width: 16px;
+    border: none;
+    border-radius: 0;
+    background: none;
+    font-family: icomoon, serif !important;
+    font-size: 10px;
+    overflow: visible
+  }
+
+  .toggle-controls.collapse-folder:after {
+    /* position: absolute; */
+    content: "\e603";
+    padding-right:5px;
+  }
+
+  .toggle-controls.expand-folder:after {
+    /* position: absolute; */
+    content: "\f054";
+    padding-right:5px;
+  }
+  .tabulator-data-tree-branch{
+    border: none !important;
+  }
+
+  .tabulator-row-odd {
+    background-color: #fff !important;
+  }
+
+  .tabulator-row-even {
+    background-color: #fff !important;
+  }
 }

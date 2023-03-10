@@ -2,9 +2,9 @@
    Xpress Insight vdlx-datagrid
    =============================
 
-   file constants.js
+   file vdlx-datagrid/index.js
    ```````````````````````
-   vdlx-datagrid editor type constants.
+   vdlx-datagrid index for datagrid.
 
     (c) Copyright 2023 Fair Isaac Corporation
 
@@ -20,35 +20,15 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-export const EDITOR_TYPES = {
-    text: 'input',
-    checkbox: 'checkbox',
-    list: 'list',
-};
+import {VDL} from '../insight-globals';
+import metadata from './metadata';
+import transform from './transform';
+import viewModel from './view-model';
 
-export const COLUMN_SORTERS = {
-    alphanum: 'alphanum',
-    array: 'array',
-    boolean: 'boolean',
-    number: 'number',
-    string: 'string'
-};
-
-export const ROW_DATA_TYPES = {
-    object: 'object',
-    array: 'array',
-    primitive: 'primitive',
-    function: 'function'
-};
-
-/**
- *
- * @type {{AUTO: string, PIVOT: string, LABELS: string, OBJECT: string}}
- */
-export const CUSTOM_COLUMN_DEFINITION = {
-    AUTO: 'auto',
-    LABELS: 'labels',
-    OBJECT: 'object',
-    PIVOT: 'pivot',
-    SCHEMA: 'schema'
-};
+VDL(metadata.tag, {
+    tag: metadata.tag,
+    attributes: metadata.attributes,
+    createViewModel: viewModel,
+    transform,
+    modifiesDescendants: metadata.modifiesDescendants
+});

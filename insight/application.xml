@@ -51,5 +51,9 @@
         <view-group title="vdlx-pivotgrid">
             <vdl-view title="simple pivot table" path="pivot/simple-pivot-table.vdl" />
         </view-group>
+        <view-group title="vdlx-datatree">
+            <vdl-view title="simple datatree table" path="datatree/simple-datatree-table.vdl" />
+        </view-group>
+        <client-resources-local-path>/home/xpress/vdl/datatree-initial/vdlx-datagrid/insight/client_resources</client-resources-local-path>
     </client>
 </model-companion>

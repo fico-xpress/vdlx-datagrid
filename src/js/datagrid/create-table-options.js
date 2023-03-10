@@ -31,7 +31,6 @@ import negate from 'lodash/negate';
 import identity from 'lodash/identity';
 import isNull from 'lodash/isNull';
 import overSome from 'lodash/overSome';
-import isArray from "lodash/isArray";
 
 const DEFAULT_GRID_PAGE_SIZE = 50;
 
@@ -63,6 +62,10 @@ export default params => {
         columnDefinitionType: params.columnDefinitionType,
         columnDefinitions: params.columnDefinitions || [],
 
+        // data tree
+        enableDataTree: params.enableDataTree ?? false,
+        dataTreeChildField: params.dataTreeChildField ?? "_children",
+        dataTreeStartExpanded: params.dataTreeStartExpanded ?? true,
         // pivot attrs
         pivotRowPositions: params.pivotRowPositions,
         pivotRowDimensions: params.pivotRowDimensions,

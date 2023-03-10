@@ -28,3 +28,4 @@ import './vdlx-datagrid';
 import './vdlx-datagrid-column';
 import './vdlx-datagrid-index-filter';
 import './vdlx-datagrid-validate';
+import './vdlx-datatree';

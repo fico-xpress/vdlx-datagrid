@@ -43,6 +43,7 @@ import size from "lodash/size";
 import map from "lodash/map";
 import head from "lodash/head";
 import isUndefined from "lodash/isUndefined";
+import {createSchemaConfig} from "./create-schema-config";
 
 /**
  * creates config object containing data and columns
@@ -80,6 +81,11 @@ export const createCustomConfig = (gridOptions) => {
             datagridData = pivotData.data;
             columnDefinitions = pivotData.cols;
             break
+        case CUSTOM_COLUMN_DEFINITION.SCHEMA:
+            const schemaData = createSchemaConfig(gridOptions, data);
+            datagridData = schemaData.data;
+            columnDefinitions = schemaData.cols;
+            break;
         default:
             throw Error('Error for component vdlx-datagrid: Unrecognised column format.');
     }

@@ -34,7 +34,7 @@ import withScenarioData from './data-loader';
 import exportCsv from './export-csv';
 import Paginator from './paginator';
 import {getRowData} from './utils';
-import {EDITOR_TYPES} from '../constants';
+import {CUSTOM_COLUMN_DEFINITION, EDITOR_TYPES} from '../constants';
 import AddRemove from './add-remove';
 import {chooseColumnFilter} from './grid-filters';
 import {perf, perfMessage} from '../performance-measurement';
@@ -77,6 +77,7 @@ import {
     getHeaderFilterParams
 } from './column-filter-utils';
 import {createCustomColumnSortOrder} from "./custom-data/custom-column-utils";
+import isPlainObject from "lodash/isPlainObject";
 
 const SELECTION_CHANGED_EVENT = 'selection-changed';
 const SELECTION_REMOVED_EVENT = 'selection-removed';
@@ -239,9 +240,15 @@ class Datagrid {
     setCustomDataColumnsAndData(gridOptions) {
         const table = this.table;
         this.stateLoaded = false;
-
-        if (!isArray(gridOptions.data())) {
-            return Promise.reject('Error for component vdlx-datagrid: Please ensure the data attribute contains an array');
+        if (gridOptions.columnDefinitionType === CUSTOM_COLUMN_DEFINITION.SCHEMA) {
+            if (!isPlainObject(gridOptions.data())){
+                return Promise.reject('Error for component vdlx-datagrid: Please ensure the schema-data attribute should be object');
+            }
+        }
+        else {
+            if(!isArray(gridOptions.data())) {
+                return Promise.reject('Error for component vdlx-datagrid: Please ensure the data attribute contains an array');
+            }
         }
 
         let config = {};
@@ -421,9 +428,17 @@ class Datagrid {
                 debugInvalidOptions: false,
             },
             debugInvalidOptions: false,
+            dataTree: options.enableDataTree,
+            dataTreeExpandElement:"<span class='toggle-controls expand-folder'></span>",
+            dataTreeCollapseElement:"<span class='toggle-controls collapse-folder'></span>",
         };
         if(!options.pagination){
             tabulatorOptions.maxHeight = options.gridHeight
+        }
+
+        if(options.enableDataTree){
+            tabulatorOptions.dataTreeChildField =  options.dataTreeChildField;
+            tabulatorOptions.dataTreeStartExpanded = options.dataTreeStartExpanded;
         }
 
         const table = new Tabulator(`#${options.tableId}`, tabulatorOptions);

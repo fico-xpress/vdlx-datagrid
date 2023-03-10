@@ -1,0 +1,277 @@
+
+
+<vdl version="5.0">
+    <vdl-page>
+        <!--<vdl-include src="vdlx-datagrid-debug/vdlx-datagrid-debug.vdl"></vdl-include>-->
+        <vdl-include src="vdlx-datagrid/vdlx-datagrid.vdl"></vdl-include>
+        <vdl-include src="includes/doc-extensions/code-panel.vdl"></vdl-include>
+        <vdl-header>
+
+            <style>
+                .schema{
+                    height: 600px;
+                    overflow: auto;
+                    margin-bottom: 100px;
+                }
+            </style>
+            <script>
+
+                const JSONSCHEMA = {
+                    "type": "object",
+                    "$schema" : "https://json-schema.org/draft/2019-09/schema",
+                    "properties": {
+                        "creditLimit": {
+                            "type": "NUMBER",
+                            "reporting": "true",
+                            "displayName": "credit Limit",
+                            "child": "true"
+                        },
+                        "cyclesDelinquent": {
+                            "type": "BOOLEAN",
+                            "reporting": "true",
+                            "displayName": "cycles Delinquent",
+                            "child": "true"
+                        },
+                        "decisionRequest": {
+                            "type": "object",
+                            "properties": {
+                                "accountStatus": {
+                                    "type": "STRING",
+                                    "reporting": "true",
+                                    "displayName": "Account Status",
+                                    "child": "true"
+                                },
+                                "addressMismatch": {
+                                    "type": "BOOLEAN",
+                                    "reporting": "true",
+                                    "displayName": "Address Mismatch",
+                                    "child": "true"
+                                },
+                                "addressCleared": {
+                                    "type": "BOOLEAN",
+                                    "reporting": "true",
+                                    "displayName": "Address Cleared",
+                                    "child": "true"
+                                },
+                                "creditLimit": {
+                                    "type": "NUMBER",
+                                    "reporting": "true",
+                                    "displayName": "credit Limit",
+                                    "child": "true"
+                                },
+                                "cyclesDelinquent": {
+                                    "type": "BOOLEAN",
+                                    "reporting": "true",
+                                    "displayName": "cycles Delinquent",
+                                    "child": "true"
+                                },
+                                "incomeMismatch": {
+                                    "type": "BOOLEAN",
+                                    "reporting": "true",
+                                    "displayName": "income Mismatch",
+                                    "child": "true"
+                                },
+                                "incomeCleared": {
+                                    "type": "BOOLEAN",
+                                    "reporting": "true",
+                                    "displayName": "income Cleared",
+                                    "child": "true"
+                                },
+                                "pctCreditLineUtil": {
+                                    "type": "NUMBER",
+                                    "reporting": "true",
+                                    "displayName": "pct CreditLine Util",
+                                    "child": "true"
+                                },
+                                "productCode": {
+                                    "type": "NUMBER",
+                                    "reporting": "true",
+                                    "displayName": "product Code",
+                                    "child": "true"
+                                },
+                                "vipFlag": {
+                                    "type": "BOOLEAN",
+                                    "reporting": "true",
+                                    "displayName": "VIP Flag",
+                                    "child": "true"
+                                },
+                                "creditCardsData": {
+                                    "type": "object",
+                                    "properties": {
+                                        "appAge": {
+                                            "type": "NUMBER",
+                                            "reporting": "true",
+                                            "displayName": "app Age",
+                                            "child": "true"
+                                        },
+                                        "appChkSv": {
+                                            "type": "NUMBER",
+                                            "reporting": "true",
+                                            "displayName": "app ChkSv",
+                                            "child": "true"
+                                        },
+                                        "appFinanceCo": {
+                                            "type": "STRING",
+                                            "reporting": "true",
+                                            "displayName": "app Finance Co",
+                                            "child": "true"
+                                        },
+                                        "appOcc": {
+                                            "type": "STRING",
+                                            "reporting": "true",
+                                            "displayName": "appOcc",
+                                            "child": "true"
+                                        },
+                                        "appOrigScore": {
+                                            "type": "NUMBER",
+                                            "reporting": "true",
+                                            "displayName": "app Original Score",
+                                            "child": "true"
+                                        },
+                                        "cbFICO": {
+                                            "type": "NUMBER",
+                                            "reporting": "true",
+                                            "displayName": "cb FICO",
+                                            "child": "true"
+                                        },
+                                        "cbInq5Mos": {
+                                            "type": "NUMBER",
+                                            "reporting": "true",
+                                            "displayName": "cbInq5Mos",
+                                            "child": "true"
+                                        },
+                                        "cbMosDlq": {
+                                            "type": "NUMBER",
+                                            "reporting": "true",
+                                            "displayName": "cbMosDlq",
+                                            "child": "true"
+                                        },
+                                        "cbTimeFile": {
+                                            "type": "NUMBER",
+                                            "reporting": "true",
+                                            "displayName": "cbTimeFile",
+                                            "child": "true"
+                                        },
+                                        "cbUtilizn": {
+                                            "type": "NUMBER",
+                                            "reporting": "true",
+                                            "displayName": "cbUtilizn",
+                                            "child": "true"
+                                        },
+                                        "cardLineToCollat": {
+                                            "type": "NUMBER",
+                                            "reporting": "true",
+                                            "displayName": "cardLine To Collate",
+                                            "child": "true"
+                                        },
+                                        "avgPurchase6Mos": {
+                                            "type": "NUMBER",
+                                            "reporting": "true",
+                                            "displayName": "avgPurchase6Mos",
+                                            "child": "true"
+                                        },
+                                        "avgPctUtil6Mos": {
+                                            "type": "NUMBER",
+                                            "reporting": "true",
+                                            "displayName": "avgPctUtil6Mos",
+                                            "child": "true"
+                                        },
+                                        "numMosRevolving": {
+                                            "type": "NUMBER",
+                                            "reporting": "true",
+                                            "displayName": "numMosRevolving",
+                                            "child": "true"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                const dataCols = [
+                    {title: "Name", field: "name"},
+                    {title: "Type", field: "type"},
+                    {title: "Display Name", field: "displayName"},
+                    {title: "Include in Reporting", field: "reporting"}
+                ];
+
+
+                //Schema to Object
+
+                function updateEntity(root, _b ,cellProxy){
+
+                    let cell = cellProxy.cell;
+                    const data = cell.getTable().getData();
+                    // const schema = tabulatorToSchema(data)
+                    // root.vars.updatedData(schema);
+                    // console.log(schema)
+
+                }
+
+                /** $(document).ready(()=>{
+                    $('.language-javascript').each((i,e) => {
+                        hljs.highlightBlock(e)
+                    })
+                }) **/
+            </script>
+
+            <vdl-var name="tableData" value="={}"></vdl-var>
+
+
+            <vdl-action-group name="setData">
+                <vdl-action-set-var var="tableData" value="=JSONSCHEMA"></vdl-action-set-var>
+                <!--                <vdl-action-set-var var="tableData" value="=constructTabulator(JSONSCHEMA.properties)"></vdl-action-set-var>-->
+            </vdl-action-group>
+
+        </vdl-header>
+
+
+        <vdl-section heading="BOM" layout="fluid">
+
+            <vdl-row >
+
+                <vdl-column size="6" heading="VDL SOURCE">
+                    <code-panel>
+
+&lt;vdlx-datatree
+        column-filter=&quot;true&quot;
+        schema-data=&quot;=vars.tableData&quot;&gt;
+&lt;/vdlx-datatree&gt;
+
+                    </code-panel>
+                </vdl-column>
+            </vdl-row>
+            <vdl-row>
+                <vdl-column size="8">
+
+                    <vdl-button vdl-event="click:actions.setData" label="Display Data"> </vdl-button>
+
+
+                    <vdlx-datatree
+                            column-filter="true"
+                            schema-data="=vars.tableData">
+                    </vdlx-datatree>
+
+                </vdl-column>
+
+
+
+                <vdl-column size="4" heading="Source Schema" heading-level="4" class="schema">
+                    <code class="language-javascript">
+                        <pre vdl-text="=JSON.stringify(JSONSCHEMA,null,5)"></pre>
+                    </code>
+
+                </vdl-column>
+
+
+            </vdl-row>
+
+        </vdl-section>
+    </vdl-page>
+
+
+</vdl>
+
+
