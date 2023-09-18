@@ -84,12 +84,31 @@ export const createCustomConfig = (gridOptions) => {
         datagridData = applyRowFilter(datagridData, rowFilter);
     }
 
+    // escape html in column titles
+    columnDefinitions = escapeTitlesInColumnDefinitions(columnDefinitions);
+
     // addGridOptionsProps will add column features set from vdlx-datagrid attributes
     return {
         columns: addGridOptionsProps(gridOptions, columnDefinitions),
         data: datagridData
     };
 
+};
+
+/**
+ * Escapes the titles of the column definitions.
+ *
+ * @param {Array<Object>} columnDefinitions A list of column definitions.
+ * @returns {Array<Object>} A list of column definitions with the titles escaped.
+ */
+const escapeTitlesInColumnDefinitions = (columnDefinitions) => {
+    return columnDefinitions.map(def => {
+        if (def.columns) def.columns = escapeTitlesInColumnDefinitions(def.columns);
+        return {
+            ...def,
+            title: _.escape(def.title)
+        };
+    });
 };
 
 /**
