@@ -166,7 +166,8 @@ export default {
                 name: 'data',
                 type: '(string|boolean|number)',
                 description:
-                    'The value of the cell being rendered. Its data type will match that of the array elements in this column.'
+                    'The value of the cell being rendered. Its data type will match that of the array elements in this column.' +
+                    'The cell value will be HTML escaped to avoid XSS security issues.'
             },
             {
                 name: 'type',
