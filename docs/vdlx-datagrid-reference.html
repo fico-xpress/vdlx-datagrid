@@ -136,7 +136,7 @@
         <div id="product-name" class="pull-left">FICO<sup>&reg;</sup> Xpress Insight</div>
         <div class="product-sub-title">
             <div class="product-title">vdlx-datagrid reference</div>
-            <div class="product-version">version 4.8.5</div>
+            <div class="product-version">version 4.8.6</div>
         </div>
     </div>
     <div id="main-nav">
@@ -160,7 +160,7 @@
 
     </ul>
     <div class="copyright">
-        © 2022 Fair Isaac Corporation. All rights reserved.
+        © 2023 Fair Isaac Corporation. All rights reserved.
     </div>
 </div>
 
@@ -233,7 +233,7 @@
                     add-remove-row
                 </th>
                 <td>
-                    Setting this will show the add-remove row buttons at the bottom of the grid. Set to "true" to prompt for index selection on row add. Set to <em>addrow-autoinc</em> will switch the behaviour to allow new index values to be created, incrementing from the highest value in the set(s).
+                    Setting this will show the add-remove row buttons at the bottom of the grid. Set to "true" to prompt for index selection on row add. Set to <em>addrow-autoinc</em> will switch the behaviour to allow new index values to be created, incrementing from the highest value in the set(s).This attribute can not be set when "data" attribute is being used.
 
                     <div>
                     </div>
@@ -291,7 +291,7 @@
                     column-definition
                 </th>
                 <td>
-                    Specify how columns are defined, allowed values: "auto", "labels", or an object defining column properties [{field:"key", title="Key"}...].<br><br>"auto" (default) will generate columns from the data.<br>"labels" will use the "label" property on an object as the column header, and the "value" property as the cell value. Data will be reduced to one row.<br><br>When using column properties, you should supply aa column definition object for each column you require and each object must have a property named 'field'. <br>The value of the field property must reference a property on the data. <br>For example: column-definition="=[{field:"name", title:"Full Name", field:"tel", title:"Phone Number"}] data="=[{name="John Doe", tel:"1234"}...]".<br>Other recommended properties: title, width, cssClass (space separated class names), headerSortStartingDir (asc/desc)
+                    Specify how columns are defined, allowed values: "auto", "labels", or an object defining column properties [{field:"key", title="Key"}...].<br><br>"auto" (default) will generate columns from the data.<br>"labels" will use the "label" property on an object as the column header, and the "value" property as the cell value. Data will be reduced to one row.<br><br>When using column properties, you should supply aa column definition object for each column you require and each object must have a property named 'field'. <br>The value of the field property must reference a property on the data. <br>For example: column-definition="=[{field:"name", title:"Full Name", field:"tel", title:"Phone Number"}] data="=[{name="John Doe", tel:"1234"}...]".<br>Other recommended properties: title, width, cssClass (space separated class names), headerSortStartingDir (asc/desc), <br>This attribute can not be set when "data" attribute is being used.
 
                     <div>
                         <span><strong>Default value</strong>: "auto"</span>
@@ -535,7 +535,7 @@
                     scenario
                 </th>
                 <td>
-                    The default scenario to use for fetching data in the grid. This can be overridden per column but the default will be used when a column does not specify a particular scenario and the index sets will be fetched from the default scenario. This attribute will not affect the scenario variable in any render expression on the datagrid columns.
+                    The default scenario to use for fetching data in the grid. This can be overridden per column but the default will be used when a column does not specify a particular scenario and the index sets will be fetched from the default scenario. This attribute will not affect the scenario variable in any render expression on the datagrid columns.This attribute can not be set when "data" attribute is being used.
 
                     <div>
                     </div>
@@ -983,7 +983,7 @@
                         <tr>
                             <td>data</td>
                             <td>
-                                The value of the cell being rendered. Its data type will match that of the array elements in this column.
+                                The value of the cell being rendered. Its data type will match that of the array elements in this column.The cell value will be HTML escaped to avoid XSS security issues.
                                 <div><code>(string|boolean|number)</code></div>
                             </td>
                         </tr>
@@ -1272,7 +1272,7 @@
         <p>
             
             Add a validation rule to a <code>&lt;vdlx-datagrid-column&gt;</code> element.
-             You can declare multiple <code>&lt;vdl-validate&gt;</code> rules within a
+             You can declare multiple <code>&lt;vdlx-datagrid-validate&gt;</code> rules within a
              <code>&lt;vdlx-datagrid-column&gt;</code> and they will all be applied. Each rule can specify whether the field is allowed to save data if that rule
              fails (this is soft validation). The <em>pass</em> attribute defines the expression that is called every time the field or autocolumn
              changes. The expression is automatically given the variables: <code>entityName</code>, <code>value</code>, <code>indices</code> 
@@ -1292,10 +1292,10 @@
         <div>
             <pre><code>&lt;vdlx-datagrid&gt;
   &lt;vdlx-datagrid-column entity&#x3D;&quot;FactoryDemand&quot;&gt;
-    &lt;vdl-validate pass&#x3D;&quot;&#x3D;value &gt;&#x3D; scenario.entities.SupportLevel.value&quot;
+    &lt;vdlx-datagrid-validate pass&#x3D;&quot;&#x3D;value &gt;&#x3D; scenario.entities.SupportLevel.value&quot;
                   allow-save&#x3D;&quot;&#x3D;scenario.entities.CanSave.value&quot;&gt;
       FactoryDemand should be greater than or equal to SupportLevel
-    &lt;/vdl-validate&gt;
+    &lt;/vdlx-datagrid-validate&gt;
   &lt;/vdlx-datagrid-column&gt;
 &lt;/vdlx-datagrid&gt;</code></pre>
         </div>
