@@ -41,6 +41,7 @@ import parseInt from "lodash/parseInt";
 import size from "lodash/size";
 import map from "lodash/map";
 import head from "lodash/head";
+import escape from "lodash/escape";
 import isUndefined from "lodash/isUndefined";
 
 /**
@@ -106,7 +107,7 @@ const escapeTitlesInColumnDefinitions = (columnDefinitions) => {
         if (def.columns) def.columns = escapeTitlesInColumnDefinitions(def.columns);
         return {
             ...def,
-            title: _.escape(def.title)
+            title: escape(def.title)
         };
     });
 };
