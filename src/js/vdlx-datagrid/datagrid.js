@@ -642,11 +642,11 @@ class Datagrid {
             const isNumberEntity = dataUtils.entityTypeIsNumber(displayEntity);
 
             const title = get(options, 'title', entity.getAbbreviation() || name);
-            const defaultFormatter = (cell) => _.escape(SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue()));
+            const defaultFormatter = (cell) => escape(SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue()));
 
             const getFormatter = (type = 'display') => {
                 if (options.render) {
-                    return (cell) => _.escape(options.render(cell.getValue(), type, getRowDataForColumns(cell.getData())));
+                    return (cell) => escape(options.render(cell.getValue(), type, getRowDataForColumns(cell.getData())));
                 }
                 return defaultFormatter;
             };
@@ -722,11 +722,11 @@ class Datagrid {
                 return `<div class="checkbox-editor"><input type="checkbox" ${checked} ${disabled}/></div>`;
             };
 
-            const defaultFormatter = (cell) => _.escape(SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue()));
+            const defaultFormatter = (cell) => escape(SelectOptions.getLabel(schema, allScenarios, entity, cell.getValue()));
 
             const getFormatter = (type = 'display') => {
                 if (entityOptions.render) {
-                    return (cell) => _.escape(entityOptions.render(cell.getValue(), type, getRowDataForColumns(cell.getData())));
+                    return (cell) => escape(entityOptions.render(cell.getValue(), type, getRowDataForColumns(cell.getData())));
                 }
 
                 if (entityOptions.editorType === EDITOR_TYPES.checkbox && type === 'display') {
@@ -786,7 +786,7 @@ class Datagrid {
                         if (isNumberEntity) {
                             return (value, title) => `<div class="numeric">${title}</div>`;
                         } else {
-                            return (value, title) => _.escape(value);
+                            return (value, title) => escape(value);
                         };
                     };
 
@@ -970,7 +970,7 @@ class Datagrid {
             const title = get(options, 'title', options.name);
 
             const getFormatter = (type = 'display') => (cell) =>
-                _.escape(options.render(cell.getValue(), type, getRowDataForColumns(cell.getData())));
+                escape(options.render(cell.getValue(), type, getRowDataForColumns(cell.getData())));
 
             let column = {
                 ...options,

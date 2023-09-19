@@ -564,4 +564,41 @@ describe('createCustomConfig module', () => {
         });
     });
 
+    describe('escapeTitlesInColumnDefinitions', () => {
+        let gridOptions;
+        let createBasicColumnDefinitionSpy;
+        let convertCustomDataToObjectDataSpy;
+
+        beforeEach(function () {
+            let resultData = {
+                data: 'data',
+                columns: [
+                    {
+                        data: 'data',
+                        title: `<img src=x onerror="alert('test_header_3')">`
+                    },
+                ],
+                title: `<img src=x onerror="alert('test_header_1')">`
+            };
+
+            gridOptions = {
+                columnDefinitionType: CUSTOM_COLUMN_DEFINITION.AUTO,
+                columnDefinitions: () => [{column: 'definition'}],
+                data: () => [1, 2, 3, 4]
+            };
+            createBasicColumnDefinitionSpy = jest.spyOn(colUtils, 'createBasicColumnDefinition').mockReturnValue(resultData);
+            convertCustomDataToObjectDataSpy = jest.spyOn(dataUtils, 'convertCustomDataToObjectData').mockReturnValue([{column: 'definition'}]);
+        });
+
+        afterEach(() => {
+            createBasicColumnDefinitionSpy.mockRestore();
+            convertCustomDataToObjectDataSpy.mockRestore();
+        });
+
+        it('escape html in column headers', () => {
+            let customConfig = createCustomConfig(gridOptions);
+            expect(customConfig.columns[0].title).toBe('&lt;img src=x onerror=&quot;alert(&#39;test_header_1&#39;)&quot;&gt;');
+            expect(customConfig.columns[0].columns[0].title).toBe('&lt;img src=x onerror=&quot;alert(&#39;test_header_3&#39;)&quot;&gt;');
+        });
+    });
 });
