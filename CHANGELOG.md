@@ -3,10 +3,15 @@
 ## v5.0.1
 
 - Fixed an issue where cells edits were being displayed as the previous value from the server when datagrid configuration changes.
+- Fixed an XSS vulnerability: cell values, headers and editor options are now HTML escaped to avoid malicious code injection.
 
 ## v5.0.0
 
 - Updated to VDL 5.0 compatibility.
+
+## v4.8.6
+
+- Fixed an XSS vulnerability: cell values, headers and editor options are now HTML escaped to avoid malicious code injection.
 
 ## v4.8.5
 
