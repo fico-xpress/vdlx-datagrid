@@ -136,8 +136,8 @@ export default {
             {
                 name: 'rowData',
                 type: 'Array.<(string|boolean|number)>',
-                description: 'The values from each cell in the current row. The order of the row data reflects the underlying ' +
-                    'order of the array indices rather than the display order.'
+                description: 'The indices for the current row, this does not include array entities. The order of ' +
+                    'the indices reflects the underlying order of the array indices rather than the displayed order.'
             }
         ],
         expressionReturns: {
@@ -177,8 +177,8 @@ export default {
             {
                 name: 'rowData',
                 type: 'Array.<(string|boolean|number)>',
-                description: 'The values from each cell in the current row. The order of the row data reflects the underlying ' +
-                    'order of the array indices rather than the display order.'
+                description: 'The values from each cell in the current row (indices and data cells). The order ' +
+                    'of the row data reflects the underlying order of the array indices rather than the display order.'
             }
         ]
     },

@@ -54,6 +54,10 @@ let _exactCompareAsString = (searchData, data) => {
 let _exactCompareAsNumber = (searchData, data) => {
     let searchTermAsFloat = _filterFloat(searchData);
     let originalValueAsFloat = _filterFloat(data);
+    // Treat empty/missing elements from a sparse array as 0 for exact match
+    if (isNaN(originalValueAsFloat)) {
+        originalValueAsFloat = 0;
+    }
 
     return searchTermAsFloat === originalValueAsFloat;
 };
@@ -101,6 +105,9 @@ const NEQ = (a,b) => a !== b;
 
 let filter = (column, searchText, formattedCellValue, rowData, params) => {
     let cellValue;
+    // searchText should be a string, but in some cases such as feature tests it may not always be
+    searchText = String(searchText);
+
     if(!!column.labelsEntity || column.filterByFormatted) {
         cellValue = formattedCellValue;
     } else {
