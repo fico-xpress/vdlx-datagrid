@@ -1,8 +1,15 @@
 # vdlx-datagrid changelog
+## v4.8.7
+
+- Filtering doing an exact match for 0 now includes empty cells.
+
+## v4.8.6
+
+- Fixed an XSS vulnerability: cell values, headers and editor options are now HTML escaped to avoid malicious code injection.
 
 ## v4.8.5
 
-- Fixed add row when `addrow-autoinc` enabled and index set is empty 
+- Fixed add row when `addrow-autoinc` enabled and index set is empty.
 
 ## v4.8.4
 
