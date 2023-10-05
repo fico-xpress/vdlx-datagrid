@@ -1,5 +1,9 @@
 # vdlx-datagrid changelog
 
+## v5.0.2
+
+- Filtering doing an exact match for 0 now includes empty cells.
+
 ## v5.0.1
 
 - Fixed an issue where cells edits were being displayed as the previous value from the server when datagrid configuration changes.
@@ -8,6 +12,10 @@
 ## v5.0.0
 
 - Updated to VDL 5.0 compatibility.
+
+## v4.8.7
+
+- Filtering doing an exact match for 0 now includes empty cells.
 
 ## v4.8.6
 
