@@ -212,8 +212,11 @@ describe('vdlx-datagrid grid-filters', () => {
                     id1: '',
                 };
                 let filter = chooseColumnFilter(column);
+
                 let result = filter('=0', '$0', rowData);
                 expect(result).toBeTruthy();
+                result = filter('<>0', '$0', rowData);
+                expect(result).toBeFalsy();
             });
         });
 
