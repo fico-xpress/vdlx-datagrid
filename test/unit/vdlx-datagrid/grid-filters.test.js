@@ -125,6 +125,7 @@ describe('vdlx-datagrid grid-filters', () => {
                 id: 'id1',
                 elementType: Enums.DataType.REAL,
             };
+
             it('chooseColumnFilter call it with a matching real', () => {
                 const rowData = {
                     id1: 2.6,
@@ -212,8 +213,11 @@ describe('vdlx-datagrid grid-filters', () => {
                     id1: '',
                 };
                 let filter = chooseColumnFilter(column);
+
                 let result = filter('=0', '$0', rowData);
                 expect(result).toBeTruthy();
+                result = filter('<>0', '$0', rowData);
+                expect(result).toBeFalsy();
             });
         });
 
