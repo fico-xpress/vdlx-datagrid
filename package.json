@@ -1,6 +1,6 @@
 {
   "name": "@fico-xpress/vdlx-datagrid",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "",
   "scripts": {
     "postinstall": "npm run build",
