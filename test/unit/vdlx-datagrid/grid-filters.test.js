@@ -203,6 +203,18 @@ describe('vdlx-datagrid grid-filters', () => {
                 var result = filter('=3', 2, rowData);
                 expect(result).toBeFalsy();
             });
+            it('treat empty cells as zero value', () => {
+                const rowData = {
+                    // Sparse arrays missing elements are returned as empty strings by the JS API
+                    id1: '',
+                };
+                let filter = chooseColumnFilter(column);
+
+                let result = filter('=0', '$0', rowData);
+                expect(result).toBeTruthy();
+                result = filter('<>0', '$0', rowData);
+                expect(result).toBeFalsy();
+            });
         });
 
         describe('Real type', () => {

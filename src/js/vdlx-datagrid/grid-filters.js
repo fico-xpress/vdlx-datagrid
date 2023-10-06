@@ -104,6 +104,10 @@ let filter = (column, searchText, formattedCellValue, rowData, params) => {
         cellValue = formattedCellValue;
     } else {
         cellValue = rowData[column.id];
+        // Treat empty/missing elements from a sparse numeric array as 0
+        if (cellValue === '' && (column?.elementType === Enums.DataType.INTEGER || column?.elementType === Enums.DataType.REAL)) {
+            cellValue = 0;
+        }
     }
     const firstChar = searchText.substring(0, 1);
     let exactColumnSearch = firstChar === EQUALS_OPERATOR;
