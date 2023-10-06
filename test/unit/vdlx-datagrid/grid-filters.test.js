@@ -97,23 +97,26 @@ describe('vdlx-datagrid grid-filters', () => {
                 const rowData = {
                     id1: 2,
                 };
-                var filter = chooseColumnFilter(column);
-                var result = filter('3', 2, rowData);
+                let filter = chooseColumnFilter(column);
+                let result = filter(123, '123', rowData);
                 expect(result).toBeFalsy();
             });
             it('chooseColumnFilter call it with a non-matching integer but formatted version matches', () => {
-                // var column = {
-                //     elementType: Enums.DataType.INTEGER,
-                //     displayType: Enums.DataType.INTEGER,
-                //     format: n => "3"
-                // };
                 const rowData = {
                     id1: 2,
                 };
-                column.format = (n) => $`G${n}`;
-                var filter = chooseColumnFilter(column);
-                var result = filter('3', 2, rowData);
+                let filter = chooseColumnFilter(column);
+                let result = filter(6, '2', rowData);
                 expect(result).toBeFalsy();
+            });
+            it('chooseColumnFilter call it with a matching formatted value', () => {
+                const rowData = {
+                    id1: 2,
+                };
+                column.filterByFormatted = true;
+                let filter = chooseColumnFilter(column);
+                let result = filter('G2', 'G2', rowData);
+                expect(result).toBeTruthy();
             });
         });
 
@@ -122,6 +125,7 @@ describe('vdlx-datagrid grid-filters', () => {
                 id: 'id1',
                 elementType: Enums.DataType.REAL,
             };
+
             it('chooseColumnFilter call it with a matching real', () => {
                 const rowData = {
                     id1: 2.6,
@@ -201,6 +205,18 @@ describe('vdlx-datagrid grid-filters', () => {
                 };
                 var filter = chooseColumnFilter(column);
                 var result = filter('=3', 2, rowData);
+                expect(result).toBeFalsy();
+            });
+            it('treat empty cells as zero value', () => {
+                const rowData = {
+                    // Sparse arrays missing elements are returned as empty strings by the JS API
+                    id1: '',
+                };
+                let filter = chooseColumnFilter(column);
+
+                let result = filter('=0', '$0', rowData);
+                expect(result).toBeTruthy();
+                result = filter('<>0', '$0', rowData);
                 expect(result).toBeFalsy();
             });
         });
