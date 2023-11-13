@@ -15,7 +15,7 @@
 
 ## v4.8.7
 
-- Filtering doing an exact match for 0 now includes empty cells.
+- Backported: Filtering doing an exact match for 0 now includes empty cells.
 
 ## v4.8.6
 
@@ -49,6 +49,10 @@
 
 - Updated to VDL 4.8 compatibility.
 - Microsoft Edge is now supported. Internet Explorer 11 is no longer supported.
+
+## v4.7.3
+
+- Backported: Filtering doing an exact match for 0 now includes empty cells.
 
 ## v4.7.2
 
